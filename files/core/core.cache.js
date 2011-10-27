@@ -179,7 +179,7 @@
 			
 			var key, newObj = {};
 			
-			if (prop[1] && prop[1] == "unshift") {
+			if (prop[1] && prop[1] === "unshift") {
 				newObj[prop[0]] = value;
 				for (key in obj) {
 					if (obj.hasOwnProperty(key)) {
@@ -189,7 +189,7 @@
 				obj = newObj;
 					
 				return obj;
-			} else if (!prop[1] || prop[1] == "push") {
+			} else if (!prop[1] || prop[1] === "push") {
 				obj[prop[0]] = value;
 			}
 				
