@@ -1,1 +1,0 @@
-java -jar compiler.jar --js jquery.ctree.js --js_output_file jquery.ctree.min.js

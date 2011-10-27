@@ -1,1 +1,0 @@
-java -jar compiler.jar --js jquery.cui.js --js_output_file jquery.cui.min.js
