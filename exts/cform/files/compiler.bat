@@ -1,1 +1,0 @@
-java -jar compiler.jar --js jquery.cform.js --js_output_file jquery.cform.min.js
