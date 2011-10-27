@@ -157,10 +157,14 @@
 			
 			if (!$parent.hasClass("cTree_expandLeaf")) {
 				if ($parent.hasClass("cTree_expandOpen")) {
+					
 					if (!events.animate || !events.animate.close) {
 						$parent.removeClass("cTree_expandOpen").addClass("cTree_expandClosed");
 					} else if (events.animate && events.animate.close) {
-						events.animate.close.call($parent);
+						events.animate.close.call($parent).queue(function () {
+							$parent.removeClass("cTree_expandOpen").addClass("cTree_expandClosed");
+							$(this).removeAttr("style").dequeue();
+						});
 					}
 					events.close && events.close.call($this, e, context, pos, $parent);
 					status = "close";
@@ -168,7 +172,10 @@
 					if (!events.animate || !events.animate.open) {
 						$parent.removeClass("cTree_expandClosed").addClass("cTree_expandOpen");
 					} else if (events.animate && events.animate.open) {
-						events.animate.open.call($parent);
+						events.animate.open.call($parent).queue(function () {
+							$parent.removeClass("cTree_expandClosed").addClass("cTree_expandOpen");
+							$(this).removeAttr("style").dequeue();
+						});
 					}
 					events.open && events.open.call($this, e, context, pos, $parent);
 					status = "open";
