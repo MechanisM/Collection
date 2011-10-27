@@ -1,0 +1,4 @@
+
+(function ($) {
+	// Включение ECMAScript 5 "strict mode"
+	"use strict";

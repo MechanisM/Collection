@@ -1,0 +1,8 @@
+﻿/**
+ * $.Collection
+ * 
+ * autor: kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * version: 3.1
+ * date: 25.10.2011 16:03:41
+ */
+ 
