@@ -34,28 +34,19 @@
 			activeFilter = param.filter ? param.filter : prop.activeFilter,
 			activeParser = param.parser ? param.parser : prop.activeParser,
 			//
-			activeContext = param.context || prop.activeContext,
-			//
 			activePage = param.page || prop.activePage,
 			checkPage = activePage === (param.page + 1),
 			//
 			activeTemplate = param.template || prop.activeTemplate,
-			activeTemplateMode = param.templateMode || prop.activeTemplateMode,
 			//
 			activeTarget = param.target || prop.activeTarget,
-			activePager = param.pager || prop.activePager,
-			activeAppendType = param.appendType || prop.activeAppendType,
 			activeCountBreak = +param.countBreak || +prop.activeCountBreak,
 			activePageBreak = +param.countBreak || +prop.activePageBreak,
 			//
 			cache = prop.activeCache,
 			cacheIteration = $.isBoolean(param.cacheIteration) ? param.cacheIteration : cache.iteration,
 			//
-			activeSelectorOut = param.selectorOut || prop.activeSelectorOut,
-			activePager = param.pager || prop.activePager,
 			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
-	
-			noResultInSearch = dObj.viewVal.noResultInSearch,
 	
 			result = "",
 			action = function (data, i, aLength, $this, objID) {
@@ -66,7 +57,7 @@
 			};
 			
 		// Получаем коллекцию
-		cObj = $.Collection.cache.obj.getByLink(prop.activeCollection, activeContext);
+		cObj = $.Collection.cache.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
 		cOLength = $this.length();
 		// Количество записей на страницу
 		activeCountBreak = activeCountBreak === false ? cOLength : activeCountBreak;
@@ -106,15 +97,15 @@
 			}
 		}
 		
-		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + noResultInSearch + '</div>' : activeResultNull : result;
+		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
 		result = activeParser !== false ? $this.customParser(activeParser, result) : result;
 		
 		// Вставляем в DOM
-		activeTarget[activeAppendType](result);
+		activeTarget[(param.appendType || prop.activeAppendType)](result);
 		
 		// Подготовка данных для панели навигации
 		sys.countRecords = $this.length(activeFilter);
-		sys.countRecordsInPage = $(activeSelectorOut, activeTarget).length;
+		sys.countRecordsInPage = $((param.selectorOut || prop.activeSelectorOut), activeTarget).length;
 		sys.countTotal = activeCountBreak * activePage - (activeCountBreak - sys.countRecordsInPage);
 	
 		$.extend(param, {

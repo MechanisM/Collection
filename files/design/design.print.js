@@ -31,18 +31,11 @@
 			dObj = $this.dObj,
 			prop = dObj.prop,
 	
-			activeFilter = param.filter || prop.activeFilter,
 			activeParser = param.parser || prop.activeParser,
-	
-			activeContext = param.context || prop.activeContext,
 			activeTemplate = param.template || prop.activeTemplate,
 	
 			activeTarget = param.target || param.target === false ? param.target : prop.activeTarget,
-			activePager = param.pager || prop.activePager,
-			activeAppendType = param.appendType || prop.activeAppendType,
 			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
-	
-			noResultInSearch = dObj.viewVal.noResultInSearch,
 	
 			result = "",
 			action = function (data, i, aLength, $this, objID) {
@@ -56,9 +49,9 @@
 		// Ставим ссылку на шаблон
 		dObj.sys.templateCallee = activeTemplate;
 		
-		this.each(action, activeFilter, "active", mult, count, from, indexOf);
+		this.each(action, (param.filter || prop.activeFilter), "active", mult, count, from, indexOf);
 		
-		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + noResultInSearch + '</div>' : activeResultNull : result;
+		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
 		result = activeParser !== false ? $this.customParser((activeParser), result) : result;
 		
 		if (activeTarget === false) {
@@ -67,7 +60,7 @@
 			} else {
 				$this.PushSetVar(param.variable, result);
 			}
-		} else { activeTarget[activeAppendType](result); }
+		} else { activeTarget[(param.appendType || prop.activeAppendType)](result); }
 	
 		return $this;
 	};

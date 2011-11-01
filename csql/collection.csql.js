@@ -38,11 +38,7 @@ CSQL.prototype.csqlFn = {};
 				str = str.replace(/`.*`/, "$obj.dObj.prop.activeCollection");
 			} else {
 				str = str.replace(/`(.*)`/, function (str, $1) {
-					if (tablesName[$1]) {
-						return "$obj.dObj.sys.tmpCollection['" + tablesName[$1] + "']";
-					} else {
-						return "console.log($obj.callee().param);";
-					}
+					return "$obj.dObj.sys.tmpCollection['" + tablesName[$1] + "']";
 				});
 			}
 						
@@ -56,10 +52,9 @@ CSQL.prototype.csqlFn = {};
 		* Подготовить строку к разбиению на лексемы
 		* 
 		* @param {Query} str - исходная строка запроса
-		* @param {Array} extObj - объект, куда будут записанны вложенные запросы
 		* @return {CSQL Query}
 		*/
-		prepareStr: function (str, extObj) {
+		prepareStr: function (str) {
 			var
 				helper = CSQL.cache.helper,
 			
@@ -82,15 +77,13 @@ CSQL.prototype.csqlFn = {};
 						if (helper.isCSQLFunction(lexemeFn)) {
 							lexeme[i] = lexeme[i].split(",").join(";");
 							// Ставим идентифкатор функции
-							lexemeFn[lexemeFnLast] = "$obj.cslFn" + lexemeFn[lexemeFnLast];
+							lexemeFn[lexemeFnLast] = "$obj.csqlFn" + lexemeFn[lexemeFnLast];
 							lexemeFn = lexemeFn.join(" ");
 							lexeme[i - 1] = lexemeFn;
 							//
 							lexeme[i] = lexeme[i].substring(1);
 						} else {
-							lexeme[i] = lexeme[i].substring(1).replace(/\)$/, "");
-							extObj.push(lexeme[i]);
-							lexeme[i] = "(" + (extObj.length - 1) + "))"
+							lexeme[i] = '$obj.runSubQuery("' + lexeme[i].substring(1).replace(/\)$/, "").split(",").join(";") + '", i))';
 						}
 					}
 				}
@@ -168,7 +161,10 @@ CSQL.prototype.csqlFn = {};
 			return token;
 		},
 	};// Лексический анализатор
-CSQL.prototype.query = function (queryStr, parent) {
+CSQL.prototype.runSubQuery = function (str, j) {
+	alert(j)
+};
+CSQL.prototype.query = function (queryStr, link) {
 	var
 		cacheObj = CSQL.cache,
 		cacheLexeme = cacheObj.lexeme,
@@ -176,9 +172,6 @@ CSQL.prototype.query = function (queryStr, parent) {
 		
 		lexeme,
 		lexemeLength,
-		
-		subQuery = [],
-		subRes,
 		
 		// Лимит
 		limitFrom = null,
@@ -207,12 +200,12 @@ CSQL.prototype.query = function (queryStr, parent) {
 		// Поля выборки
 		fields = [],
 		fieldsName = [],
-		fieldsLink = {},
+		fieldsLink = link && link.fieldsLink ? link.fieldsLink : {},
 		
 		// Таблица выборки
 		from = "",
 		tmpTable,
-		tablesName = {},
+		tablesName = link && link.tablesName ? link.tablesName : {},
 		
 		// Анализ условия
 		whereStr = "return ",
@@ -222,7 +215,7 @@ CSQL.prototype.query = function (queryStr, parent) {
 		result;
 	
 	// Преоброзауем строку запроса во множество лексем
-	lexeme = cacheLexeme.makeLexeme(cacheLexeme.prepareStr(queryStr, subQuery));
+	lexeme = cacheLexeme.makeLexeme(cacheLexeme.prepareStr(queryStr));
 	lexemeLength = lexeme.length - 1;
 	
 	// 
@@ -241,7 +234,7 @@ CSQL.prototype.query = function (queryStr, parent) {
 				fieldsName.push(lexeme[i].replace(/.*?(?:\[|)([\w'"]+)(?:\]|)$/, "$1").split(/'|"/).join(""));
 			}
 			select = true;	
-			// Псевдонимы полей выбора	
+		// Псевдонимы полей выбора	
 		} else if (token === "SELECT AS") {
 			fieldsName.push(lexeme[i]);
 			fieldsLink[lexeme[i]] = lexeme[i - 2];
@@ -256,47 +249,25 @@ CSQL.prototype.query = function (queryStr, parent) {
 		} else if (token === "FROM AS") {
 			tablesName[lexeme[i]] = from;	
 			token = "FROM";
-		// Условия
+		
+		// Анализ WHERE условия
 		} else if (token === "WHERE") {
 			if (qCheck !== -1) { whereStr += "&&"; }
 			qCheck = -1;
 			
-			// Если вложенный запрос
-			if (lexeme[i].search("\\(\\(") !== -1) {
-				// Высисляем вложенный запрос
-				subRes = this.query(subQuery[lexeme[i].replace(/\(\((\d+)\)\)/, "$1")]);
-				
-				if (subRes.length > 0) {
-					if ($.isPlainObject(subRes[0])) {
-						for (key in subRes[0]) {
-							if (subRes[0].hasOwnProperty(key)) {
-								if (!$.isNumber) {
-									whereStr += "'" + subRes[0][key]  + "'";
-								} else {
-									whereStr += subRes[0][key];
-								}
-							}
-						}
-					} else {
-						if (!$.isNumber) {
-							whereStr += "'" + subRes[0]  + "'";
-						} else {
-							whereStr += subRes[0];
-						}
-					}
-				}
-			} else {
-				console.log(lexeme[i]);
-				whereStr += helper.tableCSQLReplacer(lexeme[i], tablesName, fieldsLink);	
-			}	
-		// Сортировка
+			whereStr += helper.tableCSQLReplacer(lexeme[i], tablesName, fieldsLink);	
+		
+		// Анализ ORDER BY условия
 		} else if (token === "ORDER BY") {
 			order = lexeme[i];
 		}
 	}
-	//
+	
+	console.log(whereStr);
+	// Компиляция условия
 	if (whereStr !== "return ") { where = new Function("$this", "i", "aLength", "$obj", "id", whereStr); }
 	
+	// Компиляция SELECT запроса
 	if (select === true) {
 		result = {};
 		
@@ -337,12 +308,6 @@ CSQL.prototype.query = function (queryStr, parent) {
 		}
 		actionStr += "return true;";
 		action = new Function ("$this", "i", "aLength", "$obj", "id", actionStr);
-		// Передача переменных во вложенный запрос
-		if (subQuery.length > 0) {
-			action.beforeFilter = function ($this, i, $obj, id) {
-				where.param = {$this: $this, i: i, $obj: $obj, id: id};
-			};
-		}
 
 		this.each(action, where, from, mult, limitCount, limitFrom);
 		

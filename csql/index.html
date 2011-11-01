@@ -6,6 +6,11 @@
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 	<script type="text/javascript" src="../jquery.collection.js"></script>
 	<script type="text/javascript" src="collection.csql.js"></script>
+	<script type="text/javascript">
+		var db = new CSQL();
+		db.push({table1: [{id: 1, name: "Коба"},{id: 2, name: "Кокс"}], table2: [{t_id: 1},{t_id: 1}]});
+		db.query("SELECT * FROM `table2` WHERE `table2`[i].t_id = (SELECT `table1`[i].id FROM `table1` WHERE `table1`[i].id = `table2`[i].t_id)");
+	</script>
 </head>
 
 <body>

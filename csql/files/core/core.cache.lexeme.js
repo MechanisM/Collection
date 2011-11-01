@@ -5,10 +5,9 @@
 		* Подготовить строку к разбиению на лексемы
 		* 
 		* @param {Query} str - исходная строка запроса
-		* @param {Array} extObj - объект, куда будут записанны вложенные запросы
 		* @return {CSQL Query}
 		*/
-		prepareStr: function (str, extObj) {
+		prepareStr: function (str) {
 			var
 				helper = CSQL.cache.helper,
 			
@@ -31,15 +30,13 @@
 						if (helper.isCSQLFunction(lexemeFn)) {
 							lexeme[i] = lexeme[i].split(",").join(";");
 							// Ставим идентифкатор функции
-							lexemeFn[lexemeFnLast] = "$obj.cslFn" + lexemeFn[lexemeFnLast];
+							lexemeFn[lexemeFnLast] = "$obj.csqlFn" + lexemeFn[lexemeFnLast];
 							lexemeFn = lexemeFn.join(" ");
 							lexeme[i - 1] = lexemeFn;
 							//
 							lexeme[i] = lexeme[i].substring(1);
 						} else {
-							lexeme[i] = lexeme[i].substring(1).replace(/\)$/, "");
-							extObj.push(lexeme[i]);
-							lexeme[i] = "(" + (extObj.length - 1) + "))"
+							lexeme[i] = '$obj.runSubQuery("' + lexeme[i].substring(1).replace(/\)$/, "").split(",").join(";") + '", i))';
 						}
 					}
 				}

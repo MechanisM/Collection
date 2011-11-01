@@ -35,11 +35,7 @@
 				str = str.replace(/`.*`/, "$obj.dObj.prop.activeCollection");
 			} else {
 				str = str.replace(/`(.*)`/, function (str, $1) {
-					if (tablesName[$1]) {
-						return "$obj.dObj.sys.tmpCollection['" + tablesName[$1] + "']";
-					} else {
-						return "console.log($obj.callee().param);";
-					}
+					return "$obj.dObj.sys.tmpCollection['" + tablesName[$1] + "']";
 				});
 			}
 						
