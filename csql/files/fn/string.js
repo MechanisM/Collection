@@ -1,5 +1,5 @@
 // Строковые методы
-CSQL.prototype.CONCAT = function () {
+CSQL.prototype.csqlFn.CONCAT = function () {
 	var
 		aLength = arguments.length - 1,
 		str = "", i = -1;
@@ -10,7 +10,7 @@ CSQL.prototype.CONCAT = function () {
 
 	return str;
 };
-CSQL.prototype.CONCAT_WS = function (sep) {
+CSQL.prototype.csqlFn.CONCAT_WS = function (sep) {
 	if (!sep) { return null; }
 		
 	var
@@ -25,37 +25,37 @@ CSQL.prototype.CONCAT_WS = function (sep) {
 
 	return str;
 };
-CSQL.prototype.SUBSTRING = function (str, fromPos, forLen) {
+CSQL.prototype.csqlFn.SUBSTRING = function (str, fromPos, forLen) {
 	return str.substring(fromPos || 0, forLen || "");
 };
-CSQL.prototype.LENGTH = function (str) {
+CSQL.prototype.csqlFn.LENGTH = function (str) {
 	return str.length;
 };
-CSQL.prototype.REPLACE = function (str, fromStr, toStr, mod) {
+CSQL.prototype.csqlFn.REPLACE = function (str, fromStr, toStr, mod) {
 	mod = mod || "g";
 	fromStr = new RegExp(fromStr, mod);
 		
 	return str.replace(fromStr, toStr);
 };
-CSQL.prototype.REPEAT = function (str, count) {
+CSQL.prototype.csqlFn.REPEAT = function (str, count) {
 	if (!str || !count) { return null; }
 	for (var i = count - 1; i--;) { str += str; }
 		
 	return str;
 };
-CSQL.prototype.SPACE = function (count) {	
+CSQL.prototype.csqlFn.SPACE = function (count) {	
 	count = count || 1;
 	var str = "", i;
 	for (i = count; i--;) { str += " "; }
 		
 	return str;
 };
-CSQL.prototype.TRIM = function (str) {		
+CSQL.prototype.csqlFn.TRIM = function (str) {		
 	return $.trim(str);
 };
-CSQL.prototype.LCASE = function (str) {
+CSQL.prototype.csqlFn.LCASE = function (str) {
 	return str.toLowerCase();
 };
-CSQL.prototype.UCASE = function (str) {
+CSQL.prototype.csqlFn.UCASE = function (str) {
 	return str.toUpperCase();
 };

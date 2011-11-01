@@ -78,6 +78,8 @@
 	 * @param {Function} callback - функция callback
 	 * @param {Function} [callback.before=undefined] - функция callback, которая срабаывает перед началом итераций
 	 * @param {Function} [callback.after=undefined] - функция callback, которая срабатывает после конца итераций
+	 * @param {Function} [callback.beforeFilter=undefined] - функция callback, которая срабаывает перед фильтром
+	 * @param {Function} [callback.afterFilter=undefined] - функция callback, которая срабатывает после фильтра
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
 	 * @param {String} [id=this.active] - ИД коллекции
 	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
@@ -131,6 +133,13 @@
 			for (i = indexOf !== false ? indexOf - 1 : -1; i++ < tmpLength;) {
 				if (count !== false && j === count) { break; }
 				
+				// Событие "до" фильтра итераций
+				if (callback.beforeFilter) {
+					if (callback.beforeFilter(cObj, i, cOLength, this, id) === false) {
+						return this;
+					}
+				}
+				
 				if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) { from--; continue; }
 					
@@ -138,19 +147,40 @@
 					if (mult === false) { break; }
 					j++;
 				}
+				
+				// Событие "после" фильтра итераций
+				if (callback.afterFilter) {
+					if (callback.afterFilter(cObj, i, cOLength, this, id) === false) {
+						return this;
+					}
+				}
 			}
 		} else {
 			for (i in cObj) {
 				if (cObj.hasOwnProperty(i)) {
 					if (count !== false && j === count) { break; }
 					if (indexOf !== false && indexOf !== 0) { indexOf--; continue; }
-						
+					
+					// Событие "до" фильтра итераций
+					if (callback.beforeFilter) {
+						if (callback.beforeFilter(cObj, i, cOLength, this, id) === false) {
+							return this;
+						}
+					}
+					
 					if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) { from--; continue; }
 							
 						if (callback.call(this, cObj, i, cOLength, this, id) === false) { break; }
 						if (mult === false) { break; }
 						j++;
+					}
+					
+					// Событие "после" фильтра итераций
+					if (callback.afterFilter) {
+						if (callback.afterFilter(cObj, i, cOLength, this, id) === false) {
+							return this;
+						}
 					}
 				}
 			}

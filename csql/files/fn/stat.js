@@ -1,4 +1,4 @@
 // Статические
-CSQL.prototype.COUNT = function (obj) {
+CSQL.prototype.csqlFn.COUNT = function (obj) {
 	return obj.length;
 };

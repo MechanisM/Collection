@@ -6,6 +6,8 @@
 
 copy	^
 		core\core.js ^
+		+ core\core.cache.js ^
+		+ core\core.cache.lexeme.js ^
 		+ core\core.parser.js ^
 		^
 		+ fn\string.js ^
