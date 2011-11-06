@@ -13,7 +13,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "3.1",
+		version: "4.0",
 		/**
 		 * Вернуть строку формата: имя фреймворка + версия
 		 *
@@ -25,17 +25,36 @@
 		/**
 		 * Активная константа
 		 * 
-		 * @constant
+		 * @field
 		 * @type String
 		 */
 		active: "active",
+		
+		
+		/**
+		 * Использование активного контекста
+		 * 
+		 * @field
+		 * @type Boolean
+		 */
+		useActiveContext: true,
+		/**
+		 * Вернуть активный контекст
+		 * 
+		 * @this {Collection Object}
+		 * @return {String}
+		 */
+		getActiveContext: function () {
+			return this.useActiveContext === true ? this.dObj.prop.activeContext.toString() : "";
+		},
+		
+		
 		/**
 		 * Вернуть ссылку на объект
 		 * 
 		 * @this {Collection Object}
 		 * @param {String} [type='filter']
-		 * @throw {Error}
-		 * @return {Function}
+		 * @return {Link}
 		 */
 		callee: function (type) {
 			type = type || "filter";

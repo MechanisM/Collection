@@ -2,27 +2,6 @@
 	// Системные настройки
 	$.Collection.storage.dObj.sys = {
 		/**
-		 * Количество записей в коллекции
-		 * 
-		 * @field
-		 * @type Number
-		 */
-		countRecords: null,
-		/**
-		 * Количество записей на одной странице
-		 * 
-		 * @field
-		 * @type Number
-		 */
-		countRecordsInPage: null,
-		/**
-		 * Номер последней записи
-		 * 
-		 * @field
-		 * @type Number
-		 */
-		countTotal: null,
-		/**
 		 * Ссылка на вызываемую функцию-callback (метод each)
 		 * 
 		 * @field
@@ -75,21 +54,23 @@
 			sys[lowerCase + "Back"] = [];
 		}
 	})([
-		"Collection", 
-		"Page", 
-		"Target", 
-		"Filter", 
-		"Parser", 
-		"Var", 
+		"Collection",
+		"Page",
+		"Target",
+		"Filter",
+		"Parser",
+		"Var",
 		"Template",
 		"TemplateMode",
-		"Context", 
+		"Context",
 		"CountBreak",
-		"PageBreak", 
+		"PageBreak",
 		"Pager",
 		"SelectorOut",
 		"ResultNull",
 		"AppendType",
 		"Defer",
-		"Cache"
+		"Cache",
+		"Index",
+		"Map"
 		]);

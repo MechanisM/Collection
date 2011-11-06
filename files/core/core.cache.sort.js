@@ -1,6 +1,6 @@
 	
 	// Статичные методы и свойства для сортировки
-	$.Collection.cache.sort = {
+	$.Collection.static.sort = {
 		/**
 		 * Поле сортировки
 		 * 
@@ -53,12 +53,12 @@
 		 */
 		sortHelper: function (a, b) {	
 			var
-				$this = $.Collection.cache.sort,
+				$this = $.Collection.static.sort,
 				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
 			
 			if ($this.field) {
-				a = $.Collection.cache.obj.getByLink(a, $this.field);
-				b = $.Collection.cache.obj.getByLink(b, $this.field);
+				a = $.Collection.static.obj.getByLink(a, $this.field);
+				b = $.Collection.static.obj.getByLink(b, $this.field);
 			}
 					
 			if ($this.fn) {

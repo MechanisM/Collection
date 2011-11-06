@@ -18,15 +18,6 @@
 		return Object.prototype.toString.call(val) === "[object Boolean]";
 	};
 	/**
-	 * Проверить на число 
-	 * 
-	 * @param {mixed} val
-	 * @return {Boolean}
-	 */
-	$.isNumber = function (val) {
-		return Object.prototype.toString.call(val) === "[object Number]";
-	};
-	/**
 	 * Проверить на null и undefined
 	 * 
 	 * @param {mixed} val

@@ -101,5 +101,7 @@
 		"ResultNull",
 		"AppendType",
 		"Defer",
-		"Cache"
+		"Cache",
+		"Index",
+		"Map"
 		]);

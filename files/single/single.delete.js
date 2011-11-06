@@ -11,7 +11,7 @@
 		context = $.isExist(context) ? context.toString() : "";
 		
 		var
-			cacheObj = $.Collection.cache.obj,
+			staticObj = $.Collection.static.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -28,31 +28,31 @@
 			this.setElement("", null);
 		} else {
 			// Подготавливаем контекст
-			context = (prop.activeContext + cacheObj.contextSeparator + context).split(cacheObj.contextSeparator);
+			context = (prop.activeContext + staticObj.contextSeparator + context).split(staticObj.contextSeparator);
 			// Удаляем "мёртвые" элементы
 			for (i = context.length; i--;) {
 				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === cacheObj.subcontextSeparator) { context.splice(i, 1); }
+				if (context[i] === "" || context[i] === staticObj.subcontextSeparator) { context.splice(i, 1); }
 			}
-			context = context.join(cacheObj.contextSeparator);
+			context = context.join(staticObj.contextSeparator);
 
 			// Выбор родительского элемента для проверки типа
-			cObj = cacheObj.getByLink(id && id !== "active" ?
+			cObj = staticObj.getByLink(id && id !== "active" ?
 						dObj.sys.tmpCollection[id] : prop.activeCollection,
-						context.replace(new RegExp("[^" + cacheObj.contextSeparator + "]+$"), ""));
+						context.replace(new RegExp("[^" + staticObj.contextSeparator + "]+$"), ""));
 			// Выбор ссылки
-			context = context.replace(new RegExp(".*?([^" + cacheObj.contextSeparator + "]+$)"), "$1");
+			context = context.replace(new RegExp(".*?([^" + staticObj.contextSeparator + "]+$)"), "$1");
 
 			if ($.isArray(cObj)) {
-				context = +context.replace(cacheObj.subcontextSeparator, "");
+				context = +context.replace(staticObj.subcontextSeparator, "");
 				if (context >= 0) {
 					cObj.splice(context, 1);
 				} else { cObj.splice(cObj.length + context, 1); }
 			} else {
-				if (context.search(cacheObj.subcontextSeparator) === -1) {
+				if (context.search(staticObj.subcontextSeparator) === -1) {
 					delete cObj[context];
 				} else {
-					pos = +context.replace(cacheObj.subcontextSeparator, "");
+					pos = +context.replace(staticObj.subcontextSeparator, "");
 					if (pos < 0) { 
 						objLength = 0;
 						// Считаем длину объекта

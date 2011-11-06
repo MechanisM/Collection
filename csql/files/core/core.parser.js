@@ -2,7 +2,7 @@
 CSQL.prototype.runSubQuery = function (str, j) {
 	alert(j)
 };
-CSQL.prototype.query = function (queryStr, link) {
+CSQL.prototype.query = function (queryStr) {
 	var
 		cacheObj = CSQL.cache,
 		cacheLexeme = cacheObj.lexeme,
@@ -38,12 +38,12 @@ CSQL.prototype.query = function (queryStr, link) {
 		// Поля выборки
 		fields = [],
 		fieldsName = [],
-		fieldsLink = link && link.fieldsLink ? link.fieldsLink : {},
+		fieldsLink = {},
 		
 		// Таблица выборки
 		from = "",
 		tmpTable,
-		tablesName = link && link.tablesName ? link.tablesName : {},
+		tablesName = {},
 		
 		// Анализ условия
 		whereStr = "return ",
@@ -101,7 +101,6 @@ CSQL.prototype.query = function (queryStr, link) {
 		}
 	}
 	
-	console.log(whereStr);
 	// Компиляция условия
 	if (whereStr !== "return ") { where = new Function("$this", "i", "aLength", "$obj", "id", whereStr); }
 	

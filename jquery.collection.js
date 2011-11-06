@@ -18,9 +18,8 @@
  * 1.2) tplCompile - функция "компиляции" шаблонов из DOM;
  * 1.3) isString - функция проверки на строку;
  * 1.4) isBoolean - функция проверки на логическое значение;
- * 1.5) isNumber - функция проверки на число;
- * 1.6) isExist - функция проверки существование (отличие от null, undefined и empty string);
- * 1.7) unshiftArguments - функция, для модификации объекта arguments.
+ * 1.5) isExist - функция проверки существование (отличие от null, undefined и empty string);
+ * 1.6) unshiftArguments - функция, для модификации объекта arguments.
  * 2) Одно расширение объекта jQuery.prototype: 
  * 2.1) collection - функция преобразования коллекции jQuery в collection.
  *
@@ -730,7 +729,21 @@
 					 * @type Number
 					 */
 					lastIteration: -1
-				}
+				},
+				/**
+				 * Активный индекс
+				 * 
+				 * @field
+				 * @type Plain Object
+				 */
+				activeIndex: null,
+				/**
+				 * Активная карта
+				 * 
+				 * @field
+				 * @type Plain Object
+				 */
+				activeMap: null
 			}
 		}
 	};	
@@ -810,23 +823,25 @@
 			sys[lowerCase + "Back"] = [];
 		}
 	})([
-		"Collection", 
-		"Page", 
-		"Target", 
-		"Filter", 
-		"Parser", 
-		"Var", 
+		"Collection",
+		"Page",
+		"Target",
+		"Filter",
+		"Parser",
+		"Var",
 		"Template",
 		"TemplateMode",
-		"Context", 
+		"Context",
 		"CountBreak",
-		"PageBreak", 
+		"PageBreak",
 		"Pager",
 		"SelectorOut",
 		"ResultNull",
 		"AppendType",
 		"Defer",
-		"Cache"
+		"Cache",
+		"Index",
+		"Map"
 		]);	
 	// Поля отображения
 	$.Collection.storage.dObj.viewVal = {
@@ -870,7 +885,7 @@
 
 			// Функция модифицирования
 			typeMod = function (target, mod) {
-				if ($.isNumber(target) || $.isString(target)) {
+				if ($.isNumeric(target) || $.isString(target)) {
 					target += mod;
 				} else if ($.isArray(target)) {
 					target.push(mod);
@@ -1438,7 +1453,9 @@
 		"ResultNull",
 		"AppendType",
 		"Defer",
-		"Cache"
+		"Cache",
+		"Index",
+		"Map"
 		]);
 	/**
 	 * Установить значение элементу коллекции (с учётом контекста)
@@ -2864,18 +2881,11 @@
 			dObj = $this.dObj,
 			prop = dObj.prop,
 	
-			activeFilter = param.filter || prop.activeFilter,
 			activeParser = param.parser || prop.activeParser,
-	
-			activeContext = param.context || prop.activeContext,
 			activeTemplate = param.template || prop.activeTemplate,
 	
 			activeTarget = param.target || param.target === false ? param.target : prop.activeTarget,
-			activePager = param.pager || prop.activePager,
-			activeAppendType = param.appendType || prop.activeAppendType,
 			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
-	
-			noResultInSearch = dObj.viewVal.noResultInSearch,
 	
 			result = "",
 			action = function (data, i, aLength, $this, objID) {
@@ -2889,9 +2899,9 @@
 		// Ставим ссылку на шаблон
 		dObj.sys.templateCallee = activeTemplate;
 		
-		this.each(action, activeFilter, "active", mult, count, from, indexOf);
+		this.each(action, (param.filter || prop.activeFilter), "active", mult, count, from, indexOf);
 		
-		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + noResultInSearch + '</div>' : activeResultNull : result;
+		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
 		result = activeParser !== false ? $this.customParser((activeParser), result) : result;
 		
 		if (activeTarget === false) {
@@ -2900,7 +2910,7 @@
 			} else {
 				$this.PushSetVar(param.variable, result);
 			}
-		} else { activeTarget[activeAppendType](result); }
+		} else { activeTarget[(param.appendType || prop.activeAppendType)](result); }
 	
 		return $this;
 	};	
@@ -2939,28 +2949,19 @@
 			activeFilter = param.filter ? param.filter : prop.activeFilter,
 			activeParser = param.parser ? param.parser : prop.activeParser,
 			//
-			activeContext = param.context || prop.activeContext,
-			//
 			activePage = param.page || prop.activePage,
 			checkPage = activePage === (param.page + 1),
 			//
 			activeTemplate = param.template || prop.activeTemplate,
-			activeTemplateMode = param.templateMode || prop.activeTemplateMode,
 			//
 			activeTarget = param.target || prop.activeTarget,
-			activePager = param.pager || prop.activePager,
-			activeAppendType = param.appendType || prop.activeAppendType,
 			activeCountBreak = +param.countBreak || +prop.activeCountBreak,
 			activePageBreak = +param.countBreak || +prop.activePageBreak,
 			//
 			cache = prop.activeCache,
 			cacheIteration = $.isBoolean(param.cacheIteration) ? param.cacheIteration : cache.iteration,
 			//
-			activeSelectorOut = param.selectorOut || prop.activeSelectorOut,
-			activePager = param.pager || prop.activePager,
 			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
-	
-			noResultInSearch = dObj.viewVal.noResultInSearch,
 	
 			result = "",
 			action = function (data, i, aLength, $this, objID) {
@@ -2971,7 +2972,7 @@
 			};
 			
 		// Получаем коллекцию
-		cObj = $.Collection.cache.obj.getByLink(prop.activeCollection, activeContext);
+		cObj = $.Collection.cache.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
 		cOLength = $this.length();
 		// Количество записей на страницу
 		activeCountBreak = activeCountBreak === false ? cOLength : activeCountBreak;
@@ -3011,15 +3012,15 @@
 			}
 		}
 		
-		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + noResultInSearch + '</div>' : activeResultNull : result;
+		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
 		result = activeParser !== false ? $this.customParser(activeParser, result) : result;
 		
 		// Вставляем в DOM
-		activeTarget[activeAppendType](result);
+		activeTarget[(param.appendType || prop.activeAppendType)](result);
 		
 		// Подготовка данных для панели навигации
 		sys.countRecords = $this.length(activeFilter);
-		sys.countRecordsInPage = $(activeSelectorOut, activeTarget).length;
+		sys.countRecordsInPage = $((param.selectorOut || prop.activeSelectorOut), activeTarget).length;
 		sys.countTotal = activeCountBreak * activePage - (activeCountBreak - sys.countRecordsInPage);
 	
 		$.extend(param, {
@@ -3109,7 +3110,23 @@
 		activeTarget.children("tr").wrapAll("<table></table>");
 	
 		return this;
-	};	
+	};// JavaScript Document
+	$.Collection.fn.genIndex = function (collectionID) {
+		var
+			cObj = this._get("Collection", collectionID),
+			i = 0, j, aLength = arguments.length - 1,
+			resObj = {};
+		
+		for (; i++ < aLength;) {
+			if (!$.isArray(arguments[i])) {
+				for (j = cObj.length; j--;) {
+					resObj[cObj[j][arguments[i]]] = i;
+				}
+			}
+		}
+		
+		console.log(resObj);
+	}	
 	/**
 	 * Работа с коллекциями jQuery
 	 * 
@@ -3252,15 +3269,6 @@
 	 */
 	$.isBoolean = function (val) {
 		return Object.prototype.toString.call(val) === "[object Boolean]";
-	};
-	/**
-	 * Проверить на число 
-	 * 
-	 * @param {mixed} val
-	 * @return {Boolean}
-	 */
-	$.isNumber = function (val) {
-		return Object.prototype.toString.call(val) === "[object Number]";
 	};
 	/**
 	 * Проверить на null и undefined

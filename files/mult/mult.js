@@ -42,7 +42,7 @@
 		}
 		//
 		if (aCheck !== true) {
-			cObj = $.Collection.cache.obj.getByLink(cObj, prop.activeContext);
+			cObj = $.Collection.static.obj.getByLink(cObj, prop.activeContext);
 		}
 		// Если null
 		if (cObj === null) { return 0; }
@@ -125,7 +125,7 @@
 			}
 		}
 		
-		cObj = $.Collection.cache.obj.getByLink(id !== this.active ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		cObj = $.Collection.static.obj.getByLink(id !== this.active ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
 		cOLength = this.length(cObj);
 		
 		if ($.isArray(cObj)) {

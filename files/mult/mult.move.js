@@ -31,7 +31,7 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			cacheObj = $.Collection.cache.obj,
+			staticObj = $.Collection.static.obj,
 		
 			dObj = this.dObj,
 			sys = dObj.sys,
@@ -43,7 +43,7 @@
 	
 			elements, i, j;
 	
-		aCheckType = $.isArray(cacheObj.getByLink(this._get("Collection", activeID), dObj.prop.activeContext));
+		aCheckType = $.isArray(staticObj.getByLink(this._get("Collection", activeID), dObj.prop.activeContext));
 	
 		// Поиск элементов для переноса
 		if (sys.activeContextID) {
@@ -68,12 +68,12 @@
 			tmpLength = elements.length - 1;
 	
 			for (i = -1; i++ < tmpLength;) {
-				this.addElement(context + cacheObj.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + cacheObj.methodSeparator + addType, activeID, sourceID);
+				this.addElement(context + staticObj.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + staticObj.methodSeparator + addType, activeID, sourceID);
 
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + cacheObj.contextSeparator + elements, aCheckType === true ? addType : elements + cacheObj.methodSeparator + addType, activeID, sourceID);
+			this.addElement(context + staticObj.contextSeparator + elements, aCheckType === true ? addType : elements + staticObj.methodSeparator + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 	

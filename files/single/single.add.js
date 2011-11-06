@@ -17,7 +17,7 @@
 		deleteType = deleteType === true ? true : false;
 	
 		var
-			cacheObj = $.Collection.cache.obj,
+			staticObj = $.Collection.static.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -26,12 +26,12 @@
 			cObj, sObj,
 	
 			activeCollectionID = sys.activeCollectionID,
-	
+			
 			tmpContext, tmpContextCheck,
 	
 			oCheck, lCheck;
 		
-		cObj = cacheObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, prop.activeContext);
+		cObj = staticObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, prop.activeContext);
 		
 		if (typeof cObj === "object") {
 			oCheck = $.isPlainObject(cObj);
@@ -40,8 +40,8 @@
 			if (!sourceID) {
 				// Определение типа добавления
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + cacheObj.methodSeparator + "unshift" : propType;
-					lCheck = cacheObj.addElementToObject(cObj, propType.toString(), cValue);
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + staticObj.methodSeparator + "unshift" : propType;
+					lCheck = staticObj.addElementToObject(cObj, propType.toString(), cValue);
 				} else {
 					lCheck = true;
 					if (propType === "push") {
@@ -53,12 +53,12 @@
 			// Перенос
 			} else {
 				cValue = $.isExist(cValue) ? cValue.toString() : "";
-				sObj = cacheObj.getByLink(sourceID === this.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
+				sObj = staticObj.getByLink(sourceID === this.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
 
 				// Определение типа добавления
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + cacheObj.methodSeparator + "unshift" : propType;
-					lCheck = cacheObj.addElementToObject(cObj, propType.toString(), sObj);
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + staticObj.methodSeparator + "unshift" : propType;
+					lCheck = staticObj.addElementToObject(cObj, propType.toString(), sObj);
 				} else {
 					lCheck = true;
 					if (propType === "push") {

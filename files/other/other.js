@@ -212,11 +212,11 @@
 	
 			i;
 	
-		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.cache.obj.contextSeparator);
+		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.static.obj.contextSeparator);
 	
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join($.Collection.cache.obj.contextSeparator);
+		return context.join($.Collection.static.obj.contextSeparator);
 	};
 	/**
 	 * Подняться на n уровень контекста

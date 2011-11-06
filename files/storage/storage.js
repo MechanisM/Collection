@@ -39,7 +39,7 @@
 				 * @field
 				 * @type Function
 				 */
-				activeTemplateMode: $.Collection.cache.templateMode.simpleMode,
+				activeTemplateMode: $.Collection.static.templateMode.simpleMode,
 				/**
 				 * Активное количество записей на одну страницу
 				 * 
@@ -152,7 +152,21 @@
 					 * @type Number
 					 */
 					lastIteration: -1
-				}
+				},
+				/**
+				 * Активный индекс
+				 * 
+				 * @field
+				 * @type Plain Object
+				 */
+				activeIndex: null,
+				/**
+				 * Активная карта
+				 * 
+				 * @field
+				 * @type Plain Object
+				 */
+				activeMap: null
 			}
 		}
 	};

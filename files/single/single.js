@@ -12,14 +12,14 @@
 		context = $.isExist(context) ? context.toString() : "";
 	
 		var
-			cacheObj = $.Collection.cache.obj,
+			staticObj = $.Collection.static.obj,
 		
 			dObj = this.dObj,
-			prop = dObj.prop;
-		//
-		prop.activeContext = prop.activeContext.toString();
+			prop = dObj.prop,
+			
+			activeContext = this.getActiveContext();
 		
-		if (!context && !prop.activeContext) {
+		if (!context && !activeContext) {
 			if (id && id !== this.active) {
 				return this._push("Collection", id, value);
 			} else {
@@ -27,7 +27,7 @@
 			}
 		}
 		
-		cacheObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context, value);
+		staticObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + staticObj.contextSeparator + context, value);
 	
 		return this;
 	};
@@ -40,13 +40,15 @@
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
-		context = context !== undefined ? context : "";
+		context = $.isExist(context) ? context.toString() : "";
 		
 		var
-			cacheObj = $.Collection.cache.obj,
+			staticObj = $.Collection.static.obj,
 		
 			dObj = this.dObj,
-			prop = dObj.prop;
+			prop = dObj.prop,
+			
+			activeContext = this.getActiveContext();
 	
-		return cacheObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context);
+		return staticObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + staticObj.contextSeparator + context);
 	};

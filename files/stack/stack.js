@@ -20,7 +20,7 @@
 
 			// Функция модифицирования
 			typeMod = function (target, mod) {
-				if ($.isNumber(target) || $.isString(target)) {
+				if ($.isNumeric(target) || $.isString(target)) {
 					target += mod;
 				} else if ($.isArray(target)) {
 					target.push(mod);

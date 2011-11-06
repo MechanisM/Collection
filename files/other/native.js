@@ -20,7 +20,7 @@
 		indent = "";
 	
 		cObj = vID && $.isString(vID) && vID !== this.active ? dObj.sys.tmpCollection[vID] : typeof vID === "object" ? vID : prop.activeCollection;
-		cObj = $.Collection.cache.obj.getByLink(cObj, prop.activeContext);
+		cObj = $.Collection.static.obj.getByLink(cObj, prop.activeContext);
 	
 		if (typeof space === "number") {
 			for (i = space; i--;) {

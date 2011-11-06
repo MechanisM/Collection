@@ -1,10 +1,10 @@
 	
 	// Объект для хранения статичной информации
-	$.Collection.cache = {};
+	$.Collection.static = {};
 	// Объект для хранения статичных моделей шаблона
-	$.Collection.cache.templateMode = {};
+	$.Collection.static.templateMode = {};
 	// Статичные методы для работы с объектами
-	$.Collection.cache.obj = {
+	$.Collection.static.obj = {
 		/**
 		 * Разделитель контекста
 		 * 

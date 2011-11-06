@@ -48,6 +48,9 @@ copy	^
 		+ design\design.extprint.js ^
 		+ design\design.table.js ^
 		^
+		+ index\index.js ^
+		+ index\index.map.js ^
+		^
 		+ jquery\collection.js ^
 		+ jquery\compile.js ^
 		+ jquery\other.js ^
