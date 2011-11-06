@@ -1,56 +1,90 @@
 	
 	$.Collection.fn = $.Collection.prototype = {
 		/**
-		 * Имя фреймворка
+		 * framework name
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		name: "$.Collection",
 		/**
-		 * Версия фреймворка
+		 * framework version
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		version: "4.0",
 		/**
-		 * Вернуть строку формата: имя фреймворка + версия
+		 * return string: framework name + framework version
 		 *
+		 * @this {Collection Prototype}
 		 * @return {String}
 		 */
 		collection: function () {
 			return this.name + " " + this.version;
 		},
-		/**
-		 * Активная константа
-		 * 
-		 * @field
-		 * @type String
-		 */
-		active: "active",
 		
 		
+		// framework config object
+		config: {
+			constants: {
+				/**
+				 * default "active" constant
+				 * 
+				 * @field
+				 * @type String
+				 */
+				active: "active",
+				
+				/**
+				 * default separator: context
+				 * 
+				 * @field
+				 * @type String
+				 */
+				contextSeparator: "~",
+				/**
+				 * default separator: subcontext
+				 * 
+				 * @field
+				 * @type String
+				 */
+				subcontextSeparator: "#",
+				
+				/**
+				 * default separator: method
+				 * 
+				 * @field
+				 * @type String
+				 */
+				methodSeparator: "::"
+			},
+			flags: {
+				use: {
+					/**
+					 * use active context in methods
+					 * 
+					 * @field
+					 * @type Boolean
+					 */
+					ac: true
+				}
+			}
+		},
+		
+		//////
+		
 		/**
-		 * Использование активного контекста
-		 * 
-		 * @field
-		 * @type Boolean
-		 */
-		useActiveContext: true,
-		/**
-		 * Вернуть активный контекст
+		 * return active context
 		 * 
 		 * @this {Collection Object}
 		 * @return {String}
 		 */
 		getActiveContext: function () {
-			return this.useActiveContext === true ? this.dObj.prop.activeContext.toString() : "";
+			return this.flags.use.ac === true ? this.dObj.prop.activeContext.toString() : "";
 		},
-		
-		
 		/**
-		 * Вернуть ссылку на объект
+		 * return link to callback function
 		 * 
 		 * @this {Collection Object}
 		 * @param {String} [type='filter']
