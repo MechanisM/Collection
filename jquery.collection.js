@@ -49,76 +49,67 @@
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @version 3.1
+ * @version 4.0
  */
 (function ($) {
 	// Включение ECMAScript 5 "strict mode"
 	"use strict";	
+	/////////////////////////////////
+	//// constructor
+	/////////////////////////////////
+	
 	/**
 	 * @constructor
 	 * @this {Colletion Object}
-	 * @param {Collection|Selector} [collection=null] - исходная коллекция или строка селектор для поля activeTarget
-	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.prop] - пользовательские настройки
+	 * @param {Collection|Selector} [collection=null] - collection or selector for field: activeTarget
+	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.prop] - user's preferences
 	 */
 	$.Collection = function (collection, uProp) {
 		collection = collection || null;
 		uProp = uProp || null;
 		
-		// Создание "фабричного" объекта
+		// create "factory" function if need
 		if (this.fn && this.fn.jquery) { return new $.Collection(collection, uProp); }
 		
-		// Расширяем публичные поля
+		// mixin public fields
 		$.extend(true, this, $.Collection.storage);
 			
 		var
 			dObj = this.dObj,
 			prop = dObj.prop;
 				
-		// Расширяем публичные поля из настроек указанных в конструкторе (если указанны)
+		// extend public fields by user's preferences if need
 		if (uProp) { $.extend(true, prop, uProp); }
 				
-		// Если array является строкой
+		// if "collection" is string
 		if ($.isString(collection)) {
 			prop.activeTarget = $(collection);
 			prop.activeCollection = null;
 		} else { prop.activeCollection = collection; }
 	};	
-	// Объект для хранения статичной информации
-	$.Collection.cache = {};
-	// Объект для хранения статичных моделей шаблона
-	$.Collection.cache.templateMode = {};
-	// Статичные методы для работы с объектами
-	$.Collection.cache.obj = {
+	/////////////////////////////////
+	//// static methods (object && template mode)
+	/////////////////////////////////
+	
+	// object for static methods
+	$.Collection.stat = {};
+	// static template mode
+	$.Collection.stat.templateMode = {};
+	
+	// static methods for object
+	$.Collection.stat.obj = {
+		// link to constants
+		constants: $.Collection.prototype.config.constants,
+		
 		/**
-		 * Разделитель контекста
-		 * 
-		 * @field
-		 * @type String
-		 */
-		contextSeparator: "~",
-		/**
-		 * Разделитель контекста (указатель порядка)
-		 * 
-		 * @field
-		 * @type String
-		 */
-		subcontextSeparator: "#",
-		/**
-		 * Разделитель методов
-		 * 
-		 * @field
-		 * @type String
-		 */
-		methodSeparator: "::",
-		/**
-		* Получить элемент по указанному контексту
+		* get object by link
 		* 
-		* @param {Object} obj - объект
-		* @param {Context} context - ссылка (знак # указывает порядок)
+		* @param {Object} obj - some object
+		* @param {Context} context - link (sharp (#) char indicates the order)
 		* @return {Object}
 		*/
 		getByLink: function (obj, context) {
-			context = context.toString().split(this.contextSeparator);
+			context = context.toString().split(constants.contextSeparator);
 			
 			var
 				key, i = 0,
@@ -130,11 +121,11 @@
 			for (; i < cLength; i++) {
 				context[i] = $.trim(context[i]);
 				//
-				if (context[i] && context[i] !== this.subcontextSeparator) {
-					if (context[i].search(this.subcontextSeparator) === -1) {
+				if (context[i] && context[i] !== constants.subcontextSeparator) {
+					if (context[i].search(constants.subcontextSeparator) === -1) {
 						obj = obj[context[i]];
 					} else {
-						pos = +context[i].replace(this.subcontextSeparator, "");
+						pos = +context[i].replace(constants.subcontextSeparator, "");
 						
 						if ($.isArray(obj)) {
 							if (pos >= 0) {
@@ -170,15 +161,15 @@
 			return obj;
 		},
 		/**
-		* Задать значение по указанному контексту
+		* set new value to object by link
 		* 
-		* @param {Object} obj - объект
-		* @param {Context} context - ссылка (знак # указывает порядок)
-		* @param {mixed} value - значение
+		* @param {Object} obj - some object
+		* @param {Context} context - link (sharp (#) char indicates the order)
+		* @param {mixed} value - some value
 		* @return {Boolean}
 		*/
 		setByLink: function (obj, context, value) {
-			context = context.toString().split(this.contextSeparator);
+			context = context.toString().split(constants.contextSeparator);
 			
 			var
 				key, i = 0,
@@ -187,24 +178,24 @@
 				objLength,
 				cLength = context.length;
 			
-			// Удаляем "мёртвые" элементы
+			// remove "dead" elements
 			for (i = cLength; i--;) {
 				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === this.subcontextSeparator) { context.splice(i, 1); }
+				if (context[i] === "" || context[i] === constants.subcontextSeparator) { context.splice(i, 1); }
 			}
-			// Заново определяем длину контекста
+			// recalculate length
 			cLength = context.length - 1;
 			i = 0;
 			
 			for (; i <= cLength; i++) {
-				if (context[i].search(this.subcontextSeparator) === -1) {
+				if (context[i].search(constants.subcontextSeparator) === -1) {
 					if (i === cLength) {
 						obj[context[i]] = value;
 					} else {
 						obj = obj[context[i]];
 					}
 				} else {
-					pos = +context[i].replace(this.subcontextSeparator, "");
+					pos = +context[i].replace(constants.subcontextSeparator, "");
 						
 					if ($.isArray(obj)) {
 						if (i === cLength) {
@@ -251,15 +242,15 @@
 			return true;
 		},
 		/**
-		 * Добавить новый элемент в Plain Object
+		 * add new element to object
 		 * 
-		 * @param {Plain Object} obj - исходный объект
-		 * @param {String} prop - имя добавляемого свойства (можно использовать приставку "::unshift" - результат будет аналогичен работе unshift для массива)
-		 * @param {mixed} value - новый элемент
+		 * @param {Plain Object} obj - some object
+		 * @param {String} prop - property name (can use "::unshift" - the result will be similar to work for an array "unshift")
+		 * @param {mixed} value - some value
 		 * @return {Plain Object|Boolean}
 		 */
 		addElementToObject: function (obj, prop, value) {
-			prop = prop.split(this.methodSeparator);
+			prop = prop.split(constants.methodSeparator);
 			
 			var key, newObj = {};
 			
@@ -280,31 +271,34 @@
 			return true;
 		}
 	};	
-	// Статичные методы и свойства для сортировки
-	$.Collection.cache.sort = {
+	/////////////////////////////////
+	//// static methods (sort)
+	/////////////////////////////////
+	
+	$.Collection.stat.sort = {
 		/**
-		 * Поле сортировки
+		 * sort field name
 		 * 
 		 * @field
 		 * @type String|Null
 		 */
 		field: null,
 		/**
-		 * Реверсия
+		 * reverce
 		 * 
 		 * @field
 		 * @type Boolean
 		 */
 		rev: false,
 		/**
-		 * Перетасовка
+		 * shuffle
 		 * 
 		 * @field
 		 * @type Boolean
 		 */
 		shuffle: false,
 		/**
-		 * Функция обработки при сортировки
+		 * sort callback
 		 * 
 		 * @field
 		 * @type Function|Boolean|Null
@@ -312,11 +306,11 @@
 		fn: null,
 		
 		/**
-		 * Вспомогательная функция сортировки
+		 * main sort function
 		 * 
-		 * @param {String} [field=null] - поле сортировки
-		 * @param {Boolean} [rev=false] - реверсия массива (константы: shuffle - случайное перемешивание массива)
-		 * @param {Function} [fn=null] - функция действий над элементами массива
+		 * @param {String} [field=null] - field name
+		 * @param {Boolean} [rev=false] - reverce (contstants: shuffle - random order)
+		 * @param {Function} [fn=null] - callback
 		 * @return {Function}
 		 */
 		sortBy: function (field, rev, fn) {
@@ -328,18 +322,19 @@
 			return this.sortHelper;
 		},
 		/**
-		 * Вспомогательная функция сортировки
+		 * sort helper
 		 * 
 		 * @return {Number}
 		 */
 		sortHelper: function (a, b) {	
 			var
-				$this = $.Collection.cache.sort,
+				stat = $.Collection.stat,	
+				$this = stat.sort,
 				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
 			
 			if ($this.field) {
-				a = $.Collection.cache.obj.getByLink(a, $this.field);
-				b = $.Collection.cache.obj.getByLink(b, $this.field);
+				a = stat.obj.getByLink(a, $this.field);
+				b = stat.obj.getByLink(b, $this.field);
 			}
 					
 			if ($this.fn) {
@@ -355,48 +350,133 @@
 			} else { return rev; }
 		}
 	};	
+	/////////////////////////////////
+	//// prototype
+	/////////////////////////////////
+	
 	$.Collection.fn = $.Collection.prototype = {
 		/**
-		 * Имя фреймворка
+		 * framework name
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		name: "$.Collection",
 		/**
-		 * Версия фреймворка
+		 * framework version
 		 * 
 		 * @constant
 		 * @type String
 		 */
-		version: "3.1",
+		version: "4.0",
 		/**
-		 * Вернуть строку формата: имя фреймворка + версия
+		 * return string: framework name + framework version
 		 *
+		 * @this {Collection Prototype}
 		 * @return {String}
 		 */
 		collection: function () {
 			return this.name + " " + this.version;
 		},
+		
+		// framework config object
+		config: {
+			constants: {
+				/**
+				 * default "active" constant
+				 * 
+				 * @field
+				 * @type String
+				 */
+				active: "active",
+				
+				/**
+				 * default separator: context
+				 * 
+				 * @field
+				 * @type String
+				 */
+				contextSeparator: "~",
+				/**
+				 * default separator: subcontext
+				 * 
+				 * @field
+				 * @type String
+				 */
+				subcontextSeparator: "#",
+				
+				/**
+				 * default separator: method
+				 * 
+				 * @field
+				 * @type String
+				 */
+				methodSeparator: "::"
+			},
+			flags: {
+				use: {
+					/**
+					 * use active context in methods
+					 * 
+					 * @field
+					 * @type Boolean
+					 */
+					ac: true
+				}
+			}
+		},
+		
 		/**
-		 * Активная константа
+		 * stack parameters
 		 * 
-		 * @constant
-		 * @type String
-		 */
-		active: "active",
+		 * @field
+		 * @type Array
+		*/
+		stack: [
+		"Collection",
+		"Filter",
+		"Context",
+		"Cache",
+		"Index",
+		"Map",
+		"Var",
+		"Defer",
+		
+		"Page",
+		"Parser",
+		"AppendType",
+		"Target",
+		"SelectorOut",
+		"Pager",
+		"Template",
+		"TemplateMode",
+		"CountBreak",
+		"PageBreak",
+		"ResultNull"
+		],
+		
+		//////
+		
 		/**
-		 * Вернуть ссылку на объект
+		 * return active context
+		 * 
+		 * @this {Collection Object}
+		 * @return {String}
+		 */
+		getActiveContext: function () {
+			return this.flags.use.ac === true ? this.dObj.prop.activeContext.toString() : "";
+		},
+		/**
+		 * return link to callback function
 		 * 
 		 * @this {Collection Object}
 		 * @param {String} [type='filter']
-		 * @throw {Error}
-		 * @return {Function}
+		 * @return {Link}
 		 */
 		callee: function (type) {
 			type = type || "filter";
 			
-			return this.dObj.sys[type + "Callee"];
+			return this.dObj.sys.callee[type];
 		}
 	};
 	/**
@@ -414,7 +494,7 @@
 	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
 	 * @return {Boolean}
 	 */
-	$.Collection.cache.templateMode.simpleMode = function (param) {
+	$.Collection.stat.templateMode.simpleMode = function (param) {
 		param = param || {};
 							
 		var
@@ -492,7 +572,7 @@
 	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
 	 * @return {Boolean}
 	 */
-	$.Collection.cache.templateMode.controlMode = function (param) {
+	$.Collection.stat.templateMode.controlMode = function (param) {
 		param = param || {};
 							
 		var
@@ -576,154 +656,70 @@
 							
 		return true;
 	};	
-	// Публичные поля
+	/////////////////////////////////
+	//// public fields (prop)
+	/////////////////////////////////
+	
 	$.Collection.storage = {
-		// Корень объекта полей
+		// root
 		dObj: {
-			// Активные свойства
+			// active fields
 			prop: {
+				/////////////////////////////////
+				//// data
+				/////////////////////////////////
+				
 				/**
-				 * Активная коллекция
+				 * active collection
 				 * 
 				 * @field
 				 * @type Collection|Null
 				 */
 				activeCollection: null,
 				/**
-				 * Активная страница (используется при разбиение на страницы в методе extPrint)
-				 * 
-				 * @field
-				 * @type Number
-				 */
-				activePage: 1,
-				/**
-				 * Активная цель (цель для вставки результата шаблонизации)
-				 * 
-				 * @field
-				 * @type jQuery Object
-				 */
-				activeTarget: null,
-				/**
-				 * Активный шаблон
-				 * 
-				 * @field
-				 * @type Function
-				 */
-				activeTemplate: null,
-				/**
-				 * Активная модель шаблона
-				 * 
-				 * @field
-				 * @type Function
-				 */
-				activeTemplateMode: $.Collection.cache.templateMode.simpleMode,
-				/**
-				 * Активное количество записей на одну страницу
-				 * 
-				 * @field
-				 * @type Number
-				 */
-				activeCountBreak: 10,
-				/**
-				 * Активное количество показанных страниц (для модели шаблона controlMode)
-				 * 
-				 * @field
-				 * @type Number
-				 */
-				activePageBreak: 10,
-				/**
-				 * Активный фильтр (false если отключен)
+				 * active filter ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				activeFilter: false,
 				/**
-				 * Активный парсер (false если отключен)
-				 * 
-				 * @field
-				 * @type Function|Boolean
-				 */
-				activeParser: false,
-				/**
-				 * Активный внешний селектор (используется для подсчета количества записей на странице)
-				 * 
-				 * @field
-				 * @type Selector
-				 */
-				activeSelectorOut: ".SelectorOut",
-				/**
-				 * Активный пейджер (селектор к контейнеру для пейджера, CSS3 синтаксис)
-				 * 
-				 * @field
-				 * @type Selector
-				 */
-				activePager: "#PageControl",
-				/**
-				 * Активный пустой результат (false - если отключен)
-				 * 
-				 * @field
-				 * @type String|Boolean
-				 */
-				activeResultNull: false,
-				/**
-				 * Активная переменная
-				 * 
-				 * @field
-				 * @type mixed
-				 */
-				activeVar: null,
-				/**
-				 * Активный контекст
+				 * active context
 				 * 
 				 * @field
 				 * @type Context
 				 */
 				activeContext: "",
 				/**
-				 * Активный режим добавления (вставка в DOM, константы: методы jQuery для работы с DOM)
-				 * 
-				 * @field
-				 * @param String
-				 */
-				activeAppendType: "html",
-				/**
-				 * Активный отложенный объект
-				 * 
-				 * @field
-				 * @type jQuery Deferred
-				 */
-				activeDefer: "",
-				/**
-				 * Активный объект кеша
+				 * active cache object
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
 				activeCache: {
 					/**
-					 * Автокеширование итераций (необходимо включить для кеширования итераций)
+					 * auto cache
 					 * 
 					 * @field
 					 * @type Boolean
 					 */
 					autoIteration: false,
 					/**
-					 * Кеширование итераций (необходимо включить для кеширования итераций)
+					 * use cache
 					 * 
 					 * @field
 					 * @type Boolean
 					 */
 					iteration: false,
 					/**
-					 * Первая итерация
+					 * first iteration
 					 * 
 					 * @field
 					 * @type Number
 					 */
 					firstIteration: -1,
 					/**
-					 * Последня итерация
+					 * last iteration
 					 * 
 					 * @field
 					 * @type Number
@@ -731,83 +727,139 @@
 					lastIteration: -1
 				},
 				/**
-				 * Активный индекс
+				 * active index
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
 				activeIndex: null,
 				/**
-				 * Активная карта
+				 * active map
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
-				activeMap: null
+				activeMap: null,
+				/**
+				 * active var
+				 * 
+				 * @field
+				 * @type mixed
+				 */
+				activeVar: null,
+				/**
+				 * active deferred
+				 * 
+				 * @field
+				 * @type jQuery Deferred
+				 */
+				activeDefer: "",
+				
+				/////////////////////////////////
+				//// templating
+				/////////////////////////////////
+				
+				/**
+				 * active page (used in "extPrint")
+				 * 
+				 * @field
+				 * @type Number
+				 */
+				activePage: 1,
+				/**
+				 * active parser ("false" if disabled)
+				 * 
+				 * @field
+				 * @type Function|Boolean
+				 */
+				activeParser: false,
+				/**
+				 * active DOM insert mode (jQuery methods)
+				 * 
+				 * @field
+				 * @param String
+				 */
+				activeAppendType: "html",
+				/**
+				 * active target (target to insert the result templating)
+				 * 
+				 * @field
+				 * @type jQuery Object
+				 */
+				activeTarget: null,
+				/**
+				 * active selector (used to calculate the number of records one page)
+				 * 
+				 * @field
+				 * @type Selector
+				 */
+				activeSelectorOut: ".SelectorOut",
+				/**
+				 * active pager
+				 * 
+				 * @field
+				 * @type Selector
+				 */
+				activePager: "#PageControl",
+				/**
+				 * active template
+				 * 
+				 * @field
+				 * @type Function
+				 */
+				activeTemplate: null,
+				/**
+				 * active template mode
+				 * 
+				 * @field
+				 * @type Function
+				 */
+				activeTemplateMode: $.Collection.stat.templateMode.simpleMode,
+				/**
+				 * active records in one page
+				 * 
+				 * @field
+				 * @type Number
+				 */
+				activeCountBreak: 10,
+				/**
+				 * active page count (used in "controlMode")
+				 * 
+				 * @field
+				 * @type Number
+				 */
+				activePageBreak: 10,
+				/**
+				 * active empty result ("false" if disabled)
+				 * 
+				 * @field
+				 * @type String|Boolean
+				 */
+				activeResultNull: false
 			}
 		}
 	};	
-	// Системные настройки
+	/////////////////////////////////
+	//// public fields (system)
+	/////////////////////////////////
+	
 	$.Collection.storage.dObj.sys = {
 		/**
-		 * Количество записей в коллекции
+		 * "callee" object
 		 * 
 		 * @field
-		 * @type Number
+		 * @type Object
 		 */
-		countRecords: null,
-		/**
-		 * Количество записей на одной странице
-		 * 
-		 * @field
-		 * @type Number
-		 */
-		countRecordsInPage: null,
-		/**
-		 * Номер последней записи
-		 * 
-		 * @field
-		 * @type Number
-		 */
-		countTotal: null,
-		/**
-		 * Ссылка на вызываемую функцию-callback (метод each)
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		callbackCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-фильтр
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		filterCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-шаблон
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		templateCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-модель
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		templateModeCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-парсер
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		parserCallee: null
+		callee: { 
+			callback: null,
+			filter: null,
+			parser: null,
+			template: null,
+			templateMode: null
+		}
 	};
 	
-	// Генерация полей
+	// generate system fields
 	(function (data) {
 		var
 			i,
@@ -822,37 +874,23 @@
 			sys[lowerCase + "ChangeControl"] = null;
 			sys[lowerCase + "Back"] = [];
 		}
-	})([
-		"Collection",
-		"Page",
-		"Target",
-		"Filter",
-		"Parser",
-		"Var",
-		"Template",
-		"TemplateMode",
-		"Context",
-		"CountBreak",
-		"PageBreak",
-		"Pager",
-		"SelectorOut",
-		"ResultNull",
-		"AppendType",
-		"Defer",
-		"Cache",
-		"Index",
-		"Map"
-		]);	
-	// Поля отображения
+	})($.Collection.fn.stack);	
+	/////////////////////////////////
+	//// public fields (view value)
+	/////////////////////////////////
+	
 	$.Collection.storage.dObj.viewVal = {
 		aPrev: "&lt;&lt;",
 		aNext: "&gt;&gt;",
-		total: "Total",
-		show: "Show",
-		from: "From",
-		noResultInSearch: "Nothing was found"
+		total: "total",
+		show: "show",
+		from: "from",
+		noResultInSearch: "nothing was found"
 	};	
-	// CSS стили
+	/////////////////////////////////
+	//// public fields (css)
+	/////////////////////////////////
+	
 	$.Collection.storage.dObj.css = {
 		pageNumber: "pageNumber",
 		pagePrev: "pagePrev",
@@ -864,13 +902,17 @@
 		pagingLeft: "pagingLeft",
 		noResult: "noResult"
 	};	
+	/////////////////////////////////
+	//// stack methods
+	/////////////////////////////////
+		
 	/**
-	 * Модифицировать свойство (дозаписать)
+	 * extend property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {mixed} modProp - дополняемое свойство
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {mixed} modProp - value
+	 * @param {String} [id=this.active] - stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._mod = function (propName, modProp, id) {
@@ -883,7 +925,7 @@
 			tmp = sys["tmp" + propName],
 			activeID = sys[tmpActiveStr + "ID"],
 
-			// Функция модифицирования
+			// extend function
 			typeMod = function (target, mod) {
 				if ($.isNumeric(target) || $.isString(target)) {
 					target += mod;
@@ -914,13 +956,14 @@
 
 		return this;
 	};
+	
 	/**
-	 * Добавить новое свойство в стек (если свойство с таким ИД уже есть в стеке, то оно перезаписывается и если оно было активное, то активное перезаписывается тоже)
+	 * add new value to stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Plain Object} objID - ИД свойства или объект (ИД: значение)
-	 * @param {mixed} [newProp=undefined] - новое свойство (перегрузка)
+	 * @param {String} propName - root property
+	 * @param {String|Plain Object} objID - stack ID or object (ID: value)
+	 * @param {mixed} [newProp=undefined] - value (overload)
 	 * @throw {Error} 
 	 * @return {Colletion Object}
 	 */
@@ -940,7 +983,7 @@
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
 					if (key === this.active) {
-						throw new Error("Invalid property name!");
+						throw new Error("invalid property name!");
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
@@ -951,7 +994,7 @@
 			}
 		} else {
 			if (key === this.active) {
-				throw new Error("Invalid property name!");
+				throw new Error("invalid property name!");
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
@@ -962,11 +1005,11 @@
 		return this;
 	};
 	/**
-	 * Установить новое активное свойство
+	 * set new active property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} id - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} id - stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._set = function (propName, id) {
@@ -995,11 +1038,11 @@
 		return this;
 	};
 	/**
-	 * Вернуться на N позиций назад по истории свойств
+	 * history back
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {Number} [nmb=1] - количество шагов назад
+	 * @param {String} propName - root property
+	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._back = function (propName, nmb) {
@@ -1030,11 +1073,11 @@
 		return this;
 	};
 	/**
-	 * Вернуться на N позиций назад по истории свойств, если были изменения
+	 * history back (if history changed)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {Number} [nmb=1] - количество шагов назад
+	 * @param {String} propName - root property
+	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._backIf = function (propName, nmb) {
@@ -1045,12 +1088,12 @@
 		return this;
 	};
 	/**
-	 * Удалить свойство из стека (при этом, если свойство является активном, то оно тоже удаляется)
+	 * remove property from stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array|Plain Object} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {mixed} [deleteVal=false] - значение при удалении
+	 * @param {String} propName - root property
+	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
+	 * @param {mixed} [deleteVal=false] - default value (for active properties)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._drop = function (propName, objID, deleteVal) {
@@ -1096,12 +1139,12 @@
 		return this;
 	};
 	/**
-	 * Сбросить активное свойство (при этом, если свойство является активном, то оно тоже сбрасывается)
+	 * reset property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array|Plain Object} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {mixed} [resetVal=false] - значение, на которое сбрасывается
+	 * @param {String} propName - root property
+	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
+	 * @param {mixed} [resetVal=false] - reset value
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._reset = function (propName, objID, resetVal) {
@@ -1148,12 +1191,12 @@
 		return this;
 	};
 	/**
-	 * Сбросить свойства в другое значение
+	 * reset property to another value
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {String} [id=this.active] - ИД со значением для слияния
+	 * @param {String} propName - root property
+	 * @param {String|Array} [objID=active] - stack ID or array of IDs
+	 * @param {String} [id=this.active] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._resetTo = function (propName, objID, id) {
@@ -1165,11 +1208,11 @@
 	};
 
 	/**
-	 * Проверить наличие свойства в стеке
+	 * check the existence of property in the stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} [id=this.active] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._exist = function (propName, id) {
@@ -1187,11 +1230,11 @@
 		return false;
 	};
 	/**
-	 * Проверить на активность свойства по ИДу
+	 * check the property on the activity
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} id - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._is = function (propName, id) {
@@ -1207,57 +1250,71 @@
 	};
 	
 	/////////////////////////////////
-	//// Управление сборками
+	//// assembly
 	/////////////////////////////////
 			
 	/**
-	 * Использовать сборку
+	 * use the assembly
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} id - ИД
+	 * @param {String} stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.use = function (id) {
 		if (this._exist("Collection", id)) { this._set("Collection", id); }
 		//
+		if (this._exist("Filter", id)) { this._set("Filter", id); }
+		//
+		if (this._exist("Context", id)) { this._set("Context", id);  }
+		//
+		if (this._exist("Cache", id)) { this._set("Cache", id); }
+		//
+		if (this._exist("Index", id)) { this._set("Index", id); }
+		//
+		if (this._exist("Map", id)) { this._set("Map", id); }
+		//
+		if (this._exist("Var", id)) { this._set("Var", id); }
+		//
+		if (this._exist("Defer", id)) { this._set("Defer", id); }
+		
+		
+		///////////
+		
+		
 		if (this._exist("Page", id)) { this._set("Page", id); }
 		//
+		if (this._exist("Parser", id)) { this._set("Parser", id); }
+		//
+		if (this._exist("AppendType", id)) { this._set("AppendType", id); }
+		//
 		if (this._exist("Target", id)) { this._set("Target", id); }
+		//
+		if (this._exist("SelectorOut", id)) { this._set("SelectorOut", id); }
+		//
+		if (this._exist("Pager", id)) { this._set("Pager", id); }
 		//
 		if (this._exist("Template", id)) { this._set("Template", id); }
 		//
 		if (this._exist("TemplateMode", id)) { this._set("TemplateMode", id); }
 		//
-		if (this._exist("Filter", id)) { this._set("Filter", id); }
+		if (this._exist("CountBreak", id)) { this._set("CountBreak", id); }
 		//
-		if (this._exist("Parser", id)) { this._set("Parser", id);  }
+		if (this._exist("PageBreak", id)) { this._set("PageBreak", id); }
 		//
-		if (this._exist("Var", id)) { this._set("Var", id);  }
-		//
-		if (this._exist("Context", id)) {  this._set("Context", id);  }
-		//
-		if (this._exist("CountBreak", id)) {  this._set("CountBreak", id);  }
-		//
-		if (this._exist("PageBreak", id)) {  this._set("PageBreak", id);  }
-		//
-		if (this._exist("SelectorOut", id)) {  this._set("SelectorOut", id);  }
-		//
-		if (this._exist("ResultNull", id)) {  this._set("ResultNull", id);  }
-		//
-		if (this._exist("AppendType", id)) {  this._set("AppendType", id);  }
-		//
-		if (this._exist("Defer", id)) {  this._set("Defer", id); }
-		//
-		if (this._exist("Cache", id)) {  this._set("Cache", id); }
+		if (this._exist("ResultNull", id)) { this._set("ResultNull", id); }
 				
 		return this;
 	};	
+	/////////////////////////////////
+	//// stack methods
+	/////////////////////////////////
+	
 	/**
-	 * Назначить новое свойство взамен старому активному (при этом, если старое свойство было в стеке, оно не удаляется)
+	 * new property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {mixed} newProp - новое свойство
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new property
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._$ = function (propName, newProp) {
@@ -1273,11 +1330,11 @@
 		return this;
 	};
 	/**
-	 * Обновить активное свойство (если активное свойство есть в стеке, то оно обновится тоже)
+	 * update active property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {mixed} newProp - новое свойство
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new value
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._update = function (propName, newProp) {
@@ -1298,11 +1355,11 @@
 		return this;
 	};
 	/**
-	 * Вернуть свойство
+	 * return property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} [id=this.active] - stack ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn._get = function (propName, id) {
@@ -1316,13 +1373,17 @@
 
 		return prop["active" + propName];
 	};	
+	/////////////////////////////////
+	//// control settings
+	/////////////////////////////////
+	
 	/**
-	 * Установить/вернуть свойство
+	 * set/get property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Plain Object} objKey - имя свойства или объект (имя: значение)
-	 * @param {mixed} [value=undefined] - значение (перегрузка)
+	 * @param {String} propName - root property
+	 * @param {String|Plain Object} objKey - property name or object (name: value)
+	 * @param {mixed} [value=undefined] - value (overload)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._prop = function (propName, objKey, value) {
@@ -1338,10 +1399,7 @@
 			
 		return this;
 	};
-	
-	/////////////////////////////////
-	//// Управление настройками
-	/////////////////////////////////	
+		
 	$.Collection.fn.prop = function (objKey, value) {
 		return this._prop.apply(this, $.unshiftArguments(arguments, "prop"));
 	};
@@ -1351,7 +1409,7 @@
 	$.Collection.fn.viewVal = function (objKey, value) {
 		return this._prop.apply(this, $.unshiftArguments(arguments, "viewVal"));
 	};	
-	// Генерация методов-псевдонимов
+	// generate aliases
 	(function (data) {
 		var
 			i,
@@ -1436,27 +1494,7 @@
 				return function (id) { return this._get(nm, id || ""); };
 			}(data[i]);
 		}
-	})([
-		"Collection", 
-		"Page", 
-		"Target", 
-		"Filter", 
-		"Parser", 
-		"Var", 
-		"Template",
-		"TemplateMode",
-		"Context",
-		"CountBreak", 
-		"PageBreak", 
-		"Pager",
-		"SelectorOut",
-		"ResultNull",
-		"AppendType",
-		"Defer",
-		"Cache",
-		"Index",
-		"Map"
-		]);
+	})($.Collection.fn.stack);
 	/**
 	 * Установить значение элементу коллекции (с учётом контекста)
 	 * 
@@ -1470,14 +1508,14 @@
 		context = $.isExist(context) ? context.toString() : "";
 	
 		var
-			cacheObj = $.Collection.cache.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
-			prop = dObj.prop;
-		//
-		prop.activeContext = prop.activeContext.toString();
+			prop = dObj.prop,
+			
+			activeContext = this.getActiveContext();
 		
-		if (!context && !prop.activeContext) {
+		if (!context && !activeContext) {
 			if (id && id !== this.active) {
 				return this._push("Collection", id, value);
 			} else {
@@ -1485,7 +1523,7 @@
 			}
 		}
 		
-		cacheObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context, value);
+		statObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context, value);
 	
 		return this;
 	};
@@ -1498,15 +1536,17 @@
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
-		context = context !== undefined ? context : "";
+		context = $.isExist(context) ? context.toString() : "";
 		
 		var
-			cacheObj = $.Collection.cache.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
-			prop = dObj.prop;
+			prop = dObj.prop,
+			
+			activeContext = this.getActiveContext();
 	
-		return cacheObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context);
+		return statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context);
 	};	
 	/**
 	 * Добавить новый элемент в объект (с учётом контекста)
@@ -1526,7 +1566,7 @@
 		deleteType = deleteType === true ? true : false;
 	
 		var
-			cacheObj = $.Collection.cache.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -1535,12 +1575,12 @@
 			cObj, sObj,
 	
 			activeCollectionID = sys.activeCollectionID,
-	
+			
 			tmpContext, tmpContextCheck,
 	
 			oCheck, lCheck;
 		
-		cObj = cacheObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, prop.activeContext);
+		cObj = statObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, prop.activeContext);
 		
 		if (typeof cObj === "object") {
 			oCheck = $.isPlainObject(cObj);
@@ -1549,8 +1589,8 @@
 			if (!sourceID) {
 				// Определение типа добавления
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + cacheObj.methodSeparator + "unshift" : propType;
-					lCheck = cacheObj.addElementToObject(cObj, propType.toString(), cValue);
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
+					lCheck = statObj.addElementToObject(cObj, propType.toString(), cValue);
 				} else {
 					lCheck = true;
 					if (propType === "push") {
@@ -1562,12 +1602,12 @@
 			// Перенос
 			} else {
 				cValue = $.isExist(cValue) ? cValue.toString() : "";
-				sObj = cacheObj.getByLink(sourceID === this.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
+				sObj = statObj.getByLink(sourceID === this.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
 
 				// Определение типа добавления
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + cacheObj.methodSeparator + "unshift" : propType;
-					lCheck = cacheObj.addElementToObject(cObj, propType.toString(), sObj);
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
+					lCheck = statObj.addElementToObject(cObj, propType.toString(), sObj);
 				} else {
 					lCheck = true;
 					if (propType === "push") {
@@ -1616,7 +1656,7 @@
 		context = $.isExist(context) ? context.toString() : "";
 		
 		var
-			cacheObj = $.Collection.cache.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -1633,31 +1673,31 @@
 			this.setElement("", null);
 		} else {
 			// Подготавливаем контекст
-			context = (prop.activeContext + cacheObj.contextSeparator + context).split(cacheObj.contextSeparator);
+			context = (prop.activeContext + statObj.contextSeparator + context).split(statObj.contextSeparator);
 			// Удаляем "мёртвые" элементы
 			for (i = context.length; i--;) {
 				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === cacheObj.subcontextSeparator) { context.splice(i, 1); }
+				if (context[i] === "" || context[i] === statObj.subcontextSeparator) { context.splice(i, 1); }
 			}
-			context = context.join(cacheObj.contextSeparator);
+			context = context.join(statObj.contextSeparator);
 
 			// Выбор родительского элемента для проверки типа
-			cObj = cacheObj.getByLink(id && id !== "active" ?
+			cObj = statObj.getByLink(id && id !== "active" ?
 						dObj.sys.tmpCollection[id] : prop.activeCollection,
-						context.replace(new RegExp("[^" + cacheObj.contextSeparator + "]+$"), ""));
+						context.replace(new RegExp("[^" + statObj.contextSeparator + "]+$"), ""));
 			// Выбор ссылки
-			context = context.replace(new RegExp(".*?([^" + cacheObj.contextSeparator + "]+$)"), "$1");
+			context = context.replace(new RegExp(".*?([^" + statObj.contextSeparator + "]+$)"), "$1");
 
 			if ($.isArray(cObj)) {
-				context = +context.replace(cacheObj.subcontextSeparator, "");
+				context = +context.replace(statObj.subcontextSeparator, "");
 				if (context >= 0) {
 					cObj.splice(context, 1);
 				} else { cObj.splice(cObj.length + context, 1); }
 			} else {
-				if (context.search(cacheObj.subcontextSeparator) === -1) {
+				if (context.search(statObj.subcontextSeparator) === -1) {
 					delete cObj[context];
 				} else {
-					pos = +context.replace(cacheObj.subcontextSeparator, "");
+					pos = +context.replace(statObj.subcontextSeparator, "");
 					if (pos < 0) { 
 						objLength = 0;
 						// Считаем длину объекта
@@ -1727,14 +1767,14 @@
 		context = $.isExist(context) ? context.toString() : "";
 	
 		var
-			cacheObj = $.Collection.cache.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
 	
 			cObj;
 		
-		cObj = cacheObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context);	
+		cObj = statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + statObj.contextSeparator + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
@@ -1792,7 +1832,7 @@
 		}
 		//
 		if (aCheck !== true) {
-			cObj = $.Collection.cache.obj.getByLink(cObj, prop.activeContext);
+			cObj = $.Collection.stat.obj.getByLink(cObj, prop.activeContext);
 		}
 		// Если null
 		if (cObj === null) { return 0; }
@@ -1875,7 +1915,7 @@
 			}
 		}
 		
-		cObj = $.Collection.cache.obj.getByLink(id !== this.active ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		cObj = $.Collection.stat.obj.getByLink(id !== this.active ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
 		cOLength = this.length(cObj);
 		
 		if ($.isArray(cObj)) {
@@ -2149,7 +2189,7 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			cacheObj = $.Collection.cache.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
 			sys = dObj.sys,
@@ -2161,7 +2201,7 @@
 	
 			elements, i, j;
 	
-		aCheckType = $.isArray(cacheObj.getByLink(this._get("Collection", activeID), dObj.prop.activeContext));
+		aCheckType = $.isArray(statObj.getByLink(this._get("Collection", activeID), dObj.prop.activeContext));
 	
 		// Поиск элементов для переноса
 		if (sys.activeContextID) {
@@ -2186,12 +2226,12 @@
 			tmpLength = elements.length - 1;
 	
 			for (i = -1; i++ < tmpLength;) {
-				this.addElement(context + cacheObj.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + cacheObj.methodSeparator + addType, activeID, sourceID);
+				this.addElement(context + statObj.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + statObj.methodSeparator + addType, activeID, sourceID);
 
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + cacheObj.contextSeparator + elements, aCheckType === true ? addType : elements + cacheObj.methodSeparator + addType, activeID, sourceID);
+			this.addElement(context + statObj.contextSeparator + elements, aCheckType === true ? addType : elements + statObj.methodSeparator + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 	
@@ -2535,11 +2575,11 @@
 	
 			i;
 	
-		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.cache.obj.contextSeparator);
+		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.stat.obj.contextSeparator);
 	
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join($.Collection.cache.obj.contextSeparator);
+		return context.join($.Collection.stat.obj.contextSeparator);
 	};
 	/**
 	 * Подняться на n уровень контекста
@@ -2595,7 +2635,7 @@
 		id = id || "";
 	
 		var
-			cacheObj = $.Collection.cache,
+			statObj = $.Collection.stat,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -2616,7 +2656,7 @@
 	
 				for (i in obj) { if (obj.hasOwnProperty(i)) { sortedKeys.push(i); } }
 	
-				sortedKeys.sort(cacheObj.sort.sortBy(field, rev, fn));
+				sortedKeys.sort(statObj.sort.sortBy(field, rev, fn));
 	
 				for (i in sortedKeys) {
 					if (sortedKeys.hasOwnProperty(i)) {
@@ -2642,7 +2682,7 @@
 					}
 				}
 	
-				sortedValues.sort(cacheObj.sort.sortBy(field === true ? "value" : "value" + cacheObj.obj.contextSeparator + field, rev, fn));
+				sortedValues.sort(statObj.sort.sortBy(field === true ? "value" : "value" + statObj.obj.contextSeparator + field, rev, fn));
 	
 				for (i in sortedValues) {
 					if (sortedValues.hasOwnProperty(i)) {
@@ -2653,11 +2693,11 @@
 				return sortedObj;
 			};
 	
-		cObj = cacheObj.obj.getByLink(id ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
 	
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
-				cObj.sort(cacheObj.sort.sortBy(field, rev, fn));
+				cObj.sort(statObj.sort.sortBy(field, rev, fn));
 			} else {
 				if (field) {
 					cObj = sortObject.call(this, cObj);
@@ -2688,29 +2728,10 @@
 			cObj,
 			i;
 	
-		gap = "";
-		indent = "";
-	
 		cObj = vID && $.isString(vID) && vID !== this.active ? dObj.sys.tmpCollection[vID] : typeof vID === "object" ? vID : prop.activeCollection;
-		cObj = $.Collection.cache.obj.getByLink(cObj, prop.activeContext);
-	
-		if (typeof space === "number") {
-			for (i = space; i--;) {
-				indent += ' ';
-			}
-		} else if (typeof space === "string") {
-			indent = space;
-		}
-	
-		rep = replacer;
-	
-		if (window.JSON !== undefined) {
-			return JSON.stringify(cObj, replacer, space);
-		}
-	
-		return str('', {
-			'': cObj
-		});
+		cObj = $.Collection.stat.obj.getByLink(cObj, prop.activeContext);
+		
+		return JSON.stringify(cObj, replacer || "", space || "");
 	};
 	/**
 	 * Вернуть длину коллекции
@@ -2722,111 +2743,6 @@
 	$.Collection.fn.valueOf = function (id) {
 		return this.length($.isExist(id) ? id : this.active);
 	};	
-	/// --------------------------------
-	// Преобразование в JSON
-	// Взято из json2.js
-	function f (n) { return n < 10 ? "0" + n : n; }
-	if (typeof Date.prototype.toJSON !== 'function') {
-		Date.prototype.toJSON = function (key) {
-			return isFinite(this.valueOf()) ?
-				this.getUTCFullYear() + "-" +
-				f(this.getUTCMonth() + 1) + "-" +
-				f(this.getUTCDate()) + "T" +
-				f(this.getUTCHours()) + ":" +
-				f(this.getUTCMinutes()) + ":" +
-				f(this.getUTCSeconds()) + "Z" : null;
-		};
-	
-		String.prototype.toJSON = Number.prototype.toJSON = Boolean.prototype.toJSON = function (key) { return this.valueOf(); };
-	}
-	var 
-		cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-		escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
-		gap,
-		indent,
-		meta = {
-			'\b': '\\b',
-			'\t': '\\t',
-			'\n': '\\n',
-			'\f': '\\f',
-			'\r': '\\r',
-			'"' : '\\"',
-			'\\': '\\\\'
-		},
-		rep;
-	//
-	function quote (string) {
-		escapable.lastIndex = 0;
-		return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
-			var c = meta[a];
-			return typeof c === "string" ? c : "\\u" + ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
-		}) + '"' : '"' + string + '"';
-	}
-	//
-	function str (key, holder) {
-		var 
-			i,
-			k,
-			v,
-			length,
-			mind = gap,
-			partial,
-			value = holder[key];
-	
-		if (value && typeof value === "object" && typeof value.toJSON === "function") { value = value.toJSON(key); }
-	
-		if (typeof rep === "function") { value = rep.call(holder, key, value); }
-	
-		switch (typeof value) {
-		case "string": return quote(value);
-		case "number": return isFinite(value) ? String(value) : "null";
-		case "boolean":
-		case "null": return String(value);
-		case "object":
-			if (!value) { return "null"; }
-				
-			gap += indent;
-			partial = [];
-	
-			if ($.isArray(value)) {
-				length = value.length;
-				for (i = 0; i < length; i++) {
-					partial[i] = str(i, value) || "null";
-				}
-	
-				v = partial.length === 0 ? '[]' : gap ? "[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]" : "[" + partial.join(",") + "]";
-				gap = mind;
-				return v;
-			}
-	
-			if (rep && typeof rep === "object") {
-				length = rep.length;
-				for (i = 0; i < length; i++) {
-					if (typeof rep[i] === "string") {
-						k = rep[i];
-						v = str(k, value);
-						if (v) {
-							partial.push(quote(k) + (gap ? ": " : ":") + v);
-						}
-					}
-				}
-			} else {
-				for (k in value) {
-					if (Object.prototype.hasOwnProperty.call(value, k)) {
-						v = str(k, value);
-						if (v) {
-							partial.push(quote(k) + (gap ? ": " : ":") + v);
-						}
-					}
-				}
-			}
-	
-			v = partial.length === 0 ? "{}" : gap ? "{\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "}" : "{" + partial.join(",") + "}";
-			gap = mind;
-			
-			return v;
-		}
-	}	
 	/**
 	 * Функция для работы в цепочке с deferred
 	 * 
@@ -2972,7 +2888,7 @@
 			};
 			
 		// Получаем коллекцию
-		cObj = $.Collection.cache.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
+		cObj = $.Collection.stat.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
 		cOLength = $this.length();
 		// Количество записей на страницу
 		activeCountBreak = activeCountBreak === false ? cOLength : activeCountBreak;
@@ -3110,20 +3026,35 @@
 		activeTarget.children("tr").wrapAll("<table></table>");
 	
 		return this;
-	};// JavaScript Document
-	$.Collection.fn.genIndex = function (collectionID) {
+	};	
+	$.Collection.fn.genIndex = function (indexName, id, fieldObj, filter, count, from, indexOf) {
+		id = id || this.active;
+		
 		var
-			cObj = this._get("Collection", collectionID),
-			i = 0, j, aLength = arguments.length - 1,
+			dObj = this.dObj,
+			prop = dObj.prop,
+			sys = dObj.sys,
+		
+			cObj,
 			resObj = {};
 		
-		for (; i++ < aLength;) {
-			if (!$.isArray(arguments[i])) {
-				for (j = cObj.length; j--;) {
-					resObj[cObj[j][arguments[i]]] = i;
-				}
-			}
-		}
+		
+		
+		console.log(resObj);
+	};
+	$.Collection.fn.genMap = function (id1, id2, context1, context2) {
+		var
+			activeCollectionID = this.dObj.sys.activeCollectionID,
+		
+			cObj1, cObj2,
+			resObj = {};
+	
+		if ((!id1 || id1 === this.active || !id2 || id2 === this.active) && activeCollectionID) {
+			id1 = id1 || activeCollectionID;
+			id2 = id2 || activeCollectionID;
+		} else if (!activeCollectionID) { throw new Error("Invalid ID collection"); }
+		
+		cObj1 = 
 		
 		console.log(resObj);
 	}	
@@ -3296,4 +3227,10 @@
 		
 		return newObj;
 	};
-})(jQuery); //
+})(jQuery); //
+
+/*
+ * http://www.JSON.org/json2.js
+ * 2011-10-19
+ */
+JSON||(JSON={});(function(){function k(a){return a<10?"0"+a:a}function o(a){p.lastIndex=0;return p.test(a)?'"'+a.replace(p,function(a){var c=r[a];return typeof c==="string"?c:"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)})+'"':'"'+a+'"'}function l(a,j){var c,d,h,m,g=e,f,b=j[a];b&&typeof b==="object"&&typeof b.toJSON==="function"&&(b=b.toJSON(a));typeof i==="function"&&(b=i.call(j,a,b));switch(typeof b){case "string":return o(b);case "number":return isFinite(b)?String(b):"null";case "boolean":case "null":return String(b);case "object":if(!b)return"null"; e+=n;f=[];if(Object.prototype.toString.apply(b)==="[object Array]"){m=b.length;for(c=0;c<m;c+=1)f[c]=l(c,b)||"null";h=f.length===0?"[]":e?"[\n"+e+f.join(",\n"+e)+"\n"+g+"]":"["+f.join(",")+"]";e=g;return h}if(i&&typeof i==="object"){m=i.length;for(c=0;c<m;c+=1)typeof i[c]==="string"&&(d=i[c],(h=l(d,b))&&f.push(o(d)+(e?": ":":")+h))}else for(d in b)Object.prototype.hasOwnProperty.call(b,d)&&(h=l(d,b))&&f.push(o(d)+(e?": ":":")+h);h=f.length===0?"{}":e?"{\n"+e+f.join(",\n"+e)+"\n"+g+"}":"{"+f.join(",")+ "}";e=g;return h}}if(typeof Date.prototype.toJSON!=="function")Date.prototype.toJSON=function(){return isFinite(this.valueOf())?this.getUTCFullYear()+"-"+k(this.getUTCMonth()+1)+"-"+k(this.getUTCDate())+"T"+k(this.getUTCHours())+":"+k(this.getUTCMinutes())+":"+k(this.getUTCSeconds())+"Z":null},String.prototype.toJSON=Number.prototype.toJSON=Boolean.prototype.toJSON=function(){return this.valueOf()};var q=/[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g, p=/[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,e,n,r={"\u0008":"\\b","\t":"\\t","\n":"\\n","\u000c":"\\f","\r":"\\r",'"':'\\"',"\\":"\\\\"},i;if(typeof JSON.stringify!=="function")JSON.stringify=function(a,j,c){var d;n=e="";if(typeof c==="number")for(d=0;d<c;d+=1)n+=" ";else typeof c==="string"&&(n=c);if((i=j)&&typeof j!=="function"&&(typeof j!=="object"||typeof j.length!=="number"))throw Error("JSON.stringify");return l("", {"":a})};if(typeof JSON.parse!=="function")JSON.parse=function(a,e){function c(a,d){var g,f,b=a[d];if(b&&typeof b==="object")for(g in b)Object.prototype.hasOwnProperty.call(b,g)&&(f=c(b,g),f!==void 0?b[g]=f:delete b[g]);return e.call(a,d,b)}var d,a=String(a);q.lastIndex=0;q.test(a)&&(a=a.replace(q,function(a){return"\\u"+("0000"+a.charCodeAt(0).toString(16)).slice(-4)}));if(/^[\],:{}\s]*$/.test(a.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g,"@").replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, "]").replace(/(?:^|:|,)(?:\s*\[)+/g,"")))return d=eval("("+a+")"),typeof e==="function"?c({"":d},""):d;throw new SyntaxError("JSON.parse");}})(); //

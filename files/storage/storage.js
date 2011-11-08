@@ -157,7 +157,7 @@
 				 * @field
 				 * @type Function
 				 */
-				activeTemplateMode: $.Collection.static.templateMode.simpleMode,
+				activeTemplateMode: $.Collection.stat.templateMode.simpleMode,
 				/**
 				 * active records in one page
 				 * 

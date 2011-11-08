@@ -57,7 +57,7 @@
 			};
 			
 		// Получаем коллекцию
-		cObj = $.Collection.static.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
+		cObj = $.Collection.stat.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
 		cOLength = $this.length();
 		// Количество записей на страницу
 		activeCountBreak = activeCountBreak === false ? cOLength : activeCountBreak;

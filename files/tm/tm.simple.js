@@ -14,7 +14,7 @@
 	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
 	 * @return {Boolean}
 	 */
-	$.Collection.static.templateMode.simpleMode = function (param) {
+	$.Collection.stat.templateMode.simpleMode = function (param) {
 		param = param || {};
 							
 		var

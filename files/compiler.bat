@@ -41,7 +41,6 @@ copy	^
 		+ other\other.js ^
 		+ other\order.js ^
 		+ other\native.js ^
-		+ other\native.core.js ^
 		+ other\then.js ^
 		^
 		+ design\design.print.js ^
@@ -56,6 +55,8 @@ copy	^
 		+ jquery\other.js ^
 		^
 		+ txt\closure.end.txt ^
+		^
+		+ lib\json2.js ^
 		..\jquery.collection.js
 
 goto start

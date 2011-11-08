@@ -1,10 +1,10 @@
 	
 	/////////////////////////////////
-	// Дополнительные методы
+	// additional methods
 	/////////////////////////////////
 	
 	/**
-	 * Расчитать сложный фильтр
+	 * calculate multi filter
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Array|String} [filter=false] - условие поиска или массив атомов условия или строковое условие
@@ -212,11 +212,11 @@
 	
 			i;
 	
-		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.static.obj.contextSeparator);
+		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.stat.obj.contextSeparator);
 	
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join($.Collection.static.obj.contextSeparator);
+		return context.join($.Collection.stat.obj.contextSeparator);
 	};
 	/**
 	 * Подняться на n уровень контекста

@@ -13,14 +13,14 @@
 		context = $.isExist(context) ? context.toString() : "";
 	
 		var
-			staticObj = $.Collection.static.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
 	
 			cObj;
 		
-		cObj = staticObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + staticObj.contextSeparator + context);	
+		cObj = statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + statObj.contextSeparator + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {

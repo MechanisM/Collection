@@ -12,7 +12,7 @@
 		context = $.isExist(context) ? context.toString() : "";
 	
 		var
-			staticObj = $.Collection.static.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -27,7 +27,7 @@
 			}
 		}
 		
-		staticObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + staticObj.contextSeparator + context, value);
+		statObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context, value);
 	
 		return this;
 	};
@@ -43,12 +43,12 @@
 		context = $.isExist(context) ? context.toString() : "";
 		
 		var
-			staticObj = $.Collection.static.obj,
+			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
 			
 			activeContext = this.getActiveContext();
 	
-		return staticObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + staticObj.contextSeparator + context);
+		return statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context);
 	};

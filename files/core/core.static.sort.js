@@ -3,7 +3,7 @@
 	//// static methods (sort)
 	/////////////////////////////////
 	
-	$.Collection.static.sort = {
+	$.Collection.stat.sort = {
 		/**
 		 * sort field name
 		 * 
@@ -56,13 +56,13 @@
 		 */
 		sortHelper: function (a, b) {	
 			var
-				static = $.Collection.static,	
-				$this = static.sort,
+				stat = $.Collection.stat,	
+				$this = stat.sort,
 				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
 			
 			if ($this.field) {
-				a = static.obj.getByLink(a, $this.field);
-				b = static.obj.getByLink(b, $this.field);
+				a = stat.obj.getByLink(a, $this.field);
+				b = stat.obj.getByLink(b, $this.field);
 			}
 					
 			if ($this.fn) {

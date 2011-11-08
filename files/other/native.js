@@ -1,11 +1,15 @@
 	
+	/////////////////////////////////
+	// native
+	/////////////////////////////////
+		
 	/**
-	 * Вернуть валидную JSON строку коллекции (с учётом контекста)
+	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [vID=this.active] - ИД коллекции
-	 * @param {Function|Array} [replacer=undefined] - показывает, как элементы коллекции преобразуются в строку
-	 * @param {Number|String} [space=undefined] - пробелы
+	 * @param {String|Object} [vID=this.active] - collection ID or some object
+	 * @param {Function|Array} [replacer=undefined] - an optional parameter that determines how object values are stringified for objects
+	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
 	 */
 	$.Collection.fn.toString = function (vID, replacer, space) {
@@ -16,35 +20,16 @@
 			cObj,
 			i;
 	
-		gap = "";
-		indent = "";
-	
 		cObj = vID && $.isString(vID) && vID !== this.active ? dObj.sys.tmpCollection[vID] : typeof vID === "object" ? vID : prop.activeCollection;
-		cObj = $.Collection.static.obj.getByLink(cObj, prop.activeContext);
-	
-		if (typeof space === "number") {
-			for (i = space; i--;) {
-				indent += ' ';
-			}
-		} else if (typeof space === "string") {
-			indent = space;
-		}
-	
-		rep = replacer;
-	
-		if (window.JSON !== undefined) {
-			return JSON.stringify(cObj, replacer, space);
-		}
-	
-		return str('', {
-			'': cObj
-		});
+		cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext());
+		
+		return JSON.stringify(cObj, replacer || "", space || "");
 	};
 	/**
-	 * Вернуть длину коллекции
+	 * return collection length
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {Number}
 	 */
 	$.Collection.fn.valueOf = function (id) {

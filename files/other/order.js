@@ -22,7 +22,7 @@
 		id = id || "";
 	
 		var
-			staticObj = $.Collection.static,
+			statObj = $.Collection.stat,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -43,7 +43,7 @@
 	
 				for (i in obj) { if (obj.hasOwnProperty(i)) { sortedKeys.push(i); } }
 	
-				sortedKeys.sort(staticObj.sort.sortBy(field, rev, fn));
+				sortedKeys.sort(statObj.sort.sortBy(field, rev, fn));
 	
 				for (i in sortedKeys) {
 					if (sortedKeys.hasOwnProperty(i)) {
@@ -69,7 +69,7 @@
 					}
 				}
 	
-				sortedValues.sort(staticObj.sort.sortBy(field === true ? "value" : "value" + staticObj.obj.contextSeparator + field, rev, fn));
+				sortedValues.sort(statObj.sort.sortBy(field === true ? "value" : "value" + statObj.obj.contextSeparator + field, rev, fn));
 	
 				for (i in sortedValues) {
 					if (sortedValues.hasOwnProperty(i)) {
@@ -80,11 +80,11 @@
 				return sortedObj;
 			};
 	
-		cObj = staticObj.obj.getByLink(id ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
 	
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
-				cObj.sort(staticObj.sort.sortBy(field, rev, fn));
+				cObj.sort(statObj.sort.sortBy(field, rev, fn));
 			} else {
 				if (field) {
 					cObj = sortObject.call(this, cObj);

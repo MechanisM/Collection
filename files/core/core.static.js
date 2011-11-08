@@ -4,12 +4,12 @@
 	/////////////////////////////////
 	
 	// object for static methods
-	$.Collection.static = {};
+	$.Collection.stat = {};
 	// static template mode
-	$.Collection.static.templateMode = {};
+	$.Collection.stat.templateMode = {};
 	
 	// static methods for object
-	$.Collection.static.obj = {
+	$.Collection.stat.obj = {
 		// link to constants
 		constants: $.Collection.prototype.config.constants,
 		
