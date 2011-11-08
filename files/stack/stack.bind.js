@@ -1,10 +1,14 @@
-
+	
+	/////////////////////////////////
+	//// stack methods
+	/////////////////////////////////
+	
 	/**
-	 * Назначить новое свойство взамен старому активному (при этом, если старое свойство было в стеке, оно не удаляется)
+	 * new property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {mixed} newProp - новое свойство
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new property
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._$ = function (propName, newProp) {
@@ -20,11 +24,11 @@
 		return this;
 	};
 	/**
-	 * Обновить активное свойство (если активное свойство есть в стеке, то оно обновится тоже)
+	 * update active property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {mixed} newProp - новое свойство
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new value
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._update = function (propName, newProp) {
@@ -45,11 +49,11 @@
 		return this;
 	};
 	/**
-	 * Вернуть свойство
+	 * return property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} [id=this.active] - stack ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn._get = function (propName, id) {

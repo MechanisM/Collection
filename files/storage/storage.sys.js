@@ -34,25 +34,4 @@
 			sys[lowerCase + "ChangeControl"] = null;
 			sys[lowerCase + "Back"] = [];
 		}
-	})([
-		"Collection",
-		"Filter",
-		"Context",
-		"Cache",
-		"Index",
-		"Map",
-		"Var",
-		"Defer",
-		
-		"Page",
-		"Parser",
-		"AppendType",
-		"Target",
-		"SelectorOut",
-		"Pager",
-		"Template",
-		"TemplateMode",
-		"CountBreak",
-		"PageBreak",
-		"ResultNull"
-		]);
+	})($.Collection.fn.stack);

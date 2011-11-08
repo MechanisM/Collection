@@ -188,9 +188,9 @@
 	 * remove property from stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array|Plain Object} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {mixed} [deleteVal=false] - значение при удалении
+	 * @param {String} propName - root property
+	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
+	 * @param {mixed} [deleteVal=false] - default value (for active properties)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._drop = function (propName, objID, deleteVal) {
@@ -236,12 +236,12 @@
 		return this;
 	};
 	/**
-	 * Сбросить активное свойство (при этом, если свойство является активном, то оно тоже сбрасывается)
+	 * reset property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array|Plain Object} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {mixed} [resetVal=false] - значение, на которое сбрасывается
+	 * @param {String} propName - root property
+	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
+	 * @param {mixed} [resetVal=false] - reset value
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._reset = function (propName, objID, resetVal) {
@@ -288,12 +288,12 @@
 		return this;
 	};
 	/**
-	 * Сбросить свойства в другое значение
+	 * reset property to another value
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {String} [id=this.active] - ИД со значением для слияния
+	 * @param {String} propName - root property
+	 * @param {String|Array} [objID=active] - stack ID or array of IDs
+	 * @param {String} [id=this.active] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._resetTo = function (propName, objID, id) {
@@ -305,11 +305,11 @@
 	};
 
 	/**
-	 * Проверить наличие свойства в стеке
+	 * check the existence of property in the stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} [id=this.active] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._exist = function (propName, id) {
@@ -327,11 +327,11 @@
 		return false;
 	};
 	/**
-	 * Проверить на активность свойства по ИДу
+	 * check the property on the activity
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} id - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._is = function (propName, id) {
@@ -347,48 +347,58 @@
 	};
 	
 	/////////////////////////////////
-	//// Управление сборками
+	//// assembly
 	/////////////////////////////////
 			
 	/**
-	 * Использовать сборку
+	 * use the assembly
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} id - ИД
+	 * @param {String} stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.use = function (id) {
 		if (this._exist("Collection", id)) { this._set("Collection", id); }
 		//
+		if (this._exist("Filter", id)) { this._set("Filter", id); }
+		//
+		if (this._exist("Context", id)) { this._set("Context", id);  }
+		//
+		if (this._exist("Cache", id)) { this._set("Cache", id); }
+		//
+		if (this._exist("Index", id)) { this._set("Index", id); }
+		//
+		if (this._exist("Map", id)) { this._set("Map", id); }
+		//
+		if (this._exist("Var", id)) { this._set("Var", id); }
+		//
+		if (this._exist("Defer", id)) { this._set("Defer", id); }
+		
+		
+		///////////
+		
+		
 		if (this._exist("Page", id)) { this._set("Page", id); }
 		//
+		if (this._exist("Parser", id)) { this._set("Parser", id); }
+		//
+		if (this._exist("AppendType", id)) { this._set("AppendType", id); }
+		//
 		if (this._exist("Target", id)) { this._set("Target", id); }
+		//
+		if (this._exist("SelectorOut", id)) { this._set("SelectorOut", id); }
+		//
+		if (this._exist("Pager", id)) { this._set("Pager", id); }
 		//
 		if (this._exist("Template", id)) { this._set("Template", id); }
 		//
 		if (this._exist("TemplateMode", id)) { this._set("TemplateMode", id); }
 		//
-		if (this._exist("Filter", id)) { this._set("Filter", id); }
+		if (this._exist("CountBreak", id)) { this._set("CountBreak", id); }
 		//
-		if (this._exist("Parser", id)) { this._set("Parser", id);  }
+		if (this._exist("PageBreak", id)) { this._set("PageBreak", id); }
 		//
-		if (this._exist("Var", id)) { this._set("Var", id);  }
-		//
-		if (this._exist("Context", id)) {  this._set("Context", id);  }
-		//
-		if (this._exist("CountBreak", id)) {  this._set("CountBreak", id);  }
-		//
-		if (this._exist("PageBreak", id)) {  this._set("PageBreak", id);  }
-		//
-		if (this._exist("SelectorOut", id)) {  this._set("SelectorOut", id);  }
-		//
-		if (this._exist("ResultNull", id)) {  this._set("ResultNull", id);  }
-		//
-		if (this._exist("AppendType", id)) {  this._set("AppendType", id);  }
-		//
-		if (this._exist("Defer", id)) {  this._set("Defer", id); }
-		//
-		if (this._exist("Cache", id)) {  this._set("Cache", id); }
+		if (this._exist("ResultNull", id)) { this._set("ResultNull", id); }
 				
 		return this;
 	};

@@ -75,6 +75,35 @@
 			}
 		},
 		
+		/**
+		 * stack parameters
+		 * 
+		 * @field
+		 * @type Array
+		*/
+		stack: [
+		"Collection",
+		"Filter",
+		"Context",
+		"Cache",
+		"Index",
+		"Map",
+		"Var",
+		"Defer",
+		
+		"Page",
+		"Parser",
+		"AppendType",
+		"Target",
+		"SelectorOut",
+		"Pager",
+		"Template",
+		"TemplateMode",
+		"CountBreak",
+		"PageBreak",
+		"ResultNull"
+		],
+		
 		//////
 		
 		/**

@@ -1,5 +1,5 @@
 	
-	// Генерация методов-псевдонимов
+	// generate aliases
 	(function (data) {
 		var
 			i,
@@ -84,24 +84,4 @@
 				return function (id) { return this._get(nm, id || ""); };
 			}(data[i]);
 		}
-	})([
-		"Collection", 
-		"Page", 
-		"Target", 
-		"Filter", 
-		"Parser", 
-		"Var", 
-		"Template",
-		"TemplateMode",
-		"Context",
-		"CountBreak", 
-		"PageBreak", 
-		"Pager",
-		"SelectorOut",
-		"ResultNull",
-		"AppendType",
-		"Defer",
-		"Cache",
-		"Index",
-		"Map"
-		]);
+	})($.Collection.fn.stack);
