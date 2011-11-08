@@ -1,4 +1,8 @@
 	
+	/////////////////////////////////
+	//// static methods (object && template mode)
+	/////////////////////////////////
+	
 	// object for static methods
 	$.Collection.static = {};
 	// static template mode
@@ -10,10 +14,10 @@
 		constants: $.Collection.prototype.config.constants,
 		
 		/**
-		* Получить элемент по указанному контексту
+		* get object by link
 		* 
-		* @param {Object} obj - объект
-		* @param {Context} context - ссылка (знак # указывает порядок)
+		* @param {Object} obj - some object
+		* @param {Context} context - link (sharp (#) char indicates the order)
 		* @return {Object}
 		*/
 		getByLink: function (obj, context) {
@@ -69,11 +73,11 @@
 			return obj;
 		},
 		/**
-		* Задать значение по указанному контексту
+		* set new value to object by link
 		* 
-		* @param {Object} obj - объект
-		* @param {Context} context - ссылка (знак # указывает порядок)
-		* @param {mixed} value - значение
+		* @param {Object} obj - some object
+		* @param {Context} context - link (sharp (#) char indicates the order)
+		* @param {mixed} value - some value
 		* @return {Boolean}
 		*/
 		setByLink: function (obj, context, value) {
@@ -86,12 +90,12 @@
 				objLength,
 				cLength = context.length;
 			
-			// Удаляем "мёртвые" элементы
+			// remove "dead" elements
 			for (i = cLength; i--;) {
 				context[i] = $.trim(context[i]);
 				if (context[i] === "" || context[i] === constants.subcontextSeparator) { context.splice(i, 1); }
 			}
-			// Заново определяем длину контекста
+			// recalculate length
 			cLength = context.length - 1;
 			i = 0;
 			
@@ -150,11 +154,11 @@
 			return true;
 		},
 		/**
-		 * Добавить новый элемент в Plain Object
+		 * add new element to object
 		 * 
-		 * @param {Plain Object} obj - исходный объект
-		 * @param {String} prop - имя добавляемого свойства (можно использовать приставку "::unshift" - результат будет аналогичен работе unshift для массива)
-		 * @param {mixed} value - новый элемент
+		 * @param {Plain Object} obj - some object
+		 * @param {String} prop - property name (can use "::unshift" - the result will be similar to work for an array "unshift")
+		 * @param {mixed} value - some value
 		 * @return {Plain Object|Boolean}
 		 */
 		addElementToObject: function (obj, prop, value) {

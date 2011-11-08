@@ -1,4 +1,8 @@
 	
+	/////////////////////////////////
+	//// prototype
+	/////////////////////////////////
+	
 	$.Collection.fn = $.Collection.prototype = {
 		/**
 		 * framework name
@@ -23,7 +27,6 @@
 		collection: function () {
 			return this.name + " " + this.version;
 		},
-		
 		
 		// framework config object
 		config: {
@@ -93,6 +96,6 @@
 		callee: function (type) {
 			type = type || "filter";
 			
-			return this.dObj.sys[type + "Callee"];
+			return this.dObj.sys.callee[type];
 		}
 	};

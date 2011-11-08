@@ -1,152 +1,68 @@
 	
-	// Публичные поля
+	/////////////////////////////////
+	//// public fields (prop)
+	/////////////////////////////////
+	
 	$.Collection.storage = {
-		// Корень объекта полей
+		// root
 		dObj: {
-			// Активные свойства
+			// active fields
 			prop: {
+				/////////////////////////////////
+				//// data
+				/////////////////////////////////
+				
 				/**
-				 * Активная коллекция
+				 * active collection
 				 * 
 				 * @field
 				 * @type Collection|Null
 				 */
 				activeCollection: null,
 				/**
-				 * Активная страница (используется при разбиение на страницы в методе extPrint)
-				 * 
-				 * @field
-				 * @type Number
-				 */
-				activePage: 1,
-				/**
-				 * Активная цель (цель для вставки результата шаблонизации)
-				 * 
-				 * @field
-				 * @type jQuery Object
-				 */
-				activeTarget: null,
-				/**
-				 * Активный шаблон
-				 * 
-				 * @field
-				 * @type Function
-				 */
-				activeTemplate: null,
-				/**
-				 * Активная модель шаблона
-				 * 
-				 * @field
-				 * @type Function
-				 */
-				activeTemplateMode: $.Collection.static.templateMode.simpleMode,
-				/**
-				 * Активное количество записей на одну страницу
-				 * 
-				 * @field
-				 * @type Number
-				 */
-				activeCountBreak: 10,
-				/**
-				 * Активное количество показанных страниц (для модели шаблона controlMode)
-				 * 
-				 * @field
-				 * @type Number
-				 */
-				activePageBreak: 10,
-				/**
-				 * Активный фильтр (false если отключен)
+				 * active filter ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				activeFilter: false,
 				/**
-				 * Активный парсер (false если отключен)
-				 * 
-				 * @field
-				 * @type Function|Boolean
-				 */
-				activeParser: false,
-				/**
-				 * Активный внешний селектор (используется для подсчета количества записей на странице)
-				 * 
-				 * @field
-				 * @type Selector
-				 */
-				activeSelectorOut: ".SelectorOut",
-				/**
-				 * Активный пейджер (селектор к контейнеру для пейджера, CSS3 синтаксис)
-				 * 
-				 * @field
-				 * @type Selector
-				 */
-				activePager: "#PageControl",
-				/**
-				 * Активный пустой результат (false - если отключен)
-				 * 
-				 * @field
-				 * @type String|Boolean
-				 */
-				activeResultNull: false,
-				/**
-				 * Активная переменная
-				 * 
-				 * @field
-				 * @type mixed
-				 */
-				activeVar: null,
-				/**
-				 * Активный контекст
+				 * active context
 				 * 
 				 * @field
 				 * @type Context
 				 */
 				activeContext: "",
 				/**
-				 * Активный режим добавления (вставка в DOM, константы: методы jQuery для работы с DOM)
-				 * 
-				 * @field
-				 * @param String
-				 */
-				activeAppendType: "html",
-				/**
-				 * Активный отложенный объект
-				 * 
-				 * @field
-				 * @type jQuery Deferred
-				 */
-				activeDefer: "",
-				/**
-				 * Активный объект кеша
+				 * active cache object
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
 				activeCache: {
 					/**
-					 * Автокеширование итераций (необходимо включить для кеширования итераций)
+					 * auto cache
 					 * 
 					 * @field
 					 * @type Boolean
 					 */
 					autoIteration: false,
 					/**
-					 * Кеширование итераций (необходимо включить для кеширования итераций)
+					 * use cache
 					 * 
 					 * @field
 					 * @type Boolean
 					 */
 					iteration: false,
 					/**
-					 * Первая итерация
+					 * first iteration
 					 * 
 					 * @field
 					 * @type Number
 					 */
 					firstIteration: -1,
 					/**
-					 * Последня итерация
+					 * last iteration
 					 * 
 					 * @field
 					 * @type Number
@@ -154,19 +70,115 @@
 					lastIteration: -1
 				},
 				/**
-				 * Активный индекс
+				 * active index
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
 				activeIndex: null,
 				/**
-				 * Активная карта
+				 * active map
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
-				activeMap: null
+				activeMap: null,
+				/**
+				 * active var
+				 * 
+				 * @field
+				 * @type mixed
+				 */
+				activeVar: null,
+				/**
+				 * active deferred
+				 * 
+				 * @field
+				 * @type jQuery Deferred
+				 */
+				activeDefer: "",
+				
+				/////////////////////////////////
+				//// templating
+				/////////////////////////////////
+				
+				/**
+				 * active page (used in "extPrint")
+				 * 
+				 * @field
+				 * @type Number
+				 */
+				activePage: 1,
+				/**
+				 * active parser ("false" if disabled)
+				 * 
+				 * @field
+				 * @type Function|Boolean
+				 */
+				activeParser: false,
+				/**
+				 * active DOM insert mode (jQuery methods)
+				 * 
+				 * @field
+				 * @param String
+				 */
+				activeAppendType: "html",
+				/**
+				 * active target (target to insert the result templating)
+				 * 
+				 * @field
+				 * @type jQuery Object
+				 */
+				activeTarget: null,
+				/**
+				 * active selector (used to calculate the number of records one page)
+				 * 
+				 * @field
+				 * @type Selector
+				 */
+				activeSelectorOut: ".SelectorOut",
+				/**
+				 * active pager
+				 * 
+				 * @field
+				 * @type Selector
+				 */
+				activePager: "#PageControl",
+				/**
+				 * active template
+				 * 
+				 * @field
+				 * @type Function
+				 */
+				activeTemplate: null,
+				/**
+				 * active template mode
+				 * 
+				 * @field
+				 * @type Function
+				 */
+				activeTemplateMode: $.Collection.static.templateMode.simpleMode,
+				/**
+				 * active records in one page
+				 * 
+				 * @field
+				 * @type Number
+				 */
+				activeCountBreak: 10,
+				/**
+				 * active page count (used in "controlMode")
+				 * 
+				 * @field
+				 * @type Number
+				 */
+				activePageBreak: 10,
+				/**
+				 * active empty result ("false" if disabled)
+				 * 
+				 * @field
+				 * @type String|Boolean
+				 */
+				activeResultNull: false
 			}
 		}
 	};

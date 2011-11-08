@@ -1,4 +1,8 @@
 	
+	/////////////////////////////////
+	//// constructor
+	/////////////////////////////////
+	
 	/**
 	 * @constructor
 	 * @this {Colletion Object}
@@ -22,7 +26,7 @@
 		// extend public fields by user's preferences if need
 		if (uProp) { $.extend(true, prop, uProp); }
 				
-		// if "collection" if field
+		// if "collection" is string
 		if ($.isString(collection)) {
 			prop.activeTarget = $(collection);
 			prop.activeCollection = null;

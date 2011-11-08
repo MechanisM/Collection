@@ -1,11 +1,15 @@
 	
+	/////////////////////////////////
+	//// stack methods
+	/////////////////////////////////
+		
 	/**
-	 * Модифицировать свойство (дозаписать)
+	 * extend property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {mixed} modProp - дополняемое свойство
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {mixed} modProp - value
+	 * @param {String} [id=this.active] - stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._mod = function (propName, modProp, id) {
@@ -18,7 +22,7 @@
 			tmp = sys["tmp" + propName],
 			activeID = sys[tmpActiveStr + "ID"],
 
-			// Функция модифицирования
+			// extend function
 			typeMod = function (target, mod) {
 				if ($.isNumeric(target) || $.isString(target)) {
 					target += mod;
@@ -49,13 +53,14 @@
 
 		return this;
 	};
+	
 	/**
-	 * Добавить новое свойство в стек (если свойство с таким ИД уже есть в стеке, то оно перезаписывается и если оно было активное, то активное перезаписывается тоже)
+	 * add new value to stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Plain Object} objID - ИД свойства или объект (ИД: значение)
-	 * @param {mixed} [newProp=undefined] - новое свойство (перегрузка)
+	 * @param {String} propName - root property
+	 * @param {String|Plain Object} objID - stack ID or object (ID: value)
+	 * @param {mixed} [newProp=undefined] - value (overload)
 	 * @throw {Error} 
 	 * @return {Colletion Object}
 	 */
@@ -75,7 +80,7 @@
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
 					if (key === this.active) {
-						throw new Error("Invalid property name!");
+						throw new Error("invalid property name!");
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
@@ -86,7 +91,7 @@
 			}
 		} else {
 			if (key === this.active) {
-				throw new Error("Invalid property name!");
+				throw new Error("invalid property name!");
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
@@ -97,11 +102,11 @@
 		return this;
 	};
 	/**
-	 * Установить новое активное свойство
+	 * set new active property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} id - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} id - stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._set = function (propName, id) {
@@ -130,11 +135,11 @@
 		return this;
 	};
 	/**
-	 * Вернуться на N позиций назад по истории свойств
+	 * history back
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {Number} [nmb=1] - количество шагов назад
+	 * @param {String} propName - root property
+	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._back = function (propName, nmb) {
@@ -165,11 +170,11 @@
 		return this;
 	};
 	/**
-	 * Вернуться на N позиций назад по истории свойств, если были изменения
+	 * history back (if history changed)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {Number} [nmb=1] - количество шагов назад
+	 * @param {String} propName - root property
+	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._backIf = function (propName, nmb) {
@@ -180,7 +185,7 @@
 		return this;
 	};
 	/**
-	 * Удалить свойство из стека (при этом, если свойство является активном, то оно тоже удаляется)
+	 * remove property from stack
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - имя корневого свойства

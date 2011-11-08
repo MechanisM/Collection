@@ -1,5 +1,8 @@
 	
-	// CSS стили
+	/////////////////////////////////
+	//// public fields (css)
+	/////////////////////////////////
+	
 	$.Collection.storage.dObj.css = {
 		pageNumber: "pageNumber",
 		pagePrev: "pagePrev",

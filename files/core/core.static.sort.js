@@ -1,29 +1,32 @@
 	
-	// Статичные методы и свойства для сортировки
+	/////////////////////////////////
+	//// static methods (sort)
+	/////////////////////////////////
+	
 	$.Collection.static.sort = {
 		/**
-		 * Поле сортировки
+		 * sort field name
 		 * 
 		 * @field
 		 * @type String|Null
 		 */
 		field: null,
 		/**
-		 * Реверсия
+		 * reverce
 		 * 
 		 * @field
 		 * @type Boolean
 		 */
 		rev: false,
 		/**
-		 * Перетасовка
+		 * shuffle
 		 * 
 		 * @field
 		 * @type Boolean
 		 */
 		shuffle: false,
 		/**
-		 * Функция обработки при сортировки
+		 * sort callback
 		 * 
 		 * @field
 		 * @type Function|Boolean|Null
@@ -31,11 +34,11 @@
 		fn: null,
 		
 		/**
-		 * Вспомогательная функция сортировки
+		 * main sort function
 		 * 
-		 * @param {String} [field=null] - поле сортировки
-		 * @param {Boolean} [rev=false] - реверсия массива (константы: shuffle - случайное перемешивание массива)
-		 * @param {Function} [fn=null] - функция действий над элементами массива
+		 * @param {String} [field=null] - field name
+		 * @param {Boolean} [rev=false] - reverce (contstants: shuffle - random order)
+		 * @param {Function} [fn=null] - callback
 		 * @return {Function}
 		 */
 		sortBy: function (field, rev, fn) {
@@ -47,18 +50,19 @@
 			return this.sortHelper;
 		},
 		/**
-		 * Вспомогательная функция сортировки
+		 * sort helper
 		 * 
 		 * @return {Number}
 		 */
 		sortHelper: function (a, b) {	
 			var
-				$this = $.Collection.static.sort,
+				static = $.Collection.static,	
+				$this = static.sort,
 				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
 			
 			if ($this.field) {
-				a = $.Collection.static.obj.getByLink(a, $this.field);
-				b = $.Collection.static.obj.getByLink(b, $this.field);
+				a = static.obj.getByLink(a, $this.field);
+				b = static.obj.getByLink(b, $this.field);
 			}
 					
 			if ($this.fn) {

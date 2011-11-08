@@ -1,10 +1,13 @@
 	
-	// Поля отображения
+	/////////////////////////////////
+	//// public fields (view value)
+	/////////////////////////////////
+	
 	$.Collection.storage.dObj.viewVal = {
 		aPrev: "&lt;&lt;",
 		aNext: "&gt;&gt;",
-		total: "Total",
-		show: "Show",
-		from: "From",
-		noResultInSearch: "Nothing was found"
+		total: "total",
+		show: "show",
+		from: "from",
+		noResultInSearch: "nothing was found"
 	};

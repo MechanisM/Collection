@@ -1,44 +1,25 @@
 	
-	// Системные настройки
+	/////////////////////////////////
+	//// public fields (system)
+	/////////////////////////////////
+	
 	$.Collection.storage.dObj.sys = {
 		/**
-		 * Ссылка на вызываемую функцию-callback (метод each)
+		 * "callee" object
 		 * 
 		 * @field
-		 * @type Function
+		 * @type Object
 		 */
-		callbackCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-фильтр
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		filterCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-шаблон
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		templateCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-модель
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		templateModeCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-парсер
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		parserCallee: null
+		callee: { 
+			callback: null,
+			filter: null,
+			parser: null,
+			template: null,
+			templateMode: null
+		}
 	};
 	
-	// Генерация полей
+	// generate system fields
 	(function (data) {
 		var
 			i,
@@ -55,22 +36,23 @@
 		}
 	})([
 		"Collection",
-		"Page",
-		"Target",
 		"Filter",
-		"Parser",
-		"Var",
-		"Template",
-		"TemplateMode",
 		"Context",
-		"CountBreak",
-		"PageBreak",
-		"Pager",
-		"SelectorOut",
-		"ResultNull",
-		"AppendType",
-		"Defer",
 		"Cache",
 		"Index",
-		"Map"
+		"Map",
+		"Var",
+		"Defer",
+		
+		"Page",
+		"Parser",
+		"AppendType",
+		"Target",
+		"SelectorOut",
+		"Pager",
+		"Template",
+		"TemplateMode",
+		"CountBreak",
+		"PageBreak",
+		"ResultNull"
 		]);
