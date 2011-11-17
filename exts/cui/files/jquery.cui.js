@@ -1,4 +1,3 @@
-
 /**
  * CUI core - расширения для JavaScript фреймворка jQuery для создания виджетов на $.Collection
  *
@@ -8,8 +7,10 @@
  * CUI core состоит из:
  * 1) Трёх расширений объекта jQuery.prototype:
  * 1.1) setCUI - установка виджета;
- * 1.2) getCUI - получение виджета;
- * 1.3) removeCUI - удаление виджета.
+ * 1.2) isCUI - проверка виджетана существование;
+ * 1.3) newData - создание экземпляра $.Collection на основе выходных данных;
+ * 1.4) getCUI - получение виджета;
+ * 1.5) removeCUI - удаление виджета.
  * 2) Одно расширение объекта jQuery.expr[':']: 
  * 2.1) CUI - расширение для Sizzle.
  *
@@ -22,7 +23,7 @@
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @version 1.1
+ * @version 1.2
  */
 (function ($) {
 	// Включение ECMAScript 5 "strict mode"
@@ -45,6 +46,41 @@
 		});
 		
 		return this;
+	};
+	/**
+	 * Проверить виджет на существование (если виджет уже существует, то будет возвращён его управляющий объект)
+	 *
+	 * @this {jQuery Object}
+	 * @param {String} name - имя виджета
+	 * @return {Object|Boolean}
+	 */
+	$.fn.isCUI = function (name) {
+		if (this.data("CUI") && this.data("CUI")[name]) {
+			var obj = this.data("CUI")[name].obj;
+			
+			return obj;
+		}
+		
+		return false;
+	};
+	/**
+	 * Создание экземпляров $.Collection на основе входных данных
+	 *
+	 * @this {jQuery Object}
+	 * @param {mixed} data - исходные данные
+	 * @param {Plain Object} def - пользовательские настройки
+	 * @return {Object}
+	 */
+	$.fn.newData = function (data, def) {
+		var obj;
+	
+		if (data && data.name && data.name === "$.Collection") {
+			obj = data;
+		} else {
+			obj = data && data !== false ? new $.Collection(data, def) : data && data === false ? new $.Collection("", def) : this.collection(def);
+		}
+		
+		return obj;
 	};
 	/**
 	 * Получить список виджетов для элемента
