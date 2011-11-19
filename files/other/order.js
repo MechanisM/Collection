@@ -32,10 +32,7 @@
 			sys = dObj.sys,
 	
 			activeCollectionID = sys.activeCollectionID,
-	
 			cObj,
-	
-			i,
 	
 			// sort object by key
 			sortObjectByKey = function (obj) {

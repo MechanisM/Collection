@@ -1,13 +1,13 @@
 	
 	/**
-	 * Простая шаблонизация коллекции (с учётом контекста)
+	 * Простая шаблонизация коллекции (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - объект настроек
 	 * @param {Template} [param.template=this.dObj.prop.activeTemplate] - шаблон
 	 * @param {jQuery Object|Boolean} [param.target=this.dObj.prop.activeTarget] - контейнер вывода результата (false - если выводить в переменную)
 	 * @param {String} [param.variable=this.dObj.sys.activeVarID] - ИД переменной (если param.target === false)
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
 	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.activeParser] - парсер, ИД парсера, строковое условие или false
 	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пагинатору
 	 * @param {String} [param.appendType=this.dObj.prop.activeAppendType] - режим добавления в DOM

@@ -7,7 +7,7 @@
 	 * calculate multi filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Array|String} [filter=false] - filter function or string expressions
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
 	 * @param {Collection} $this - link to collection
 	 * @param {Number|String} i - iteration (key)
 	 * @param {Number} cALength - collection length
@@ -142,7 +142,7 @@
 	 * calculate multi parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|Array|String} parser - parser function or string expressions
+	 * @param {Parser|String} parser - parser function or string expressions
 	 * @param {String} str - source string
 	 * @return {String}
 	 */

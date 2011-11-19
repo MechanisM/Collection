@@ -1,6 +1,6 @@
 	
 	/**
-	 * Сложная шаблонизация коллекции (с учётом контекста) (с активацией пагинатора)
+	 * Сложная шаблонизация коллекции (in context) (с активацией пагинатора)
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - объект настроек
@@ -9,7 +9,7 @@
 	 * @param {Number|Boolean} [param.countBreak=this.dObj.prop.activeCountBreak] - количество записей на 1 страницу (false - выводятся все записи)
 	 * @param {Number} [param.pageBreak=this.dObj.prop.activePageBreak] - количество выводимых страниц (навигация)
 	 * @param {jQuery Object} [param.target=this.dObj.prop.activeTarget] - контейнер вывода результата
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
 	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.activeParser] - ИД парсера, строковое условие или false
 	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - если true, то последняя итерация берется из кеша
 	 * @param {Selector} [param.selectorOut=this.dObj.prop.activeSelectorOut] - cелектор, по которому читается количество записей на страницу
