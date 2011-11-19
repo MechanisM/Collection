@@ -116,7 +116,7 @@
 			return this.flags.use.ac === true ? this.dObj.prop.activeContext.toString() : "";
 		},
 		/**
-		 * return link to callback function
+		 * return links to callback function
 		 * 
 		 * @this {Collection Object}
 		 * @param {String} [type='filter']

@@ -1,10 +1,14 @@
 	
+	/////////////////////////////////
+	//// single methods (delete)
+	/////////////////////////////////
+		
 	/**
-	 * Удалить элемент коллекции по ссылке (с учётом контекста)
+	 * delete element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - ссылка (знак # указывает порядок)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - link (sharp (#) char indicates the order)
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementByLink = function (context, id) {
@@ -20,27 +24,27 @@
 			pos, n = 0,
 			
 			objLength,
-			cObj;
-		//
-		prop.activeContext = prop.activeContext.toString();
+			cObj,
+			
+			activeContext = this.getActiveContext();
 		
-		if (!context && !prop.activeContext) {
+		if (!context && !activeContext) {
 			this.setElement("", null);
 		} else {
-			// Подготавливаем контекст
-			context = (prop.activeContext + statObj.contextSeparator + context).split(statObj.contextSeparator);
-			// Удаляем "мёртвые" элементы
+			// prepare context
+			context = (activeContext + statObj.contextSeparator + context).split(statObj.contextSeparator);
+			// remove "dead" elements
 			for (i = context.length; i--;) {
 				context[i] = $.trim(context[i]);
 				if (context[i] === "" || context[i] === statObj.subcontextSeparator) { context.splice(i, 1); }
 			}
 			context = context.join(statObj.contextSeparator);
 
-			// Выбор родительского элемента для проверки типа
+			// choice of the parent element to check the type
 			cObj = statObj.getByLink(id && id !== "active" ?
 						dObj.sys.tmpCollection[id] : prop.activeCollection,
 						context.replace(new RegExp("[^" + statObj.contextSeparator + "]+$"), ""));
-			// Выбор ссылки
+			// choice link
 			context = context.replace(new RegExp(".*?([^" + statObj.contextSeparator + "]+$)"), "$1");
 
 			if ($.isArray(cObj)) {
@@ -55,11 +59,11 @@
 					pos = +context.replace(statObj.subcontextSeparator, "");
 					if (pos < 0) { 
 						objLength = 0;
-						// Считаем длину объекта
+						// object length
 						for (key in cObj) {
 							if (cObj.hasOwnProperty(key)) { objLength++; }
 						}
-						// Если отсчёт идёт с конца
+						// if reverse
 						pos += objLength;
 					}
 
@@ -80,11 +84,11 @@
 		return this;
 	};
 	/**
-	 * Удалить элементы коллекции по ссылке (с учётом контекста)
+	 * delete elements by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context|Array|Plain Object} objContext - ссылка (знак # указывает порядок), массив ссылок или объект (ИД коллекции: массив ссылок)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context|Array|Plain Object} objContext - link (sharp (#) char indicates the order), array of links or object (collection ID: array of links)
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementsByLink = function (objContext, id) {

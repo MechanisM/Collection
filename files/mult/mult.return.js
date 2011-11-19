@@ -4,7 +4,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
 	 * @param {Number|Boolean} [count=false] - максимальное количество элементов для поиска (по умолчанию: весь объект)
 	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
@@ -52,7 +52,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElement = function (filter, id) {

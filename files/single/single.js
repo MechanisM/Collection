@@ -1,22 +1,25 @@
-
+	
+	/////////////////////////////////
+	//// single methods (core)
+	/////////////////////////////////
+	
 	/**
-	 * Установить значение элементу коллекции (с учётом контекста)
+	 * set new value to element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {mixed} value - значение
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {mixed} value - new value
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.setElement = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
+		value = value === undefined ? "" : value;
 	
 		var
 			statObj = $.Collection.stat.obj,
 		
-			dObj = this.dObj,
-			prop = dObj.prop,
-			
+			dObj = this.dObj,	
 			activeContext = this.getActiveContext();
 		
 		if (!context && !activeContext) {
@@ -27,16 +30,16 @@
 			}
 		}
 		
-		statObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context, value);
+		statObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, activeContext + statObj.contextSeparator + context, value);
 	
 		return this;
 	};
 	/**
-	 * Получить элемент коллекции (с учётом контекста)
+	 * get element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
@@ -44,11 +47,7 @@
 		
 		var
 			statObj = $.Collection.stat.obj,
-		
-			dObj = this.dObj,
-			prop = dObj.prop,
-			
-			activeContext = this.getActiveContext();
+			dObj = this.dObj;
 	
-		return statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context);
+		return statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext() + statObj.contextSeparator + context);
 	};

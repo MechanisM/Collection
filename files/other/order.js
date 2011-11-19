@@ -1,12 +1,16 @@
 	
+	/////////////////////////////////
+	//// sort method
+	/////////////////////////////////
+	
 	/**
-	 * Сортировать коллекцию (с учётом контекста)
+	 * sort collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [field] - поле сортировки
-	 * @param {Boolean} [rev=false] - перевернуть массив (константы: shuffle - случайное перемешивание массива)
-	 * @param {Function|Boolean} [fn=toUpperCase] - функция действий над элементами коллекций (false - если ничего не делать)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [field] - field name
+	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
+	 * @param {Function|Boolean} [fn=toUpperCase] - callback ("false" if disabled)
+	 * @param {String} [id=this.active] - collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -25,7 +29,6 @@
 			statObj = $.Collection.stat,
 		
 			dObj = this.dObj,
-			prop = dObj.prop,
 			sys = dObj.sys,
 	
 			activeCollectionID = sys.activeCollectionID,
@@ -34,53 +37,53 @@
 	
 			i,
 	
-			// Сортировка объекта по ключам
+			// sort object by key
 			sortObjectByKey = function (obj) {
 				var
 					sortedKeys = [],
 					sortedObj = {},
-					i;
+					key;
 	
-				for (i in obj) { if (obj.hasOwnProperty(i)) { sortedKeys.push(i); } }
+				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
 	
 				sortedKeys.sort(statObj.sort.sortBy(field, rev, fn));
 	
-				for (i in sortedKeys) {
-					if (sortedKeys.hasOwnProperty(i)) {
-						sortedObj[sortedKeys[i]] = obj[sortedKeys[i]];
+				for (key in sortedKeys) {
+					if (sortedKeys.hasOwnProperty(key)) {
+						sortedObj[sortedKeys[key]] = obj[sortedKeys[key]];
 					}
 				}
 	
 				return sortedObj;
 			},
-			// Сортировка объекта по значениям
+			// sort object by value
 			sortObject = function (obj) {
 				var
 					sortedValues = [],
 					sortedObj = {},
-					i;
+					key;
 	
-				for (i in obj) {
-					if (obj.hasOwnProperty(i)) {
+				for (key in obj) {
+					if (obj.hasOwnProperty(key)) {
 						sortedValues.push({
-							key: i,
-							value: obj[i]
+							key: key,
+							value: obj[key]
 						});
 					}
 				}
 	
 				sortedValues.sort(statObj.sort.sortBy(field === true ? "value" : "value" + statObj.obj.contextSeparator + field, rev, fn));
 	
-				for (i in sortedValues) {
-					if (sortedValues.hasOwnProperty(i)) {
-						sortedObj[sortedValues[i].key] = sortedValues[i].value;
+				for (key in sortedValues) {
+					if (sortedValues.hasOwnProperty(key)) {
+						sortedObj[sortedValues[key].key] = sortedValues[key].value;
 					}
 				}
 	
 				return sortedObj;
 			};
 	
-		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext());
 	
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
@@ -94,7 +97,7 @@
 	
 				this.setElement("", cObj, id || "");
 			}
-		} else { throw new Error("Incorrect data type!"); }
+		} else { throw new Error("incorrect data type!"); }
 	
 		return this;
 	};

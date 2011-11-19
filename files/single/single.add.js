@@ -1,13 +1,17 @@
 	
+	/////////////////////////////////
+	//// single methods (add)
+	/////////////////////////////////	
+	
 	/**
-	 * Добавить новый элемент в объект (с учётом контекста)
+	 * add new element to object (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} cValue - новый элемент или контекст для sourceID (знак # указывает порядок)
-	 * @param {String} [propType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало") или имя добавляемого свойства (в случае если имеем дело с объектом, также для объекта к имени свойсва можно использовать приставку "::unshift" - результат будет аналогичен работе unshift для массива)
-	 * @param {String} [activeID=this.dObj.prop.activeCollectionID] - ИД коллекции
-	 * @param {String} [sourceID=undefined] - ИД коллекции из которого берётся значение для вставки
-	 * @param {Boolean} [deleteType=false] - если установленно true, то удаляет элемент из переносимой коллекции
+	 * @param {mixed|Context} cValue - new element или context for sourceID (sharp (#) char indicates the order)
+	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "::unshift" - the result will be similar to work for an array "unshift")
+	 * @param {String} [activeID=this.dObj.prop.activeCollectionID] - collection ID
+	 * @param {String} [sourceID=undefined] - source ID (if move)
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -26,19 +30,17 @@
 			cObj, sObj,
 	
 			activeCollectionID = sys.activeCollectionID,
-			
-			tmpContext, tmpContextCheck,
 	
 			oCheck, lCheck;
 		
-		cObj = statObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, prop.activeContext);
+		cObj = statObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, this.getActiveContext());
 		
 		if (typeof cObj === "object") {
 			oCheck = $.isPlainObject(cObj);
 	
-			// Простое добавление
+			// simple add
 			if (!sourceID) {
-				// Определение типа добавления
+				// add type
 				if (oCheck === true) {
 					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
 					lCheck = statObj.addElementToObject(cObj, propType.toString(), cValue);
@@ -50,12 +52,12 @@
 						cObj.unshift(cValue);
 					}
 				}
-			// Перенос
+			// move
 			} else {
 				cValue = $.isExist(cValue) ? cValue.toString() : "";
 				sObj = statObj.getByLink(sourceID === this.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
 
-				// Определение типа добавления
+				// add type
 				if (oCheck === true) {
 					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
 					lCheck = statObj.addElementToObject(cObj, propType.toString(), sObj);
@@ -68,30 +70,17 @@
 					}
 				}
 				
-				// Удаление элемента
+				// delete element
 				if (deleteType === true) {
-					if (sys.activeContextID) {
-						tmpContext = sys.activeContextID;
-						tmpContextCheck = true;
-					} else {
-						tmpContext = this._get("Context");
-						tmpContextCheck = false;
-					}
-					this._$("Context", "");
-	
-					if (sourceID === this.active) {
-						this.deleteElementByLink(cValue);
-					} else { this.deleteElementByLink(cValue, sourceID); }
-	
-					if (tmpContextCheck === true) {
-						this._set("Context", tmpContext);
-					} else { this._$("Context", tmpContext); }
+					this.config.flags.use.ac = false;
+					this.deleteElementByLink(cValue, sourceID);
+					this.config.flags.use.ac = true;
 				}
 			}
 	
-			// Перезаписываем ссылки (если для объекта использовался unshift)
+			// rewrites links (if used for an object "unshift")
 			if (lCheck !== true) { this.setElement("", lCheck, activeID || ""); }
-		} else { throw new Error("Unable to set property!"); }
+		} else { throw new Error("unable to set property!"); }
 	
 		return this;
 	};

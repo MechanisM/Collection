@@ -4,9 +4,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
+	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
+	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
+	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
 	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
 	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
 	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
@@ -96,9 +96,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
+	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
+	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
+	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
 	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
 	 * @return {Colletion Object}
 	 */
@@ -110,9 +110,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
+	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
+	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
+	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
 	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
 	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
 	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
@@ -141,9 +141,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
+	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
+	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
+	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
 	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
 	 * @return {Colletion Object}
 	 */

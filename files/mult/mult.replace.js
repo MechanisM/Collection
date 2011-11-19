@@ -5,7 +5,7 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
 	 * @param {mixed} replaceObj - объект замены (если функция, то выполняется, как callback) 
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественная замена
 	 * @param {Number|Boolean} [count=false] - максимальное количество замен (по умолчанию: весь объект)
 	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
@@ -51,7 +51,7 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
 	 * @param {mixed} replaceObj - объект замены (если функция, то выполняется, как callback) 
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.replaceElement = function (filter, replaceObj, id) {

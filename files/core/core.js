@@ -14,14 +14,12 @@
 		uProp = uProp || null;
 		
 		// create "factory" function if need
-		if (this.fn && this.fn.jquery) { return new $.Collection(collection, uProp); }
+		if (this.fn && this.fn.name && this.fn.name !== "$.Collection") { return new $.Collection(collection, uProp); }
 		
 		// mixin public fields
 		$.extend(true, this, $.Collection.storage);
 			
-		var
-			dObj = this.dObj,
-			prop = dObj.prop;
+		var prop = this.dObj.prop;
 				
 		// extend public fields by user's preferences if need
 		if (uProp) { $.extend(true, prop, uProp); }

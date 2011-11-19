@@ -9,7 +9,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Collection} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String|Collection} [id=this.active] - ИД коллекции или коллекция
+	 * @param {String|Collection} [id=this.active] - collection ID или коллекция
 	 * @throw {Error}
 	 * @return {Number}
 	 */
@@ -64,7 +64,7 @@
 					}
 				}
 			}
-		} else { throw new Error("Incorrect data type!"); }
+		} else { throw new Error("incorrect data type!"); }
 	
 		return countRecords;
 	};
@@ -81,7 +81,7 @@
 	 * @param {Function} [callback.beforeFilter=undefined] - функция callback, которая срабаывает перед фильтром
 	 * @param {Function} [callback.afterFilter=undefined] - функция callback, которая срабатывает после фильтра
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
 	 * @param {Number|Boolean} [count=false] - максимальное количество результатов (по умолчанию: весь объект)
 	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)

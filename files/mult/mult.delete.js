@@ -4,7 +4,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественное удаление
 	 * @param {Number|Boolean} [count=false] - максимальное количество удалений (по умолчанию: весь объект)
 	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
@@ -47,7 +47,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElement = function (filter, id) {

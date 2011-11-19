@@ -9,8 +9,8 @@ copy	^
 		+ txt\closure.start.txt ^
 		^
 		+ core\core.js ^
-		+ core\core.static.js ^
-		+ core\core.static.sort.js ^
+		+ core\core.stat.js ^
+		+ core\core.stat.sort.js ^
 		+ core\core.prototype.js ^
 		^
 		+ tm\tm.simple.js ^
@@ -22,9 +22,8 @@ copy	^
 		+ storage\storage.css.js ^
 		^
 		+ stack\stack.js ^
-		+ stack\stack.bind.js ^
 		+ stack\stack.prop.js ^
-		+ stack\stack.alias.js ^
+		+ stack\stack.aliases.js ^
 		^
 		+ single\single.js ^
 		+ single\single.add.js ^
