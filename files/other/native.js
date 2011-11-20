@@ -7,7 +7,7 @@
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|Object} [id=this.active] - collection ID
+	 * @param {String|Object} [id=this.config.constants.active] - collection ID
 	 * @param {Function|Array} [replacer=undefined] - an optional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
@@ -15,7 +15,7 @@
 	$.Collection.fn.toString = function (id, replacer, space) {
 		var dObj = this.dObj, cObj;
 	
-		cObj = id && id !== this.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection;
+		cObj = id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection;
 		cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext());
 		
 		if (JSON && JSON.stringify) {
@@ -27,9 +27,9 @@
 	 * return collection length
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Number}
 	 */
 	$.Collection.fn.valueOf = function (id) {
-		return this.length($.isExist(id) ? id : this.active);
+		return this.length($.isExist(id) ? id : this.config.constants.active);
 	};

@@ -9,7 +9,7 @@
 	 * @this {Colletion Object}
 	 * @param {Context} context - additional context (sharp (#) char indicates the order)
 	 * @param {mixed} value - new value
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.setElement = function (context, value, id) {
@@ -20,17 +20,17 @@
 			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,	
-			activeContext = this.getActiveContext();
+			context = this.getActiveContext();
 		
-		if (!context && !activeContext) {
-			if (id && id !== this.active) {
+		if (!context && !context) {
+			if (id && id !== this.config.constants.active) {
 				return this._push("Collection", id, value);
 			} else {
 				return this._update("Collection", value);
 			}
 		}
 		
-		statObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, activeContext + statObj.contextSeparator + context, value);
+		statObj.setByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, context + statObj.contextSeparator + context, value);
 	
 		return this;
 	};
@@ -39,7 +39,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context} context - additional context (sharp (#) char indicates the order)
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
@@ -49,5 +49,5 @@
 			statObj = $.Collection.stat.obj,
 			dObj = this.dObj;
 	
-		return statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext() + statObj.contextSeparator + context);
+		return statObj.getByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + statObj.contextSeparator + context);
 	};

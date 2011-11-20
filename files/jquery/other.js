@@ -1,6 +1,10 @@
 	
+	/////////////////////////////////
+	//// jQuery methods (other)
+	/////////////////////////////////
+		
 	/**
-	 * Проверить на строку 
+	 * string test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -9,7 +13,7 @@
 		return Object.prototype.toString.call(val) === "[object String]";
 	};
 	/**
-	 * Проверить на логическое значение 
+	 * boolean test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -18,7 +22,7 @@
 		return Object.prototype.toString.call(val) === "[object Boolean]";
 	};
 	/**
-	 * Проверить на null и undefined
+	 * null && undefined && empty string test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -27,12 +31,12 @@
 		return val !== undefined && val !== "undefined" && val !== null && val !== "";
 	};
 	/**
-	 * Метод unshift для объекта arguments
+	 * unshift for arguments (object)
 	 * 
-	 * @param {Object} obj - исходный объект
-	 * @param {mixed} pushVal - новое свойство
-	 * @param {String|Number} [pushName=0] - имя свойства
-	 * @return {Object}
+	 * @param {Object} obj - some object
+	 * @param {mixed} pushVal - new value
+	 * @param {String|Number} [pushName=0] - property name
+	 * @return {Array}
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
 		var newObj = [pushVal], i = 0, oLength = obj.length;

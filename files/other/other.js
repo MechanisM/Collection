@@ -33,17 +33,17 @@
 		
 		// if filter is function
 		if ($.isFunction(filter)) {
-			sys.filterCallee = filter;
+			sys.callee.filter = filter;
 			
 			return filter($this, i, cALength, $obj, id);
 		}
 		
 		// if filter is not defined or filter is a string constant
-		if (!filter || ($.isString(filter) && $.trim(filter) === this.active)) {
-			if (prop.activeFilter) {
-				sys.filterCallee = prop.activeFilter;
+		if (!filter || ($.isString(filter) && $.trim(filter) === this.config.constants.active)) {
+			if (prop.filter) {
+				sys.callee.filter = prop.filter;
 				
-				return prop.activeFilter($this, i, cALength, $obj, id);
+				return prop.filter($this, i, cALength, $obj, id);
 			}
 	
 			return true;
@@ -52,7 +52,7 @@
 			if (!$.isArray(filter)) {
 				// if simple filter
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					sys.filterCallee = sys.tmpFilter[filter];
+					sys.callee.filter = sys.tmpFilter[filter];
 					
 					return sys.tmpFilter[filter]($this, i, cALength, $obj, id);
 				}
@@ -109,13 +109,14 @@
 					}
 				// calculate outer filter
 				} else if (filter[j] !== ")" && filter[j] !== "||" && filter[j] !== "&&") {
+					console.log(filter[j]);
 					if (filter[j].substring(0, 1) === "!") {
 						inverse = true;
 						filter[j] = filter[j].substring(1);
 					} else { inverse = false; }
 					
-					tmpFilter = filter[j] === this.active ? prop.activeFilter : sys.tmpFilter[filter[j]];
-					sys.filterCallee = tmpFilter;
+					tmpFilter = filter[j] === this.config.constants.active ? prop.filter : sys.tmpFilter[filter[j]];
+					sys.callee.filter = tmpFilter;
 					//
 					tmpResult = tmpFilter($this, i, cALength, $obj, id);
 					if (!and && !or) {
@@ -157,17 +158,17 @@
 		
 		// if parser is function
 		if ($.isFunction(parser)) {
-			sys.parserCallee = parser;
+			sys.callee.parser = parser;
 			
 			return parser(str, this);
 		}
 		
 		// if parser is not defined or parser is a string constant
-		if (!parser || ($.isString(parser) && $.trim(parser) === this.active)) {
-			if (prop.activeParser) {
-				sys.parserCallee = prop.activeParser;
+		if (!parser || ($.isString(parser) && $.trim(parser) === this.config.constants.active)) {
+			if (prop.parser) {
+				sys.callee.parser = prop.parser;
 				
-				return prop.activeParser(str, this);
+				return prop.parser(str, this);
 			}
 	
 			return str;
@@ -176,7 +177,7 @@
 				parser = $.trim(parser);
 				// if simple parser
 				if (parser.search("&&") === -1) {
-					sys.parserCallee = sys.tmpParser[parser];
+					sys.callee.parser = sys.tmpParser[parser];
 					
 					return sys.tmpParser[parser](str, this);
 				}
@@ -185,9 +186,9 @@
 			
 			for (i = parser.length; i--;) {
 				parser[i] = $.trim(parser[i]);
-				tmpParser = parser[i] === this.active ? prop.activeParser : sys.tmpParser[parser[i]];
+				tmpParser = parser[i] === this.config.constants.active ? prop.parser : sys.tmpParser[parser[i]];
 				
-				sys.parserCallee = tmpParser;
+				sys.callee.parser = tmpParser;
 				str = tmpParser(str, this);
 			}
 	
@@ -201,7 +202,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] - level up
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {String}
 	 */
 	$.Collection.fn.parentContext = function (n, id) {
@@ -212,12 +213,12 @@
 			sys = dObj.sys,
 			prop = dObj.prop,
 	
-			activeContextID = sys.activeContextID,
+			contextID = sys.contextID,
 			context = "",
 	
 			i;
 	
-		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.stat.obj.contextSeparator);
+		context = (id && id !== this.config.constants.active ? sys.tmpContext[id] : prop.context).split($.Collection.stat.obj.contextSeparator);
 	
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
@@ -228,7 +229,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] - level up
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.parent = function (n, id) {
@@ -237,18 +238,18 @@
 			sys = dObj.sys,
 			prop = dObj.prop,
 	
-			activeContextID = sys.activeContextID,
+			contextID = sys.contextID,
 			context = this.parentContext.apply(this, arguments);
 	
-		if (!id || id === this.active) {
-			if (activeContextID) {
-				sys.tmpContext[activeContextID] = context;
+		if (!id || id === this.config.constants.active) {
+			if (contextID) {
+				sys.tmpContext[contextID] = context;
 			}
-			prop.activeContext = context;
+			prop.context = context;
 		} else {
 			sys.tmpContext[id] = context;
-			if (activeContextID && id === activeContextID) {
-				prop.activeContext = context;
+			if (contextID && id === contextID) {
+				prop.context = context;
 			}
 		}
 	

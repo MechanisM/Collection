@@ -98,8 +98,8 @@
 		"SelectorOut",
 		"Pager",
 		"Template",
-		"TemplateMode",
-		"CountBreak",
+		"TemplateModel",
+		"NumberBreak",
 		"PageBreak",
 		"ResultNull"
 		],
@@ -113,7 +113,7 @@
 		 * @return {String}
 		 */
 		getActiveContext: function () {
-			return this.flags.use.ac === true ? this.dObj.prop.activeContext.toString() : "";
+			return this.config.flags.use.ac === true ? this.dObj.prop.context.toString() : "";
 		},
 		/**
 		 * return links to callback function
@@ -126,5 +126,16 @@
 			type = type || "filter";
 			
 			return this.dObj.sys.callee[type];
+		},
+		
+		apExtend: function (param, active) {
+			var key, newKey;
+			
+			for (key in active) {
+				if (active.hasOwnProperty(key)) {
+					newKey = key.substring(7);
+					console.log(newKey);
+				}
+			}
 		}
 	};

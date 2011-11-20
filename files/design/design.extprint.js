@@ -1,85 +1,91 @@
 	
+	/////////////////////////////////
+	//// design methods (extended print)
+	/////////////////////////////////
+		
 	/**
-	 * Сложная шаблонизация коллекции (in context) (с активацией пагинатора)
+	 * extended templating (in context) (with pager)
 	 * 
 	 * @this {Colletion Object}
-	 * @param param - объект настроек
-	 * @param {Number} [param.page=this.dObj.prop.activePage] - номер страницы
-	 * @param {Template} [param.template=this.dObj.prop.activeTemplate] - шаблон
-	 * @param {Number|Boolean} [param.countBreak=this.dObj.prop.activeCountBreak] - количество записей на 1 страницу (false - выводятся все записи)
-	 * @param {Number} [param.pageBreak=this.dObj.prop.activePageBreak] - количество выводимых страниц (навигация)
-	 * @param {jQuery Object} [param.target=this.dObj.prop.activeTarget] - контейнер вывода результата
+	 * @param param - object settings
+	 * @param {Number} [param.page=this.dObj.prop.param.page] - page number
+	 * @param {Template} [param.template=this.dObj.prop.template] - template
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.param.numberBreak] - number of entries on 1 page (if "false", returns all records)
+	 * @param {Number} [param.pageBreak=this.dObj.prop.param.pageBreak] - number of displayed pages (navigation)
+	 * @param {jQuery Object} [param.target=this.dObj.prop.target] - element to output the result
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.activeParser] - ИД парсера, строковое условие или false
-	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - если true, то последняя итерация берется из кеша
-	 * @param {Selector} [param.selectorOut=this.dObj.prop.activeSelectorOut] - cелектор, по которому читается количество записей на страницу
-	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пагинатору
-	 * @param {String} [param.appendType=this.dObj.prop.activeAppendType] - режим добавления в DOM
-	 * @param {String} [param.resultNull=this.dObj.prop.activeResultNull] - текст, выводимый в случае если результатов нету
+	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.parser] - parser function, string expressions or "false"
+	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - if "true", the last iteration is taken from cache
+	 * @param {Selector} [param.calculator=this.dObj.prop.calculator] - selector, on which is the number of records per page
+	 * @param {Selector} [param.pager=this.dObj.prop.param.pager] - selector to pager
+	 * @param {String} [param.appendType=this.dObj.prop.appendType] - type additions to the DOM
+	 * @param {String} [param.resultNull=this.dObj.prop.resultNull] - text displayed if no results
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.extPrint = function (param) {
 		param = param || {};
 		
 		var
-			$this = this,
-			dObj = $this.dObj,
+			dObj = this.dObj,
 			sys = dObj.sys,
 			prop = dObj.prop,
 	
-			cObj,
-			cOLength,
+			cObj, cOLength,
 			start, inc = 0,
-	
-			activeFilter = param.filter ? param.filter : prop.activeFilter,
-			activeParser = param.parser ? param.parser : prop.activeParser,
-			//
-			activePage = param.page || prop.activePage,
-			checkPage = activePage === (param.page + 1),
-			//
-			activeTemplate = param.template || prop.activeTemplate,
-			//
-			activeTarget = param.target || prop.activeTarget,
-			activeCountBreak = +param.countBreak || +prop.activeCountBreak,
-			activePageBreak = +param.countBreak || +prop.activePageBreak,
-			//
-			cache = prop.activeCache,
-			cacheIteration = $.isBoolean(param.cacheIteration) ? param.cacheIteration : cache.iteration,
-			//
-			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
-	
-			result = "",
-			action = function (data, i, aLength, $this, objID) {
-				result += activeTemplate(data, i, aLength, $this, objID);
-				inc = i;
-				
-				return true;
-			};
 			
-		// Получаем коллекцию
-		cObj = $.Collection.stat.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
-		cOLength = $this.length();
-		// Количество записей на страницу
-		activeCountBreak = activeCountBreak === false ? cOLength : activeCountBreak;
+			checkPage,
+			cache,
+			result = "", action;
+			
+		param.filter = param.filter || prop.filter;
+		param.parser = param.parser || prop.parser;
 		
-		// Ставим ссылку на шаблон
-		dObj.sys.templateCallee = activeTemplate;
+		param.page = param.page || prop.page;
+		checkPage = param.page === (param.page + 1);
+			
+		param.template = param.template || prop.template;
+		param.target = param.target || prop.target;
 		
-		if ($.isPlainObject(cObj) || cacheIteration === false) {
-			start = activePage === 1 ? activeCountBreak : (activePage - 1) * activeCountBreak;
+		param.numberBreak = +param.numberBreak || +prop.param.numberBreak;
+		param.pageBreak = +param.pageBreak || +prop.param.pagerBreak;
+		
+		cache = prop.cache;
+		param.cacheIteration = $.isBoolean(param.cacheIteration) ? param.cacheIteration : cache.iteration;
+			
+		param.resultNull = param.resultNull !== undefined ? param.resultNull : prop.resultNull;
+	
+		result = "";
+		action = function (data, i, aLength, $this, objID) {
+			result += template(data, i, aLength, $this, objID);
+			inc = i;
+				
+			return true;
+		};
+			
+		// get collection
+		cObj = $.Collection.stat.obj.getByLink(prop.collection, (param.context || this.getActiveContext()));
+		cOLength = this.length();
+		
+		// number of records per page
+		param.numberBreak = param.numberBreak === false ? cOLength : param.numberBreak;
+		// "callee" link
+		sys.callee.template = param.template;
+		
+		if ($.isPlainObject(cObj) || param.cacheIteration === false) {
+			start = param.page === 1 ? param.numberBreak : (param.page - 1) * param.numberBreak;
 			//
-			this.each(action, activeFilter, "active", true, activeCountBreak, start);
+			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, start);
 		} else if ($.isArray(cObj) && cacheIteration === true) {
-			// Вычисляем стартовую позицию
-			start = activeFilter === false ?
-						activePage === 1 ? -1 : (activePage - 1) * activeCountBreak - 1 : cacheIteration === true ?
+			// calculate the starting position
+			start = param.filter === false ?
+						param.page === 1 ? -1 : (param.page - 1) * param.numberBreak - 1 : cacheIteration === true ?
 							checkPage === true ? cache.firstIteration : cache.lastIteration : i;
 			
-			// Перематывание кешированного шага назад
-			if (checkPage === true && activeFilter !== false) {
+			// rewind cached step back
+			if (checkPage === true && param.filter !== false) {
 				for (; start--;) {
-					if ($this.customFilter(activeFilter, cObj, start, cOLength, $this, "active") === true) {
-						if (inc === activeCountBreak) {
+					if (this.customFilter(param.filter, cObj, start, cOLength, $this, this.config.constants.active) === true) {
+						if (inc === param.numberBreak) {
 							break;
 						} else { inc++; }
 					}
@@ -88,7 +94,7 @@
 				cache.lastIteration = start;
 			}
 			
-			this.each(action, activeFilter, "active", true, activeCountBreak, null, start);
+			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, null, start);
 			//
 			cache.firstIteration = cache.lastIteration;
 			cache.lastIteration = inc - 1;
@@ -97,42 +103,38 @@
 			}
 		}
 		
-		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
-		result = activeParser !== false ? $this.customParser(activeParser, result) : result;
-		
-		// Вставляем в DOM
-		activeTarget[(param.appendType || prop.activeAppendType)](result);
-		
-		// Подготовка данных для панели навигации
-		sys.countRecords = $this.length(activeFilter);
-		sys.countRecordsInPage = $((param.selectorOut || prop.activeSelectorOut), activeTarget).length;
-		sys.countTotal = activeCountBreak * activePage - (activeCountBreak - sys.countRecordsInPage);
+		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
+		result = parser !== false ? this.customParser(parser, result) : result;
+		// append to DOM
+		target[(param.appendType || prop.appendType)](result);
 	
 		$.extend(param, {
-			countRecords: sys.countRecords,
-			countRecordsInPage: sys.countRecordsInPage,
-			countTotal: sys.countTotal
+			countRecords: this.length(param.filter),
+			countRecordsInPage: $((param.calculator || prop.calculator), target).length,
+			countTotal: param.numberBreak * param.page - (param.numberBreak - sys.countRecordsInPage)
 		});
-		// Генерерируем панель навигации
-		if (activePage !== 1 && sys.countRecordsInPage === 0) {
-			dObj.prop.activePage--;
-			$this.extPrint.apply($this, arguments);
-		} else { $this.easyPage(param, dObj.prop); }
+		
+		/*
+		// generate navigation bar
+		if (param.page !== 1 && sys.countRecordsInPage === 0) {
+			prop.param.page--;
+			this.extPrint.apply(this, arguments);
+		} else { this.easyPage(param, prop); }*/
 	
-		return $this;
+		return this;
 	};
 	/**
-	 * Активация модели шаблона
+	 * activation of the model template
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Object} [param=undefined] - объект настроект (зависит от модели шаблона)
-	 * @param {Object} [prop=undefined] - свойства коллекции
+	 * @param {Object} [param=undefined] - object settings (depends on the model template)
+	 * @param {Object} [prop=undefined] - collection properties
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.easyPage = function (param, prop) {
-		// Ставим ссылку на модель
-		this.dObj.sys.templateModeCallee = this.dObj.prop.activeTemplateMode;
-		this.dObj.prop.activeTemplateMode.apply(this, arguments);
+		// "callee" link
+		this.dObj.sys.callee.templateModel = this.dObj.prop.templateModel;
+		this.dObj.prop.templateModel.apply(this, arguments);
 		
 		return this;
 	};

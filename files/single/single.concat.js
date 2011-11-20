@@ -9,7 +9,7 @@
 	 * @this {Colletion Object}
 	 * @param {Collection} obj - collection
 	 * @param {Context} context - additional context (sharp (#) char indicates the order)
-	 * @param {String} [id=this.active] - collection ID, which is the concatenation
+	 * @param {String} [id=this.config.constants.active] - collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -22,7 +22,7 @@
 			dObj = this.dObj,
 			cObj;
 		
-		cObj = statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext() + statObj.contextSeparator + context);	
+		cObj = statObj.getByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + statObj.contextSeparator + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {

@@ -52,7 +52,7 @@
  * @version 4.0
  */
 (function ($) {
-	// Включение ECMAScript 5 "strict mode"
+	// try to use ECMAScript 5 "strict mode"
 	"use strict";	
 	/////////////////////////////////
 	//// constructor
@@ -68,15 +68,13 @@
 		collection = collection || null;
 		uProp = uProp || null;
 		
-		// create "factory" function if need
-		if (this.fn && this.fn.jquery) { return new $.Collection(collection, uProp); }
+		// create "factory" function if need	
+		if (this.fn && (!this.fn.name || this.fn.name !== "$.Collection")) { return new $.Collection(collection, uProp); }
 		
 		// mixin public fields
 		$.extend(true, this, $.Collection.storage);
 			
-		var
-			dObj = this.dObj,
-			prop = dObj.prop;
+		var prop = this.dObj.prop;
 				
 		// extend public fields by user's preferences if need
 		if (uProp) { $.extend(true, prop, uProp); }
@@ -86,269 +84,6 @@
 			prop.activeTarget = $(collection);
 			prop.activeCollection = null;
 		} else { prop.activeCollection = collection; }
-	};	
-	/////////////////////////////////
-	//// static methods (object && template mode)
-	/////////////////////////////////
-	
-	// object for static methods
-	$.Collection.stat = {};
-	// static template mode
-	$.Collection.stat.templateMode = {};
-	
-	// static methods for object
-	$.Collection.stat.obj = {
-		// link to constants
-		constants: $.Collection.prototype.config.constants,
-		
-		/**
-		* get object by link
-		* 
-		* @param {Object} obj - some object
-		* @param {Context} context - link (sharp (#) char indicates the order)
-		* @return {Object}
-		*/
-		getByLink: function (obj, context) {
-			context = context.toString().split(constants.contextSeparator);
-			
-			var
-				key, i = 0,
-				pos, n = 0,
-				
-				objLength,
-				cLength = context.length;
-			
-			for (; i < cLength; i++) {
-				context[i] = $.trim(context[i]);
-				//
-				if (context[i] && context[i] !== constants.subcontextSeparator) {
-					if (context[i].search(constants.subcontextSeparator) === -1) {
-						obj = obj[context[i]];
-					} else {
-						pos = +context[i].replace(constants.subcontextSeparator, "");
-						
-						if ($.isArray(obj)) {
-							if (pos >= 0) {
-								obj = obj[pos];
-							} else {
-								obj = obj[obj.length + pos];
-							}
-						} else {
-							if (pos < 0) { 
-								objLength = 0;
-								for (key in obj) {
-									if (obj.hasOwnProperty(key)) { objLength++; }
-								}
-								//
-								pos += objLength;
-							}
-							
-							n = 0;
-							for (key in obj) {
-								if (obj.hasOwnProperty(key)) {
-									if (pos === n) {
-										obj = obj[key];
-										break;
-									}
-									n++;
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			return obj;
-		},
-		/**
-		* set new value to object by link
-		* 
-		* @param {Object} obj - some object
-		* @param {Context} context - link (sharp (#) char indicates the order)
-		* @param {mixed} value - some value
-		* @return {Boolean}
-		*/
-		setByLink: function (obj, context, value) {
-			context = context.toString().split(constants.contextSeparator);
-			
-			var
-				key, i = 0,
-				pos, n = 0,
-				
-				objLength,
-				cLength = context.length;
-			
-			// remove "dead" elements
-			for (i = cLength; i--;) {
-				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === constants.subcontextSeparator) { context.splice(i, 1); }
-			}
-			// recalculate length
-			cLength = context.length - 1;
-			i = 0;
-			
-			for (; i <= cLength; i++) {
-				if (context[i].search(constants.subcontextSeparator) === -1) {
-					if (i === cLength) {
-						obj[context[i]] = value;
-					} else {
-						obj = obj[context[i]];
-					}
-				} else {
-					pos = +context[i].replace(constants.subcontextSeparator, "");
-						
-					if ($.isArray(obj)) {
-						if (i === cLength) {
-							if (pos >= 0) {
-								obj[pos] = value;
-							} else {
-								obj[obj.length + pos] = value;
-							}
-						} else {
-							if (pos >= 0) {
-								obj = obj[pos];
-							} else {
-								obj = obj[obj.length + pos];
-							}
-						}
-					} else {
-						if (pos < 0) { 
-							objLength = 0;
-							for (key in obj) {
-								if (obj.hasOwnProperty(key)) { objLength++; }
-							}
-							//
-							pos += objLength;
-						}
-						
-						n = 0;
-						for (key in obj) {
-							if (obj.hasOwnProperty(key)) {
-								if (pos === n) {
-									if (i === cLength) {
-										obj[key] = value;
-									} else {
-										obj = obj[key];
-									}
-									break;
-								}
-								n++;
-							}
-						}
-					}
-				}
-			}
-			
-			return true;
-		},
-		/**
-		 * add new element to object
-		 * 
-		 * @param {Plain Object} obj - some object
-		 * @param {String} prop - property name (can use "::unshift" - the result will be similar to work for an array "unshift")
-		 * @param {mixed} value - some value
-		 * @return {Plain Object|Boolean}
-		 */
-		addElementToObject: function (obj, prop, value) {
-			prop = prop.split(constants.methodSeparator);
-			
-			var key, newObj = {};
-			
-			if (prop[1] && prop[1] == "unshift") {
-				newObj[prop[0]] = value;
-				for (key in obj) {
-					if (obj.hasOwnProperty(key)) {
-						newObj[key] = obj[key];
-					}
-				}
-				obj = newObj;
-					
-				return obj;
-			} else if (!prop[1] || prop[1] == "push") {
-				obj[prop[0]] = value;
-			}
-				
-			return true;
-		}
-	};	
-	/////////////////////////////////
-	//// static methods (sort)
-	/////////////////////////////////
-	
-	$.Collection.stat.sort = {
-		/**
-		 * sort field name
-		 * 
-		 * @field
-		 * @type String|Null
-		 */
-		field: null,
-		/**
-		 * reverce
-		 * 
-		 * @field
-		 * @type Boolean
-		 */
-		rev: false,
-		/**
-		 * shuffle
-		 * 
-		 * @field
-		 * @type Boolean
-		 */
-		shuffle: false,
-		/**
-		 * sort callback
-		 * 
-		 * @field
-		 * @type Function|Boolean|Null
-		 */
-		fn: null,
-		
-		/**
-		 * main sort function
-		 * 
-		 * @param {String} [field=null] - field name
-		 * @param {Boolean} [rev=false] - reverce (contstants: shuffle - random order)
-		 * @param {Function} [fn=null] - callback
-		 * @return {Function}
-		 */
-		sortBy: function (field, rev, fn) {
-			this.field = field || null;
-			this.rev = rev ? rev !== "shuffle" ? rev : false : false;
-			this.shuffle = rev ? rev === "shuffle" ? rev : false : false;
-			this.fn = fn || null;
-				
-			return this.sortHelper;
-		},
-		/**
-		 * sort helper
-		 * 
-		 * @return {Number}
-		 */
-		sortHelper: function (a, b) {	
-			var
-				stat = $.Collection.stat,	
-				$this = stat.sort,
-				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
-			
-			if ($this.field) {
-				a = stat.obj.getByLink(a, $this.field);
-				b = stat.obj.getByLink(b, $this.field);
-			}
-					
-			if ($this.fn) {
-				a = $this.fn(a);
-				b = $this.fn(b);
-			}
-			
-			if (!$this.shuffle) {	
-				if (a < b) { return rev * -1; }
-				if (a > b) { return rev; }
-				
-				return 0;
-			} else { return rev; }
-		}
 	};	
 	/////////////////////////////////
 	//// prototype
@@ -449,8 +184,8 @@
 		"SelectorOut",
 		"Pager",
 		"Template",
-		"TemplateMode",
-		"CountBreak",
+		"TemplateModel",
+		"NumberBreak",
 		"PageBreak",
 		"ResultNull"
 		],
@@ -464,10 +199,10 @@
 		 * @return {String}
 		 */
 		getActiveContext: function () {
-			return this.flags.use.ac === true ? this.dObj.prop.activeContext.toString() : "";
+			return this.config.flags.use.ac === true ? this.dObj.prop.activeContext.toString() : "";
 		},
 		/**
-		 * return link to callback function
+		 * return links to callback function
 		 * 
 		 * @this {Collection Object}
 		 * @param {String} [type='filter']
@@ -478,23 +213,290 @@
 			
 			return this.dObj.sys.callee[type];
 		}
-	};
+	};	
+	/////////////////////////////////
+	//// static methods (object && template mode)
+	/////////////////////////////////
+	
+	// object for static methods
+	$.Collection.stat = {};
+	// static template mode
+	$.Collection.stat.templateModel = {};
+	
+	// static methods for object
+	$.Collection.stat.obj = {
+		// link to constants
+		constants: $.Collection.fn.config.constants,
+		
+		/**
+		* get object by link
+		* 
+		* @param {Object} obj - some object
+		* @param {Context} context - link (sharp (#) char indicates the order)
+		* @return {Object}
+		*/
+		getByLink: function (obj, context) {
+			context = context.toString().split(this.constants.contextSeparator);
+			
+			var
+				key, i = 0,
+				pos, n = 0,
+				
+				objLength,
+				cLength = context.length;
+			
+			for (; i < cLength; i++) {
+				context[i] = $.trim(context[i]);
+				//
+				if (context[i] && context[i] !== this.constants.subcontextSeparator) {
+					if (context[i].search(this.constants.subcontextSeparator) === -1) {
+						obj = obj[context[i]];
+					} else {
+						pos = +context[i].replace(this.constants.subcontextSeparator, "");
+						
+						if ($.isArray(obj)) {
+							if (pos >= 0) {
+								obj = obj[pos];
+							} else {
+								obj = obj[obj.length + pos];
+							}
+						} else {
+							if (pos < 0) { 
+								objLength = 0;
+								for (key in obj) {
+									if (obj.hasOwnProperty(key)) { objLength++; }
+								}
+								//
+								pos += objLength;
+							}
+							
+							n = 0;
+							for (key in obj) {
+								if (obj.hasOwnProperty(key)) {
+									if (pos === n) {
+										obj = obj[key];
+										break;
+									}
+									n++;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			return obj;
+		},
+		/**
+		* set new value to object by link
+		* 
+		* @param {Object} obj - some object
+		* @param {Context} context - link (sharp (#) char indicates the order)
+		* @param {mixed} value - some value
+		* @return {Boolean}
+		*/
+		setByLink: function (obj, context, value) {
+			context = context.toString().split(this.constants.contextSeparator);
+			
+			var
+				key, i = 0,
+				pos, n = 0,
+				
+				objLength,
+				cLength = context.length;
+			
+			// remove "dead" elements
+			for (i = cLength; i--;) {
+				context[i] = $.trim(context[i]);
+				if (context[i] === "" || context[i] === this.constants.subcontextSeparator) { context.splice(i, 1); }
+			}
+			// recalculate length
+			cLength = context.length - 1;
+			i = 0;
+			
+			for (; i <= cLength; i++) {
+				if (context[i].search(this.constants.subcontextSeparator) === -1) {
+					if (i === cLength) {
+						obj[context[i]] = value;
+					} else {
+						obj = obj[context[i]];
+					}
+				} else {
+					pos = +context[i].replace(this.constants.subcontextSeparator, "");
+						
+					if ($.isArray(obj)) {
+						if (i === cLength) {
+							if (pos >= 0) {
+								obj[pos] = value;
+							} else {
+								obj[obj.length + pos] = value;
+							}
+						} else {
+							if (pos >= 0) {
+								obj = obj[pos];
+							} else {
+								obj = obj[obj.length + pos];
+							}
+						}
+					} else {
+						if (pos < 0) { 
+							objLength = 0;
+							for (key in obj) {
+								if (obj.hasOwnProperty(key)) { objLength++; }
+							}
+							//
+							pos += objLength;
+						}
+						
+						n = 0;
+						for (key in obj) {
+							if (obj.hasOwnProperty(key)) {
+								if (pos === n) {
+									if (i === cLength) {
+										obj[key] = value;
+									} else {
+										obj = obj[key];
+									}
+									break;
+								}
+								n++;
+							}
+						}
+					}
+				}
+			}
+			
+			return true;
+		},
+		/**
+		 * add new element to object
+		 * 
+		 * @param {Plain Object} obj - some object
+		 * @param {String} prop - property name (can use "::unshift" - the result will be similar to work for an array "unshift")
+		 * @param {mixed} value - some value
+		 * @return {Plain Object|Boolean}
+		 */
+		addElementToObject: function (obj, prop, value) {
+			prop = prop.split(this.constants.methodSeparator);
+			
+			var key, newObj = {};
+			
+			if (prop[1] && prop[1] == "unshift") {
+				newObj[prop[0]] = value;
+				for (key in obj) {
+					if (obj.hasOwnProperty(key)) {
+						newObj[key] = obj[key];
+					}
+				}
+				obj = newObj;
+					
+				return obj;
+			} else if (!prop[1] || prop[1] == "push") {
+				obj[prop[0]] = value;
+			}
+				
+			return true;
+		}
+	};	
+	/////////////////////////////////
+	//// static methods (sort)
+	/////////////////////////////////
+	
+	$.Collection.stat.sort = {
+		/**
+		 * sort field name
+		 * 
+		 * @field
+		 * @type String|Null
+		 */
+		field: null,
+		/**
+		 * reverce
+		 * 
+		 * @field
+		 * @type Boolean
+		 */
+		rev: false,
+		/**
+		 * shuffle
+		 * 
+		 * @field
+		 * @type Boolean
+		 */
+		shuffle: false,
+		/**
+		 * sort callback
+		 * 
+		 * @field
+		 * @type Function|Boolean|Null
+		 */
+		fn: null,
+		
+		/**
+		 * main sort function
+		 * 
+		 * @param {String} [field=null] - field name
+		 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
+		 * @param {Function} [fn=null] - callback
+		 * @return {Function}
+		 */
+		sortBy: function (field, rev, fn) {
+			this.field = field || null;
+			this.rev = rev ? rev !== "shuffle" ? rev : false : false;
+			this.shuffle = rev ? rev === "shuffle" ? rev : false : false;
+			this.fn = fn || null;
+				
+			return this.sortHelper;
+		},
+		/**
+		 * sort helper
+		 * 
+		 * @return {Number}
+		 */
+		sortHelper: function (a, b) {	
+			var
+				stat = $.Collection.stat,	
+				$this = stat.sort,
+				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
+			
+			if ($this.field) {
+				a = stat.obj.getByLink(a, $this.field);
+				b = stat.obj.getByLink(b, $this.field);
+			}
+					
+			if ($this.fn) {
+				a = $this.fn(a);
+				b = $this.fn(b);
+			}
+			
+			if (!$this.shuffle) {	
+				if (a < b) { return rev * -1; }
+				if (a > b) { return rev; }
+				
+				return 0;
+			} else { return rev; }
+		}
+	};	
+	/////////////////////////////////
+	//// template model (simple)
+	/////////////////////////////////
+	
 	/**
-	 * Простая модель шаблона (без указателей на страницы)
+	 * simple model
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - объект настроек
 	 * @param {Number} [param.page=this.dObj.prop.activePage] - активная страница
 	 * @param {Collection} [param.collection=null] - коллекция (если не было пересчета заранее)
-	 * @param {Number|Boolean} [param.countBreak=this.dObj.prop.activeCountBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
-	 * @param {Selector} [param.selectorOut=this.dObj.prop.activeSelectorOut] -  селектор, по которому cчитается количесво записей на страницу
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.activeNumberBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
+	 * @param {Selector} [param.calculator=this.dObj.prop.activeCalculator] -  селектор, по которому cчитается количесво записей на страницу
 	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пейджеру
 	 * @param {Number} [param.countRecords=this.dObj.sys.countRecords] - всего записей в объекте (с учётом фильтра)
 	 * @param {Number} [param.countRecordsInPage=this.dObj.sys.countRecordsInPage] - всего записей на странице
 	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
 	 * @return {Boolean}
 	 */
-	$.Collection.stat.templateMode.simpleMode = function (param) {
+	$.Collection.stat.templateModel.simpleMode = function (param) {
 		param = param || {};
 							
 		var
@@ -505,25 +507,7 @@
 			css = dObj.css,
 			viewVal = dObj.viewVal,
 			prop = dObj.prop,
-							
-			page = param.page || prop.activePage,
-			selectorOut = param.selectorOut || prop.activeSelectorOut,
-			pager = $(param.pager || prop.activePager),
-			countRecords = param.countRecords || sys.countRecords || tmpCount || 0,
-			countRecordsInPage = param.countRecordsInPage || sys.countRecordsInPage || $(selectorOut, prop.activeTarget).length,
-			countBreak = param.countBreak || prop.activeCountBreak,
-			countTotal = param.countTotal || sys.countTotal || countBreak * page - (countBreak - countRecordsInPage),
-								
-			pageNumber = css.pageNumber,
-			pagePrev = css.pagePrev,
-			pageDisablePrev = css.pageDisablePrev,
-			pageNext = css.pageNext,
-			pageDisableNext = css.pageDisableNext,
-								
-			aPrev = viewVal.aPrev,
-			aNext = viewVal.aNext,
-			from = viewVal.from,
-								
+			
 			disableNext,
 			disablePrev;
 			
@@ -551,28 +535,32 @@
 		if (countRecordsInPage === 0) {
 			$("." + pageNumber, pager).html(0);
 		} else {
-			$("." + pageNumber, pager).html(((page - 1) * countBreak + 1) + "-" + countTotal + ' ' + from + ' ' + countRecords);
+			$("." + pageNumber, pager).html(((page - 1) * numberBreak + 1) + "-" + countTotal + ' ' + from + ' ' + countRecords);
 		}
 							
 		return true;
-	};
+	};	
+	/////////////////////////////////
+	//// template model (advansed)
+	/////////////////////////////////
+	
 	/**
-	 * Продвинутая модель шаблона
+	 * advansed model
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - объект настроек
 	 * @param {Number} [param.page=this.dObj.prop.activePage] - активна страница
 	 * @param {Collection} [param.collection=null] - коллекция (если не было пересчета заранее)
-	 * @param {Number|Boolean} [param.countBreak=this.dObj.prop.activeCountBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.activeNumberBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
 	 * @param {Number} [param.pageBreak=this.dObj.prop.activePageBreak] - количество выводимых страниц (навигация)
-	 * @param {Selector} [param.selectorOut=this.dObj.prop.activeSelectorOut] -  селектор, по которому cчитается количесво записей на страницу
+	 * @param {Selector} [param.calculator=this.dObj.prop.activeCalculator] -  селектор, по которому cчитается количесво записей на страницу
 	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пейджеру
 	 * @param {Number} [param.countRecords=this.dObj.sys.countRecords] - всего записей в объекте (с учётом фильтра)
 	 * @param {Number} [param.countRecordsInPage=this.dObj.sys.countRecordsInPage] - всего записей на странице
 	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
 	 * @return {Boolean}
 	 */
-	$.Collection.stat.templateMode.controlMode = function (param) {
+	$.Collection.stat.templateModel.controlMode = function (param) {
 		param = param || {};
 							
 		var
@@ -585,14 +573,14 @@
 			prop = dObj.prop,
 							
 			page = param.page || prop.activePage,
-			selectorOut = param.selectorOut || prop.activeSelectorOut,
+			calculator = param.calculator || prop.activeCalculator,
 			pager = $(param.pager || prop.activePager),
 			countRecords = param.countRecords || sys.countRecords || tmpCount || 0,
-			countRecordsInPage = param.countRecordsInPage || sys.countRecordsInPage || $(selectorOut, prop.activeTarget).length,
-			countBreak = param.countBreak || prop.activeCountBreak,
+			countRecordsInPage = param.countRecordsInPage || sys.countRecordsInPage || $(calculator, prop.activeTarget).length,
+			numberBreak = param.numberBreak || prop.activeNumberBreak,
 			pageBreak = param.pageBreak || prop.activePageBreak,
-			countTotal = param.countTotal || sys.countTotal || countBreak * page - (countBreak - countRecordsInPage),
-			pageCount = countRecords % countBreak !== 0 ? ~~(countRecords / countBreak) + 1 : countRecords / countBreak,
+			countTotal = param.countTotal || sys.countTotal || numberBreak * page - (numberBreak - countRecordsInPage),
+			pageCount = countRecords % numberBreak !== 0 ? ~~(countRecords / numberBreak) + 1 : countRecords / numberBreak,
 								
 			str = "",
 								
@@ -622,7 +610,7 @@
 					str += '<a href="javascript:;" data-action="set/page[' + (i - 1) + '">' + (i - 1) + '</a>';
 				}
 							
-				if (j === (countBreak - 1)) { break; }
+				if (j === (numberBreak - 1)) { break; }
 							
 				if (i === page) {
 					str += '<a href="javascript:;" class="' + pageActive + '">' + i + '</a>';
@@ -651,7 +639,7 @@
 			$("." + pagingLeft + "," + "." + pagingRight, pager).empty();
 		} else {
 			$("." + pagingRight, pager).html(str);
-			$("." + pagingLeft, pager).html(total + ": " + countRecords + ". " + show + ": " + ((page - 1) * countBreak + 1) + "-" + countTotal);
+			$("." + pagingLeft, pager).html(total + ": " + countRecords + ". " + show + ": " + ((page - 1) * numberBreak + 1) + "-" + countTotal);
 		}
 							
 		return true;
@@ -793,14 +781,14 @@
 				 * @field
 				 * @type Selector
 				 */
-				activeSelectorOut: ".SelectorOut",
+				activeCalculator: ".line",
 				/**
 				 * active pager
 				 * 
 				 * @field
 				 * @type Selector
 				 */
-				activePager: "#PageControl",
+				activePager: "#pageControl",
 				/**
 				 * active template
 				 * 
@@ -814,14 +802,14 @@
 				 * @field
 				 * @type Function
 				 */
-				activeTemplateMode: $.Collection.stat.templateMode.simpleMode,
+				activeTemplateModel: $.Collection.stat.templateModel.simpleMode,
 				/**
 				 * active records in one page
 				 * 
 				 * @field
 				 * @type Number
 				 */
-				activeCountBreak: 10,
+				activeNumberBreak: 10,
 				/**
 				 * active page count (used in "controlMode")
 				 * 
@@ -855,7 +843,7 @@
 			filter: null,
 			parser: null,
 			template: null,
-			templateMode: null
+			templateModel: null
 		}
 	};
 	
@@ -905,14 +893,79 @@
 	/////////////////////////////////
 	//// stack methods
 	/////////////////////////////////
+	
+	/**
+	 * new property
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new property
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn._$ = function (propName, newProp) {
+		var
+			dObj = this.dObj,
+			prop = dObj.prop,
+
+			tmpActiveStr = "active" + propName;
+
+		prop[tmpActiveStr] = newProp;
+		dObj.sys[tmpActiveStr + "ID"] = null;
+
+		return this;
+	};
+	/**
+	 * update active property
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new value
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn._update = function (propName, newProp) {
+		var
+			dObj = this.dObj,
+			prop = dObj.prop,
+			sys = dObj.sys,
+
+			tmpActiveStr = "active" + propName,
+			tmpActiveIDStr = tmpActiveStr + "ID",
+			activeID = sys[tmpActiveIDStr];
+
+		prop[tmpActiveStr] = newProp;
+		if (activeID) {
+			sys["tmp" + propName][activeID] = prop[tmpActiveStr];
+		}
+
+		return this;
+	};
+	/**
+	 * return property
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} propName - root property
+	 * @param {String} [id=this.config.constants.active] - stack ID
+	 * @return {mixed}
+	 */
+	$.Collection.fn._get = function (propName, id) {
+		var 
+			dObj = this.dObj,
+			prop = dObj.prop;
 		
+		if (id && id !== this.config.constants.active) {
+			return dObj.sys["tmp" + propName][id];
+		}
+
+		return prop["active" + propName];
+	};
+	
 	/**
 	 * extend property
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {mixed} modProp - value
-	 * @param {String} [id=this.active] - stack ID
+	 * @param {String} [id=this.config.constants.active] - stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._mod = function (propName, modProp, id) {
@@ -942,7 +995,7 @@
 				return target;
 			};
 		
-		if (id && id !== this.active) {
+		if (id && id !== this.config.constants.active) {
 			tmp[id] = typeMod(tmp[id], modProp);
 			if (activeID && id === activeID) {
 				prop[tmpActiveStr] = tmp[id];
@@ -982,7 +1035,7 @@
 		if ($.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
-					if (key === this.active) {
+					if (key === this.config.constants.active) {
 						throw new Error("invalid property name!");
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
@@ -993,7 +1046,7 @@
 				}
 			}
 		} else {
-			if (key === this.active) {
+			if (objID === this.config.constants.active) {
 				throw new Error("invalid property name!");
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
@@ -1114,10 +1167,10 @@
 
 			i;
 
-		if (tmpArray[0] && tmpArray[0] !== this.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
 			for (i in tmpArray) {
 				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.active) {
+					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
 						prop[tmpActiveStr] = deleteVal;
@@ -1165,10 +1218,10 @@
 
 			i;
 
-		if (tmpArray[0] && tmpArray[0] !== this.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
 			for (i in tmpArray) {
 				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.active) {
+					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
 						if (activeID) {
 							sys[tmpTmpStr][activeID] = resetVal;
 						}
@@ -1196,13 +1249,13 @@
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array} [objID=active] - stack ID or array of IDs
-	 * @param {String} [id=this.active] - source ID (for merge)
+	 * @param {String} [id=this.config.constants.active] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._resetTo = function (propName, objID, id) {
 		var
 			dObj = this.dObj,
-			mergeVal = !id || id === this.active ? dObj.prop["active" + propName] : dObj.sys["tmp" + propName][id];
+			mergeVal = !id || id === this.config.constants.active ? dObj.prop["active" + propName] : dObj.sys["tmp" + propName][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
@@ -1212,7 +1265,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id=this.active] - stack ID
+	 * @param {String} [id=this.config.constants.active] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._exist = function (propName, id) {
@@ -1220,7 +1273,7 @@
 			dObj = this.dObj,
 			prop = dObj.prop;
 		
-		if ((!id || id === this.active) && dObj.sys["active" + propName + "ID"]) {
+		if ((!id || id === this.config.constants.active) && dObj.sys["active" + propName + "ID"]) {
 			return true;
 		}
 		if (dObj.sys["tmp" + propName][id] !== undefined) {
@@ -1295,83 +1348,15 @@
 		//
 		if (this._exist("Template", id)) { this._set("Template", id); }
 		//
-		if (this._exist("TemplateMode", id)) { this._set("TemplateMode", id); }
+		if (this._exist("TemplateModel", id)) { this._set("TemplateModel", id); }
 		//
-		if (this._exist("CountBreak", id)) { this._set("CountBreak", id); }
+		if (this._exist("NumberBreak", id)) { this._set("NumberBreak", id); }
 		//
 		if (this._exist("PageBreak", id)) { this._set("PageBreak", id); }
 		//
 		if (this._exist("ResultNull", id)) { this._set("ResultNull", id); }
 				
 		return this;
-	};	
-	/////////////////////////////////
-	//// stack methods
-	/////////////////////////////////
-	
-	/**
-	 * new property
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} propName - root property
-	 * @param {mixed} newProp - new property
-	 * @return {Colletion Object}
-	 */
-	$.Collection.fn._$ = function (propName, newProp) {
-		var
-			dObj = this.dObj,
-			prop = dObj.prop,
-
-			tmpActiveStr = "active" + propName;
-
-		prop[tmpActiveStr] = newProp;
-		dObj.sys[tmpActiveStr + "ID"] = null;
-
-		return this;
-	};
-	/**
-	 * update active property
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} propName - root property
-	 * @param {mixed} newProp - new value
-	 * @return {Colletion Object}
-	 */
-	$.Collection.fn._update = function (propName, newProp) {
-		var
-			dObj = this.dObj,
-			prop = dObj.prop,
-			sys = dObj.sys,
-
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID",
-			activeID = sys[tmpActiveIDStr];
-
-		prop[tmpActiveStr] = newProp;
-		if (activeID) {
-			sys["tmp" + propName][activeID] = prop[tmpActiveStr];
-		}
-
-		return this;
-	};
-	/**
-	 * return property
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} propName - root property
-	 * @param {String} [id=this.active] - stack ID
-	 * @return {mixed}
-	 */
-	$.Collection.fn._get = function (propName, id) {
-		var 
-			dObj = this.dObj,
-			prop = dObj.prop;
-		
-		if (id && id !== this.active) {
-			return dObj.sys["tmp" + propName][id];
-		}
-
-		return prop["active" + propName];
 	};	
 	/////////////////////////////////
 	//// control settings
@@ -1409,6 +1394,10 @@
 	$.Collection.fn.viewVal = function (objKey, value) {
 		return this._prop.apply(this, $.unshiftArguments(arguments, "viewVal"));
 	};	
+	/////////////////////////////////
+	//// stack methods (aliases)
+	/////////////////////////////////
+		
 	// generate aliases
 	(function (data) {
 		var
@@ -1494,45 +1483,48 @@
 				return function (id) { return this._get(nm, id || ""); };
 			}(data[i]);
 		}
-	})($.Collection.fn.stack);
+	})($.Collection.fn.stack);	
+	/////////////////////////////////
+	//// single methods (core)
+	/////////////////////////////////
+	
 	/**
-	 * Установить значение элементу коллекции (с учётом контекста)
+	 * set new value to element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {mixed} value - значение
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {mixed} value - new value
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.setElement = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
+		value = value === undefined ? "" : value;
 	
 		var
 			statObj = $.Collection.stat.obj,
 		
-			dObj = this.dObj,
-			prop = dObj.prop,
-			
+			dObj = this.dObj,	
 			activeContext = this.getActiveContext();
 		
 		if (!context && !activeContext) {
-			if (id && id !== this.active) {
+			if (id && id !== this.config.constants.active) {
 				return this._push("Collection", id, value);
 			} else {
 				return this._update("Collection", value);
 			}
 		}
 		
-		statObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context, value);
+		statObj.setByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, activeContext + statObj.contextSeparator + context, value);
 	
 		return this;
 	};
 	/**
-	 * Получить элемент коллекции (с учётом контекста)
+	 * get element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
@@ -1540,23 +1532,23 @@
 		
 		var
 			statObj = $.Collection.stat.obj,
-		
-			dObj = this.dObj,
-			prop = dObj.prop,
-			
-			activeContext = this.getActiveContext();
+			dObj = this.dObj;
 	
-		return statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, activeContext + statObj.contextSeparator + context);
+		return statObj.getByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext() + statObj.contextSeparator + context);
 	};	
+	/////////////////////////////////
+	//// single methods (add)
+	/////////////////////////////////	
+	
 	/**
-	 * Добавить новый элемент в объект (с учётом контекста)
+	 * add new element to object (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} cValue - новый элемент или контекст для sourceID (знак # указывает порядок)
-	 * @param {String} [propType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало") или имя добавляемого свойства (в случае если имеем дело с объектом, также для объекта к имени свойсва можно использовать приставку "::unshift" - результат будет аналогичен работе unshift для массива)
-	 * @param {String} [activeID=this.dObj.prop.activeCollectionID] - ИД коллекции
-	 * @param {String} [sourceID=undefined] - ИД коллекции из которого берётся значение для вставки
-	 * @param {Boolean} [deleteType=false] - если установленно true, то удаляет элемент из переносимой коллекции
+	 * @param {mixed|Context} cValue - new element или context for sourceID (sharp (#) char indicates the order)
+	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "::unshift" - the result will be similar to work for an array "unshift")
+	 * @param {String} [activeID=this.dObj.prop.activeCollectionID] - collection ID
+	 * @param {String} [sourceID=undefined] - source ID (if move)
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -1575,19 +1567,17 @@
 			cObj, sObj,
 	
 			activeCollectionID = sys.activeCollectionID,
-			
-			tmpContext, tmpContextCheck,
 	
 			oCheck, lCheck;
 		
-		cObj = statObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, prop.activeContext);
+		cObj = statObj.getByLink(activeID && activeID !== this.config.constants.active ? sys.tmpCollection[activeID] : prop.activeCollection, this.getActiveContext());
 		
 		if (typeof cObj === "object") {
 			oCheck = $.isPlainObject(cObj);
 	
-			// Простое добавление
+			// simple add
 			if (!sourceID) {
-				// Определение типа добавления
+				// add type
 				if (oCheck === true) {
 					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
 					lCheck = statObj.addElementToObject(cObj, propType.toString(), cValue);
@@ -1599,12 +1589,12 @@
 						cObj.unshift(cValue);
 					}
 				}
-			// Перенос
+			// move
 			} else {
 				cValue = $.isExist(cValue) ? cValue.toString() : "";
-				sObj = statObj.getByLink(sourceID === this.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
+				sObj = statObj.getByLink(sourceID === this.config.constants.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
 
-				// Определение типа добавления
+				// add type
 				if (oCheck === true) {
 					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
 					lCheck = statObj.addElementToObject(cObj, propType.toString(), sObj);
@@ -1617,39 +1607,30 @@
 					}
 				}
 				
-				// Удаление элемента
+				// delete element
 				if (deleteType === true) {
-					if (sys.activeContextID) {
-						tmpContext = sys.activeContextID;
-						tmpContextCheck = true;
-					} else {
-						tmpContext = this._get("Context");
-						tmpContextCheck = false;
-					}
-					this._$("Context", "");
-	
-					if (sourceID === this.active) {
-						this.deleteElementByLink(cValue);
-					} else { this.deleteElementByLink(cValue, sourceID); }
-	
-					if (tmpContextCheck === true) {
-						this._set("Context", tmpContext);
-					} else { this._$("Context", tmpContext); }
+					this.config.flags.use.ac = false;
+					this.deleteElementByLink(cValue, sourceID);
+					this.config.flags.use.ac = true;
 				}
 			}
 	
-			// Перезаписываем ссылки (если для объекта использовался unshift)
+			// rewrites links (if used for an object "unshift")
 			if (lCheck !== true) { this.setElement("", lCheck, activeID || ""); }
-		} else { throw new Error("Unable to set property!"); }
+		} else { throw new Error("unable to set property!"); }
 	
 		return this;
 	};	
+	/////////////////////////////////
+	//// single methods (delete)
+	/////////////////////////////////
+		
 	/**
-	 * Удалить элемент коллекции по ссылке (с учётом контекста)
+	 * delete element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - ссылка (знак # указывает порядок)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - link (sharp (#) char indicates the order)
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementByLink = function (context, id) {
@@ -1665,27 +1646,27 @@
 			pos, n = 0,
 			
 			objLength,
-			cObj;
-		//
-		prop.activeContext = prop.activeContext.toString();
+			cObj,
+			
+			activeContext = this.getActiveContext();
 		
-		if (!context && !prop.activeContext) {
+		if (!context && !activeContext) {
 			this.setElement("", null);
 		} else {
-			// Подготавливаем контекст
-			context = (prop.activeContext + statObj.contextSeparator + context).split(statObj.contextSeparator);
-			// Удаляем "мёртвые" элементы
+			// prepare context
+			context = (activeContext + statObj.contextSeparator + context).split(statObj.contextSeparator);
+			// remove "dead" elements
 			for (i = context.length; i--;) {
 				context[i] = $.trim(context[i]);
 				if (context[i] === "" || context[i] === statObj.subcontextSeparator) { context.splice(i, 1); }
 			}
 			context = context.join(statObj.contextSeparator);
 
-			// Выбор родительского элемента для проверки типа
+			// choice of the parent element to check the type
 			cObj = statObj.getByLink(id && id !== "active" ?
 						dObj.sys.tmpCollection[id] : prop.activeCollection,
 						context.replace(new RegExp("[^" + statObj.contextSeparator + "]+$"), ""));
-			// Выбор ссылки
+			// choice link
 			context = context.replace(new RegExp(".*?([^" + statObj.contextSeparator + "]+$)"), "$1");
 
 			if ($.isArray(cObj)) {
@@ -1700,11 +1681,11 @@
 					pos = +context.replace(statObj.subcontextSeparator, "");
 					if (pos < 0) { 
 						objLength = 0;
-						// Считаем длину объекта
+						// object length
 						for (key in cObj) {
 							if (cObj.hasOwnProperty(key)) { objLength++; }
 						}
-						// Если отсчёт идёт с конца
+						// if reverse
 						pos += objLength;
 					}
 
@@ -1725,11 +1706,11 @@
 		return this;
 	};
 	/**
-	 * Удалить элементы коллекции по ссылке (с учётом контекста)
+	 * delete elements by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context|Array|Plain Object} objContext - ссылка (знак # указывает порядок), массив ссылок или объект (ИД коллекции: массив ссылок)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context|Array|Plain Object} objContext - link (sharp (#) char indicates the order), array of links or object (collection ID: array of links)
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementsByLink = function (objContext, id) {
@@ -1753,13 +1734,17 @@
 	
 		return this;
 	};	
+	/////////////////////////////////
+	//// single methods (concatenation)
+	/////////////////////////////////
+	
 	/**
-	 * Конкатенация коллекций (с учётом контекста)
+	 * concatenation of collections (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Collection} obj - коллекция
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {String} [id=this.active] - ИД коллекции, с которой происходит конкатенация
+	 * @param {Collection} obj - collection
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {String} [id=this.config.constants.active] - collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -1770,11 +1755,9 @@
 			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
-			prop = dObj.prop,
-	
 			cObj;
 		
-		cObj = statObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + statObj.contextSeparator + context);	
+		cObj = statObj.getByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext() + statObj.contextSeparator + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
@@ -1785,21 +1768,20 @@
 					this.setElement(context, cObj, id || "");
 				} else { this.addElement(obj, "push", id || ""); }
 			}
-		} else { throw new Error("Incorrect data type!"); }
+		} else { throw new Error("incorrect data type!"); }
 	
 		return this;
 	};	
+	/////////////////////////////////
+	//// mult methods (core)
+	/////////////////////////////////
+	
 	/**
-	 * Вернуть количество элементов в коллекции (с учётом контекста)
-	 * 
-	 * // Перегрузки:
-	 * 1) Если нету входных параметров, то ИД равен активной коллекции, а фильтр отключён;
-	 * 2) Если один входной параметр (строка), то он равен ИДу, а фильтр отключён;
-	 * 3) Если один входной параметр (коллекция), то возвращается её длина (активный контекст не учитывается).
+	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String|Collection} [id=this.active] - ИД коллекции или коллекция
+	 * @param {Filter|String|Boolean|Collection} [filter=false] - filter function, string expressions or "false"
+	 * @param {String|Collection} [id=this.config.constants.active] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
 	 */
@@ -1808,22 +1790,18 @@
 		
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
-	
 			cObj, cOLength, aCheck,
-	
-			i, countRecords;
-	
-
+			key, countRecords;
+		
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
 		}
-
-		if (!id || id === this.active) {
-			cObj = prop.activeCollection;
+		
+		if (!id || id === this.config.constants.active) {
+			cObj = dObj.prop.activeCollection;
 		} else if ($.isString(id)) {
 			cObj = dObj.sys.tmpCollection[id];
 		} else {
@@ -1831,13 +1809,12 @@
 			cObj = id;
 		}
 		//
-		if (aCheck !== true) {
-			cObj = $.Collection.stat.obj.getByLink(cObj, prop.activeContext);
-		}
-		// Если null
+		if (aCheck !== true) { cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext()); }
+		// if cObj is null
 		if (cObj === null) { return 0; }
-		
+
 		cOLength = cObj.length;
+		// if cObj is String
 		if ($.isString(cObj)) { return cOLength; }
 		
 		if (typeof cObj === "object") {
@@ -1845,53 +1822,48 @@
 				countRecords = cOLength;
 			} else {
 				countRecords = 0;
-				for (i in cObj) {
-					if (cObj.hasOwnProperty(i)
-					&& (
-						filter === false
-						|| this.customFilter(filter, cObj, i, cOLength || null, this, aCheck === true ? "array" : id ? id : this.active)) === true) {
-						countRecords++;
+				for (key in cObj) {
+					if (cObj.hasOwnProperty(key)) {
+						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.config.constants.active) === true) {
+							countRecords++;
+						}
 					}
 				}
 			}
-		} else { throw new Error("Incorrect data type!"); }
+		} else { throw new Error("incorrect data type!"); }
 	
 		return countRecords;
 	};
 	/**
-	 * Перебрать коллекцию (с учётом контекста)
+	 * forEach method (in context)
 	 *
-	 * // Перегрузки:
-	 * 1) Если id имеет логическое значение, то он считается за mult.
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback - функция callback
-	 * @param {Function} [callback.before=undefined] - функция callback, которая срабаывает перед началом итераций
-	 * @param {Function} [callback.after=undefined] - функция callback, которая срабатывает после конца итераций
-	 * @param {Function} [callback.beforeFilter=undefined] - функция callback, которая срабаывает перед фильтром
-	 * @param {Function} [callback.afterFilter=undefined] - функция callback, которая срабатывает после фильтра
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
-	 * @param {Number|Boolean} [count=false] - максимальное количество результатов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Function} callback - callback
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
-		// Если id имеет логическое значение
+		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
-		// Значения по умолчанию
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -1906,43 +1878,23 @@
 	
 			i, j = 0;
 		
-		// Вешаем ссылку
-		dObj.sys.callbackCallee = callback;
-		// Событие "до" итераций
-		if (callback.before) {
-			if (callback.before.apply(this, arguments) === false) {
-				return this;
-			}
-		}
-		
-		cObj = $.Collection.stat.obj.getByLink(id !== this.active ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		// "callee" link
+		dObj.sys.callee.callback = callback;
+		//
+		cObj = $.Collection.stat.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : prop.activeCollection, this.getActiveContext());
 		cOLength = this.length(cObj);
 		
+		//
 		if ($.isArray(cObj)) {
 			tmpLength = cOLength - 1;
 			for (i = indexOf !== false ? indexOf - 1 : -1; i++ < tmpLength;) {
 				if (count !== false && j === count) { break; }
-				
-				// Событие "до" фильтра итераций
-				if (callback.beforeFilter) {
-					if (callback.beforeFilter(cObj, i, cOLength, this, id) === false) {
-						return this;
-					}
-				}
-				
 				if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) { from--; continue; }
 					
 					if (callback.call(this, cObj, i, cOLength, this, id) === false) { break; }
 					if (mult === false) { break; }
 					j++;
-				}
-				
-				// Событие "после" фильтра итераций
-				if (callback.afterFilter) {
-					if (callback.afterFilter(cObj, i, cOLength, this, id) === false) {
-						return this;
-					}
 				}
 			}
 		} else {
@@ -1951,13 +1903,6 @@
 					if (count !== false && j === count) { break; }
 					if (indexOf !== false && indexOf !== 0) { indexOf--; continue; }
 					
-					// Событие "до" фильтра итераций
-					if (callback.beforeFilter) {
-						if (callback.beforeFilter(cObj, i, cOLength, this, id) === false) {
-							return this;
-						}
-					}
-					
 					if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) { from--; continue; }
 							
@@ -1965,48 +1910,45 @@
 						if (mult === false) { break; }
 						j++;
 					}
-					
-					// Событие "после" фильтра итераций
-					if (callback.afterFilter) {
-						if (callback.afterFilter(cObj, i, cOLength, this, id) === false) {
-							return this;
-						}
-					}
 				}
 			}
 		}
-		
-		// Событие "после" итераций
-		callback.after && callback.after.apply(this, arguments);
 	
 		return this;
 	};	
+	/////////////////////////////////
+	//// mult methods (search)
+	/////////////////////////////////
+	
 	/**
-	 * Искать элементы коллекции (с учётом контекста)
+	 * search elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
-	 * @param {Number|Boolean} [count=false] - максимальное количество элементов для поиска (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Number|Array}
 	 */
 	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
-		// Если id имеет логическое значение
+		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
-		// Значения по умолчанию
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -2030,42 +1972,49 @@
 		return result;
 	};
 	/**
-	 * Искать элемент коллекции (с учётом контекста)
+	 * search element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Number|Array}
 	 */
 	$.Collection.fn.searchElement = function (filter, id) {
 		return this.searchElements(filter || "", id || "", false);
 	};	
+	/////////////////////////////////
+	//// mult methods (return)
+	/////////////////////////////////
+	
 	/**
-	 * Вернуть элементы коллекции (с учётом контекста)
+	 * return elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
-	 * @param {Number|Boolean} [count=false] - максимальное количество элементов для поиска (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
-		// Если id имеет логическое значение
+		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
-		// Значения по умолчанию
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -2089,43 +2038,50 @@
 		return result;
 	};
 	/**
-	 * Вернуть элемент коллекции (с учётом контекста)
+	 * return element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElement = function (filter, id) {
 		return this.returnElements(filter || "", id || "", false);
-	};	
+	};
+	/////////////////////////////////
+	//// mult methods (replace)
+	/////////////////////////////////
+	
 	/**
-	 * Заменить элементы коллекции (с учётом контекста)
-	 * 
+	 * replace elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
+	 *  
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {mixed} replaceObj - объект замены (если функция, то выполняется, как callback) 
-	 * @param {String} [id=this.active] - ИД коллекции
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественная замена
-	 * @param {Number|Boolean} [count=false] - максимальное количество замен (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.replaceElements = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
-		// Если id имеет логическое значение
+		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
-		// Значения по умолчанию
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -2146,31 +2102,35 @@
 		return this;
 	};
 	/**
-	 * Заменить элемент коллекции (с учётом контекста)
+	 * replace element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {mixed} replaceObj - объект замены (если функция, то выполняется, как callback) 
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.replaceElement = function (filter, replaceObj, id) {
 		return this.replaceElements(filter || "", replaceObj, id || "", false);
-	};	
+	};
+	/////////////////////////////////
+	//// mult methods (move && copy)
+	/////////////////////////////////
+		
 	/**
-	 * Переместить элементы коллекции (с учётом контекста)
+	 * move elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
-	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
-	 * @param {Boolean} [deleteType=true] - если установленно true, то удаляет элемент из переносимой коллекции
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
@@ -2190,44 +2150,22 @@
 		
 		var
 			statObj = $.Collection.stat.obj,
-		
-			dObj = this.dObj,
-			sys = dObj.sys,
-	
-			tmpContext, tmpContextCheck, tmpLength,
 	
 			deleteList = [],
-			aCheckType,
+			aCheckType = $.isArray(statObj.getByLink(this._get("Collection", activeID), this.getActiveContext())),
 	
-			elements, i, j;
+			elements, eLength, i = -1;
 	
-		aCheckType = $.isArray(statObj.getByLink(this._get("Collection", activeID), dObj.prop.activeContext));
-	
-		// Поиск элементов для переноса
-		if (sys.activeContextID) {
-			tmpContext = sys.activeContextID;
-			tmpContextCheck = true;
-		} else {
-			tmpContext = this._get("Context");
-			tmpContextCheck = false;
-		}
-		this._$("Context", context);
-		//
+		// search elements
+		this.config.flags.use.ac = false;
 		elements = this.searchElements(moveFilter, sourceID, mult, count, from, indexOf);
-		//
-		if (tmpContextCheck === true) {
-			this._set("Context", tmpContext);
-		} else {
-			this._$("Context", tmpContext);
-		}
+		this.config.flags.use.ac = true;
 	
-		// Перенос элементов
+		// move
 		if (mult === true) {
-			tmpLength = elements.length - 1;
-	
-			for (i = -1; i++ < tmpLength;) {
+			eLength = elements.length - 1;
+			for (; i++ < eLength;) {
 				this.addElement(context + statObj.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + statObj.methodSeparator + addType, activeID, sourceID);
-
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
@@ -2235,105 +2173,99 @@
 			deleteType === true && deleteList.push(elements);
 		}
 	
-		// Удаляем, если нужно, элементы
+		// delete element
 		if (deleteType === true) {
-			this._$("Context", context);
+			this.config.flags.use.ac = false;
 			this.deleteElementsByLink(deleteList, sourceID);
-	
-			if (tmpContextCheck === true) {
-				this._set("Context", tmpContext);
-			} else {
-				this._$("Context", tmpContext);
-			}
+			this.config.flags.use.ac = true;
 		}
 	
 		return this;
 	},
 	/**
-	 * Переместить элемент коллекции (с учётом контекста)
+	 * move element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElement = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
-	 * Копировать элементы коллекции (с учётом контекста)
+	 * copy elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
-	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.copyElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
-		moveFilter = moveFilter || false;
-		context = $.isExist(context) ? context.toString() : "";
-		
-		sourceID = sourceID || "";
-		activeID = activeID || "";
-		
-		addType = addType || "push";
-	
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.moveElements(moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, false);
+		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
-	 * Копировать элмент коллекции (с учётом контекста)
+	 * copy element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.copyElement = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};	
+	/////////////////////////////////
+	//// mult methods (delete)
+	/////////////////////////////////
+	
 	/**
-	 * Удалить элементы коллекции (с учётом контекста)
+	 * delete elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественное удаление
-	 * @param {Number|Boolean} [count=false] - максимальное количество удалений (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
-		// Если id имеет логическое значение
+		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
-		// Значения по умолчанию
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -2352,30 +2284,30 @@
 		return this;
 	};
 	/**
-	 * Удалить элемент коллекции (с учётом контекста)
+	 * delete element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElement = function (filter, id) {
 		return this.deleteElements(filter || "", id || "", false);
 	};	
 	/////////////////////////////////
-	// Дополнительные методы
+	// additional methods
 	/////////////////////////////////
 	
 	/**
-	 * Расчитать сложный фильтр
+	 * calculate multi filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Array|String} [filter=false] - условие поиска или массив атомов условия или строковое условие
-	 * @param {Collection} $this - ссылка на коллекцию
-	 * @param {Number|String} i - ключ итерации
-	 * @param {Number} cALength - длина коллекции
-	 * @param {Collection Object} $obj - ссылка на объект $.Collection
-	 * @param {String} id - ИД активной коллекции
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Collection} $this - link to collection
+	 * @param {Number|String} i - iteration (key)
+	 * @param {Number} cALength - collection length
+	 * @param {Collection Object} $obj - link to collection object
+	 * @param {String} id - collection ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn.customFilter = function (filter, $this, i, cALength, $obj, id) {
@@ -2393,27 +2325,29 @@
 			and, or, inverse,
 			
 			j = -1;
-	
+		
+		// if filter is function
 		if ($.isFunction(filter)) {
-			dObj.sys.filterCallee = filter;
+			sys.callee.filter = filter;
 			
 			return filter($this, i, cALength, $obj, id);
 		}
 		
-		if (!filter || ($.isString(filter) && $.trim(filter) === this.active)) {
+		// if filter is not defined or filter is a string constant
+		if (!filter || ($.isString(filter) && $.trim(filter) === this.config.constants.active)) {
 			if (prop.activeFilter) {
-				dObj.sys.filterCallee = prop.activeFilter;
+				sys.callee.filter = prop.activeFilter;
 				
 				return prop.activeFilter($this, i, cALength, $obj, id);
 			}
 	
 			return true;
 		} else {
-			// Если фильр задан строкой, то парсим его
+			// if filter is string
 			if (!$.isArray(filter)) {
-				// Если простой фильр
+				// if simple filter
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					dObj.sys.filterCallee = sys.tmpFilter[filter];
+					sys.callee.filter = sys.tmpFilter[filter];
 					
 					return sys.tmpFilter[filter]($this, i, cALength, $obj, id);
 				}
@@ -2427,7 +2361,7 @@
 							)
 						.split(" ");
 			}
-			// Расчёт вложенных фильтров
+			// calculate deep filter
 			calFilter = function (array, iter) {
 				var
 					i = -1,
@@ -2446,11 +2380,11 @@
 					result.push(array[i]);
 				}
 			};
-			// Расчитываем фильтр
+			// calculate filter
 			fLength = filter.length - 1;
 			
 			for (; j++ < fLength;) {
-				// Расчёт скобок
+				// calculate atoms
 				if (filter[j] === "(" || filter[j] === "!(") {
 					if (filter[j].substring(0, 1) === "!") {
 						inverse = true;
@@ -2468,15 +2402,16 @@
 					} else {
 						result = inverse === true ? !tmpResult : tmpResult || result;
 					}
-				// Расчёт внешних фильтров
+				// calculate outer filter
 				} else if (filter[j] !== ")" && filter[j] !== "||" && filter[j] !== "&&") {
+					console.log(filter[j]);
 					if (filter[j].substring(0, 1) === "!") {
 						inverse = true;
 						filter[j] = filter[j].substring(1);
 					} else { inverse = false; }
 					
-					tmpFilter = filter[j] === this.active ? prop.activeFilter : sys.tmpFilter[filter[j]];
-					dObj.sys.filterCallee = tmpFilter;
+					tmpFilter = filter[j] === this.config.constants.active ? prop.activeFilter : sys.tmpFilter[filter[j]];
+					sys.callee.filter = tmpFilter;
 					//
 					tmpResult = tmpFilter($this, i, cALength, $obj, id);
 					if (!and && !or) {
@@ -2486,7 +2421,7 @@
 					} else {
 						result = inverse === true ? !tmpResult : tmpResult || result;
 					}
-				// И и ИЛИ
+				// "and" or "or"
 				} else if (filter[j] === "||") {
 					and = false;
 					or = true;
@@ -2500,11 +2435,11 @@
 		}
 	};
 	/**
-	 * Расчитать сложный парсер
+	 * calculate multi parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|Array|String} parser - парсер или массив парсеров или строковое условие
-	 * @param {String} str - исходная строка
+	 * @param {Parser|String} parser - parser function or string expressions
+	 * @param {String} str - source string
 	 * @return {String}
 	 */
 	$.Collection.fn.customParser = function (parser, str) {
@@ -2515,16 +2450,18 @@
 			
 			tmpParser,
 			i;
-	
+		
+		// if parser is function
 		if ($.isFunction(parser)) {
-			dObj.sys.parserCallee = parser;
+			sys.callee.parser = parser;
 			
 			return parser(str, this);
 		}
-	
-		if (!parser || ($.isString(parser) && $.trim(parser) === this.active)) {
+		
+		// if parser is not defined or parser is a string constant
+		if (!parser || ($.isString(parser) && $.trim(parser) === this.config.constants.active)) {
 			if (prop.activeParser) {
-				dObj.sys.parserCallee = prop.activeParser;
+				sys.callee.parser = prop.activeParser;
 				
 				return prop.activeParser(str, this);
 			}
@@ -2533,8 +2470,9 @@
 		} else {
 			if ($.isString(parser)) {
 				parser = $.trim(parser);
+				// if simple parser
 				if (parser.search("&&") === -1) {
-					dObj.sys.parserCallee = sys.tmpParser[parser];
+					sys.callee.parser = sys.tmpParser[parser];
 					
 					return sys.tmpParser[parser](str, this);
 				}
@@ -2543,9 +2481,9 @@
 			
 			for (i = parser.length; i--;) {
 				parser[i] = $.trim(parser[i]);
-				tmpParser = parser[i] === this.active ? prop.activeParser : sys.tmpParser[parser[i]];
+				tmpParser = parser[i] === this.config.constants.active ? prop.activeParser : sys.tmpParser[parser[i]];
 				
-				dObj.sys.parserCallee = tmpParser;
+				sys.callee.parser = tmpParser;
 				str = tmpParser(str, this);
 			}
 	
@@ -2555,11 +2493,11 @@
 	
 	
 	/**
-	 * Расчитать контекст на n уровней вверх
+	 * calculate parent context
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] - уровень подъёма
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Number} [n=1] - level up
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {String}
 	 */
 	$.Collection.fn.parentContext = function (n, id) {
@@ -2575,18 +2513,18 @@
 	
 			i;
 	
-		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.stat.obj.contextSeparator);
+		context = (id && id !== this.config.constants.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.stat.obj.contextSeparator);
 	
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
 		return context.join($.Collection.stat.obj.contextSeparator);
 	};
 	/**
-	 * Подняться на n уровень контекста
+	 * parent
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] - уровень подъёма
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Number} [n=1] - level up
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.parent = function (n, id) {
@@ -2595,10 +2533,10 @@
 			sys = dObj.sys,
 			prop = dObj.prop,
 	
-			activeContextID = dObj.sys.activeContextID,
+			activeContextID = sys.activeContextID,
 			context = this.parentContext.apply(this, arguments);
 	
-		if (!id || id === this.active) {
+		if (!id || id === this.config.constants.active) {
 			if (activeContextID) {
 				sys.tmpContext[activeContextID] = context;
 			}
@@ -2612,14 +2550,18 @@
 	
 		return this;
 	};	
+	/////////////////////////////////
+	//// sort method
+	/////////////////////////////////
+	
 	/**
-	 * Сортировать коллекцию (с учётом контекста)
+	 * sort collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [field] - поле сортировки
-	 * @param {Boolean} [rev=false] - перевернуть массив (константы: shuffle - случайное перемешивание массива)
-	 * @param {Function|Boolean} [fn=toUpperCase] - функция действий над элементами коллекций (false - если ничего не делать)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [field] - field name
+	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
+	 * @param {Function|Boolean} [fn=toUpperCase] - callback ("false" if disabled)
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -2638,62 +2580,58 @@
 			statObj = $.Collection.stat,
 		
 			dObj = this.dObj,
-			prop = dObj.prop,
 			sys = dObj.sys,
 	
 			activeCollectionID = sys.activeCollectionID,
-	
 			cObj,
 	
-			i,
-	
-			// Сортировка объекта по ключам
+			// sort object by key
 			sortObjectByKey = function (obj) {
 				var
 					sortedKeys = [],
 					sortedObj = {},
-					i;
+					key;
 	
-				for (i in obj) { if (obj.hasOwnProperty(i)) { sortedKeys.push(i); } }
+				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
 	
 				sortedKeys.sort(statObj.sort.sortBy(field, rev, fn));
 	
-				for (i in sortedKeys) {
-					if (sortedKeys.hasOwnProperty(i)) {
-						sortedObj[sortedKeys[i]] = obj[sortedKeys[i]];
+				for (key in sortedKeys) {
+					if (sortedKeys.hasOwnProperty(key)) {
+						sortedObj[sortedKeys[key]] = obj[sortedKeys[key]];
 					}
 				}
 	
 				return sortedObj;
 			},
-			// Сортировка объекта по значениям
+			// sort object by value
 			sortObject = function (obj) {
 				var
 					sortedValues = [],
 					sortedObj = {},
-					i;
+					key;
 	
-				for (i in obj) {
-					if (obj.hasOwnProperty(i)) {
+				for (key in obj) {
+					if (obj.hasOwnProperty(key)) {
 						sortedValues.push({
-							key: i,
-							value: obj[i]
+							key: key,
+							value: obj[key]
 						});
 					}
 				}
 	
 				sortedValues.sort(statObj.sort.sortBy(field === true ? "value" : "value" + statObj.obj.contextSeparator + field, rev, fn));
 	
-				for (i in sortedValues) {
-					if (sortedValues.hasOwnProperty(i)) {
-						sortedObj[sortedValues[i].key] = sortedValues[i].value;
+				for (key in sortedValues) {
+					if (sortedValues.hasOwnProperty(key)) {
+						sortedObj[sortedValues[key].key] = sortedValues[key].value;
 					}
 				}
 	
 				return sortedObj;
 			};
 	
-		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext());
 	
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
@@ -2707,57 +2645,63 @@
 	
 				this.setElement("", cObj, id || "");
 			}
-		} else { throw new Error("Incorrect data type!"); }
+		} else { throw new Error("incorrect data type!"); }
 	
 		return this;
 	};	
+	/////////////////////////////////
+	// native
+	/////////////////////////////////
+		
 	/**
-	 * Вернуть валидную JSON строку коллекции (с учётом контекста)
+	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [vID=this.active] - ИД коллекции
-	 * @param {Function|Array} [replacer=undefined] - показывает, как элементы коллекции преобразуются в строку
-	 * @param {Number|String} [space=undefined] - пробелы
+	 * @param {String|Object} [id=this.config.constants.active] - collection ID
+	 * @param {Function|Array} [replacer=undefined] - an optional parameter that determines how object values are stringified for objects
+	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
 	 */
-	$.Collection.fn.toString = function (vID, replacer, space) {
-		var
-			dObj = this.dObj,
-			prop = dObj.prop,
+	$.Collection.fn.toString = function (id, replacer, space) {
+		var dObj = this.dObj, cObj;
 	
-			cObj,
-			i;
-	
-		cObj = vID && $.isString(vID) && vID !== this.active ? dObj.sys.tmpCollection[vID] : typeof vID === "object" ? vID : prop.activeCollection;
-		cObj = $.Collection.stat.obj.getByLink(cObj, prop.activeContext);
+		cObj = id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.activeCollection;
+		cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext());
 		
-		return JSON.stringify(cObj, replacer || "", space || "");
+		if (JSON && JSON.stringify) {
+			return JSON.stringify(cObj, replacer || "", space || "");
+		}
+		throw new Error("object JSON is not defined!");
 	};
 	/**
-	 * Вернуть длину коллекции
+	 * return collection length
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Number}
 	 */
 	$.Collection.fn.valueOf = function (id) {
-		return this.length($.isExist(id) ? id : this.active);
+		return this.length($.isExist(id) ? id : this.config.constants.active);
 	};	
+	/////////////////////////////////
+	// other
+	/////////////////////////////////
+	
 	/**
-	 * Функция для работы в цепочке с deferred
+	 * jQuery "then" method
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} done - callback в случае успеха
-	 * @param {Function} [fail=done] - callback в случае провала
+	 * @param {Function} done - callback (if success)
+	 * @param {Function} [fail=done] - callback (if failed)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.then = function (done, fail) {
 		var $this = this;
 		
 		if (arguments.length === 1) {
-			$.when(this.prop("activeDefer")).always(function () { done.apply($this, arguments); });
+			$.when($this.prop("activeDefer")).always(function () { done.apply($this, arguments); });
 		} else {
-			$.when(this.prop("activeDefer")).then(
+			$.when($this.prop("activeDefer")).then(
 				function () { done().apply($this, arguments); },
 				function () { fail().apply($this, arguments); }
 			);
@@ -2765,23 +2709,26 @@
 			
 		return this;
 	};	
+	/////////////////////////////////
+	//// design methods (print)
+	/////////////////////////////////
+	
 	/**
-	 * Простая шаблонизация коллекции (с учётом контекста)
+	 * simple templating (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param param - объект настроек
-	 * @param {Template} [param.template=this.dObj.prop.activeTemplate] - шаблон
-	 * @param {jQuery Object|Boolean} [param.target=this.dObj.prop.activeTarget] - контейнер вывода результата (false - если выводить в переменную)
-	 * @param {String} [param.variable=this.dObj.sys.activeVarID] - ИД переменной (если param.target === false)
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.activeParser] - парсер, ИД парсера, строковое условие или false
-	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пагинатору
-	 * @param {String} [param.appendType=this.dObj.prop.activeAppendType] - режим добавления в DOM
-	 * @param {String} [param.resultNull=this.dObj.prop.activeResultNull] - текст, выводимый в случае если результатов нету
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
-	 * @param {Number|Boolean} [count=false] - максимальное количество записей (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param param - object settings
+	 * @param {Template} [param.template=this.dObj.prop.template] - template
+	 * @param {jQuery Object|Boolean} [param.target=this.dObj.prop.target] - element to output the result ("false" - if you print a variable)
+	 * @param {String} [param.variable=this.dObj.sys.activeVarID] - variable ID (if param.target === false)
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.parser] - parser function, string expressions or "false"
+	 * @param {String} [param.appendType=this.dObj.prop.activeAppendType] - type additions to the DOM
+	 * @param {String} [param.resultNull=this.dObj.prop.resultNull] - text displayed if no results
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.print = function (param, mult, count, from, indexOf) {
@@ -2793,124 +2740,130 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			$this = this,
-			dObj = $this.dObj,
+			dObj = this.dObj,
 			prop = dObj.prop,
 	
-			activeParser = param.parser || prop.activeParser,
-			activeTemplate = param.template || prop.activeTemplate,
+			parser = param.parser || prop.parser,
+			template = param.template || prop.template,
 	
-			activeTarget = param.target || param.target === false ? param.target : prop.activeTarget,
-			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
+			target = param.target || param.target === false ? param.target : prop.target,
+			resultNull = param.resultNull !== undefined ? param.resultNull : prop.resultNull,
 	
 			result = "",
 			action = function (data, i, aLength, $this, objID) {
-				result += activeTemplate(data, i, aLength, $this, objID);
+				result += template(data, i, aLength, $this, objID);
 				
 				if (mult !== true) { return false; }
 	
 				return true;
 			};
 		
-		// Ставим ссылку на шаблон
-		dObj.sys.templateCallee = activeTemplate;
+		// "callee" link
+		dObj.sys.callee.template = template;		
+		this.each(action, (param.filter || prop.activeFilter), this.config.constants.active, mult, count, from, indexOf);
 		
-		this.each(action, (param.filter || prop.activeFilter), "active", mult, count, from, indexOf);
+		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
+		result = parser !== false ? this.customParser((parser), result) : result;
 		
-		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
-		result = activeParser !== false ? $this.customParser((activeParser), result) : result;
-		
-		if (activeTarget === false) {
+		if (target === false) {
 			if (!param.variable) {
-				$this.$Var(result);
+				this.$Var(result);
 			} else {
-				$this.PushSetVar(param.variable, result);
+				this.PushSetVar(param.variable, result);
 			}
-		} else { activeTarget[(param.appendType || prop.activeAppendType)](result); }
+		} else { target[(param.appendType || prop.activeAppendType)](result); }
 	
-		return $this;
+		return this;
 	};	
+	/////////////////////////////////
+	//// design methods (extended print)
+	/////////////////////////////////
+		
 	/**
-	 * Сложная шаблонизация коллекции (с учётом контекста) (с активацией пагинатора)
+	 * extended templating (in context) (with pager)
 	 * 
 	 * @this {Colletion Object}
-	 * @param param - объект настроек
-	 * @param {Number} [param.page=this.dObj.prop.activePage] - номер страницы
-	 * @param {Template} [param.template=this.dObj.prop.activeTemplate] - шаблон
-	 * @param {Number|Boolean} [param.countBreak=this.dObj.prop.activeCountBreak] - количество записей на 1 страницу (false - выводятся все записи)
-	 * @param {Number} [param.pageBreak=this.dObj.prop.activePageBreak] - количество выводимых страниц (навигация)
-	 * @param {jQuery Object} [param.target=this.dObj.prop.activeTarget] - контейнер вывода результата
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.activeParser] - ИД парсера, строковое условие или false
-	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - если true, то последняя итерация берется из кеша
-	 * @param {Selector} [param.selectorOut=this.dObj.prop.activeSelectorOut] - cелектор, по которому читается количество записей на страницу
-	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пагинатору
-	 * @param {String} [param.appendType=this.dObj.prop.activeAppendType] - режим добавления в DOM
-	 * @param {String} [param.resultNull=this.dObj.prop.activeResultNull] - текст, выводимый в случае если результатов нету
+	 * @param param - object settings
+	 * @param {Number} [param.page=this.dObj.prop.param.page] - page number
+	 * @param {Template} [param.template=this.dObj.prop.activeTemplate] - template
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.param.numberBreak] - number of entries on 1 page (if "false", returns all records)
+	 * @param {Number} [param.pageBreak=this.dObj.prop.param.pageBreak] - number of displayed pages (navigation)
+	 * @param {jQuery Object} [param.target=this.dObj.prop.activeTarget] - element to output the result
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.activeParser] - parser function, string expressions or "false"
+	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - if "true", the last iteration is taken from cache
+	 * @param {Selector} [param.calculator=this.dObj.prop.activeCalculator] - selector, on which is the number of records per page
+	 * @param {Selector} [param.pager=this.dObj.prop.param.pager] - selector to pager
+	 * @param {String} [param.appendType=this.dObj.prop.activeAppendType] - type additions to the DOM
+	 * @param {String} [param.resultNull=this.dObj.prop.activeResultNull] - text displayed if no results
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.extPrint = function (param) {
 		param = param || {};
 		
 		var
-			$this = this,
-			dObj = $this.dObj,
+			dObj = this.dObj,
 			sys = dObj.sys,
 			prop = dObj.prop,
 	
-			cObj,
-			cOLength,
+			cObj, cOLength,
 			start, inc = 0,
-	
-			activeFilter = param.filter ? param.filter : prop.activeFilter,
-			activeParser = param.parser ? param.parser : prop.activeParser,
-			//
-			activePage = param.page || prop.activePage,
-			checkPage = activePage === (param.page + 1),
-			//
-			activeTemplate = param.template || prop.activeTemplate,
-			//
-			activeTarget = param.target || prop.activeTarget,
-			activeCountBreak = +param.countBreak || +prop.activeCountBreak,
-			activePageBreak = +param.countBreak || +prop.activePageBreak,
-			//
-			cache = prop.activeCache,
-			cacheIteration = $.isBoolean(param.cacheIteration) ? param.cacheIteration : cache.iteration,
-			//
-			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
-	
-			result = "",
-			action = function (data, i, aLength, $this, objID) {
-				result += activeTemplate(data, i, aLength, $this, objID);
-				inc = i;
-				
-				return true;
-			};
 			
-		// Получаем коллекцию
-		cObj = $.Collection.stat.obj.getByLink(prop.activeCollection, (param.context || prop.activeContext));
-		cOLength = $this.length();
-		// Количество записей на страницу
-		activeCountBreak = activeCountBreak === false ? cOLength : activeCountBreak;
+			checkPage,
+			
+			cache,
+			
+			result = "", action;
+			
+		param.filter = param.filter || prop.activeFilter;
+		param.parser = param.parser || prop.activeParser;
 		
-		// Ставим ссылку на шаблон
-		dObj.sys.templateCallee = activeTemplate;
+		param.page = param.page || prop.param.page;
+		checkPage = param.page === (param.page + 1);
+			
+		param.template = param.template || prop.activeTemplate;
+		param.target = param.target || prop.activeTarget;
 		
-		if ($.isPlainObject(cObj) || cacheIteration === false) {
-			start = activePage === 1 ? activeCountBreak : (activePage - 1) * activeCountBreak;
+		param.numberBreak = +param.numberBreak || +prop.param.numberBreak;
+		param.pageBreak = +param.pageBreak || +prop.param.pagerBreak;
+		
+		cache = prop.activeCache;
+		param.cacheIteration = $.isBoolean(param.cacheIteration) ? param.cacheIteration : cache.iteration;
+			
+		param.resultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull;
+	
+		result = "";
+		action = function (data, i, aLength, $this, objID) {
+			result += activeTemplate(data, i, aLength, $this, objID);
+			inc = i;
+				
+			return true;
+		};
+			
+		// get collection
+		cObj = $.Collection.stat.obj.getByLink(prop.activeCollection, (param.context || this.getActiveContext()));
+		cOLength = this.length();
+		
+		// number of records per page
+		param.numberBreak = param.numberBreak === false ? cOLength : param.numberBreak;
+		// "callee" link
+		sys.callee.template = param.template;
+		
+		if ($.isPlainObject(cObj) || param.cacheIteration === false) {
+			start = param.page === 1 ? param.numberBreak : (param.page - 1) * param.numberBreak;
 			//
-			this.each(action, activeFilter, "active", true, activeCountBreak, start);
+			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, start);
 		} else if ($.isArray(cObj) && cacheIteration === true) {
-			// Вычисляем стартовую позицию
-			start = activeFilter === false ?
-						activePage === 1 ? -1 : (activePage - 1) * activeCountBreak - 1 : cacheIteration === true ?
+			// calculate the starting position
+			start = param.filter === false ?
+						param.page === 1 ? -1 : (param.page - 1) * param.numberBreak - 1 : cacheIteration === true ?
 							checkPage === true ? cache.firstIteration : cache.lastIteration : i;
 			
-			// Перематывание кешированного шага назад
-			if (checkPage === true && activeFilter !== false) {
+			// rewind cached step back
+			if (checkPage === true && param.filter !== false) {
 				for (; start--;) {
-					if ($this.customFilter(activeFilter, cObj, start, cOLength, $this, "active") === true) {
-						if (inc === activeCountBreak) {
+					if (this.customFilter(param.filter, cObj, start, cOLength, $this, this.config.constants.active) === true) {
+						if (inc === param.numberBreak) {
 							break;
 						} else { inc++; }
 					}
@@ -2919,7 +2872,7 @@
 				cache.lastIteration = start;
 			}
 			
-			this.each(action, activeFilter, "active", true, activeCountBreak, null, start);
+			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, null, start);
 			//
 			cache.firstIteration = cache.lastIteration;
 			cache.lastIteration = inc - 1;
@@ -2929,49 +2882,49 @@
 		}
 		
 		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
-		result = activeParser !== false ? $this.customParser(activeParser, result) : result;
-		
-		// Вставляем в DOM
+		result = activeParser !== false ? this.customParser(activeParser, result) : result;
+		// append to DOM
 		activeTarget[(param.appendType || prop.activeAppendType)](result);
-		
-		// Подготовка данных для панели навигации
-		sys.countRecords = $this.length(activeFilter);
-		sys.countRecordsInPage = $((param.selectorOut || prop.activeSelectorOut), activeTarget).length;
-		sys.countTotal = activeCountBreak * activePage - (activeCountBreak - sys.countRecordsInPage);
 	
 		$.extend(param, {
-			countRecords: sys.countRecords,
-			countRecordsInPage: sys.countRecordsInPage,
-			countTotal: sys.countTotal
+			countRecords: this.length(param.filter),
+			countRecordsInPage: $((param.calculator || prop.activeCalculator), activeTarget).length,
+			countTotal: param.numberBreak * param.page - (param.numberBreak - sys.countRecordsInPage)
 		});
-		// Генерерируем панель навигации
-		if (activePage !== 1 && sys.countRecordsInPage === 0) {
-			dObj.prop.activePage--;
-			$this.extPrint.apply($this, arguments);
-		} else { $this.easyPage(param, dObj.prop); }
+		
+		/*
+		// generate navigation bar
+		if (param.page !== 1 && sys.countRecordsInPage === 0) {
+			prop.param.page--;
+			this.extPrint.apply(this, arguments);
+		} else { this.easyPage(param, prop); }*/
 	
-		return $this;
+		return this;
 	};
 	/**
-	 * Активация модели шаблона
+	 * activation of the model template
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Object} [param=undefined] - объект настроект (зависит от модели шаблона)
-	 * @param {Object} [prop=undefined] - свойства коллекции
+	 * @param {Object} [param=undefined] - object settings (depends on the model template)
+	 * @param {Object} [prop=undefined] - collection properties
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.easyPage = function (param, prop) {
-		// Ставим ссылку на модель
-		this.dObj.sys.templateModeCallee = this.dObj.prop.activeTemplateMode;
-		this.dObj.prop.activeTemplateMode.apply(this, arguments);
+		// "callee" link
+		this.dObj.sys.callee.templateModel = this.dObj.prop.activeTemplateModel;
+		this.dObj.prop.activeTemplateModel.apply(this, arguments);
 		
 		return this;
 	};	
+	/////////////////////////////////
+	//// design methods (table)
+	/////////////////////////////////
+		
 	/**
-	 * Генерация в таблицу (если шаблон состоял из td)
+	 * generating the table (if the template consisted of td)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [count=4] - количество td на строку
+	 * @param {Number} [count=4] - td number to a string
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.genTable = function (count) {
@@ -2993,9 +2946,7 @@
 	
 				for (j = -1; j++ < countDec;) {
 					queryString += "td:eq(" + (n - j) + ")";
-					if (j !== countDec) {
-						queryString += ",";
-					}
+					if (j !== countDec) { queryString += ","; }
 				}
 	
 				$(queryString, activeTarget).wrapAll("<tr></tr>");
@@ -3005,19 +2956,13 @@
 	
 				for (j = 0, i; j < i; j++) {
 					queryString += "td:eq(" + j + ")";
-					if (j !== (i - 1)) {
-						queryString += ",";
-					}
+					if (j !== (i - 1)) { queryString += ","; }
 				}
 	
-				activeTarget.children(queryString).wrapAll("<tr></tr>");
-	
+				activeTarget.children(queryString).wrapAll("<tr></tr>");	
 				queryString = "";
 	
-				for (; i < count; i++) {
-					queryString += "<td></td>";
-				}
-	
+				for (; i < count; i++) { queryString += "<td></td>"; }	
 				activeTarget.children("tr:last").append(queryString);
 			}
 			i++;
@@ -3028,7 +2973,7 @@
 		return this;
 	};	
 	$.Collection.fn.genIndex = function (indexName, id, fieldObj, filter, count, from, indexOf) {
-		id = id || this.active;
+		id = id || this.config.constants.active;
 		
 		var
 			dObj = this.dObj,
@@ -3049,7 +2994,7 @@
 			cObj1, cObj2,
 			resObj = {};
 	
-		if ((!id1 || id1 === this.active || !id2 || id2 === this.active) && activeCollectionID) {
+		if ((!id1 || id1 === this.config.constants.active || !id2 || id2 === this.config.constants.active) && activeCollectionID) {
 			id1 = id1 || activeCollectionID;
 			id2 = id2 || activeCollectionID;
 		} else if (!activeCollectionID) { throw new Error("Invalid ID collection"); }
@@ -3058,11 +3003,15 @@
 		
 		console.log(resObj);
 	}	
+	/////////////////////////////////
+	//// jQuery methods (core)
+	/////////////////////////////////
+		
 	/**
-	 * Работа с коллекциями jQuery
+	 * jQuery collection
 	 * 
 	 * @this {jQuery Object}
-	 * @param {Object} prop - объект настроек
+	 * @param {Object} prop - user's preferences
 	 * @return {Colletion Object}
 	 */
 	$.fn.collection = function (prop) {
@@ -3087,6 +3036,7 @@
 			},
 			inObj = function (elem) {
 				var array = [];
+				//
 				elem.each(function (n) {
 					var
 						$this = $(this),
@@ -3108,8 +3058,9 @@
 					}
 	
 					if (cLength) {
+						cLength--;
 						array[n][stat.classes] = {};
-						for (i = 0; i < cLength; i++) {
+						for (i = -1; i++ < cLength;) {
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}
@@ -3118,20 +3069,18 @@
 						array[n][stat.childNodes] = inObj($this.children());
 					}
 	
-					if (txt !== false) {
-						array[n][stat.val] = txt.replace(/[\r\t\n]/g, " ");
-					}
+					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
 				});
 	
 				return array;
 			},
-			array = inObj(this);
+			data = inObj(this);
 	
-		if (prop) { return new $.Collection(array, prop); }
+		if (prop) { return new $.Collection(data, prop); }
 	
-		return new $.Collection(array);
+		return new $.Collection(data);
 	};
-	// Стандартные данные
+	// values by default
 	if (!$.fn.collection.stat) {
 		$.fn.collection.stat = {
 			val: "val",
@@ -3139,8 +3088,12 @@
 			classes: "classes"
 		};
 	};	
+	/////////////////////////////////
+	//// jQuery methods (compiler templates)
+	/////////////////////////////////
+	
 	/**
-	 * Компиляция шаблона
+	 * compiler templates
 	 * 
 	 * @this {jQuery Object}
 	 * @throw {Error}
@@ -3183,8 +3136,12 @@
 		resStr += ";";
 		return new Function("$this", "i", "aLength", "$obj", "id", resStr + jsStr + " return result;");
 	};	
+	/////////////////////////////////
+	//// jQuery methods (other)
+	/////////////////////////////////
+		
 	/**
-	 * Проверить на строку 
+	 * string test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -3193,7 +3150,7 @@
 		return Object.prototype.toString.call(val) === "[object String]";
 	};
 	/**
-	 * Проверить на логическое значение 
+	 * boolean test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -3202,7 +3159,7 @@
 		return Object.prototype.toString.call(val) === "[object Boolean]";
 	};
 	/**
-	 * Проверить на null и undefined
+	 * null && undefined && empty string test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -3211,12 +3168,12 @@
 		return val !== undefined && val !== "undefined" && val !== null && val !== "";
 	};
 	/**
-	 * Метод unshift для объекта arguments
+	 * unshift for arguments (object)
 	 * 
-	 * @param {Object} obj - исходный объект
-	 * @param {mixed} pushVal - новое свойство
-	 * @param {String|Number} [pushName=0] - имя свойства
-	 * @return {Object}
+	 * @param {Object} obj - some object
+	 * @param {mixed} pushVal - new value
+	 * @param {String|Number} [pushName=0] - property name
+	 * @return {Array}
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
 		var newObj = [pushVal], i = 0, oLength = obj.length;
@@ -3228,7 +3185,6 @@
 		return newObj;
 	};
 })(jQuery); //
-
 /*
  * http://www.JSON.org/json2.js
  * 2011-10-19

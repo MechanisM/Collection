@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context} context - link (sharp (#) char indicates the order)
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementByLink = function (context, id) {
@@ -26,13 +26,13 @@
 			objLength,
 			cObj,
 			
-			activeContext = this.getActiveContext();
+			context = this.getActiveContext();
 		
-		if (!context && !activeContext) {
+		if (!context && !context) {
 			this.setElement("", null);
 		} else {
 			// prepare context
-			context = (activeContext + statObj.contextSeparator + context).split(statObj.contextSeparator);
+			context = (context + statObj.contextSeparator + context).split(statObj.contextSeparator);
 			// remove "dead" elements
 			for (i = context.length; i--;) {
 				context[i] = $.trim(context[i]);
@@ -42,7 +42,7 @@
 
 			// choice of the parent element to check the type
 			cObj = statObj.getByLink(id && id !== "active" ?
-						dObj.sys.tmpCollection[id] : prop.activeCollection,
+						dObj.sys.tmpCollection[id] : prop.collection,
 						context.replace(new RegExp("[^" + statObj.contextSeparator + "]+$"), ""));
 			// choice link
 			context = context.replace(new RegExp(".*?([^" + statObj.contextSeparator + "]+$)"), "$1");
@@ -88,7 +88,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context|Array|Plain Object} objContext - link (sharp (#) char indicates the order), array of links or object (collection ID: array of links)
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementsByLink = function (objContext, id) {

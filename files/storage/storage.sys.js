@@ -15,7 +15,7 @@
 			filter: null,
 			parser: null,
 			template: null,
-			templateMode: null
+			templateModel: null
 		}
 	};
 	

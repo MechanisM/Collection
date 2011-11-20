@@ -1,21 +1,24 @@
 	
+	/////////////////////////////////
+	//// design methods (print)
+	/////////////////////////////////
+	
 	/**
-	 * Простая шаблонизация коллекции (in context)
+	 * simple templating (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param param - объект настроек
-	 * @param {Template} [param.template=this.dObj.prop.activeTemplate] - шаблон
-	 * @param {jQuery Object|Boolean} [param.target=this.dObj.prop.activeTarget] - контейнер вывода результата (false - если выводить в переменную)
-	 * @param {String} [param.variable=this.dObj.sys.activeVarID] - ИД переменной (если param.target === false)
+	 * @param param - object settings
+	 * @param {Template} [param.template=this.dObj.prop.template] - template
+	 * @param {jQuery Object|Boolean} [param.target=this.dObj.prop.target] - element to output the result ("false" - if you print a variable)
+	 * @param {String} [param.variable=this.dObj.sys.variableID] - variable ID (if param.target === false)
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.activeParser] - парсер, ИД парсера, строковое условие или false
-	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пагинатору
-	 * @param {String} [param.appendType=this.dObj.prop.activeAppendType] - режим добавления в DOM
-	 * @param {String} [param.resultNull=this.dObj.prop.activeResultNull] - текст, выводимый в случае если результатов нету
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
-	 * @param {Number|Boolean} [count=false] - максимальное количество записей (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.parser] - parser function, string expressions or "false"
+	 * @param {String} [param.appendType=this.dObj.prop.appendType] - type additions to the DOM
+	 * @param {String} [param.resultNull=this.dObj.prop.resultNull] - text displayed if no results
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.print = function (param, mult, count, from, indexOf) {
@@ -27,40 +30,38 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			$this = this,
-			dObj = $this.dObj,
+			dObj = this.dObj,
 			prop = dObj.prop,
 	
-			activeParser = param.parser || prop.activeParser,
-			activeTemplate = param.template || prop.activeTemplate,
+			parser = param.parser || prop.parser,
+			template = param.template || prop.template,
 	
-			activeTarget = param.target || param.target === false ? param.target : prop.activeTarget,
-			activeResultNull = param.resultNull !== undefined ? param.resultNull : prop.activeResultNull,
+			target = param.target || param.target === false ? param.target : prop.target,
+			resultNull = param.resultNull !== undefined ? param.resultNull : prop.resultNull,
 	
 			result = "",
 			action = function (data, i, aLength, $this, objID) {
-				result += activeTemplate(data, i, aLength, $this, objID);
+				result += template(data, i, aLength, $this, objID);
 				
 				if (mult !== true) { return false; }
 	
 				return true;
 			};
 		
-		// Ставим ссылку на шаблон
-		dObj.sys.templateCallee = activeTemplate;
+		// "callee" link
+		dObj.sys.callee.template = template;		
+		this.each(action, (param.filter || prop.filter), this.config.constants.active, mult, count, from, indexOf);
 		
-		this.each(action, (param.filter || prop.activeFilter), "active", mult, count, from, indexOf);
+		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
+		result = parser !== false ? this.customParser((parser), result) : result;
 		
-		result = !result ? activeResultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : activeResultNull : result;
-		result = activeParser !== false ? $this.customParser((activeParser), result) : result;
-		
-		if (activeTarget === false) {
+		if (target === false) {
 			if (!param.variable) {
-				$this.$Var(result);
+				this.$Var(result);
 			} else {
-				$this.PushSetVar(param.variable, result);
+				this.PushSetVar(param.variable, result);
 			}
-		} else { activeTarget[(param.appendType || prop.activeAppendType)](result); }
+		} else { target[(param.appendType || prop.appendType)](result); }
 	
-		return $this;
+		return this;
 	};

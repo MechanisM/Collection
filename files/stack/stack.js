@@ -53,7 +53,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id=this.active] - stack ID
+	 * @param {String} [id=this.config.constants.active] - stack ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn._get = function (propName, id) {
@@ -61,7 +61,7 @@
 			dObj = this.dObj,
 			prop = dObj.prop;
 		
-		if (id && id !== this.active) {
+		if (id && id !== this.config.constants.active) {
 			return dObj.sys["tmp" + propName][id];
 		}
 
@@ -74,7 +74,7 @@
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {mixed} modProp - value
-	 * @param {String} [id=this.active] - stack ID
+	 * @param {String} [id=this.config.constants.active] - stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._mod = function (propName, modProp, id) {
@@ -104,7 +104,7 @@
 				return target;
 			};
 		
-		if (id && id !== this.active) {
+		if (id && id !== this.config.constants.active) {
 			tmp[id] = typeMod(tmp[id], modProp);
 			if (activeID && id === activeID) {
 				prop[tmpActiveStr] = tmp[id];
@@ -144,7 +144,7 @@
 		if ($.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
-					if (key === this.active) {
+					if (key === this.config.constants.active) {
 						throw new Error("invalid property name!");
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
@@ -155,7 +155,7 @@
 				}
 			}
 		} else {
-			if (key === this.active) {
+			if (objID === this.config.constants.active) {
 				throw new Error("invalid property name!");
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
@@ -276,10 +276,10 @@
 
 			i;
 
-		if (tmpArray[0] && tmpArray[0] !== this.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
 			for (i in tmpArray) {
 				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.active) {
+					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
 						prop[tmpActiveStr] = deleteVal;
@@ -327,10 +327,10 @@
 
 			i;
 
-		if (tmpArray[0] && tmpArray[0] !== this.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
 			for (i in tmpArray) {
 				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.active) {
+					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
 						if (activeID) {
 							sys[tmpTmpStr][activeID] = resetVal;
 						}
@@ -358,13 +358,13 @@
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array} [objID=active] - stack ID or array of IDs
-	 * @param {String} [id=this.active] - source ID (for merge)
+	 * @param {String} [id=this.config.constants.active] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._resetTo = function (propName, objID, id) {
 		var
 			dObj = this.dObj,
-			mergeVal = !id || id === this.active ? dObj.prop["active" + propName] : dObj.sys["tmp" + propName][id];
+			mergeVal = !id || id === this.config.constants.active ? dObj.prop["active" + propName] : dObj.sys["tmp" + propName][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
@@ -374,7 +374,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id=this.active] - stack ID
+	 * @param {String} [id=this.config.constants.active] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._exist = function (propName, id) {
@@ -382,7 +382,7 @@
 			dObj = this.dObj,
 			prop = dObj.prop;
 		
-		if ((!id || id === this.active) && dObj.sys["active" + propName + "ID"]) {
+		if ((!id || id === this.config.constants.active) && dObj.sys["active" + propName + "ID"]) {
 			return true;
 		}
 		if (dObj.sys["tmp" + propName][id] !== undefined) {
@@ -457,9 +457,9 @@
 		//
 		if (this._exist("Template", id)) { this._set("Template", id); }
 		//
-		if (this._exist("TemplateMode", id)) { this._set("TemplateMode", id); }
+		if (this._exist("TemplateModel", id)) { this._set("TemplateModel", id); }
 		//
-		if (this._exist("CountBreak", id)) { this._set("CountBreak", id); }
+		if (this._exist("NumberBreak", id)) { this._set("NumberBreak", id); }
 		//
 		if (this._exist("PageBreak", id)) { this._set("PageBreak", id); }
 		//

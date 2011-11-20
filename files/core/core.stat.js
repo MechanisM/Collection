@@ -6,12 +6,12 @@
 	// object for static methods
 	$.Collection.stat = {};
 	// static template mode
-	$.Collection.stat.templateMode = {};
+	$.Collection.stat.templateModel = {};
 	
 	// static methods for object
 	$.Collection.stat.obj = {
 		// link to constants
-		constants: $.Collection.prototype.config.constants,
+		constants: $.Collection.fn.config.constants,
 		
 		/**
 		* get object by link
@@ -21,7 +21,7 @@
 		* @return {Object}
 		*/
 		getByLink: function (obj, context) {
-			context = context.toString().split(constants.contextSeparator);
+			context = context.toString().split(this.constants.contextSeparator);
 			
 			var
 				key, i = 0,
@@ -33,11 +33,11 @@
 			for (; i < cLength; i++) {
 				context[i] = $.trim(context[i]);
 				//
-				if (context[i] && context[i] !== constants.subcontextSeparator) {
-					if (context[i].search(constants.subcontextSeparator) === -1) {
+				if (context[i] && context[i] !== this.constants.subcontextSeparator) {
+					if (context[i].search(this.constants.subcontextSeparator) === -1) {
 						obj = obj[context[i]];
 					} else {
-						pos = +context[i].replace(constants.subcontextSeparator, "");
+						pos = +context[i].replace(this.constants.subcontextSeparator, "");
 						
 						if ($.isArray(obj)) {
 							if (pos >= 0) {
@@ -81,7 +81,7 @@
 		* @return {Boolean}
 		*/
 		setByLink: function (obj, context, value) {
-			context = context.toString().split(constants.contextSeparator);
+			context = context.toString().split(this.constants.contextSeparator);
 			
 			var
 				key, i = 0,
@@ -93,21 +93,21 @@
 			// remove "dead" elements
 			for (i = cLength; i--;) {
 				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === constants.subcontextSeparator) { context.splice(i, 1); }
+				if (context[i] === "" || context[i] === this.constants.subcontextSeparator) { context.splice(i, 1); }
 			}
 			// recalculate length
 			cLength = context.length - 1;
 			i = 0;
 			
 			for (; i <= cLength; i++) {
-				if (context[i].search(constants.subcontextSeparator) === -1) {
+				if (context[i].search(this.constants.subcontextSeparator) === -1) {
 					if (i === cLength) {
 						obj[context[i]] = value;
 					} else {
 						obj = obj[context[i]];
 					}
 				} else {
-					pos = +context[i].replace(constants.subcontextSeparator, "");
+					pos = +context[i].replace(this.constants.subcontextSeparator, "");
 						
 					if ($.isArray(obj)) {
 						if (i === cLength) {
@@ -162,7 +162,7 @@
 		 * @return {Plain Object|Boolean}
 		 */
 		addElementToObject: function (obj, prop, value) {
-			prop = prop.split(constants.methodSeparator);
+			prop = prop.split(this.constants.methodSeparator);
 			
 			var key, newObj = {};
 			

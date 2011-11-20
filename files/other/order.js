@@ -10,7 +10,7 @@
 	 * @param {String} [field] - field name
 	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
 	 * @param {Function|Boolean} [fn=toUpperCase] - callback ("false" if disabled)
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -31,7 +31,7 @@
 			dObj = this.dObj,
 			sys = dObj.sys,
 	
-			activeCollectionID = sys.activeCollectionID,
+			collectionID = sys.collectionID,
 			cObj,
 	
 			// sort object by key
@@ -80,7 +80,7 @@
 				return sortedObj;
 			};
 	
-		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.prop.activeCollection, this.getActiveContext());
+		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext());
 	
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {

@@ -9,9 +9,9 @@ copy	^
 		+ txt\closure.start.txt ^
 		^
 		+ core\core.js ^
+		+ core\core.prototype.js ^
 		+ core\core.stat.js ^
 		+ core\core.stat.sort.js ^
-		+ core\core.prototype.js ^
 		^
 		+ tm\tm.simple.js ^
 		+ tm\tm.control.js ^

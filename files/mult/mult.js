@@ -6,12 +6,9 @@
 	/**
 	 * collection length (in context)
 	 * 
-	 * // overloads:
-	 * 1) if no input parameters, then the ID is equal to the active collection, and the filter is disabled.
-	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String|Collection} [id=this.active] - collection ID
+	 * @param {Filter|String|Boolean|Collection} [filter=false] - filter function, string expressions or "false"
+	 * @param {String|Collection} [id=this.config.constants.active] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
 	 */
@@ -20,24 +17,33 @@
 		
 		var
 			dObj = this.dObj,
-			cObj, cOLength,
+			cObj, cOLength, aCheck,
 			key, countRecords;
 		
-		// if filter isn't function
-		if ($.isString(filter) && !$.isExist(id)) {
-			id = filter;
-			filter = false;
+		if (!$.isFunction(filter)) {
+			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
+				id = filter;
+				filter = false;
+			}
 		}
-
-		if (!id || id === this.active) {
-			cObj = dObj.prop.activeCollection;
-		} else { cObj = dObj.sys.tmpCollection[id]; }
+		
+		if (!id || id === this.config.constants.active) {
+			cObj = dObj.prop.collection;
+		} else if ($.isString(id)) {
+			cObj = dObj.sys.tmpCollection[id];
+		} else {
+			aCheck = true;
+			cObj = id;
+		}
 		//
-		cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext());
+		if (aCheck !== true) { cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext()); }
 		// if cObj is null
 		if (cObj === null) { return 0; }
-		
+
 		cOLength = cObj.length;
+		// if cObj is String
+		if ($.isString(cObj)) { return cOLength; }
+		
 		if (typeof cObj === "object") {
 			if (filter === false && cOLength !== undefined) {
 				countRecords = cOLength;
@@ -45,7 +51,7 @@
 				countRecords = 0;
 				for (key in cObj) {
 					if (cObj.hasOwnProperty(key)) {
-						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.active) === true) {
+						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.config.constants.active) === true) {
 							countRecords++;
 						}
 					}
@@ -64,7 +70,7 @@
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -73,7 +79,7 @@
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -81,7 +87,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
 		// values by default
@@ -100,10 +106,11 @@
 			i, j = 0;
 		
 		// "callee" link
-		dObj.sys.callbackCallee = callback;
+		dObj.sys.callee.callback = callback;
 		//
-		cObj = $.Collection.stat.obj.getByLink(id !== this.active ? sys.tmpCollection[id] : prop.activeCollection, this.getActiveContext());
+		cObj = $.Collection.stat.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : prop.collection, this.getActiveContext());
 		cOLength = this.length(cObj);
+		
 		//
 		if ($.isArray(cObj)) {
 			tmpLength = cOLength - 1;

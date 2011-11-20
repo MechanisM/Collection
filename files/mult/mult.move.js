@@ -8,15 +8,15 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
-	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
-	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
-	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
-	 * @param {Boolean} [deleteType=true] - если установленно true, то удаляет элемент из переносимой коллекции
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
@@ -69,59 +69,51 @@
 		return this;
 	},
 	/**
-	 * Переместить элемент коллекции (in context)
+	 * move element (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
-	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
-	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElement = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
-	 * Копировать элементы коллекции (in context)
+	 * copy elements (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
-	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
-	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
-	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.copyElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
-		moveFilter = moveFilter || false;
-		context = $.isExist(context) ? context.toString() : "";
-		
-		sourceID = sourceID || "";
-		activeID = activeID || "";
-		
-		addType = addType || "push";
-	
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.moveElements(moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, false);
+		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
-	 * Копировать элмент коллекции (in context)
+	 * copy element (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - контекст для коллекции-источника (sharp (#) char indicates the order)
-	 * @param {String|Array} [sourceID=this.active] - collection ID-источника
-	 * @param {String|Array} [activeID=this.active] - collection ID (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.copyElement = function (moveFilter, context, sourceID, activeID, addType) {

@@ -18,28 +18,28 @@
 				 * @field
 				 * @type Collection|Null
 				 */
-				activeCollection: null,
+				collection: null,
 				/**
 				 * active filter ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
-				activeFilter: false,
+				filter: false,
 				/**
 				 * active context
 				 * 
 				 * @field
 				 * @type Context
 				 */
-				activeContext: "",
+				context: "",
 				/**
 				 * active cache object
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
-				activeCache: {
+				cache: {
 					/**
 					 * auto cache
 					 * 
@@ -75,28 +75,28 @@
 				 * @field
 				 * @type Plain Object
 				 */
-				activeIndex: null,
+				index: null,
 				/**
 				 * active map
 				 * 
 				 * @field
 				 * @type Plain Object
 				 */
-				activeMap: null,
+				map: null,
 				/**
 				 * active var
 				 * 
 				 * @field
 				 * @type mixed
 				 */
-				activeVar: null,
+				variable: null,
 				/**
 				 * active deferred
 				 * 
 				 * @field
 				 * @type jQuery Deferred
 				 */
-				activeDefer: "",
+				defer: "",
 				
 				/////////////////////////////////
 				//// templating
@@ -108,77 +108,77 @@
 				 * @field
 				 * @type Number
 				 */
-				activePage: 1,
+				page: 1,
 				/**
 				 * active parser ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
-				activeParser: false,
+				parser: false,
 				/**
 				 * active DOM insert mode (jQuery methods)
 				 * 
 				 * @field
 				 * @param String
 				 */
-				activeAppendType: "html",
+				appendType: "html",
 				/**
 				 * active target (target to insert the result templating)
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
-				activeTarget: null,
+				target: null,
 				/**
 				 * active selector (used to calculate the number of records one page)
 				 * 
 				 * @field
 				 * @type Selector
 				 */
-				activeSelectorOut: ".SelectorOut",
+				calculator: ".line",
 				/**
 				 * active pager
 				 * 
 				 * @field
 				 * @type Selector
 				 */
-				activePager: "#PageControl",
+				pager: "#pageControl",
 				/**
 				 * active template
 				 * 
 				 * @field
 				 * @type Function
 				 */
-				activeTemplate: null,
+				template: null,
 				/**
 				 * active template mode
 				 * 
 				 * @field
 				 * @type Function
 				 */
-				activeTemplateMode: $.Collection.stat.templateMode.simpleMode,
+				templateModel: $.Collection.stat.templateModel.simpleMode,
 				/**
 				 * active records in one page
 				 * 
 				 * @field
 				 * @type Number
 				 */
-				activeCountBreak: 10,
+				numberBreak: 10,
 				/**
 				 * active page count (used in "controlMode")
 				 * 
 				 * @field
 				 * @type Number
 				 */
-				activePageBreak: 10,
+				pageBreak: 10,
 				/**
 				 * active empty result ("false" if disabled)
 				 * 
 				 * @field
 				 * @type String|Boolean
 				 */
-				activeResultNull: false
+				resultNull: false
 			}
 		}
 	};

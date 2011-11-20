@@ -1,21 +1,25 @@
-
+	
+	/////////////////////////////////
+	//// template model (advansed)
+	/////////////////////////////////
+	
 	/**
-	 * Продвинутая модель шаблона
+	 * advansed model
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - объект настроек
-	 * @param {Number} [param.page=this.dObj.prop.activePage] - активна страница
+	 * @param {Number} [param.page=this.dObj.prop.page] - активна страница
 	 * @param {Collection} [param.collection=null] - коллекция (если не было пересчета заранее)
-	 * @param {Number|Boolean} [param.countBreak=this.dObj.prop.activeCountBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
-	 * @param {Number} [param.pageBreak=this.dObj.prop.activePageBreak] - количество выводимых страниц (навигация)
-	 * @param {Selector} [param.selectorOut=this.dObj.prop.activeSelectorOut] -  селектор, по которому cчитается количесво записей на страницу
-	 * @param {Selector} [param.pager=this.dObj.prop.activePager] - селектор к пейджеру
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.numberBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
+	 * @param {Number} [param.pageBreak=this.dObj.prop.pageBreak] - количество выводимых страниц (навигация)
+	 * @param {Selector} [param.calculator=this.dObj.prop.calculator] -  селектор, по которому cчитается количесво записей на страницу
+	 * @param {Selector} [param.pager=this.dObj.prop.pager] - селектор к пейджеру
 	 * @param {Number} [param.countRecords=this.dObj.sys.countRecords] - всего записей в объекте (с учётом фильтра)
 	 * @param {Number} [param.countRecordsInPage=this.dObj.sys.countRecordsInPage] - всего записей на странице
 	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
 	 * @return {Boolean}
 	 */
-	$.Collection.stat.templateMode.controlMode = function (param) {
+	$.Collection.stat.templateModel.controlMode = function (param) {
 		param = param || {};
 							
 		var
@@ -27,15 +31,15 @@
 			viewVal = dObj.viewVal,
 			prop = dObj.prop,
 							
-			page = param.page || prop.activePage,
-			selectorOut = param.selectorOut || prop.activeSelectorOut,
-			pager = $(param.pager || prop.activePager),
+			page = param.page || prop.page,
+			calculator = param.calculator || prop.calculator,
+			pager = $(param.pager || prop.pager),
 			countRecords = param.countRecords || sys.countRecords || tmpCount || 0,
-			countRecordsInPage = param.countRecordsInPage || sys.countRecordsInPage || $(selectorOut, prop.activeTarget).length,
-			countBreak = param.countBreak || prop.activeCountBreak,
-			pageBreak = param.pageBreak || prop.activePageBreak,
-			countTotal = param.countTotal || sys.countTotal || countBreak * page - (countBreak - countRecordsInPage),
-			pageCount = countRecords % countBreak !== 0 ? ~~(countRecords / countBreak) + 1 : countRecords / countBreak,
+			countRecordsInPage = param.countRecordsInPage || sys.countRecordsInPage || $(calculator, prop.target).length,
+			numberBreak = param.numberBreak || prop.numberBreak,
+			pageBreak = param.pageBreak || prop.pageBreak,
+			countTotal = param.countTotal || sys.countTotal || numberBreak * page - (numberBreak - countRecordsInPage),
+			pageCount = countRecords % numberBreak !== 0 ? ~~(countRecords / numberBreak) + 1 : countRecords / numberBreak,
 								
 			str = "",
 								
@@ -65,7 +69,7 @@
 					str += '<a href="javascript:;" data-action="set/page[' + (i - 1) + '">' + (i - 1) + '</a>';
 				}
 							
-				if (j === (countBreak - 1)) { break; }
+				if (j === (numberBreak - 1)) { break; }
 							
 				if (i === page) {
 					str += '<a href="javascript:;" class="' + pageActive + '">' + i + '</a>';
@@ -94,7 +98,7 @@
 			$("." + pagingLeft + "," + "." + pagingRight, pager).empty();
 		} else {
 			$("." + pagingRight, pager).html(str);
-			$("." + pagingLeft, pager).html(total + ": " + countRecords + ". " + show + ": " + ((page - 1) * countBreak + 1) + "-" + countTotal);
+			$("." + pagingLeft, pager).html(total + ": " + countRecords + ". " + show + ": " + ((page - 1) * numberBreak + 1) + "-" + countTotal);
 		}
 							
 		return true;

@@ -9,7 +9,7 @@
 	 * @this {Colletion Object}
 	 * @param {mixed|Context} cValue - new element или context for sourceID (sharp (#) char indicates the order)
 	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "::unshift" - the result will be similar to work for an array "unshift")
-	 * @param {String} [activeID=this.dObj.prop.activeCollectionID] - collection ID
+	 * @param {String} [activeID=this.dObj.prop.collectionID] - collection ID
 	 * @param {String} [sourceID=undefined] - source ID (if move)
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @throw {Error}
@@ -29,11 +29,11 @@
 	
 			cObj, sObj,
 	
-			activeCollectionID = sys.activeCollectionID,
+			collectionID = sys.collectionID,
 	
 			oCheck, lCheck;
 		
-		cObj = statObj.getByLink(activeID && activeID !== this.active ? sys.tmpCollection[activeID] : prop.activeCollection, this.getActiveContext());
+		cObj = statObj.getByLink(activeID && activeID !== this.config.constants.active ? sys.tmpCollection[activeID] : prop.collection, this.getActiveContext());
 		
 		if (typeof cObj === "object") {
 			oCheck = $.isPlainObject(cObj);
@@ -55,7 +55,7 @@
 			// move
 			} else {
 				cValue = $.isExist(cValue) ? cValue.toString() : "";
-				sObj = statObj.getByLink(sourceID === this.active ? prop.activeCollection : sys.tmpCollection[sourceID], cValue);
+				sObj = statObj.getByLink(sourceID === this.config.constants.active ? prop.collection : sys.tmpCollection[sourceID], cValue);
 
 				// add type
 				if (oCheck === true) {

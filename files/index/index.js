@@ -1,6 +1,6 @@
 	
 	$.Collection.fn.genIndex = function (indexName, id, fieldObj, filter, count, from, indexOf) {
-		id = id || this.active;
+		id = id || this.config.constants.active;
 		
 		var
 			dObj = this.dObj,

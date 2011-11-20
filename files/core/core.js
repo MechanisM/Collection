@@ -6,15 +6,15 @@
 	/**
 	 * @constructor
 	 * @this {Colletion Object}
-	 * @param {Collection|Selector} [collection=null] - collection or selector for field: activeTarget
+	 * @param {Collection|Selector} [collection=null] - collection or selector for field: target
 	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.prop] - user's preferences
 	 */
 	$.Collection = function (collection, uProp) {
 		collection = collection || null;
 		uProp = uProp || null;
 		
-		// create "factory" function if need
-		if (this.fn && this.fn.name && this.fn.name !== "$.Collection") { return new $.Collection(collection, uProp); }
+		// create "factory" function if need	
+		if (this.fn && (!this.fn.name || this.fn.name !== "$.Collection")) { return new $.Collection(collection, uProp); }
 		
 		// mixin public fields
 		$.extend(true, this, $.Collection.storage);
@@ -26,7 +26,7 @@
 				
 		// if "collection" is string
 		if ($.isString(collection)) {
-			prop.activeTarget = $(collection);
-			prop.activeCollection = null;
-		} else { prop.activeCollection = collection; }
+			prop.target = $(collection);
+			prop.collection = null;
+		} else { prop.collection = collection; }
 	};

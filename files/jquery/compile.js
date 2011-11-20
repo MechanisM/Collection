@@ -1,6 +1,10 @@
 	
+	/////////////////////////////////
+	//// jQuery methods (compiler templates)
+	/////////////////////////////////
+	
 	/**
-	 * Компиляция шаблона
+	 * compiler templates
 	 * 
 	 * @this {jQuery Object}
 	 * @throw {Error}

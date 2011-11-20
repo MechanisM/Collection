@@ -5,10 +5,13 @@
 	
 	/**
 	 * return elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -17,7 +20,7 @@
 	 */
 	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -25,7 +28,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
 		// values by default
@@ -56,7 +59,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.active] - collection ID
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElement = function (filter, id) {
