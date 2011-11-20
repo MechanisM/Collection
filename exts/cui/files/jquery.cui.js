@@ -35,16 +35,25 @@
 	 * @this {jQuery Object}
 	 * @param {String} name - имя виджета
 	 * @param {Object} obj - управляющий объект
+	 * @param {Object} param - дополнительный объект
 	 * @return {jQuery Object}
 	 */
-	$.fn.setCUI = function (name, obj) {
+	$.fn.setCUI = function (name, obj, param) {
 		this.each(function () {
 			var $this = $(this);
 			if ($this.data("CUI")) {
-				if (!$this.data("CUI")[name]) { $this.data("CUI")[name] = {obj: obj, events: {}}; }
-			} else { $this.data("CUI", {}).data("CUI")[name] = {obj: obj, events: {}}; }
+				if (!$this.data("CUI")[name]) { $this.data("CUI")[name] = {obj: obj}; }
+			} else { $this.data("CUI", {}).data("CUI")[name] = {obj: obj}; }
+			
+			if (param) {
+				for (var key in param) {
+					if (param.hasOwnProperty(key)) {
+						$this.data("CUI")[name][key] = param[key];
+					}
+				}
+			}
 		});
-		
+
 		return this;
 	};
 	/**
@@ -71,7 +80,7 @@
 	 * @param {Plain Object} def - пользовательские настройки
 	 * @return {Object}
 	 */
-	$.fn.newData = function (data, def) {
+	$.fn.newCUIData = function (data, def) {
 		var obj;
 	
 		if (data && data.name && data.name === "$.Collection") {
@@ -81,6 +90,13 @@
 		}
 		
 		return obj;
+	};
+	$.fn.addCUIEvent = function (name) {
+		for (var key in this[name].events) {
+			if (this[name].events.hasOwnProperty(key) && key !== "animate") {
+				this[name].events[key](this, this.data("CUI")[name].obj);
+			}
+		}
 	};
 	/**
 	 * Получить список виджетов для элемента
