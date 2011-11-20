@@ -6,7 +6,7 @@
 	/**
 	 * @constructor
 	 * @this {Colletion Object}
-	 * @param {Collection|Selector} [collection=null] - collection or selector for field: target
+	 * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
 	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.prop] - user's preferences
 	 */
 	$.Collection = function (collection, uProp) {

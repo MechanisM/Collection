@@ -17,20 +17,20 @@
 		value = value === undefined ? "" : value;
 	
 		var
-			statObj = $.Collection.stat.obj,
+			constants = this.config.constants,
 		
 			dObj = this.dObj,	
-			context = this.getActiveContext();
+			activeContext = this.getActiveContext();
 		
-		if (!context && !context) {
-			if (id && id !== this.config.constants.active) {
-				return this._push("Collection", id, value);
+		if (!context && !activeContext) {
+			if (id && id !== constants.active) {
+				return this._push("collection", id, value);
 			} else {
-				return this._update("Collection", value);
+				return this._update("collection", value);
 			}
 		}
 		
-		statObj.setByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, context + statObj.contextSeparator + context, value);
+		$.Collection.stat.obj.setByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, activeContext + constants.contextSeparator + context, value);
 	
 		return this;
 	};
@@ -46,8 +46,8 @@
 		context = $.isExist(context) ? context.toString() : "";
 		
 		var
-			statObj = $.Collection.stat.obj,
+			constants = this.config.constants,
 			dObj = this.dObj;
-	
-		return statObj.getByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + statObj.contextSeparator + context);
+		
+		return $.Collection.stat.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + constants.contextSeparator + context);
 	};

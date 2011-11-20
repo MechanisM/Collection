@@ -51,11 +51,11 @@
 		if (mult === true) {
 			eLength = elements.length - 1;
 			for (; i++ < eLength;) {
-				this.addElement(context + statObj.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + statObj.methodSeparator + addType, activeID, sourceID);
+				this.addElement(context + this.config.constants.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + statObj.methodSeparator + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + statObj.contextSeparator + elements, aCheckType === true ? addType : elements + statObj.methodSeparator + addType, activeID, sourceID);
+			this.addElement(context + this.config.constants.contextSeparator + elements, aCheckType === true ? addType : elements + statObj.methodSeparator + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 	

@@ -23,15 +23,15 @@
 	(function (data) {
 		var
 			i,
-			lowerCase,
+			upperCase,
 			sys = $.Collection.storage.dObj.sys;
 	
 		for (i = data.length; i--;) {
-			lowerCase = data[i].substring(0, 1).toLowerCase() + data[i].substring(1);
+			upperCase = $.toUpperCase(data[i], 1);
 			
-			sys["active" + data[i] + "ID"] = null;
-			sys["tmp" + data[i]] = {};
-			sys[lowerCase + "ChangeControl"] = null;
-			sys[lowerCase + "Back"] = [];
+			sys["active" + upperCase + "ID"] = null;
+			sys["tmp" + upperCase] = {};
+			sys[data[i] + "ChangeControl"] = null;
+			sys[data[i] + "Back"] = [];
 		}
 	})($.Collection.fn.stack);

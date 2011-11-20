@@ -13,6 +13,10 @@ copy	^
 		+ core\core.stat.js ^
 		+ core\core.stat.sort.js ^
 		^
+		+ jquery\collection.js ^
+		+ jquery\compile.js ^
+		+ jquery\other.js ^
+		^
 		+ tm\tm.simple.js ^
 		+ tm\tm.control.js ^
 		^
@@ -48,10 +52,6 @@ copy	^
 		^
 		+ index\index.js ^
 		+ index\index.map.js ^
-		^
-		+ jquery\collection.js ^
-		+ jquery\compile.js ^
-		+ jquery\other.js ^
 		^
 		+ txt\closure.end.txt ^
 		^

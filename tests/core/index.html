@@ -6,23 +6,24 @@
 	<link rel="stylesheet" href="http://code.jquery.com/qunit/git/qunit.css" type="text/css">
 	<script src="http://code.jquery.com/jquery-latest.js"></script>
 	<script type="text/javascript" src="http://code.jquery.com/qunit/git/qunit.js"></script>
-	<script type="text/javascript" src="../../jquery.collection.min.js"></script>
+	<script type="text/javascript" src="../../jquery.collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
 			module("core");
 			test("Создание пустого экземпляра", function () {
+				console.log(new $.Collection());
 				equal(new $.Collection(), 0, "Через new");
 				equal($.Collection(), 0, "Фабрика");
-				equal($.Collection(null, {activeContext: "0~#-1"}).dObj.prop.activeContext, "0~#-1", "Задание дополнительного параметра в конструкторе");
+				equal($.Collection(null, {context: "0~#-1"}).dObj.prop.context, "0~#-1", "Задание дополнительного параметра в конструкторе");
 			});
 			test("Создание экземпляра", function () {
-				ok($.Collection("#result").dObj.prop.activeTarget !== null, "Первый параметр - строка");
+				ok($.Collection("#result").dObj.prop.target !== null, "Первый параметр - строка");
 				equal($.Collection([1,2,3]), 3, "Задание коллекции");
 			});
 			module("core.cache.obj");
 			test("Операции с объектами", function () {
 				var
-					obj = $.Collection.cache.obj,
+					obj = $.Collection.stat.obj,
 					objTest = [{next: {next: [1, 2, 3, 4]}}, 2, 3],
 					objTest2 = {a: 1, b: 2};
 				

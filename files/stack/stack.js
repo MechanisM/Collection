@@ -14,12 +14,10 @@
 	$.Collection.fn._$ = function (propName, newProp) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			upperCase = $.toUpperCase(propName, 1);
 
-			tmpActiveStr = "active" + propName;
-
-		prop[tmpActiveStr] = newProp;
-		dObj.sys[tmpActiveStr + "ID"] = null;
+		dObj.prop[propName] = newProp;
+		dObj.sys["active" + upperCase + "ID"] = null;
 
 		return this;
 	};
@@ -36,15 +34,13 @@
 			dObj = this.dObj,
 			prop = dObj.prop,
 			sys = dObj.sys,
-
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID",
+			
+			upperCase = $.toUpperCase(propName, 1),
+			tmpActiveIDStr = "active" + upperCase + "ID",
 			activeID = sys[tmpActiveIDStr];
 
-		prop[tmpActiveStr] = newProp;
-		if (activeID) {
-			sys["tmp" + propName][activeID] = prop[tmpActiveStr];
-		}
+		prop[propName] = newProp;
+		if (activeID) { sys["tmp" + upperCase][activeID] = prop[propName]; }
 
 		return this;
 	};
@@ -57,15 +53,13 @@
 	 * @return {mixed}
 	 */
 	$.Collection.fn._get = function (propName, id) {
-		var 
-			dObj = this.dObj,
-			prop = dObj.prop;
+		var dObj = this.dObj;
 		
 		if (id && id !== this.config.constants.active) {
-			return dObj.sys["tmp" + propName][id];
+			return dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		}
 
-		return prop["active" + propName];
+		return dObj.prop[propName];
 	};
 	
 	/**
@@ -82,10 +76,10 @@
 			dObj = this.dObj,
 			prop = dObj.prop,
 			sys = dObj.sys,
-
-			tmpActiveStr = "active" + propName,
-			tmp = sys["tmp" + propName],
-			activeID = sys[tmpActiveStr + "ID"],
+			
+			upperCase = $.toUpperCase(propName, 1),
+			tmp = sys["tmp" + upperCase],
+			activeID = sys["active" + upperCase + "ID"],
 
 			// extend function
 			typeMod = function (target, mod) {
@@ -106,14 +100,10 @@
 		
 		if (id && id !== this.config.constants.active) {
 			tmp[id] = typeMod(tmp[id], modProp);
-			if (activeID && id === activeID) {
-				prop[tmpActiveStr] = tmp[id];
-			}
+			if (activeID && id === activeID) { prop[propName] = tmp[id]; }
 		} else {
-			prop[tmpActiveStr] = typeMod(prop[tmpActiveStr], modProp);
-			if (activeID) {
-				tmp[activeID] = prop[tmpActiveStr];
-			}
+			prop[propName] = typeMod(prop[propName], modProp);
+			if (activeID) { tmp[activeID] = prop[propName]; }
 		}
 
 		return this;
@@ -135,9 +125,9 @@
 			sys = dObj.sys,
 			prop = dObj.prop,
 
-			tmpActiveStr = "active" + propName,
-			tmp = sys["tmp" + propName],
-			activeID = sys[tmpActiveStr + "ID"],
+			upperCase = $.toUpperCase(propName, 1),
+			tmp = sys["tmp" + upperCase],
+			activeID = sys["active" + upperCase + "ID"],
 
 			key;
 			
@@ -177,25 +167,19 @@
 	$.Collection.fn._set = function (propName, id) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
 			sys = dObj.sys,
 
-			lowerCase = propName.substring(0, 1).toLowerCase() + propName.substring(1),
-
-			tmpChangeControlStr = lowerCase + "ChangeControl",
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID";
+			upperCase = $.toUpperCase(propName, 1),
+			tmpChangeControlStr = propName + "ChangeControl",
+			tmpActiveIDStr = "active" + upperCase + "ID";
 
 		if (sys[tmpActiveIDStr] !== id) {
 			sys[tmpChangeControlStr] = true;
 			sys[tmpActiveIDStr] = id;
-		} else {
-			sys[tmpChangeControlStr] = false;
-		}
+		} else { sys[tmpChangeControlStr] = false; }
 
-		sys[lowerCase + "Back"].push(id);
-
-		prop[tmpActiveStr] = sys["tmp" + propName][id];
+		sys[propName + "Back"].push(id);
+		dObj.prop[propName] = sys["tmp" + upperCase][id];
 
 		return this;
 	};
@@ -210,23 +194,21 @@
 	$.Collection.fn._back = function (propName, nmb) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
 			sys = dObj.sys,
 
-			lowerCase = propName.substring(0, 1).toLowerCase() + propName.substring(1),
-			tmpActiveStr = "active" + propName,
-			propBack = sys[lowerCase + "Back"],
+			upperCase = $.toUpperCase(propName, 1),
+			tmpActiveStr = "active" + upperCase,
+			propBack = sys[propName + "Back"],
 
 			pos;
 
-		sys[lowerCase + "ChangeControl"] = false;
-
+		sys[propName + "ChangeControl"] = false;
 		pos = propBack.length - (nmb || 1) - 1;
 
 		if (pos >= 0 && propBack[pos]) {
-			if (sys["tmp" + propName][propBack[pos]]) {
+			if (sys["tmp" + upperCase][propBack[pos]]) {
 				sys[tmpActiveStr + "ID"] = propBack[pos];
-				prop[tmpActiveStr] = sys["tmp" + propName][propBack[pos]];
+				dObj.prop[propName] = sys["tmp" + upperCase][propBack[pos]];
 
 				propBack.splice(pos + 1, propBack.length);
 			}
@@ -243,7 +225,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._backIf = function (propName, nmb) {
-		if (this.dObj.sys[(propName.substring(0, 1).toLowerCase() + propName.substring(1)) + "ChangeControl"] === true) {
+		if (this.dObj.sys[propName + "ChangeControl"] === true) {
 			return this._back.apply(this, arguments);
 		}
 
@@ -265,15 +247,13 @@
 			dObj = this.dObj,
 			prop = dObj.prop,
 			sys = dObj.sys,
-
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID",
-			tmpTmpStr = "tmp" + propName,
+			
+			upperCase = $.toUpperCase(propName, 1),
+			tmpActiveIDStr = "active" + upperCase + "ID",
+			tmpTmpStr = "tmp" + upperCase,
 
 			activeID = sys[tmpActiveIDStr],
-
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-
 			i;
 
 		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
@@ -282,12 +262,12 @@
 					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
-						prop[tmpActiveStr] = deleteVal;
+						prop[propName] = deleteVal;
 					} else {
 						delete sys[tmpTmpStr][tmpArray[i]];
 						if (activeID && tmpArray[i] === activeID) {
 							sys[tmpActiveIDStr] = null;
-							prop[tmpActiveStr] = deleteVal;
+							prop[propName] = deleteVal;
 						}
 					}
 				}
@@ -295,7 +275,7 @@
 		} else {
 			if (activeID) { delete sys[tmpTmpStr][activeID]; }
 			sys[tmpActiveIDStr] = null;
-			prop[tmpActiveStr] = deleteVal;
+			prop[propName] = deleteVal;
 		}
 
 		return this;
@@ -317,37 +297,29 @@
 			prop = dObj.prop,
 			sys = dObj.sys,
 
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID",
-			tmpTmpStr = "tmp" + propName,
+			upperCase = $.toUpperCase(propName, 1),
+			tmpActiveIDStr = "active" + upperCase + "ID",
+			tmpTmpStr = "tmp" + upperCase,
 
 			activeID = sys[tmpActiveIDStr],
-
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-
 			i;
 
 		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
 			for (i in tmpArray) {
 				if (tmpArray.hasOwnProperty(i)) {
 					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
-						if (activeID) {
-							sys[tmpTmpStr][activeID] = resetVal;
-						}
-						prop[tmpActiveStr] = resetVal;
+						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+						prop[propName] = resetVal;
 					} else {
 						sys[tmpTmpStr][tmpArray[i]] = resetVal;
-						if (activeID && tmpArray[i] === activeID) {
-							prop[tmpActiveStr] = resetVal;
-						}
+						if (activeID && tmpArray[i] === activeID) { prop[propName] = resetVal; }
 					}
 				}
 			}
 		} else {
-			if (activeID) {
-				sys[tmpTmpStr][activeID] = resetVal;
-			}
-			prop[tmpActiveStr] = resetVal;
+			if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+			prop[propName] = resetVal;
 		}
 
 		return this;
@@ -364,7 +336,7 @@
 	$.Collection.fn._resetTo = function (propName, objID, id) {
 		var
 			dObj = this.dObj,
-			mergeVal = !id || id === this.config.constants.active ? dObj.prop["active" + propName] : dObj.sys["tmp" + propName][id];
+			mergeVal = !id || id === this.config.constants.active ? dObj.prop[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
@@ -380,12 +352,12 @@
 	$.Collection.fn._exist = function (propName, id) {
 		var 
 			dObj = this.dObj,
-			prop = dObj.prop;
+			upperCase = $.toUpperCase(propName, 1);
 		
-		if ((!id || id === this.config.constants.active) && dObj.sys["active" + propName + "ID"]) {
+		if ((!id || id === this.config.constants.active) && dObj.sys["active" + upperCase + "ID"]) {
 			return true;
 		}
-		if (dObj.sys["tmp" + propName][id] !== undefined) {
+		if (dObj.sys["tmp" + upperCase][id] !== undefined) {
 			return true;
 		}
 
@@ -400,11 +372,7 @@
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._is = function (propName, id) {
-		var 
-			dObj = this.dObj,
-			prop = dObj.prop;
-
-		if (id === dObj.sys["active" + propName + "ID"]) {
+		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) {
 			return true;
 		}
 
@@ -423,47 +391,47 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.use = function (id) {
-		if (this._exist("Collection", id)) { this._set("Collection", id); }
+		if (this._exist("collection", id)) { this._set("collection", id); }
 		//
-		if (this._exist("Filter", id)) { this._set("Filter", id); }
+		if (this._exist("filter", id)) { this._set("filter", id); }
 		//
-		if (this._exist("Context", id)) { this._set("Context", id);  }
+		if (this._exist("context", id)) { this._set("context", id);  }
 		//
-		if (this._exist("Cache", id)) { this._set("Cache", id); }
+		if (this._exist("cache", id)) { this._set("cache", id); }
 		//
-		if (this._exist("Index", id)) { this._set("Index", id); }
+		if (this._exist("index", id)) { this._set("index", id); }
 		//
-		if (this._exist("Map", id)) { this._set("Map", id); }
+		if (this._exist("map", id)) { this._set("map", id); }
 		//
-		if (this._exist("Var", id)) { this._set("Var", id); }
+		if (this._exist("var", id)) { this._set("var", id); }
 		//
-		if (this._exist("Defer", id)) { this._set("Defer", id); }
+		if (this._exist("defer", id)) { this._set("defer", id); }
 		
 		
 		///////////
 		
 		
-		if (this._exist("Page", id)) { this._set("Page", id); }
+		if (this._exist("page", id)) { this._set("page", id); }
 		//
-		if (this._exist("Parser", id)) { this._set("Parser", id); }
+		if (this._exist("parser", id)) { this._set("parser", id); }
 		//
-		if (this._exist("AppendType", id)) { this._set("AppendType", id); }
+		if (this._exist("appendType", id)) { this._set("appendType", id); }
 		//
-		if (this._exist("Target", id)) { this._set("Target", id); }
+		if (this._exist("target", id)) { this._set("target", id); }
 		//
-		if (this._exist("SelectorOut", id)) { this._set("SelectorOut", id); }
+		if (this._exist("calculator", id)) { this._set("calculator", id); }
 		//
-		if (this._exist("Pager", id)) { this._set("Pager", id); }
+		if (this._exist("pager", id)) { this._set("pager", id); }
 		//
-		if (this._exist("Template", id)) { this._set("Template", id); }
+		if (this._exist("template", id)) { this._set("template", id); }
 		//
-		if (this._exist("TemplateModel", id)) { this._set("TemplateModel", id); }
+		if (this._exist("templateModel", id)) { this._set("templateModel", id); }
 		//
-		if (this._exist("NumberBreak", id)) { this._set("NumberBreak", id); }
+		if (this._exist("numberBreak", id)) { this._set("numberBreak", id); }
 		//
-		if (this._exist("PageBreak", id)) { this._set("PageBreak", id); }
+		if (this._exist("pageBreak", id)) { this._set("pageBreak", id); }
 		//
-		if (this._exist("ResultNull", id)) { this._set("ResultNull", id); }
+		if (this._exist("resultNull", id)) { this._set("resultNull", id); }
 				
 		return this;
 	};

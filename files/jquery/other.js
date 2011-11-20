@@ -41,9 +41,35 @@
 	$.unshiftArguments = function (obj, pushVal) {
 		var newObj = [pushVal], i = 0, oLength = obj.length;
 		
-		for (; i < oLength; i++) {
-			newObj.push(obj[i]);
-		}
+		for (; i < oLength; i++) { newObj.push(obj[i]); }
 		
 		return newObj;
+	};
+	/**
+	 * toUpperCase function
+	 * 
+	 * @param {String} str - some str
+	 * @param {Number} [to=str.length] - end
+	 * @param {Number} [from=0] - start
+	 * @return {String}
+	 */
+	$.toUpperCase = function (str, to, from) {
+		from = from || 0;
+		
+		if (!to) { return str.toUpperCase(); }
+		return str.substring(from, to).toUpperCase() + str.substring(to);
+	};
+	/**
+	 * toLowerCase function
+	 * 
+	 * @param {String} str - some str
+	 * @param {Number} [to=str.length] - end
+	 * @param {Number} [from=0] - start
+	 * @return {String}
+	 */
+	$.toLowerCase = function (str, to, from) {
+		from = from || 0;
+		
+		if (!to) { return str.toLowerCase(); }
+		return str.substring(from, to).toLowerCase() + str.substring(to);
 	};

@@ -10,60 +10,60 @@
 	<script type="text/javascript">
 		$(function () {
 			test("_$", function () {
-				var db = new $.Collection([[1, 2, 3, 4, 5], 2, 3, 4], {activeContext: "0"});
-				equal(+db._$("Context", ""), 4, "Простая проверка");
+				var db = new $.Collection([[1, 2, 3, 4, 5], 2, 3, 4], {context: "0"});
+				equal(+db._$("context", ""), 4, "Простая проверка");
 			});
 			//
 			test("_update", function () {
-				var db = new $.Collection([1, 2])._push("Collection", "table1", [1, 2, 3]);
+				var db = new $.Collection([1, 2])._push("collection", "table1", [1, 2, 3]);
 				
 				equal(db
-					._update("Collection", [1, 2, 3])
-					._get("Collection").length, 3,
+					._update("collection", [1, 2, 3])
+					._get("collection").length, 3,
 				"Простая проверка");
 				
 				equal(db
-					._set("Collection", "table1")
-					._update("Collection", [1, 2])
-					._get("Collection", "table1").length, 2,
+					._set("collection", "table1")
+					._update("collection", [1, 2])
+					._get("collection", "table1").length, 2,
 				"Проверка работы со стеком");
 			});
 			//
 			test("_get", function () {
-				var db = new $.Collection([1, 2])._push("Collection", "table1", [1, 2, 3]);
+				var db = new $.Collection([1, 2])._push("collection", "table1", [1, 2, 3]);
 				
-				equal(db._get("Collection").length, 2, "Простая проверка");
-				equal(db._get("Collection", "table1").length, 3, "Проверка работы со стеком");
+				equal(db._get("collection").length, 2, "Простая проверка");
+				equal(db._get("collection", "table1").length, 3, "Проверка работы со стеком");
 			});
 			//
 			test("_mod", function () {
-				var db = new $.Collection([1, 2])._push("Collection", "table1", [1, 2, 3]);
+				var db = new $.Collection([1, 2])._push("collection", "table1", [1, 2, 3]);
 				
 				equal(db
-					._mod("Context", "~0")
-					._get("Context"), "~0",
+					._mod("context", "~0")
+					._get("context"), "~0",
 				"Простая проверка: строковое дополнение");
 				
 				equal(db
-					._mod("Collection", 3)
-					._get("Collection").length, 3,
+					._mod("collection", 3)
+					._get("collection").length, 3,
 				"Простая проверка: дополнение массива");
 				
 				equal(db
-					._$("Collection", true)
-					._mod("Collection", true)
-					._get("Collection"), false,
+					._$("collection", true)
+					._mod("collection", true)
+					._get("collection"), false,
 				"Простая проверка: дополнение логической переменной");
 				
 				equal(db
-					._set("Collection", "table1")
-					._mod("Collection", 4)
-					._get("Collection").length, 4,
+					._set("collection", "table1")
+					._mod("collection", 4)
+					._get("collection").length, 4,
 				"Проверка работы со стеком: дополнение массива");
 				
 				equal(db
-					._mod("Collection", 5, "active")
-					._get("Collection").length, 5,
+					._mod("collection", 5, "active")
+					._get("collection").length, 5,
 				"Проверка работы со стеком: дополнение массива, обращение по константе");
 			});
 			//
@@ -71,111 +71,111 @@
 				var db = new $.Collection();
 				
 				equal(db
-					._push("Collection", "table1", [1, 2, 3])
-					._get("Collection", "table1").length, 3,
+					._push("collection", "table1", [1, 2, 3])
+					._get("collection", "table1").length, 3,
 				"Простая проверка: 2 входных параметра");
 				
 				equal(db
-					._push("Collection", {table2: [1, 2]})
-					._get("Collection", "table2").length, 2,
+					._push("collection", {table2: [1, 2]})
+					._get("collection", "table2").length, 2,
 				"Простая проверка: 1 входной параметр");
 				
 				equal(db
-					._set("Collection", "table1")
-					._push("Collection", "table1", [1])
-					._get("Collection").length, 1,
+					._set("collection", "table1")
+					._push("collection", "table1", [1])
+					._get("collection").length, 1,
 				"Перезапись активного свойства: 2 входных параметра");
 				
 				equal(db
-					._set("Collection", "table2")
-					._push("Collection", {table2: [1, 2, 3]})
-					._get("Collection").length, 3,
+					._set("collection", "table2")
+					._push("collection", {table2: [1, 2, 3]})
+					._get("collection").length, 3,
 				"Перезапись активного свойства: 1 входной параметр");
 			});
 			//
 			test("_set", function () {
-				var db = new $.Collection()._push("Collection", "table1", [1, 2]);
+				var db = new $.Collection()._push("collection", "table1", [1, 2]);
 				
 				equal(db
-					._set("Collection", "table1")
-					._get("Collection").length, 2,
+					._set("collection", "table1")
+					._get("collection").length, 2,
 				"Простая проверка");
 			});
 			//
 			test("_back", function () {
 				var db = new $.Collection()
-					._push("Collection", {table1: [1, 2], table2: [1]});
+					._push("collection", {table1: [1, 2], table2: [1]});
 				
 				equal(db
-					._set("Collection", "table1")
-					._set("Collection", "table2")
-					._back("Collection")
-					._get("Collection").length, 2,
+					._set("collection", "table1")
+					._set("collection", "table2")
+					._back("collection")
+					._get("collection").length, 2,
 				"Простая проверка");
 			});
 			//
 			test("_backIf", function () {
 				var db = new $.Collection()
-					._push("Collection", {table1: [1, 2], table2: [1]});
+					._push("collection", {table1: [1, 2], table2: [1]});
 				
 				equal(db
-					._set("Collection", "table1")
-					._set("Collection", "table2")
-					._set("Collection", "table1")
-					._back("Collection")
-					._backIf("Collection")
-					._get("Collection").length, 1,
+					._set("collection", "table1")
+					._set("collection", "table2")
+					._set("collection", "table1")
+					._back("collection")
+					._backIf("collection")
+					._get("collection").length, 1,
 				"Простая проверка");
 			});
 			//
 			test("_drop", function () {
 				var db = new $.Collection()
-					._push("Collection", {table1: [1, 2], table2: [1]})
-					._set("Collection", "table1");
+					._push("collection", {table1: [1, 2], table2: [1]})
+					._set("collection", "table1");
 
 				equal(db
-					._drop("Collection", ["active", "table2"], null)
-					._get("Collection"), null,
+					._drop("collection", ["active", "table2"], null)
+					._get("collection"), null,
 				"Простая проверка");
 			});
 			//
 			test("_reset", function () {
 				var db = new $.Collection()
-					._push("Context", {table1: "0", table2: "1"})
-					._set("Context", "table1");
+					._push("context", {table1: "0", table2: "1"})
+					._set("context", "table1");
 
 				equal(db
-					._reset("Context", ["active", "table2"], "")
-					._get("Context"), "",
+					._reset("context", ["active", "table2"], "")
+					._get("context"), "",
 				"Простая проверка");
 			});
 			//
 			test("_resetTo", function () {
 				var db = new $.Collection()
-					._push("Context", {table1: "0", table2: "1"})
-					._set("Context", "table1");
+					._push("context", {table1: "0", table2: "1"})
+					._set("context", "table1");
 
 				equal(db
-					._resetTo("Context", "table1", "table2")
-					._get("Context"), "1",
+					._resetTo("context", "table1", "table2")
+					._get("context"), "1",
 				"Простая проверка");
 			});
 			//
 			test("_exist", function () {
 				var db = new $.Collection()
-					._push("Collection", {table1: [1, 2], table2: [1]})
-					._set("Collection", "table1");
+					._push("collection", {table1: [1, 2], table2: [1]})
+					._set("collection", "table1");
 
-				equal(db._exist("Collection", "table3"), false, "Простая проверка");
-				equal(db._exist("Collection"), true, "Простая проверка: по активному параметру");
+				equal(db._exist("collection", "table3"), false, "Простая проверка");
+				equal(db._exist("collection"), true, "Простая проверка: по активному параметру");
 			});
 			//
 			test("_is", function () {
 				var db = new $.Collection()
-					._push("Collection", {table1: [1, 2], table2: [1]})
-					._set("Collection", "table1");
+					._push("collection", {table1: [1, 2], table2: [1]})
+					._set("collection", "table1");
 
-				equal(db._is("Collection", "table1"), true, "Простая проверка");
+				equal(db._is("collection", "table1"), true, "Простая проверка");
 			});
 		});
 	</script>

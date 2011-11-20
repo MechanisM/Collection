@@ -21,6 +21,7 @@
 		deleteType = deleteType === true ? true : false;
 	
 		var
+			constants = this.config.constants,
 			statObj = $.Collection.stat.obj,
 		
 			dObj = this.dObj,
@@ -33,7 +34,7 @@
 	
 			oCheck, lCheck;
 		
-		cObj = statObj.getByLink(activeID && activeID !== this.config.constants.active ? sys.tmpCollection[activeID] : prop.collection, this.getActiveContext());
+		cObj = statObj.getByLink(activeID && activeID !== constants.active ? sys.tmpCollection[activeID] : prop.collection, this.getActiveContext());
 		
 		if (typeof cObj === "object") {
 			oCheck = $.isPlainObject(cObj);
@@ -42,7 +43,7 @@
 			if (!sourceID) {
 				// add type
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + constants.methodSeparator + "unshift" : propType;
 					lCheck = statObj.addElementToObject(cObj, propType.toString(), cValue);
 				} else {
 					lCheck = true;
@@ -55,11 +56,11 @@
 			// move
 			} else {
 				cValue = $.isExist(cValue) ? cValue.toString() : "";
-				sObj = statObj.getByLink(sourceID === this.config.constants.active ? prop.collection : sys.tmpCollection[sourceID], cValue);
+				sObj = statObj.getByLink(sourceID === constants.active ? prop.collection : sys.tmpCollection[sourceID], cValue);
 
 				// add type
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + statObj.methodSeparator + "unshift" : propType;
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + constants.methodSeparator + "unshift" : propType;
 					lCheck = statObj.addElementToObject(cObj, propType.toString(), sObj);
 				} else {
 					lCheck = true;

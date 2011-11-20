@@ -82,26 +82,26 @@
 		 * @type Array
 		*/
 		stack: [
-		"Collection",
-		"Filter",
-		"Context",
-		"Cache",
-		"Index",
-		"Map",
-		"Var",
-		"Defer",
+		"collection",
+		"filter",
+		"context",
+		"cache",
+		"index",
+		"map",
+		"var",
+		"defer",
 		
-		"Page",
-		"Parser",
-		"AppendType",
-		"Target",
-		"SelectorOut",
-		"Pager",
-		"Template",
-		"TemplateModel",
-		"NumberBreak",
-		"PageBreak",
-		"ResultNull"
+		"page",
+		"parser",
+		"appendType",
+		"target",
+		"calculator",
+		"pager",
+		"template",
+		"templateModel",
+		"numberBreak",
+		"pageBreak",
+		"resultNull"
 		],
 		
 		//////
@@ -126,16 +126,5 @@
 			type = type || "filter";
 			
 			return this.dObj.sys.callee[type];
-		},
-		
-		apExtend: function (param, active) {
-			var key, newKey;
-			
-			for (key in active) {
-				if (active.hasOwnProperty(key)) {
-					newKey = key.substring(7);
-					console.log(newKey);
-				}
-			}
 		}
 	};

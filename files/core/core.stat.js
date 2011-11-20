@@ -5,8 +5,8 @@
 	
 	// object for static methods
 	$.Collection.stat = {};
-	// static template mode
-	$.Collection.stat.templateModel = {};
+	// static template models
+	$.Collection.stat.templateModels = {};
 	
 	// static methods for object
 	$.Collection.stat.obj = {

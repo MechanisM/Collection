@@ -6,85 +6,84 @@
 	// generate aliases
 	(function (data) {
 		var
-			i,
-			fn = $.Collection.fn,
-			nm;
+			i, fn = $.Collection.fn,
+			nm, upperCase;
 	
 		for (i = data.length; i--;) {
+			nm = data[i] !== "collection" ? data[i] : "";
+			upperCase = $.toUpperCase(data[i], 1);
 			
-			nm = data[i] !== "Collection" ? data[i] : "";
-			
-			fn["$" + nm] = function (nm) {
+			fn["$" + upperCase] = function (nm) {
 				return function (newParam) { return this._$(nm, newParam); };
 			}(data[i]);
 			//
-			if (data[i] === "Context") {
-				fn["mod" + nm] = function (nm) {
+			if (data[i] === "context") {
+				fn["mod" + upperCase] = function (nm) {
 					return function (newParam, id) { return this._mod.apply(this, $.unshiftArguments(arguments, nm)); };
 				}(data[i]);
 			}
 			//
-			fn["update" + nm] = function (nm) {
+			fn["update" + upperCase] = function (nm) {
 				return function (newParam) { return this._update(nm, newParam); };
 			}(data[i]);
 			//
-			fn["reset" + nm + "To"] = function (nm) {
+			fn["reset" + upperCase + "To"] = function (nm) {
 				return function (objID, id) { return this._resetTo(nm, objID, id); };
 			}(data[i]);	
 			//
-			fn["push" + nm] = function (nm) {
+			fn["push" + upperCase] = function (nm) {
 				return function (objID, newParam) { return this._push.apply(this, $.unshiftArguments(arguments, nm)); }
 			}(data[i]);
 			//
-			fn["set" + nm] = function (nm) {
+			fn["set" + upperCase] = function (nm) {
 				return function (id) { return this._set(nm, id); };
 			}(data[i]);
 			//
-			fn["pushSet" + nm] = function (nm) {
+			fn["pushSet" + upperCase] = function (nm) {
 				return function (id, newParam) { return this._push(nm, id, newParam)._set(nm, id); };
 			}(data[i]);
 			//
-			fn["back" + nm] = function (nm) {
+			fn["back" + upperCase] = function (nm) {
 				return function (nmb) { return this._back(nm, nmb || ""); };
 			}(data[i]);	
 			//
-			fn["back" + nm + "If"] = function (nm) {
+			fn["back" + upperCase + "If"] = function (nm) {
 				return function (nmb) { return this._backIf(nm, nmb || ""); };
 			}(data[i]);	
 			//
-			if (data[i] === "Filter" || data[i] === "Parser") {
-				fn["drop" + nm] = function (nm) {
+			if (data[i] === "filter" || data[i] === "parser") {
+				fn["drop" + upperCase] = function (nm) {
 					return function () { return this._drop(nm, arguments); };
 				}(data[i]);	
 			} else {
-				fn["drop" + nm] = function (nm) {
+				fn["drop" + upperCase] = function (nm) {
 					return function () { return this._drop(nm, arguments, null); };
 				}(data[i]);	
 			}
 			//
-			if (data[i] === "Filter" || data[i] === "Parser") {
-				fn["reset" + nm] = function (nm) {
+			if (data[i] === "filter" || data[i] === "parser") {
+				fn["reset" + upperCase] = function (nm) {
 					return function () { return this._reset(nm, arguments); };
 				}(data[i]);	
-			} else if (data[i] === "Page") {
-				fn["reset" + nm] = function (nm) {
+			} else if (data[i] === "page") {
+				fn["reset" + upperCase] = function (nm) {
 					return function () { return this._reset(nm, arguments, 1); };
 				}(data[i]);	
-			} else if (data[i] === "Context") {
-				fn["reset" + nm] = function (nm) {
+			} else if (data[i] === "context") {
+				fn["reset" + upperCase] = function (nm) {
 					return function () { return this._reset(nm, arguments, ""); };
 				}(data[i]);	
 			}
 			//
-			fn["is" + nm] = function (nm) {
+			fn["is" + upperCase] = function (nm) {
 				return function (id) { return this._is(nm, id); };
 			}(data[i]);	
 			//
-			fn["exist" + nm] = function (nm) {
+			fn["exist" + upperCase] = function (nm) {
 				return function (id) { return this._exist(nm, id || ""); };
 			}(data[i]);
 			//
-			fn["get" + nm] = function (nm) {
+			fn["get" + upperCase] = function (nm) {
 				return function (id) { return this._get(nm, id || ""); };
 			}(data[i]);
 		}

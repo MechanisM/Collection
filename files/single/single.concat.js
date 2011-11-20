@@ -17,12 +17,12 @@
 		context = $.isExist(context) ? context.toString() : "";
 	
 		var
-			statObj = $.Collection.stat.obj,
+			constants = this.config.constants,
 		
 			dObj = this.dObj,
 			cObj;
 		
-		cObj = statObj.getByLink(id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + statObj.contextSeparator + context);	
+		cObj = $.Collection.stat.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + constants.contextSeparator + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
