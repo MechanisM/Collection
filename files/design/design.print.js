@@ -57,9 +57,9 @@
 		
 		if (target === false) {
 			if (!param.variable) {
-				this.$Var(result);
+				this.$_("variable", result);
 			} else {
-				this.PushSetVar(param.variable, result);
+				this._push("variable", param.variable, result);
 			}
 		} else { target[(param.appendType || prop.appendType)](result); }
 	

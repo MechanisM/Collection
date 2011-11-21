@@ -35,10 +35,10 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			statObj = $.Collection.stat.obj,
+			constants = this.config.constants,
 	
 			deleteList = [],
-			aCheckType = $.isArray(statObj.getByLink(this._get("Collection", activeID), this.getActiveContext())),
+			aCheckType = $.isArray($.Collection.stat.obj.getByLink(this._get("collection", activeID), this.getActiveContext())),
 	
 			elements, eLength, i = -1;
 	
@@ -51,11 +51,11 @@
 		if (mult === true) {
 			eLength = elements.length - 1;
 			for (; i++ < eLength;) {
-				this.addElement(context + this.config.constants.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + statObj.methodSeparator + addType, activeID, sourceID);
+				this.addElement(context + constants.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + constants.methodSeparator + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + this.config.constants.contextSeparator + elements, aCheckType === true ? addType : elements + statObj.methodSeparator + addType, activeID, sourceID);
+			this.addElement(context + constants.contextSeparator + elements, aCheckType === true ? addType : elements + constants.methodSeparator + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 	

@@ -12,7 +12,7 @@
 			module("core");
 			test("length", function () {
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3], last: 2});
-				db.push({table1: null, table2: "GO!"})
+				db.push({table1: null, table2: "GO!"});
 				
 				equal(db.length([1, 2, 3]), 3, "Массив");
 				equal(db.length(function ($this, i) {

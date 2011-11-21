@@ -88,7 +88,7 @@
 		"cache",
 		"index",
 		"map",
-		"var",
+		"variable",
 		"defer",
 		
 		"page",
