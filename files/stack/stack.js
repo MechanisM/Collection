@@ -36,8 +36,7 @@
 			sys = dObj.sys,
 			
 			upperCase = $.toUpperCase(propName, 1),
-			tmpActiveIDStr = "active" + upperCase + "ID",
-			activeID = sys[tmpActiveIDStr];
+			activeID = sys["active" + upperCase + "ID"];
 
 		prop[propName] = newProp;
 		if (activeID) { sys["tmp" + upperCase][activeID] = prop[propName]; }
@@ -63,7 +62,7 @@
 	};
 	
 	/**
-	 * extend property
+	 * modify property
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
@@ -197,7 +196,6 @@
 			sys = dObj.sys,
 
 			upperCase = $.toUpperCase(propName, 1),
-			tmpActiveStr = "active" + upperCase,
 			propBack = sys[propName + "Back"],
 
 			pos;
@@ -207,7 +205,7 @@
 
 		if (pos >= 0 && propBack[pos]) {
 			if (sys["tmp" + upperCase][propBack[pos]]) {
-				sys[tmpActiveStr + "ID"] = propBack[pos];
+				sys["active" + upperCase + "ID"] = propBack[pos];
 				dObj.prop[propName] = sys["tmp" + upperCase][propBack[pos]];
 
 				propBack.splice(pos + 1, propBack.length);
@@ -254,18 +252,19 @@
 
 			activeID = sys[tmpActiveIDStr],
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-			i;
+			
+			key;
 
 		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
-			for (i in tmpArray) {
-				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
 						prop[propName] = deleteVal;
 					} else {
-						delete sys[tmpTmpStr][tmpArray[i]];
-						if (activeID && tmpArray[i] === activeID) {
+						delete sys[tmpTmpStr][tmpArray[key]];
+						if (activeID && tmpArray[key] === activeID) {
 							sys[tmpActiveIDStr] = null;
 							prop[propName] = deleteVal;
 						}
@@ -303,17 +302,18 @@
 
 			activeID = sys[tmpActiveIDStr],
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-			i;
+			
+			key;
 
 		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
-			for (i in tmpArray) {
-				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
 						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
 						prop[propName] = resetVal;
 					} else {
-						sys[tmpTmpStr][tmpArray[i]] = resetVal;
-						if (activeID && tmpArray[i] === activeID) { prop[propName] = resetVal; }
+						sys[tmpTmpStr][tmpArray[key]] = resetVal;
+						if (activeID && tmpArray[key] === activeID) { prop[propName] = resetVal; }
 					}
 				}
 			}

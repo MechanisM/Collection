@@ -55,7 +55,6 @@ copy	^
 		^
 		+ txt\closure.end.txt ^
 		^
-		+ lib\json2.js ^
 		..\jquery.collection.js
 
 goto start

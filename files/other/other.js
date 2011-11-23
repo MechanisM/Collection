@@ -18,7 +18,8 @@
 	$.Collection.fn.customFilter = function (filter, $this, i, cALength, $obj, id) {
 		var
 			tmpFilter,
-		
+			constants = this.config.constants,
+			
 			dObj = this.dObj,
 			prop = dObj.prop,
 			sys = dObj.sys,
@@ -39,7 +40,7 @@
 		}
 		
 		// if filter is not defined or filter is a string constant
-		if (!filter || ($.isString(filter) && $.trim(filter) === this.config.constants.active)) {
+		if (!filter || ($.isString(filter) && $.trim(filter) === constants.active)) {
 			if (prop.filter) {
 				sys.callee.filter = prop.filter;
 				
@@ -115,7 +116,7 @@
 						filter[j] = filter[j].substring(1);
 					} else { inverse = false; }
 					
-					tmpFilter = filter[j] === this.config.constants.active ? prop.filter : sys.tmpFilter[filter[j]];
+					tmpFilter = filter[j] === constants.active ? prop.filter : sys.tmpFilter[filter[j]];
 					sys.callee.filter = tmpFilter;
 					//
 					tmpResult = tmpFilter($this, i, cALength, $obj, id);
