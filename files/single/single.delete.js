@@ -18,7 +18,6 @@
 			constants = this.config.constants,
 		
 			dObj = this.dObj,
-			prop = dObj.prop,
 			
 			key, i = 0,
 			pos, n = 0,
@@ -42,7 +41,7 @@
 
 			// choice of the parent element to check the type
 			cObj = $.Collection.stat.obj.getByLink(id && id !== constants.active ?
-						dObj.sys.tmpCollection[id] : prop.collection,
+						dObj.sys.tmpCollection[id] : dObj.prop.collection,
 						context.replace(new RegExp("[^" + constants.contextSeparator + "]+$"), ""));
 			// choice link
 			context = context.replace(new RegExp(".*?([^" + constants.contextSeparator + "]+$)"), "$1");

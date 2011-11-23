@@ -13,9 +13,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._prop = function (propName, objKey, value) {
-		var
-			dObj = this.dObj,
-			prop = dObj[propName];
+		var prop = this.dObj[propName];
 			
 		if (arguments.length !== 3) {
 			if ($.isPlainObject(objKey)) {

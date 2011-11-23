@@ -211,16 +211,9 @@
 	
 		var
 			dObj = this.dObj,
-			sys = dObj.sys,
-			prop = dObj.prop,
+			context = "", i;
 	
-			contextID = sys.contextID,
-			context = "",
-	
-			i;
-	
-		context = (id && id !== this.config.constants.active ? sys.tmpContext[id] : prop.context).split($.Collection.stat.obj.contextSeparator);
-	
+		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.prop.context).split($.Collection.stat.obj.contextSeparator);
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
 		return context.join($.Collection.stat.obj.contextSeparator);
