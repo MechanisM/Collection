@@ -25,14 +25,16 @@
 	$.Collection.fn.extPrint = function (param) {
 		var
 			dObj = this.dObj,
+			prop = dObj.prop,
 			opt = {},
 			
 			cObj, cOLength,
-			start, inc = 0,
+			start, inc = 0, checkPage,
 			
 			result = "", action;
 		//
-		$.extend(true, opt, dObj.prop, param);
+		$.extend(true, opt, prop, param);
+		checkPage = opt.page === (prop.page + 1);
 		action = function (data, i, aLength, $this, objID) {
 			result += opt.template(data, i, aLength, $this, objID);
 			inc = i;
@@ -40,7 +42,7 @@
 			return true;
 		};
 		// get collection
-		cObj = $.Collection.obj.getByLink(prop.collection, this.getActiveContext());
+		cObj = $.Collection.obj.getByLink(opt.collection, this.getActiveContext());
 		cOLength = this.length();
 		
 		// number of records per page
@@ -48,15 +50,15 @@
 		// "callee" link
 		dObj.sys.callee.template = opt.template;
 		
-		if ($.isPlainObject(cObj) || opt.cacheIteration === false) {
-			start = opt.page === 1 ? opt.numberBreak : (opt.page - 1) * opt.numberBreak;
+		if ($.isPlainObject(cObj) || opt.cache.iteration === false) {
+			start = opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, start);
-		} else if ($.isArray(cObj) && opt.cacheIteration === true) {
+		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = opt.filter === false ?
-						opt.page === 1 ? -1 : (opt.page - 1) * opt.numberBreak - 1 : cacheIteration === true ?
-							checkPage === true ? cache.firstIteration : cache.lastIteration : i;
+						opt.page === 1 ? -1 : (opt.page - 1) * opt.numberBreak - 1 : opt.cache.iteration === true ?
+							checkPage === true ? opt.cache.firstIteration : opt.cache.lastIteration : i;
 			
 			// rewind cached step back
 			if (checkPage === true && opt.filter !== false) {
@@ -68,35 +70,34 @@
 					}
 				}
 				start = start === -1 ? start : start + 1;
-				cache.lastIteration = start;
+				opt.cache.lastIteration = start;
 			}
 			
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, null, start);
 			//
-			cache.firstIteration = cache.lastIteration;
-			cache.lastIteration = inc - 1;
+			opt.cache.firstIteration = opt.cache.lastIteration;
+			opt.cache.lastIteration = inc - 1;
 			if (cache.autoIteration === true) {
 				cache.iteration = true;
 			}
 		}
 		
-		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
+		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : opt.resultNull : result;
 		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;
 		// append to DOM
 		opt.target[opt.appendType](result);
 	
-		/*$.extend(opt, {
+		$.extend(true, opt, {
 			countRecords: this.length(opt.filter),
-			countRecordsInPage: $((opt.calculator || prop.calculator), target).length,
-			countTotal: opt.numberBreak * opt.page - (opt.numberBreak - sys.countRecordsInPage)
-		});*/
+			countRecordsInPage: $(opt.calculator, opt.target).length
+		});
+		opt.countTotal = opt.numberBreak * opt.page - (opt.numberBreak - opt.countRecordsInPage);
 		
-		/*
 		// generate navigation bar
 		if (opt.page !== 1 && sys.countRecordsInPage === 0) {
-			prop.opt.page--;
+			prop.page--;
 			this.extPrint.apply(this, arguments);
-		} else { this.easyPage(opt, prop); }*/
+		} else { this.easyPage(opt, prop); }
 	
 		return this;
 	};

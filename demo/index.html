@@ -45,7 +45,7 @@
 		];
 		$(function () {
 			var db = $.Collection();
-			$.Collection(data).extPrint({template: $("#result").children().tplCompile(), target: $("#result"), pager: "#nav"});
+			$.Collection(data).extPrint({template: $("#result").children().tplCompile(), target: $("#result"), pager: "#nav", numberBreak: 3});
 		});
 	</script>
 </head>

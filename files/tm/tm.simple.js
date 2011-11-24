@@ -18,22 +18,10 @@
 	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
 	 * @return {Boolean}
 	 */
-	$.Collection.templateModels.simple = function (param) {
-		param = param || {};
-							
-		var
-			tmpCount = param.collection ? param.collection.Count : "",
-							
-			dObj = this.dObj,
-			sys = dObj.sys,
-			css = dObj.css,
-			viewVal = dObj.viewVal,
-			prop = dObj.prop,
+	$.Collection.templateModels.simple = function (o) {					
+		var	disableNext, disablePrev;
 			
-			disableNext,
-			disablePrev;
-			
-		if (page === 1 && countRecordsInPage === countRecords) {
+		if (o.page === 1 && o.countRecordsInPage === o.countRecords) {
 			$("." + pagePrev + "," + "." + pageDisablePrev + "," + "." + pageNext + "," + "." + pageDisableNext, pager).addClass(pageDisableNext);
 		} else {
 			if (countTotal === countRecords) {
