@@ -36,7 +36,7 @@
 			cObj = id;
 		}
 		//
-		if (aCheck !== true) { cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext()); }
+		if (aCheck !== true) { cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext()); }
 		// if cObj is null
 		if (cObj === null) { return 0; }
 
@@ -108,7 +108,7 @@
 		// "callee" link
 		dObj.sys.callee.callback = callback;
 		//
-		cObj = $.Collection.stat.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : prop.collection, this.getActiveContext());
+		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : prop.collection, this.getActiveContext());
 		cOLength = this.length(cObj);
 		
 		//

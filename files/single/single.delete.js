@@ -40,7 +40,7 @@
 			context = context.join(constants.contextSeparator);
 
 			// choice of the parent element to check the type
-			cObj = $.Collection.stat.obj.getByLink(id && id !== constants.active ?
+			cObj = $.Collection.obj.getByLink(id && id !== constants.active ?
 						dObj.sys.tmpCollection[id] : dObj.prop.collection,
 						context.replace(new RegExp("[^" + constants.contextSeparator + "]+$"), ""));
 			// choice link

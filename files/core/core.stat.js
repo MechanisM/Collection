@@ -3,13 +3,11 @@
 	//// static methods (object && template mode)
 	/////////////////////////////////
 	
-	// object for static methods
-	$.Collection.stat = {};
 	// static template models
-	$.Collection.stat.templateModels = {};
+	$.Collection.templateModels = {};
 	
 	// static methods for object
-	$.Collection.stat.obj = {
+	$.Collection.obj = {
 		// link to constants
 		constants: $.Collection.fn.config.constants,
 		

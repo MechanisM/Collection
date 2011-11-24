@@ -22,7 +22,7 @@
 	
 		var
 			constants = this.config.constants,
-			statObj = $.Collection.stat.obj,
+			statObj = $.Collection.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,

@@ -218,13 +218,11 @@
 	//// static methods (object && template mode)
 	/////////////////////////////////
 	
-	// object for static methods
-	$.Collection.stat = {};
 	// static template models
-	$.Collection.stat.templateModels = {};
+	$.Collection.templateModels = {};
 	
 	// static methods for object
-	$.Collection.stat.obj = {
+	$.Collection.obj = {
 		// link to constants
 		constants: $.Collection.fn.config.constants,
 		
@@ -397,6 +395,170 @@
 				
 			return true;
 		}
+	};	
+	/////////////////////////////////
+	//// static methods (sort)
+	/////////////////////////////////
+	
+	$.Collection.sort = {
+		/**
+		 * sort field name
+		 * 
+		 * @field
+		 * @type String|Null
+		 */
+		field: null,
+		/**
+		 * reverce
+		 * 
+		 * @field
+		 * @type Boolean
+		 */
+		rev: false,
+		/**
+		 * shuffle
+		 * 
+		 * @field
+		 * @type Boolean
+		 */
+		shuffle: false,
+		/**
+		 * sort callback
+		 * 
+		 * @field
+		 * @type Function|Boolean|Null
+		 */
+		fn: null,
+		
+		/**
+		 * main sort function
+		 * 
+		 * @param {String} [field=null] - field name
+		 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
+		 * @param {Function} [fn=null] - callback
+		 * @return {Function}
+		 */
+		sortBy: function (field, rev, fn) {
+			this.field = field || null;
+			this.rev = rev ? rev !== "shuffle" ? rev : false : false;
+			this.shuffle = rev ? rev === "shuffle" ? rev : false : false;
+			this.fn = fn || null;
+				
+			return this.sortHelper;
+		},
+		/**
+		 * sort helper
+		 * 
+		 * @return {Number}
+		 */
+		sortHelper: function (a, b) {	
+			var
+				stat = $.Collection,	
+				$this = stat.sort,
+				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
+			
+			if ($this.field) {
+				a = stat.obj.getByLink(a, $this.field);
+				b = stat.obj.getByLink(b, $this.field);
+			}
+					
+			if ($this.fn) {
+				a = $this.fn(a);
+				b = $this.fn(b);
+			}
+			
+			if (!$this.shuffle) {	
+				if (a < b) { return rev * -1; }
+				if (a > b) { return rev; }
+				
+				return 0;
+			} else { return rev; }
+		}
+	};	
+	/////////////////////////////////
+	//// jQuery methods (core)
+	/////////////////////////////////
+		
+	/**
+	 * jQuery collection
+	 * 
+	 * @this {jQuery Object}
+	 * @param {Object} prop - user's preferences
+	 * @return {Colletion Object}
+	 */
+	$.fn.collection = function (prop) {
+		var
+			stat = $.fn.collection.stat,
+			text = function (elem) {
+				elem = elem.childNodes;
+				var
+					eLength = elem.length - 1,
+					i = -1,
+					str = "";
+	
+				for (; i++ < eLength;) {
+					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) {
+						str += elem[i].textContent;
+					}
+				}
+	
+				if (str) { return str; }
+	
+				return false;
+			},
+			inObj = function (elem) {
+				var array = [];
+				//
+				elem.each(function (n) {
+					var
+						$this = $(this),
+						data = $this.data(),
+	
+						classes = $this.attr("class") ? $this.attr("class").split(" ") : "",
+						cLength = classes ? classes.length : 0,
+	
+						txt = text($this[0]),
+	
+						i;
+	
+					array.push({});
+	
+					for (i in data) {
+						if (data.hasOwnProperty(i)) {
+							array[n][i] = data[i];
+						}
+					}
+	
+					if (cLength) {
+						cLength--;
+						array[n][stat.classes] = {};
+						for (i = -1; i++ < cLength;) {
+							array[n][stat.classes][classes[i]] = classes[i];
+						}
+					}
+	
+					if ($this.children().length !== 0) {
+						array[n][stat.childNodes] = inObj($this.children());
+					}
+	
+					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
+				});
+	
+				return array;
+			},
+			data = inObj(this);
+	
+		if (prop) { return new $.Collection(data, prop); }
+	
+		return new $.Collection(data);
+	};
+	// values by default
+	if (!$.fn.collection.stat) {
+		$.fn.collection.stat = {
+			val: "val",
+			childNodes: "childNodes",
+			classes: "classes"
+		};
 	};
 	/////////////////////////////////
 	//// jQuery methods (compiler templates)
@@ -519,6 +681,173 @@
 		
 		if (!to) { return str.toLowerCase(); }
 		return str.substring(from, to).toLowerCase() + str.substring(to);
+	};	
+	/////////////////////////////////
+	//// template model (simple)
+	/////////////////////////////////
+	
+	/**
+	 * simple model
+	 * 
+	 * @this {Colletion Object}
+	 * @param param - объект настроек
+	 * @param {Number} [param.page=this.dObj.prop.page] - активная страница
+	 * @param {Collection} [param.collection=null] - коллекция (если не было пересчета заранее)
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.numberBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
+	 * @param {Selector} [param.calculator=this.dObj.prop.calculator] -  селектор, по которому cчитается количесво записей на страницу
+	 * @param {Selector} [param.pager=this.dObj.prop.pager] - селектор к пейджеру
+	 * @param {Number} [param.countRecords=this.dObj.sys.countRecords] - всего записей в объекте (с учётом фильтра)
+	 * @param {Number} [param.countRecordsInPage=this.dObj.sys.countRecordsInPage] - всего записей на странице
+	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
+	 * @return {Boolean}
+	 */
+	$.Collection.templateModels.simple = function (param) {
+		param = param || {};
+							
+		var
+			tmpCount = param.collection ? param.collection.Count : "",
+							
+			dObj = this.dObj,
+			sys = dObj.sys,
+			css = dObj.css,
+			viewVal = dObj.viewVal,
+			prop = dObj.prop,
+			
+			disableNext,
+			disablePrev;
+			
+		if (page === 1 && countRecordsInPage === countRecords) {
+			$("." + pagePrev + "," + "." + pageDisablePrev + "," + "." + pageNext + "," + "." + pageDisableNext, pager).addClass(pageDisableNext);
+		} else {
+			if (countTotal === countRecords) {
+				$("." + pageNext, pager).replaceWith('<div class="' + pageDisableNext + '">' + aNext + '</div>'); 
+			} else {
+				disableNext = $("." + pageDisableNext, pager);
+				if (disableNext.length === 1) {
+					disableNext.replaceWith('<a href="javascript:;" class="' + pageNext + '" data-action="set/page/next">' + aNext + '</a>'); 
+				} else { $("." + pageNext, pager).removeClass(pageDisableNext); }
+			}		
+			if (page === 1) {
+				$("." + pagePrev, pager).replaceWith('<div class="' + pageDisablePrev + '">' + aPrev + '</div>');
+			} else {
+				disablePrev = $("." + pageDisablePrev, pager);
+				if (disablePrev.length === 1) {
+					disablePrev.replaceWith('<a href="javascript:;" class="' + pagePrev + '" data-action="set/page/prev">' + aPrev + '</a>');
+				} else { $("." + pagePrev, pager).removeClass(pageDisableNext); }
+			}	
+		}
+									
+		if (countRecordsInPage === 0) {
+			$("." + pageNumber, pager).html(0);
+		} else {
+			$("." + pageNumber, pager).html(((page - 1) * numberBreak + 1) + "-" + countTotal + ' ' + from + ' ' + countRecords);
+		}
+							
+		return true;
+	};	
+	/////////////////////////////////
+	//// template model (advansed)
+	/////////////////////////////////
+	
+	/**
+	 * advansed model
+	 * 
+	 * @this {Colletion Object}
+	 * @param param - объект настроек
+	 * @param {Number} [param.page=this.dObj.prop.page] - активна страница
+	 * @param {Collection} [param.collection=null] - коллекция (если не было пересчета заранее)
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.numberBreak] - количество записей на 1 страницу (константы: false - выводятся все записи)
+	 * @param {Number} [param.pageBreak=this.dObj.prop.pageBreak] - количество выводимых страниц (навигация)
+	 * @param {Selector} [param.calculator=this.dObj.prop.calculator] -  селектор, по которому cчитается количесво записей на страницу
+	 * @param {Selector} [param.pager=this.dObj.prop.pager] - селектор к пейджеру
+	 * @param {Number} [param.countRecords=this.dObj.sys.countRecords] - всего записей в объекте (с учётом фильтра)
+	 * @param {Number} [param.countRecordsInPage=this.dObj.sys.countRecordsInPage] - всего записей на странице
+	 * @param {Number} [param.countTotal=this.dObj.sys.countTotal] - номер последней записи на странице
+	 * @return {Boolean}
+	 */
+	$.Collection.templateModels.control = function (param) {
+		param = param || {};
+							
+		var
+			tmpCount = param.collection ? param.collection.Count : "",
+								
+			dObj = this.dObj,
+			sys = dObj.sys,
+			css = dObj.css,
+			viewVal = dObj.viewVal,
+			prop = dObj.prop,
+							
+			page = param.page || prop.page,
+			calculator = param.calculator || prop.calculator,
+			pager = $(param.pager || prop.pager),
+			countRecords = param.countRecords || sys.countRecords || tmpCount || 0,
+			countRecordsInPage = param.countRecordsInPage || sys.countRecordsInPage || $(calculator, prop.target).length,
+			numberBreak = param.numberBreak || prop.numberBreak,
+			pageBreak = param.pageBreak || prop.pageBreak,
+			countTotal = param.countTotal || sys.countTotal || numberBreak * page - (numberBreak - countRecordsInPage),
+			pageCount = countRecords % numberBreak !== 0 ? ~~(countRecords / numberBreak) + 1 : countRecords / numberBreak,
+								
+			str = "",
+								
+			pageActive = css.pageActive,
+			pagingLeft = css.pagingLeft,
+			pagingRight = css.pagingRight,
+								
+			pageDisablePrev = css.pageDisablePrev,
+			pageDisableNext = css.pageDisableNext,
+							
+			aPrev = viewVal.aPrev,
+			aNext = viewVal.aNext,
+			show = viewVal.show,
+			total = viewVal.total,
+								
+			i, j;
+							
+		if (pageCount > pageBreak) {
+			if (page !== 1) {
+				str += '<a href="javascript:;" data-action="set/page[1">' + aPrev + '</a>';
+			} else {
+				str += '<div class="' + pageDisablePrev + '">' + aPrev + '</div>';
+			}
+								
+			for (j = 0, i = (page - 1); i++ < pageCount; j++) {	
+				if (j === 0 && page !== 1) {
+					str += '<a href="javascript:;" data-action="set/page[' + (i - 1) + '">' + (i - 1) + '</a>';
+				}
+							
+				if (j === (numberBreak - 1)) { break; }
+							
+				if (i === page) {
+					str += '<a href="javascript:;" class="' + pageActive + '">' + i + '</a>';
+				} else {
+					str += '<a href="javascript:;" data-action="set/page[' + i + '">' + i + '</a>';
+				}
+			}
+								
+			if (i !== (pageCount + 1)) {
+				str += '\
+					<a href="javascript:;" data-action="set/page[' + (i + 1) + '">' + (i + 1) + '</a>\
+					<a href="javascript:;" data-action="set/page[' + pageCount + '">' + aNext + '</a>\
+				';
+			} else { str += '<div class="' + pageDisableNext + '">' + aNext + '</div>'; }
+		} else {
+			for (i = 0; i++ < pageCount;) {
+				if (i === page) {
+					str += '<a href="javascript:;" class="' + pageActive + '">' + i + '</a>';
+				} else {
+					str += '<a href="javascript:;" data-action="set/page[' + i + '">' + i + '</a>';
+				}
+			}
+		}
+							
+		if (countRecords === 0) {
+			$("." + pagingLeft + "," + "." + pagingRight, pager).empty();
+		} else {
+			$("." + pagingRight, pager).html(str);
+			$("." + pagingLeft, pager).html(total + ": " + countRecords + ". " + show + ": " + ((page - 1) * numberBreak + 1) + "-" + countTotal);
+		}
+							
+		return true;
 	};	
 	/////////////////////////////////
 	//// public fields (prop)
@@ -678,7 +1007,7 @@
 				 * @field
 				 * @type Function
 				 */
-				templateModel: $.Collection.stat.templateModels.simple,
+				templateModel: $.Collection.templateModels.simple,
 				/**
 				 * active records in one page
 				 * 
@@ -803,8 +1132,7 @@
 			sys = dObj.sys,
 			
 			upperCase = $.toUpperCase(propName, 1),
-			tmpActiveIDStr = "active" + upperCase + "ID",
-			activeID = sys[tmpActiveIDStr];
+			activeID = sys["active" + upperCase + "ID"];
 
 		prop[propName] = newProp;
 		if (activeID) { sys["tmp" + upperCase][activeID] = prop[propName]; }
@@ -830,7 +1158,7 @@
 	};
 	
 	/**
-	 * extend property
+	 * modify property
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
@@ -964,7 +1292,6 @@
 			sys = dObj.sys,
 
 			upperCase = $.toUpperCase(propName, 1),
-			tmpActiveStr = "active" + upperCase,
 			propBack = sys[propName + "Back"],
 
 			pos;
@@ -974,7 +1301,7 @@
 
 		if (pos >= 0 && propBack[pos]) {
 			if (sys["tmp" + upperCase][propBack[pos]]) {
-				sys[tmpActiveStr + "ID"] = propBack[pos];
+				sys["active" + upperCase + "ID"] = propBack[pos];
 				dObj.prop[propName] = sys["tmp" + upperCase][propBack[pos]];
 
 				propBack.splice(pos + 1, propBack.length);
@@ -1021,18 +1348,19 @@
 
 			activeID = sys[tmpActiveIDStr],
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-			i;
+			
+			key;
 
 		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
-			for (i in tmpArray) {
-				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
 						prop[propName] = deleteVal;
 					} else {
-						delete sys[tmpTmpStr][tmpArray[i]];
-						if (activeID && tmpArray[i] === activeID) {
+						delete sys[tmpTmpStr][tmpArray[key]];
+						if (activeID && tmpArray[key] === activeID) {
 							sys[tmpActiveIDStr] = null;
 							prop[propName] = deleteVal;
 						}
@@ -1070,17 +1398,18 @@
 
 			activeID = sys[tmpActiveIDStr],
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-			i;
+			
+			key;
 
 		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
-			for (i in tmpArray) {
-				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.config.constants.active) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
 						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
 						prop[propName] = resetVal;
 					} else {
-						sys[tmpTmpStr][tmpArray[i]] = resetVal;
-						if (activeID && tmpArray[i] === activeID) { prop[propName] = resetVal; }
+						sys[tmpTmpStr][tmpArray[key]] = resetVal;
+						if (activeID && tmpArray[key] === activeID) { prop[propName] = resetVal; }
 					}
 				}
 			}
@@ -1216,9 +1545,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._prop = function (propName, objKey, value) {
-		var
-			dObj = this.dObj,
-			prop = dObj[propName];
+		var prop = this.dObj[propName];
 			
 		if (arguments.length !== 3) {
 			if ($.isPlainObject(objKey)) {
@@ -1357,7 +1684,7 @@
 			}
 		}
 		
-		$.Collection.stat.obj.setByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, activeContext + constants.contextSeparator + context, value);
+		$.Collection.obj.setByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, activeContext + constants.contextSeparator + context, value);
 	
 		return this;
 	};
@@ -1376,7 +1703,7 @@
 			constants = this.config.constants,
 			dObj = this.dObj;
 		
-		return $.Collection.stat.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + constants.contextSeparator + context);
+		return $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + constants.contextSeparator + context);
 	};	
 	/////////////////////////////////
 	//// single methods (add)
@@ -1401,7 +1728,7 @@
 	
 		var
 			constants = this.config.constants,
-			statObj = $.Collection.stat.obj,
+			statObj = $.Collection.obj,
 		
 			dObj = this.dObj,
 			prop = dObj.prop,
@@ -1483,7 +1810,6 @@
 			constants = this.config.constants,
 		
 			dObj = this.dObj,
-			prop = dObj.prop,
 			
 			key, i = 0,
 			pos, n = 0,
@@ -1506,8 +1832,8 @@
 			context = context.join(constants.contextSeparator);
 
 			// choice of the parent element to check the type
-			cObj = $.Collection.stat.obj.getByLink(id && id !== constants.active ?
-						dObj.sys.tmpCollection[id] : prop.collection,
+			cObj = $.Collection.obj.getByLink(id && id !== constants.active ?
+						dObj.sys.tmpCollection[id] : dObj.prop.collection,
 						context.replace(new RegExp("[^" + constants.contextSeparator + "]+$"), ""));
 			// choice link
 			context = context.replace(new RegExp(".*?([^" + constants.contextSeparator + "]+$)"), "$1");
@@ -1600,7 +1926,7 @@
 			dObj = this.dObj,
 			cObj;
 		
-		cObj = $.Collection.stat.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + constants.contextSeparator + context);	
+		cObj = $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext() + constants.contextSeparator + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
@@ -1652,7 +1978,7 @@
 			cObj = id;
 		}
 		//
-		if (aCheck !== true) { cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext()); }
+		if (aCheck !== true) { cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext()); }
 		// if cObj is null
 		if (cObj === null) { return 0; }
 
@@ -1724,7 +2050,7 @@
 		// "callee" link
 		dObj.sys.callee.callback = callback;
 		//
-		cObj = $.Collection.stat.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : prop.collection, this.getActiveContext());
+		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : prop.collection, this.getActiveContext());
 		cOLength = this.length(cObj);
 		
 		//
@@ -1760,6 +2086,384 @@
 		return this;
 	};	
 	/////////////////////////////////
+	//// mult methods (search)
+	/////////////////////////////////
+	
+	/**
+	 * search elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @return {Number|Array}
+	 */
+	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
+		filter = filter || false;
+		id = $.isExist(id) ? id : this.config.constants.active;
+	
+		// if id is Boolean
+		if ($.isBoolean(id)) {
+			indexOf = from;
+			from = count;
+			count = mult;
+			mult = id;
+			id = this.config.constants.active;
+		}
+	
+		// values by default
+		mult = mult === false ? false : true;
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+	
+		var
+			result = [],
+			action = function (data, i, aLength, $this, id) {
+				if (mult === true) {
+					result.push(i);
+				} else {
+					result = i;
+					return false;
+				}
+	
+				return true;
+			};
+	
+		this.each(action, filter, id, mult, count, from, indexOf);
+	
+		return result;
+	};
+	/**
+	 * search element (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @return {Number|Array}
+	 */
+	$.Collection.fn.searchElement = function (filter, id) {
+		return this.searchElements(filter || "", id || "", false);
+	};	
+	/////////////////////////////////
+	//// mult methods (return)
+	/////////////////////////////////
+	
+	/**
+	 * return elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @return {mixed}
+	 */
+	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
+		filter = filter || false;
+		id = $.isExist(id) ? id : this.config.constants.active;
+	
+		// if id is Boolean
+		if ($.isBoolean(id)) {
+			indexOf = from;
+			from = count;
+			count = mult;
+			mult = id;
+			id = this.config.constants.active;
+		}
+	
+		// values by default
+		mult = mult === false ? false : true;
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+	
+		var
+			result = [],
+			action = function (data, i, aLength, $this, id) {
+				if (mult === true) {
+					result.push(data[i]);
+				} else {
+					result = data[i];
+					return false;
+				}
+	
+				return true;
+			};
+	
+		this.each(action, filter, id, mult, count, from, indexOf);
+	
+		return result;
+	};
+	/**
+	 * return element (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @return {mixed}
+	 */
+	$.Collection.fn.returnElement = function (filter, id) {
+		return this.returnElements(filter || "", id || "", false);
+	};
+	/////////////////////////////////
+	//// mult methods (replace)
+	/////////////////////////////////
+	
+	/**
+	 * replace elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
+	 *  
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.replaceElements = function (filter, replaceObj, id, mult, count, from, indexOf) {
+		filter = filter || false;
+		id = $.isExist(id) ? id : this.config.constants.active;
+	
+		// if id is Boolean
+		if ($.isBoolean(id)) {
+			indexOf = from;
+			from = count;
+			count = mult;
+			mult = id;
+			id = this.config.constants.active;
+		}
+	
+		// values by default
+		mult = mult === false ? false : true;
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+	
+		var
+			replaceCheck = $.isFunction(replaceObj),
+			action = function (data, i, aLength, $this, id) {
+				if (replaceCheck) {
+					replaceObj(data, i, aLength, $this, id);
+				} else { data[i] = replaceObj; }
+	
+				return true;
+			};
+	
+		this.each(action, filter, id, mult, count, from, indexOf);
+	
+		return this;
+	};
+	/**
+	 * replace element (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.replaceElement = function (filter, replaceObj, id) {
+		return this.replaceElements(filter || "", replaceObj, id || "", false);
+	};
+	/////////////////////////////////
+	//// mult methods (move && copy)
+	/////////////////////////////////
+		
+	/**
+	 * move elements (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
+		moveFilter = moveFilter || false;
+		deleteType = deleteType === false ? false : true;
+		context = $.isExist(context) ? context.toString() : "";
+		
+		sourceID = sourceID || "";
+		activeID = activeID || "";
+		
+		addType = addType || "push";
+	
+		mult = mult === false ? false : true;
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		
+		var
+			constants = this.config.constants,
+	
+			deleteList = [],
+			aCheckType = $.isArray($.Collection.obj.getByLink(this._get("collection", activeID), this.getActiveContext())),
+	
+			elements, eLength, i = -1;
+	
+		// search elements
+		this.config.flags.use.ac = false;
+		elements = this.searchElements(moveFilter, sourceID, mult, count, from, indexOf);
+		this.config.flags.use.ac = true;
+	
+		// move
+		if (mult === true) {
+			eLength = elements.length - 1;
+			for (; i++ < eLength;) {
+				this.addElement(context + constants.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + constants.methodSeparator + addType, activeID, sourceID);
+				deleteType === true && deleteList.push(elements[i]);
+			}
+		} else {
+			this.addElement(context + constants.contextSeparator + elements, aCheckType === true ? addType : elements + constants.methodSeparator + addType, activeID, sourceID);
+			deleteType === true && deleteList.push(elements);
+		}
+	
+		// delete element
+		if (deleteType === true) {
+			this.config.flags.use.ac = false;
+			this.deleteElementsByLink(deleteList, sourceID);
+			this.config.flags.use.ac = true;
+		}
+	
+		return this;
+	},
+	/**
+	 * move element (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.moveElement = function (moveFilter, context, sourceID, activeID, addType) {
+		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+	};
+	/**
+	 * copy elements (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.copyElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
+		mult = mult === false ? false : true;
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		
+		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+	};
+	/**
+	 * copy element (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.copyElement = function (moveFilter, context, sourceID, activeID, addType) {
+		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+	};	
+	/////////////////////////////////
+	//// mult methods (delete)
+	/////////////////////////////////
+	
+	/**
+	 * delete elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.deleteElements = function (filter, id, mult, count, from, indexOf) {
+		filter = filter || false;
+		id = $.isExist(id) ? id : this.config.constants.active;
+	
+		// if id is Boolean
+		if ($.isBoolean(id)) {
+			indexOf = from;
+			from = count;
+			count = mult;
+			mult = id;
+			id = this.config.constants.active;
+		}
+	
+		// values by default
+		mult = mult === false ? false : true;
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		
+		var elements = this.searchElements(filter, id, mult, count, from, indexOf), i;
+
+		if (mult === false) {
+			this.deleteElementByLink(elements, id);
+		} else {
+			for (i = elements.length; i--;) {
+				this.deleteElementByLink(elements[i], id);
+			}
+		}
+	
+		return this;
+	};
+	/**
+	 * delete element (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.deleteElement = function (filter, id) {
+		return this.deleteElements(filter || "", id || "", false);
+	};	
+	/////////////////////////////////
 	// additional methods
 	/////////////////////////////////
 	
@@ -1778,7 +2482,8 @@
 	$.Collection.fn.customFilter = function (filter, $this, i, cALength, $obj, id) {
 		var
 			tmpFilter,
-		
+			constants = this.config.constants,
+			
 			dObj = this.dObj,
 			prop = dObj.prop,
 			sys = dObj.sys,
@@ -1799,7 +2504,7 @@
 		}
 		
 		// if filter is not defined or filter is a string constant
-		if (!filter || ($.isString(filter) && $.trim(filter) === this.config.constants.active)) {
+		if (!filter || ($.isString(filter) && $.trim(filter) === constants.active)) {
 			if (prop.filter) {
 				sys.callee.filter = prop.filter;
 				
@@ -1875,7 +2580,7 @@
 						filter[j] = filter[j].substring(1);
 					} else { inverse = false; }
 					
-					tmpFilter = filter[j] === this.config.constants.active ? prop.filter : sys.tmpFilter[filter[j]];
+					tmpFilter = filter[j] === constants.active ? prop.filter : sys.tmpFilter[filter[j]];
 					sys.callee.filter = tmpFilter;
 					//
 					tmpResult = tmpFilter($this, i, cALength, $obj, id);
@@ -1970,19 +2675,12 @@
 	
 		var
 			dObj = this.dObj,
-			sys = dObj.sys,
-			prop = dObj.prop,
+			context = "", i;
 	
-			contextID = sys.contextID,
-			context = "",
-	
-			i;
-	
-		context = (id && id !== this.config.constants.active ? sys.tmpContext[id] : prop.context).split($.Collection.stat.obj.contextSeparator);
-	
+		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.prop.context).split($.Collection.obj.contextSeparator);
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join($.Collection.stat.obj.contextSeparator);
+		return context.join($.Collection.obj.contextSeparator);
 	};
 	/**
 	 * parent
@@ -2016,6 +2714,105 @@
 		return this;
 	};	
 	/////////////////////////////////
+	//// sort method
+	/////////////////////////////////
+	
+	/**
+	 * sort collection (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} [field] - field name
+	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
+	 * @param {Function|Boolean} [fn=toUpperCase] - callback ("false" if disabled)
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.orderBy = function (field, rev, fn, id) {
+		field = field || null;
+		rev = rev || false;
+		fn = fn ? fn === false ? null : fn : function (a) {
+			if (isNaN(a)) { return a.toUpperCase(); }
+			
+			return a;
+		};
+	
+		id = id || "";
+	
+		var
+			statObj = $.Collection,
+		
+			dObj = this.dObj,
+			sys = dObj.sys,
+	
+			collectionID = sys.collectionID,
+			cObj,
+	
+			// sort object by key
+			sortObjectByKey = function (obj) {
+				var
+					sortedKeys = [],
+					sortedObj = {},
+					key;
+	
+				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
+	
+				sortedKeys.sort(statObj.sort.sortBy(field, rev, fn));
+	
+				for (key in sortedKeys) {
+					if (sortedKeys.hasOwnProperty(key)) {
+						sortedObj[sortedKeys[key]] = obj[sortedKeys[key]];
+					}
+				}
+	
+				return sortedObj;
+			},
+			// sort object by value
+			sortObject = function (obj) {
+				var
+					sortedValues = [],
+					sortedObj = {},
+					key;
+	
+				for (key in obj) {
+					if (obj.hasOwnProperty(key)) {
+						sortedValues.push({
+							key: key,
+							value: obj[key]
+						});
+					}
+				}
+	
+				sortedValues.sort(statObj.sort.sortBy(field === true ? "value" : "value" + statObj.obj.contextSeparator + field, rev, fn));
+	
+				for (key in sortedValues) {
+					if (sortedValues.hasOwnProperty(key)) {
+						sortedObj[sortedValues[key].key] = sortedValues[key].value;
+					}
+				}
+	
+				return sortedObj;
+			};
+	
+		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext());
+	
+		if (typeof cObj === "object") {
+			if ($.isArray(cObj)) {
+				cObj.sort(statObj.sort.sortBy(field, rev, fn));
+			} else {
+				if (field) {
+					cObj = sortObject.call(this, cObj);
+				} else {
+					cObj = sortObjectByKey.call(this, cObj);
+				}
+	
+				this.setElement("", cObj, id || "");
+			}
+		} else { throw new Error("incorrect data type!"); }
+	
+		return this;
+	};	
+	/////////////////////////////////
 	// native
 	/////////////////////////////////
 		
@@ -2024,7 +2821,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String|Object} [id=this.config.constants.active] - collection ID
-	 * @param {Function|Array} [replacer=undefined] - an optional parameter that determines how object values are stringified for objects
+	 * @param {Function|Array} [replacer=undefined] - an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
 	 */
@@ -2032,7 +2829,7 @@
 		var dObj = this.dObj, cObj;
 	
 		cObj = id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection;
-		cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext());
+		cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext());
 		
 		if (JSON && JSON.stringify) {
 			return JSON.stringify(cObj, replacer || "", space || "");
@@ -2048,6 +2845,32 @@
 	 */
 	$.Collection.fn.valueOf = function (id) {
 		return this.length($.isExist(id) ? id : this.config.constants.active);
+	};	
+	/////////////////////////////////
+	// other
+	/////////////////////////////////
+	
+	/**
+	 * jQuery "then" method
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Function} done - callback (if success)
+	 * @param {Function} [fail=done] - callback (if failed)
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.then = function (done, fail) {
+		var $this = this;
+		
+		if (arguments.length === 1) {
+			$.when($this.prop("defer")).always(function () { done.apply($this, arguments); });
+		} else {
+			$.when($this.prop("defer")).then(
+				function () { done().apply($this, arguments); },
+				function () { fail().apply($this, arguments); }
+			);
+		}
+			
+		return this;
 	};	
 	/////////////////////////////////
 	//// design methods (print)
@@ -2072,8 +2895,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.print = function (param, mult, count, from, indexOf) {
-		param = param || {};
-		
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -2081,38 +2903,244 @@
 		
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			opt = {},
 	
-			parser = param.parser || prop.parser,
-			template = param.template || prop.template,
+			result = "", action;
+		//
+		$.extend(true, opt, dObj.prop, param);
+		action = function (data, i, aLength, $this, objID) {
+			result += opt.template(data, i, aLength, $this, objID);
+			if (mult !== true) { return false; }
 	
-			target = param.target || param.target === false ? param.target : prop.target,
-			resultNull = param.resultNull !== undefined ? param.resultNull : prop.resultNull,
-	
-			result = "",
-			action = function (data, i, aLength, $this, objID) {
-				result += template(data, i, aLength, $this, objID);
-				
-				if (mult !== true) { return false; }
-	
-				return true;
-			};
-		
+			return true;
+		};
 		// "callee" link
-		dObj.sys.callee.template = template;		
-		this.each(action, (param.filter || prop.filter), this.config.constants.active, mult, count, from, indexOf);
+		dObj.sys.callee.template = opt.template;		
+		this.each(action, opt.filter, this.config.constants.active, mult, count, from, indexOf);
 		
-		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
-		result = parser !== false ? this.customParser((parser), result) : result;
+		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : opt.resultNull : result;
+		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;
 		
-		if (target === false) {
-			if (!param.variable) {
+		if (opt.target === false) {
+			if (!opt.variable) {
 				this.$_("variable", result);
 			} else {
-				this._push("variable", param.variable, result);
+				this._push("variable", opt.variable, result);
 			}
-		} else { target[(param.appendType || prop.appendType)](result); }
+		} else { opt.target[opt.appendType](result); }
+	
+		return this;
+	};	
+	/////////////////////////////////
+	//// design methods (extended print)
+	/////////////////////////////////
+		
+	/**
+	 * extended templating (in context) (with pager)
+	 * 
+	 * @this {Colletion Object}
+	 * @param param - object settings
+	 * @param {Number} [param.page=this.dObj.prop.param.page] - page number
+	 * @param {Template} [param.template=this.dObj.prop.template] - template
+	 * @param {Number|Boolean} [param.numberBreak=this.dObj.prop.param.numberBreak] - number of entries on 1 page (if "false", returns all records)
+	 * @param {Number} [param.pageBreak=this.dObj.prop.param.pageBreak] - number of displayed pages (navigation)
+	 * @param {jQuery Object} [param.target=this.dObj.prop.target] - element to output the result
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.parser] - parser function, string expressions or "false"
+	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - if "true", the last iteration is taken from cache
+	 * @param {Selector} [param.calculator=this.dObj.prop.calculator] - selector, on which is the number of records per page
+	 * @param {Selector} [param.pager=this.dObj.prop.param.pager] - selector to pager
+	 * @param {String} [param.appendType=this.dObj.prop.appendType] - type additions to the DOM
+	 * @param {String} [param.resultNull=this.dObj.prop.resultNull] - text displayed if no results
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.extPrint = function (param) {
+		param = param || {};
+		
+		var
+			dObj = this.dObj,
+			sys = dObj.sys,
+			prop = dObj.prop,
+	
+			cObj, cOLength,
+			start, inc = 0,
+			
+			checkPage,
+			cache,
+			result = "", action;
+		
+		$.extend(true, param, prop);
+		console.log(param);
+	
+		result = "";
+		action = function (data, i, aLength, $this, objID) {
+			result += param.template(data, i, aLength, $this, objID);
+			inc = i;
+				
+			return true;
+		};
+			
+		// get collection
+		cObj = $.Collection.obj.getByLink(prop.collection, (param.context || this.getActiveContext()));
+		cOLength = this.length();
+		
+		// number of records per page
+		param.numberBreak = param.numberBreak === false ? cOLength : param.numberBreak;
+		// "callee" link
+		sys.callee.template = param.template;
+		
+		if ($.isPlainObject(cObj) || param.cacheIteration === false) {
+			start = param.page === 1 ? param.numberBreak : (param.page - 1) * param.numberBreak;
+			//
+			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, start);
+		} else if ($.isArray(cObj) && cacheIteration === true) {
+			// calculate the starting position
+			start = param.filter === false ?
+						param.page === 1 ? -1 : (param.page - 1) * param.numberBreak - 1 : cacheIteration === true ?
+							checkPage === true ? cache.firstIteration : cache.lastIteration : i;
+			
+			// rewind cached step back
+			if (checkPage === true && param.filter !== false) {
+				for (; start--;) {
+					if (this.customFilter(param.filter, cObj, start, cOLength, $this, this.config.constants.active) === true) {
+						if (inc === param.numberBreak) {
+							break;
+						} else { inc++; }
+					}
+				}
+				start = start === -1 ? start : start + 1;
+				cache.lastIteration = start;
+			}
+			
+			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, null, start);
+			//
+			cache.firstIteration = cache.lastIteration;
+			cache.lastIteration = inc - 1;
+			if (cache.autoIteration === true) {
+				cache.iteration = true;
+			}
+		}
+		
+		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
+		result = param.parser !== false ? this.customParser(param.parser, result) : result;
+		// append to DOM
+		param.target[param.appendType](result);
+	
+		/*$.extend(param, {
+			countRecords: this.length(param.filter),
+			countRecordsInPage: $((param.calculator || prop.calculator), target).length,
+			countTotal: param.numberBreak * param.page - (param.numberBreak - sys.countRecordsInPage)
+		});*/
+		
+		/*
+		// generate navigation bar
+		if (param.page !== 1 && sys.countRecordsInPage === 0) {
+			prop.param.page--;
+			this.extPrint.apply(this, arguments);
+		} else { this.easyPage(param, prop); }*/
 	
 		return this;
 	};
+	/**
+	 * activation of the model template
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Object} [param=undefined] - object settings (depends on the model template)
+	 * @param {Object} [prop=undefined] - collection properties
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.easyPage = function (param, prop) {
+		// "callee" link
+		this.dObj.sys.callee.templateModel = this.dObj.prop.templateModel;
+		this.dObj.prop.templateModel.apply(this, arguments);
+		
+		return this;
+	};	
+	/////////////////////////////////
+	//// design methods (table)
+	/////////////////////////////////
+		
+	/**
+	 * generating the table (if the template consisted of td)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Number} [count=4] - td number to a string
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.genTable = function (count) {
+		count = count || 4;
+	
+		var
+			i = 1,
+			j,
+	
+			target = this.dObj.prop.target,
+			tdLength = target.children("td").length - 1,
+	
+			countDec = count - 1,
+			queryString = "";
+	
+		target.children("td").each(function (n) {
+			if (i === count) {
+				queryString = "";
+	
+				for (j = -1; j++ < countDec;) {
+					queryString += "td:eq(" + (n - j) + ")";
+					if (j !== countDec) { queryString += ","; }
+				}
+	
+				$(queryString, target).wrapAll("<tr></tr>");
+				i = 0;
+			} else if (n === tdLength && i !== count) {
+				queryString = "";
+	
+				for (j = 0, i; j < i; j++) {
+					queryString += "td:eq(" + j + ")";
+					if (j !== (i - 1)) { queryString += ","; }
+				}
+	
+				target.children(queryString).wrapAll("<tr></tr>");	
+				queryString = "";
+	
+				for (; i < count; i++) { queryString += "<td></td>"; }	
+				target.children("tr:last").append(queryString);
+			}
+			i++;
+		});
+	
+		target.children("tr").wrapAll("<table></table>");
+	
+		return this;
+	};	
+	$.Collection.fn.genIndex = function (indexName, id, fieldObj, filter, count, from, indexOf) {
+		id = id || this.config.constants.active;
+		
+		var
+			dObj = this.dObj,
+			prop = dObj.prop,
+			sys = dObj.sys,
+		
+			cObj,
+			resObj = {};
+		
+		
+		
+		console.log(resObj);
+	};
+	$.Collection.fn.genMap = function (id1, id2, context1, context2) {
+		var
+			collectionID = this.dObj.sys.collectionID,
+		
+			cObj1, cObj2,
+			resObj = {};
+	
+		if ((!id1 || id1 === this.config.constants.active || !id2 || id2 === this.config.constants.active) && collectionID) {
+			id1 = id1 || collectionID;
+			id2 = id2 || collectionID;
+		} else if (!collectionID) { throw new Error("Invalid ID collection"); }
+		
+		cObj1 = 
+		
+		console.log(resObj);
+	}
 })(jQuery); //

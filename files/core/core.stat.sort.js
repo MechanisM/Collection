@@ -3,7 +3,7 @@
 	//// static methods (sort)
 	/////////////////////////////////
 	
-	$.Collection.stat.sort = {
+	$.Collection.sort = {
 		/**
 		 * sort field name
 		 * 
@@ -56,7 +56,7 @@
 		 */
 		sortHelper: function (a, b) {	
 			var
-				stat = $.Collection.stat,	
+				stat = $.Collection,	
 				$this = stat.sort,
 				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
 			

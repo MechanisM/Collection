@@ -157,7 +157,7 @@
 				 * @field
 				 * @type Function
 				 */
-				templateModel: $.Collection.stat.templateModels.simple,
+				templateModel: $.Collection.templateModels.simple,
 				/**
 				 * active records in one page
 				 * 

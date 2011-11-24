@@ -38,7 +38,7 @@
 			constants = this.config.constants,
 	
 			deleteList = [],
-			aCheckType = $.isArray($.Collection.stat.obj.getByLink(this._get("collection", activeID), this.getActiveContext())),
+			aCheckType = $.isArray($.Collection.obj.getByLink(this._get("collection", activeID), this.getActiveContext())),
 	
 			elements, eLength, i = -1;
 	

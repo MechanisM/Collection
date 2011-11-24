@@ -23,69 +23,46 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.extPrint = function (param) {
-		param = param || {};
-		
 		var
 			dObj = this.dObj,
-			sys = dObj.sys,
-			prop = dObj.prop,
-	
+			opt = {},
+			
 			cObj, cOLength,
 			start, inc = 0,
 			
-			checkPage,
-			cache,
 			result = "", action;
-			
-		param.filter = param.filter || prop.filter;
-		param.parser = param.parser || prop.parser;
-		
-		param.page = param.page || prop.page;
-		checkPage = param.page === (param.page + 1);
-			
-		param.template = param.template || prop.template;
-		param.target = param.target || prop.target;
-		
-		param.numberBreak = +param.numberBreak || +prop.param.numberBreak;
-		param.pageBreak = +param.pageBreak || +prop.param.pagerBreak;
-		
-		cache = prop.cache;
-		param.cacheIteration = $.isBoolean(param.cacheIteration) ? param.cacheIteration : cache.iteration;
-			
-		param.resultNull = param.resultNull !== undefined ? param.resultNull : prop.resultNull;
-	
-		result = "";
+		//
+		$.extend(true, opt, dObj.prop, param);
 		action = function (data, i, aLength, $this, objID) {
-			result += template(data, i, aLength, $this, objID);
+			result += opt.template(data, i, aLength, $this, objID);
 			inc = i;
 				
 			return true;
 		};
-			
 		// get collection
-		cObj = $.Collection.stat.obj.getByLink(prop.collection, (param.context || this.getActiveContext()));
+		cObj = $.Collection.obj.getByLink(prop.collection, this.getActiveContext());
 		cOLength = this.length();
 		
 		// number of records per page
-		param.numberBreak = param.numberBreak === false ? cOLength : param.numberBreak;
+		opt.numberBreak = opt.numberBreak === false ? cOLength : opt.numberBreak;
 		// "callee" link
-		sys.callee.template = param.template;
+		dObj.sys.callee.template = opt.template;
 		
-		if ($.isPlainObject(cObj) || param.cacheIteration === false) {
-			start = param.page === 1 ? param.numberBreak : (param.page - 1) * param.numberBreak;
+		if ($.isPlainObject(cObj) || opt.cacheIteration === false) {
+			start = opt.page === 1 ? opt.numberBreak : (opt.page - 1) * opt.numberBreak;
 			//
-			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, start);
-		} else if ($.isArray(cObj) && cacheIteration === true) {
+			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, start);
+		} else if ($.isArray(cObj) && opt.cacheIteration === true) {
 			// calculate the starting position
-			start = param.filter === false ?
-						param.page === 1 ? -1 : (param.page - 1) * param.numberBreak - 1 : cacheIteration === true ?
+			start = opt.filter === false ?
+						opt.page === 1 ? -1 : (opt.page - 1) * opt.numberBreak - 1 : cacheIteration === true ?
 							checkPage === true ? cache.firstIteration : cache.lastIteration : i;
 			
 			// rewind cached step back
-			if (checkPage === true && param.filter !== false) {
+			if (checkPage === true && opt.filter !== false) {
 				for (; start--;) {
-					if (this.customFilter(param.filter, cObj, start, cOLength, $this, this.config.constants.active) === true) {
-						if (inc === param.numberBreak) {
+					if (this.customFilter(opt.filter, cObj, start, cOLength, $this, this.config.constants.active) === true) {
+						if (inc === opt.numberBreak) {
 							break;
 						} else { inc++; }
 					}
@@ -94,7 +71,7 @@
 				cache.lastIteration = start;
 			}
 			
-			this.each(action, param.filter, this.config.constants.active, true, param.numberBreak, null, start);
+			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, null, start);
 			//
 			cache.firstIteration = cache.lastIteration;
 			cache.lastIteration = inc - 1;
@@ -104,22 +81,22 @@
 		}
 		
 		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
-		result = parser !== false ? this.customParser(parser, result) : result;
+		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;
 		// append to DOM
-		target[(param.appendType || prop.appendType)](result);
+		opt.target[opt.appendType](result);
 	
-		$.extend(param, {
-			countRecords: this.length(param.filter),
-			countRecordsInPage: $((param.calculator || prop.calculator), target).length,
-			countTotal: param.numberBreak * param.page - (param.numberBreak - sys.countRecordsInPage)
-		});
+		/*$.extend(opt, {
+			countRecords: this.length(opt.filter),
+			countRecordsInPage: $((opt.calculator || prop.calculator), target).length,
+			countTotal: opt.numberBreak * opt.page - (opt.numberBreak - sys.countRecordsInPage)
+		});*/
 		
 		/*
 		// generate navigation bar
-		if (param.page !== 1 && sys.countRecordsInPage === 0) {
-			prop.param.page--;
+		if (opt.page !== 1 && sys.countRecordsInPage === 0) {
+			prop.opt.page--;
 			this.extPrint.apply(this, arguments);
-		} else { this.easyPage(param, prop); }*/
+		} else { this.easyPage(opt, prop); }*/
 	
 		return this;
 	};

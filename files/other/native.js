@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String|Object} [id=this.config.constants.active] - collection ID
-	 * @param {Function|Array} [replacer=undefined] - an optional parameter that determines how object values are stringified for objects
+	 * @param {Function|Array} [replacer=undefined] - an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
 	 */
@@ -16,7 +16,7 @@
 		var dObj = this.dObj, cObj;
 	
 		cObj = id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection;
-		cObj = $.Collection.stat.obj.getByLink(cObj, this.getActiveContext());
+		cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext());
 		
 		if (JSON && JSON.stringify) {
 			return JSON.stringify(cObj, replacer || "", space || "");

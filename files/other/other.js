@@ -213,10 +213,10 @@
 			dObj = this.dObj,
 			context = "", i;
 	
-		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.prop.context).split($.Collection.stat.obj.contextSeparator);
+		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.prop.context).split($.Collection.obj.contextSeparator);
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join($.Collection.stat.obj.contextSeparator);
+		return context.join($.Collection.obj.contextSeparator);
 	};
 	/**
 	 * parent

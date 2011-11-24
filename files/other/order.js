@@ -26,7 +26,7 @@
 		id = id || "";
 	
 		var
-			statObj = $.Collection.stat,
+			statObj = $.Collection,
 		
 			dObj = this.dObj,
 			sys = dObj.sys,

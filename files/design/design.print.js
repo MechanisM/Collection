@@ -22,8 +22,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.print = function (param, mult, count, from, indexOf) {
-		param = param || {};
-		
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -31,37 +30,31 @@
 		
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			opt = {},
 	
-			parser = param.parser || prop.parser,
-			template = param.template || prop.template,
-	
-			target = param.target || param.target === false ? param.target : prop.target,
-			resultNull = param.resultNull !== undefined ? param.resultNull : prop.resultNull,
-	
-			result = "",
-			action = function (data, i, aLength, $this, objID) {
-				result += template(data, i, aLength, $this, objID);
-				
-				if (mult !== true) { return false; }
-	
-				return true;
-			};
-		
+			result = "", action;
+		//
+		$.extend(true, opt, dObj.prop, param);
+		action = function (data, i, aLength, $this, objID) {
+			result += opt.template(data, i, aLength, $this, objID);
+			if (mult !== true) { return false; }
+			
+			return true;
+		};
 		// "callee" link
-		dObj.sys.callee.template = template;		
-		this.each(action, (param.filter || prop.filter), this.config.constants.active, mult, count, from, indexOf);
+		dObj.sys.callee.template = opt.template;		
+		this.each(action, opt.filter, this.config.constants.active, mult, count, from, indexOf);
 		
-		result = !result ? resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : resultNull : result;
-		result = parser !== false ? this.customParser((parser), result) : result;
+		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : opt.resultNull : result;
+		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;
 		
-		if (target === false) {
-			if (!param.variable) {
+		if (opt.target === false) {
+			if (!opt.variable) {
 				this.$_("variable", result);
 			} else {
-				this._push("variable", param.variable, result);
+				this._push("variable", opt.variable, result);
 			}
-		} else { target[(param.appendType || prop.appendType)](result); }
+		} else { opt.target[opt.appendType](result); }
 	
 		return this;
 	};
