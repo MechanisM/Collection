@@ -17,7 +17,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "4.0",
+		version: "3.2",
 		/**
 		 * return string: framework name + framework version
 		 *
