@@ -1,30 +1,37 @@
 	
+	/////////////////////////////////
+	//// mult methods (return)
+	/////////////////////////////////
+	
 	/**
-	 * Вернуть элементы коллекции (с учётом контекста)
+	 * return elements (in context)
+	 *
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
-	 * @param {Number|Boolean} [count=false] - максимальное количество элементов для поиска (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
-		// Если id имеет логическое значение
+		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
-		// Значения по умолчанию
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -48,11 +55,11 @@
 		return result;
 	};
 	/**
-	 * Вернуть элемент коллекции (с учётом контекста)
+	 * return element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElement = function (filter, id) {

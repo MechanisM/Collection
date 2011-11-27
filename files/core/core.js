@@ -1,30 +1,32 @@
 	
+	/////////////////////////////////
+	//// constructor
+	/////////////////////////////////
+	
 	/**
 	 * @constructor
 	 * @this {Colletion Object}
-	 * @param {Collection|Selector} [collection=null] - исходная коллекция или строка селектор для поля activeTarget
-	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.prop] - пользовательские настройки
+	 * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
+	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - user's preferences
 	 */
 	$.Collection = function (collection, uProp) {
 		collection = collection || null;
 		uProp = uProp || null;
 		
-		// Создание "фабричного" объекта
-		if (this.fn && this.fn.jquery) { return new $.Collection(collection, uProp); }
+		// create "factory" function if need	
+		if (this.fn && (!this.fn.name || this.fn.name !== "$.Collection")) { return new $.Collection(collection, uProp); }
 		
-		// Расширяем публичные поля
+		// mixin public fields
 		$.extend(true, this, $.Collection.storage);
 			
-		var
-			dObj = this.dObj,
-			prop = dObj.prop;
+		var active = this.dObj.active;
 				
-		// Расширяем публичные поля из настроек указанных в конструкторе (если указанны)
-		if (uProp) { $.extend(true, prop, uProp); }
+		// extend public fields by user's preferences if need
+		if (uProp) { $.extend(true, active, uProp); }
 				
-		// Если array является строкой
+		// if "collection" is string
 		if ($.isString(collection)) {
-			prop.activeTarget = $(collection);
-			prop.activeCollection = null;
-		} else { prop.activeCollection = collection; }
+			active.target = $(collection);
+			active.collection = null;
+		} else { active.collection = collection; }
 	};

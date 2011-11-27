@@ -1,6 +1,10 @@
 	
+	/////////////////////////////////
+	//// jQuery methods (other)
+	/////////////////////////////////
+		
 	/**
-	 * Проверить на строку 
+	 * string test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -9,7 +13,7 @@
 		return Object.prototype.toString.call(val) === "[object String]";
 	};
 	/**
-	 * Проверить на логическое значение 
+	 * boolean test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -18,16 +22,7 @@
 		return Object.prototype.toString.call(val) === "[object Boolean]";
 	};
 	/**
-	 * Проверить на число 
-	 * 
-	 * @param {mixed} val
-	 * @return {Boolean}
-	 */
-	$.isNumber = function (val) {
-		return Object.prototype.toString.call(val) === "[object Number]";
-	};
-	/**
-	 * Проверить на null и undefined
+	 * null && undefined && empty string test
 	 * 
 	 * @param {mixed} val
 	 * @return {Boolean}
@@ -36,19 +31,45 @@
 		return val !== undefined && val !== "undefined" && val !== null && val !== "";
 	};
 	/**
-	 * Метод unshift для объекта arguments
+	 * unshift for arguments (object)
 	 * 
-	 * @param {Object} obj - исходный объект
-	 * @param {mixed} pushVal - новое свойство
-	 * @param {String|Number} [pushName=0] - имя свойства
-	 * @return {Object}
+	 * @param {Object} obj - some object
+	 * @param {mixed} pushVal - new value
+	 * @param {String|Number} [pushName=0] - property name
+	 * @return {Array}
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
 		var newObj = [pushVal], i = 0, oLength = obj.length;
 		
-		for (; i < oLength; i++) {
-			newObj.push(obj[i]);
-		}
+		for (; i < oLength; i++) { newObj.push(obj[i]); }
 		
 		return newObj;
+	};
+	/**
+	 * toUpperCase function
+	 * 
+	 * @param {String} str - some str
+	 * @param {Number} [to=str.length] - end
+	 * @param {Number} [from=0] - start
+	 * @return {String}
+	 */
+	$.toUpperCase = function (str, to, from) {
+		from = from || 0;
+		
+		if (!to) { return str.toUpperCase(); }
+		return str.substring(from, to).toUpperCase() + str.substring(to);
+	};
+	/**
+	 * toLowerCase function
+	 * 
+	 * @param {String} str - some str
+	 * @param {Number} [to=str.length] - end
+	 * @param {Number} [from=0] - start
+	 * @return {String}
+	 */
+	$.toLowerCase = function (str, to, from) {
+		from = from || 0;
+		
+		if (!to) { return str.toLowerCase(); }
+		return str.substring(from, to).toLowerCase() + str.substring(to);
 	};

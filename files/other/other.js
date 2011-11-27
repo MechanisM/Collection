@@ -1,26 +1,27 @@
 	
 	/////////////////////////////////
-	// Дополнительные методы
+	// additional methods
 	/////////////////////////////////
 	
 	/**
-	 * Расчитать сложный фильтр
+	 * calculate multi filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Array|String} [filter=false] - условие поиска или массив атомов условия или строковое условие
-	 * @param {Collection} $this - ссылка на коллекцию
-	 * @param {Number|String} i - ключ итерации
-	 * @param {Number} cALength - длина коллекции
-	 * @param {Collection Object} $obj - ссылка на объект $.Collection
-	 * @param {String} id - ИД активной коллекции
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Collection} $this - link to collection
+	 * @param {Number|String} i - iteration (key)
+	 * @param {Number} cALength - collection length
+	 * @param {Collection Object} $obj - link to collection object
+	 * @param {String} id - collection ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn.customFilter = function (filter, $this, i, cALength, $obj, id) {
 		var
 			tmpFilter,
-		
+			constants = this.config.constants,
+			
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 			
 			fLength,
@@ -30,27 +31,29 @@
 			and, or, inverse,
 			
 			j = -1;
-	
+		
+		// if filter is function
 		if ($.isFunction(filter)) {
-			dObj.sys.filterCallee = filter;
+			sys.callee.filter = filter;
 			
 			return filter($this, i, cALength, $obj, id);
 		}
 		
-		if (!filter || ($.isString(filter) && $.trim(filter) === this.active)) {
-			if (prop.activeFilter) {
-				dObj.sys.filterCallee = prop.activeFilter;
+		// if filter is not defined or filter is a string constant
+		if (!filter || ($.isString(filter) && $.trim(filter) === constants.active)) {
+			if (active.filter) {
+				sys.callee.filter = active.filter;
 				
-				return prop.activeFilter($this, i, cALength, $obj, id);
+				return active.filter($this, i, cALength, $obj, id);
 			}
 	
 			return true;
 		} else {
-			// Если фильр задан строкой, то парсим его
+			// if filter is string
 			if (!$.isArray(filter)) {
-				// Если простой фильр
+				// if simple filter
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					dObj.sys.filterCallee = sys.tmpFilter[filter];
+					sys.callee.filter = sys.tmpFilter[filter];
 					
 					return sys.tmpFilter[filter]($this, i, cALength, $obj, id);
 				}
@@ -64,7 +67,7 @@
 							)
 						.split(" ");
 			}
-			// Расчёт вложенных фильтров
+			// calculate deep filter
 			calFilter = function (array, iter) {
 				var
 					i = -1,
@@ -83,11 +86,11 @@
 					result.push(array[i]);
 				}
 			};
-			// Расчитываем фильтр
+			// calculate filter
 			fLength = filter.length - 1;
 			
 			for (; j++ < fLength;) {
-				// Расчёт скобок
+				// calculate atoms
 				if (filter[j] === "(" || filter[j] === "!(") {
 					if (filter[j].substring(0, 1) === "!") {
 						inverse = true;
@@ -105,15 +108,15 @@
 					} else {
 						result = inverse === true ? !tmpResult : tmpResult || result;
 					}
-				// Расчёт внешних фильтров
+				// calculate outer filter
 				} else if (filter[j] !== ")" && filter[j] !== "||" && filter[j] !== "&&") {
 					if (filter[j].substring(0, 1) === "!") {
 						inverse = true;
 						filter[j] = filter[j].substring(1);
 					} else { inverse = false; }
 					
-					tmpFilter = filter[j] === this.active ? prop.activeFilter : sys.tmpFilter[filter[j]];
-					dObj.sys.filterCallee = tmpFilter;
+					tmpFilter = filter[j] === constants.active ? active.filter : sys.tmpFilter[filter[j]];
+					sys.callee.filter = tmpFilter;
 					//
 					tmpResult = tmpFilter($this, i, cALength, $obj, id);
 					if (!and && !or) {
@@ -123,7 +126,7 @@
 					} else {
 						result = inverse === true ? !tmpResult : tmpResult || result;
 					}
-				// И и ИЛИ
+				// "and" or "or"
 				} else if (filter[j] === "||") {
 					and = false;
 					or = true;
@@ -137,41 +140,44 @@
 		}
 	};
 	/**
-	 * Расчитать сложный парсер
+	 * calculate multi parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|Array|String} parser - парсер или массив парсеров или строковое условие
-	 * @param {String} str - исходная строка
+	 * @param {Parser|String} parser - parser function or string expressions
+	 * @param {String} str - source string
 	 * @return {String}
 	 */
 	$.Collection.fn.customParser = function (parser, str) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 			
 			tmpParser,
 			i;
-	
+		
+		// if parser is function
 		if ($.isFunction(parser)) {
-			dObj.sys.parserCallee = parser;
+			sys.callee.parser = parser;
 			
 			return parser(str, this);
 		}
-	
-		if (!parser || ($.isString(parser) && $.trim(parser) === this.active)) {
-			if (prop.activeParser) {
-				dObj.sys.parserCallee = prop.activeParser;
+		
+		// if parser is not defined or parser is a string constant
+		if (!parser || ($.isString(parser) && $.trim(parser) === this.config.constants.active)) {
+			if (active.parser) {
+				sys.callee.parser = active.parser;
 				
-				return prop.activeParser(str, this);
+				return active.parser(str, this);
 			}
 	
 			return str;
 		} else {
 			if ($.isString(parser)) {
 				parser = $.trim(parser);
+				// if simple parser
 				if (parser.search("&&") === -1) {
-					dObj.sys.parserCallee = sys.tmpParser[parser];
+					sys.callee.parser = sys.tmpParser[parser];
 					
 					return sys.tmpParser[parser](str, this);
 				}
@@ -180,9 +186,9 @@
 			
 			for (i = parser.length; i--;) {
 				parser[i] = $.trim(parser[i]);
-				tmpParser = parser[i] === this.active ? prop.activeParser : sys.tmpParser[parser[i]];
+				tmpParser = parser[i] === this.config.constants.active ? active.parser : sys.tmpParser[parser[i]];
 				
-				dObj.sys.parserCallee = tmpParser;
+				sys.callee.parser = tmpParser;
 				str = tmpParser(str, this);
 			}
 	
@@ -190,13 +196,12 @@
 		}
 	};
 	
-	
 	/**
-	 * Расчитать контекст на n уровней вверх
+	 * calculate parent context
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] - уровень подъёма
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Number} [n=1] - level up
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {String}
 	 */
 	$.Collection.fn.parentContext = function (n, id) {
@@ -204,46 +209,39 @@
 	
 		var
 			dObj = this.dObj,
-			sys = dObj.sys,
-			prop = dObj.prop,
+			context = "", i;
 	
-			activeContextID = sys.activeContextID,
-			context = "",
-	
-			i;
-	
-		context = (id && id !== this.active ? sys.tmpContext[id] : prop.activeContext).split($.Collection.cache.obj.contextSeparator);
-	
+		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.active.context).split($.Collection.obj.contextSeparator);
 		for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join($.Collection.cache.obj.contextSeparator);
+		return context.join($.Collection.obj.contextSeparator);
 	};
 	/**
-	 * Подняться на n уровень контекста
+	 * parent
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] - уровень подъёма
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Number} [n=1] - level up
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.parent = function (n, id) {
 		var
 			dObj = this.dObj,
 			sys = dObj.sys,
-			prop = dObj.prop,
+			active = dObj.active,
 	
-			activeContextID = dObj.sys.activeContextID,
+			contextID = sys.contextID,
 			context = this.parentContext.apply(this, arguments);
 	
-		if (!id || id === this.active) {
-			if (activeContextID) {
-				sys.tmpContext[activeContextID] = context;
+		if (!id || id === this.config.constants.active) {
+			if (contextID) {
+				sys.tmpContext[contextID] = context;
 			}
-			prop.activeContext = context;
+			active.context = context;
 		} else {
 			sys.tmpContext[id] = context;
-			if (activeContextID && id === activeContextID) {
-				prop.activeContext = context;
+			if (contextID && id === contextID) {
+				active.context = context;
 			}
 		}
 	

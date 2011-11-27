@@ -1,95 +1,37 @@
 	
-	// Системные настройки
+	/////////////////////////////////
+	//// public fields (system)
+	/////////////////////////////////
+	
 	$.Collection.storage.dObj.sys = {
 		/**
-		 * Количество записей в коллекции
+		 * "callee" object
 		 * 
 		 * @field
-		 * @type Number
+		 * @type Object
 		 */
-		countRecords: null,
-		/**
-		 * Количество записей на одной странице
-		 * 
-		 * @field
-		 * @type Number
-		 */
-		countRecordsInPage: null,
-		/**
-		 * Номер последней записи
-		 * 
-		 * @field
-		 * @type Number
-		 */
-		countTotal: null,
-		/**
-		 * Ссылка на вызываемую функцию-callback (метод each)
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		callbackCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-фильтр
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		filterCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-шаблон
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		templateCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-модель
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		templateModeCallee: null,
-		/**
-		 * Ссылка на вызываемую функцию-парсер
-		 * 
-		 * @field
-		 * @type Function
-		 */
-		parserCallee: null
+		callee: { 
+			callback: null,
+			filter: null,
+			parser: null,
+			template: null,
+			templateModel: null
+		}
 	};
 	
-	// Генерация полей
+	// generate system fields
 	(function (data) {
 		var
 			i,
-			lowerCase,
+			upperCase,
 			sys = $.Collection.storage.dObj.sys;
 	
 		for (i = data.length; i--;) {
-			lowerCase = data[i].substring(0, 1).toLowerCase() + data[i].substring(1);
+			upperCase = $.toUpperCase(data[i], 1);
 			
-			sys["active" + data[i] + "ID"] = null;
-			sys["tmp" + data[i]] = {};
-			sys[lowerCase + "ChangeControl"] = null;
-			sys[lowerCase + "Back"] = [];
+			sys["active" + upperCase + "ID"] = null;
+			sys["tmp" + upperCase] = {};
+			sys[data[i] + "ChangeControl"] = null;
+			sys[data[i] + "Back"] = [];
 		}
-	})([
-		"Collection", 
-		"Page", 
-		"Target", 
-		"Filter", 
-		"Parser", 
-		"Var", 
-		"Template",
-		"TemplateMode",
-		"Context", 
-		"CountBreak",
-		"PageBreak", 
-		"Pager",
-		"SelectorOut",
-		"ResultNull",
-		"AppendType",
-		"Defer",
-		"Cache"
-		]);
+	})($.Collection.fn.stack);

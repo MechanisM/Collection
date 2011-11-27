@@ -1,6 +1,10 @@
+
+	/////////////////////////////////
+	//// jQuery methods (compiler templates)
+	/////////////////////////////////
 	
 	/**
-	 * Компиляция шаблона
+	 * compiler templates
 	 * 
 	 * @this {jQuery Object}
 	 * @throw {Error}
@@ -18,17 +22,16 @@
 				.split("<?js"),
 			
 			eLength = elem.length - 1,
-			resStr = "var result = ''",
-			jsStr = '',
+			resStr = "result += ''", jsStr = "",
 			
 			i = -1, j, jelength;
 		
 		for (; i++ < eLength;) {
 			if (i === 0 || i % 2 === 0) {
-				resStr += "+'" + elem[i] +  "'";
+				resStr += "+'" + elem[i] + "'";
 			} else {
 				j = -1;
-				elem[i] = elem[i].split("`");
+				elem[i] = elem[i].split("<<");
 				jelength = elem[i].length;
 				
 				for (; j++ < jelength;) {
@@ -41,5 +44,6 @@
 			}
 		}
 		resStr += ";";
-		return new Function("$this", "i", "aLength", "$obj", "id", resStr + jsStr + " return result;");
+		
+		return new Function("$this", "i", "aLength", "$obj", "id", 'var result = "";' + jsStr + resStr + ' return result;');
 	};

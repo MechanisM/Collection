@@ -1,11 +1,15 @@
 	
+	/////////////////////////////////
+	//// single methods (concatenation)
+	/////////////////////////////////
+	
 	/**
-	 * Конкатенация коллекций (с учётом контекста)
+	 * concatenation of collections (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Collection} obj - коллекция
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {String} [id=this.active] - ИД коллекции, с которой происходит конкатенация
+	 * @param {Collection} obj - collection
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {String} [id=this.config.constants.active] - collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -13,14 +17,12 @@
 		context = $.isExist(context) ? context.toString() : "";
 	
 		var
-			cacheObj = $.Collection.cache.obj,
+			constants = this.config.constants,
 		
 			dObj = this.dObj,
-			prop = dObj.prop,
-	
 			cObj;
 		
-		cObj = cacheObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context);	
+		cObj = $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext() + constants.contextSeparator + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
@@ -31,7 +33,7 @@
 					this.setElement(context, cObj, id || "");
 				} else { this.addElement(obj, "push", id || ""); }
 			}
-		} else { throw new Error("Incorrect data type!"); }
+		} else { throw new Error("incorrect data type!"); }
 	
 		return this;
 	};

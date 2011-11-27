@@ -1,18 +1,22 @@
-	
+
+	/////////////////////////////////
+	//// mult methods (move && copy)
+	/////////////////////////////////
+		
 	/**
-	 * Переместить элементы коллекции (с учётом контекста)
+	 * move elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
-	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
-	 * @param {Boolean} [deleteType=true] - если установленно true, то удаляет элемент из переносимой коллекции
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
@@ -31,120 +35,85 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			cacheObj = $.Collection.cache.obj,
-		
-			dObj = this.dObj,
-			sys = dObj.sys,
-	
-			tmpContext, tmpContextCheck, tmpLength,
+			constants = this.config.constants,
 	
 			deleteList = [],
-			aCheckType,
+			aCheckType = $.isArray($.Collection.obj.getByLink(this._get("collection", activeID), this.getActiveContext())),
 	
-			elements, i, j;
+			elements, eLength, i = -1;
 	
-		aCheckType = $.isArray(cacheObj.getByLink(this._get("Collection", activeID), dObj.prop.activeContext));
-	
-		// Поиск элементов для переноса
-		if (sys.activeContextID) {
-			tmpContext = sys.activeContextID;
-			tmpContextCheck = true;
-		} else {
-			tmpContext = this._get("Context");
-			tmpContextCheck = false;
-		}
-		this._$("Context", context);
-		//
+		// search elements
+		this.config.flags.use.ac = false;
 		elements = this.searchElements(moveFilter, sourceID, mult, count, from, indexOf);
-		//
-		if (tmpContextCheck === true) {
-			this._set("Context", tmpContext);
-		} else {
-			this._$("Context", tmpContext);
-		}
+		this.config.flags.use.ac = true;
 	
-		// Перенос элементов
+		// move
 		if (mult === true) {
-			tmpLength = elements.length - 1;
-	
-			for (i = -1; i++ < tmpLength;) {
-				this.addElement(context + cacheObj.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + cacheObj.methodSeparator + addType, activeID, sourceID);
-
+			eLength = elements.length - 1;
+			for (; i++ < eLength;) {
+				this.addElement(context + constants.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + constants.methodSeparator + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + cacheObj.contextSeparator + elements, aCheckType === true ? addType : elements + cacheObj.methodSeparator + addType, activeID, sourceID);
+			this.addElement(context + constants.contextSeparator + elements, aCheckType === true ? addType : elements + constants.methodSeparator + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 	
-		// Удаляем, если нужно, элементы
+		// delete element
 		if (deleteType === true) {
-			this._$("Context", context);
+			this.config.flags.use.ac = false;
 			this.deleteElementsByLink(deleteList, sourceID);
-	
-			if (tmpContextCheck === true) {
-				this._set("Context", tmpContext);
-			} else {
-				this._$("Context", tmpContext);
-			}
+			this.config.flags.use.ac = true;
 		}
 	
 		return this;
 	},
 	/**
-	 * Переместить элемент коллекции (с учётом контекста)
+	 * move element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElement = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
-	 * Копировать элементы коллекции (с учётом контекста)
+	 * copy elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный перенос
-	 * @param {Number|Boolean} [count=false] - максимальное количество переносов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.copyElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
-		moveFilter = moveFilter || false;
-		context = $.isExist(context) ? context.toString() : "";
-		
-		sourceID = sourceID || "";
-		activeID = activeID || "";
-		
-		addType = addType || "push";
-	
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.moveElements(moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, false);
+		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
-	 * Копировать элмент коллекции (с учётом контекста)
+	 * copy element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {Context} context - контекст для коллекции-источника (знак # указывает порядок)
-	 * @param {String|Array} [sourceID=this.active] - ИД коллекции-источника
-	 * @param {String|Array} [activeID=this.active] - ИД коллекции (куда переносится)
-	 * @param {String} [addType="push"] - тип добавления (константы: "push" - добавить в конец, "unshift" - добавить в начало)
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Context} context - source context (sharp (#) char indicates the order)
+	 * @param {String} [sourceID=this.config.constants.active] - source ID
+	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.copyElement = function (moveFilter, context, sourceID, activeID, addType) {

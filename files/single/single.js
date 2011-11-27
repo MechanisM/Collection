@@ -1,52 +1,53 @@
-
+	
+	/////////////////////////////////
+	//// single methods (core)
+	/////////////////////////////////
+	
 	/**
-	 * Установить значение элементу коллекции (с учётом контекста)
+	 * set new value to element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {mixed} value - значение
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {mixed} value - new value
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.setElement = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
+		value = value === undefined ? "" : value;
 	
 		var
-			cacheObj = $.Collection.cache.obj,
+			constants = this.config.constants,
 		
-			dObj = this.dObj,
-			prop = dObj.prop;
-		//
-		prop.activeContext = prop.activeContext.toString();
+			dObj = this.dObj,	
+			activeContext = this.getActiveContext();
 		
-		if (!context && !prop.activeContext) {
-			if (id && id !== this.active) {
-				return this._push("Collection", id, value);
+		if (!context && !activeContext) {
+			if (id && id !== constants.active) {
+				return this._push("collection", id, value);
 			} else {
-				return this._update("Collection", value);
+				return this._update("collection", value);
 			}
 		}
 		
-		cacheObj.setByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context, value);
+		$.Collection.obj.setByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, activeContext + constants.contextSeparator + context, value);
 	
 		return this;
 	};
 	/**
-	 * Получить элемент коллекции (с учётом контекста)
+	 * get element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - дополнительный контекст (знак # указывает порядок)
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
-		context = context !== undefined ? context : "";
+		context = $.isExist(context) ? context.toString() : "";
 		
 		var
-			cacheObj = $.Collection.cache.obj,
+			constants = this.config.constants,
+			dObj = this.dObj;
 		
-			dObj = this.dObj,
-			prop = dObj.prop;
-	
-		return cacheObj.getByLink(id && id !== this.active ? dObj.sys.tmpCollection[id] : prop.activeCollection, prop.activeContext + cacheObj.contextSeparator + context);
+		return $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext() + constants.contextSeparator + context);
 	};

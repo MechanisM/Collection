@@ -1,32 +1,31 @@
 	
+	/////////////////////////////////
+	//// control settings
+	/////////////////////////////////
+	
 	/**
-	 * Установить/вернуть свойство
+	 * set/get property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Plain Object} objKey - имя свойства или объект (имя: значение)
-	 * @param {mixed} [value=undefined] - значение (перегрузка)
+	 * @param {String} propName - root property
+	 * @param {String|Plain Object} objKey - property name or object (name: value)
+	 * @param {mixed} [value=undefined] - value (overload)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._prop = function (propName, objKey, value) {
-		var
-			dObj = this.dObj,
-			prop = dObj[propName];
+		var active = this.dObj[propName];
 			
 		if (arguments.length !== 3) {
 			if ($.isPlainObject(objKey)) {
-				$.extend(prop, objKey);
-			} else { return prop[objKey]; }
-		} else { prop[objKey] = value; }
+				$.extend(active, objKey);
+			} else { return active[objKey]; }
+		} else { active[objKey] = value; }
 			
 		return this;
 	};
-	
-	/////////////////////////////////
-	//// Управление настройками
-	/////////////////////////////////	
-	$.Collection.fn.prop = function (objKey, value) {
-		return this._prop.apply(this, $.unshiftArguments(arguments, "prop"));
+		
+	$.Collection.fn.active = function (objKey, value) {
+		return this._prop.apply(this, $.unshiftArguments(arguments, "active"));
 	};
 	$.Collection.fn.css = function (objKey, value) {
 		return this._prop.apply(this, $.unshiftArguments(arguments, "css"));

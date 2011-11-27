@@ -1,52 +1,42 @@
 	
+	/////////////////////////////////
+	// native
+	/////////////////////////////////
+		
 	/**
-	 * Вернуть валидную JSON строку коллекции (с учётом контекста)
+	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [vID=this.active] - ИД коллекции
-	 * @param {Function|Array} [replacer=undefined] - показывает, как элементы коллекции преобразуются в строку
-	 * @param {Number|String} [space=undefined] - пробелы
+	 * @param {String|Collection} [objID=this.config.constants.active] - collection ID or collection
+	 * @param {Function|Array} [replacer=undefined] - an paramional parameter that determines how object values are stringified for objects
+	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
 	 */
-	$.Collection.fn.toString = function (vID, replacer, space) {
-		var
-			dObj = this.dObj,
-			prop = dObj.prop,
-	
-			cObj,
-			i;
-	
-		gap = "";
-		indent = "";
-	
-		cObj = vID && $.isString(vID) && vID !== this.active ? dObj.sys.tmpCollection[vID] : typeof vID === "object" ? vID : prop.activeCollection;
-		cObj = $.Collection.cache.obj.getByLink(cObj, prop.activeContext);
-	
-		if (typeof space === "number") {
-			for (i = space; i--;) {
-				indent += ' ';
+	$.Collection.fn.toString = function (objID, replacer, space) {
+		var dObj = this.dObj, cObj;
+		
+		if (objID && ($.isArray(objID) || $.isPlainObject(objID))) {
+			if (JSON && JSON.stringify) {
+				return JSON.stringify(objID, replacer || "", space || "");
 			}
-		} else if (typeof space === "string") {
-			indent = space;
+			throw new Error("object JSON is not defined!");
 		}
-	
-		rep = replacer;
-	
-		if (window.JSON !== undefined) {
-			return JSON.stringify(cObj, replacer, space);
+		
+		cObj = objID && objID !== this.config.constants.active ? dObj.sys.tmpCollection[objID] : dObj.active.collection;
+		cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext());
+		
+		if (JSON && JSON.stringify) {
+			return JSON.stringify(cObj, replacer || "", space || "");
 		}
-	
-		return str('', {
-			'': cObj
-		});
+		throw new Error("object JSON is not defined!");
 	};
 	/**
-	 * Вернуть длину коллекции
+	 * return collection length
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.active] - ИД коллекции
+	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @return {Number}
 	 */
 	$.Collection.fn.valueOf = function (id) {
-		return this.length($.isExist(id) ? id : this.active);
+		return this.length($.isExist(id) ? id : this.config.constants.active);
 	};

@@ -1,4 +1,4 @@
 
 (function ($) {
-	// Включение ECMAScript 5 "strict mode"
+	// try to use ECMAScript 5 "strict mode"
 	"use strict";

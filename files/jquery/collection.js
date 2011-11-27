@@ -1,12 +1,16 @@
 	
+	/////////////////////////////////
+	//// jQuery methods (core)
+	/////////////////////////////////
+		
 	/**
-	 * Работа с коллекциями jQuery
+	 * jQuery collection
 	 * 
 	 * @this {jQuery Object}
-	 * @param {Object} prop - объект настроек
+	 * @param {Object} active - user's preferences
 	 * @return {Colletion Object}
 	 */
-	$.fn.collection = function (prop) {
+	$.fn.collection = function (active) {
 		var
 			stat = $.fn.collection.stat,
 			text = function (elem) {
@@ -28,6 +32,7 @@
 			},
 			inObj = function (elem) {
 				var array = [];
+				//
 				elem.each(function (n) {
 					var
 						$this = $(this),
@@ -49,8 +54,9 @@
 					}
 	
 					if (cLength) {
+						cLength--;
 						array[n][stat.classes] = {};
-						for (i = 0; i < cLength; i++) {
+						for (i = -1; i++ < cLength;) {
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}
@@ -59,20 +65,18 @@
 						array[n][stat.childNodes] = inObj($this.children());
 					}
 	
-					if (txt !== false) {
-						array[n][stat.val] = txt.replace(/[\r\t\n]/g, " ");
-					}
+					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
 				});
 	
 				return array;
 			},
-			array = inObj(this);
+			data = inObj(this);
 	
-		if (prop) { return new $.Collection(array, prop); }
+		if (active) { return new $.Collection(data, active); }
 	
-		return new $.Collection(array);
+		return new $.Collection(data);
 	};
-	// Стандартные данные
+	// values by default
 	if (!$.fn.collection.stat) {
 		$.fn.collection.stat = {
 			val: "val",

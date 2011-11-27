@@ -1,15 +1,14 @@
 	
+	/////////////////////////////////
+	//// mult methods (core)
+	/////////////////////////////////
+	
 	/**
-	 * Вернуть количество элементов в коллекции (с учётом контекста)
-	 * 
-	 * // Перегрузки:
-	 * 1) Если нету входных параметров, то ИД равен активной коллекции, а фильтр отключён;
-	 * 2) Если один входной параметр (строка), то он равен ИДу, а фильтр отключён;
-	 * 3) Если один входной параметр (коллекция), то возвращается её длина (активный контекст не учитывается).
+	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String|Collection} [id=this.active] - ИД коллекции или коллекция
+	 * @param {Filter|String|Boolean|Collection} [filter=false] - filter function, string expressions or "false"
+	 * @param {String|Collection} [id=this.config.constants.active] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
 	 */
@@ -18,22 +17,18 @@
 		
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
-	
 			cObj, cOLength, aCheck,
-	
-			i, countRecords;
-	
-
+			key, countRecords;
+		
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
 		}
-
-		if (!id || id === this.active) {
-			cObj = prop.activeCollection;
+		
+		if (!id || id === this.config.constants.active) {
+			cObj = dObj.active.collection;
 		} else if ($.isString(id)) {
 			cObj = dObj.sys.tmpCollection[id];
 		} else {
@@ -41,13 +36,12 @@
 			cObj = id;
 		}
 		//
-		if (aCheck !== true) {
-			cObj = $.Collection.cache.obj.getByLink(cObj, prop.activeContext);
-		}
-		// Если null
+		if (aCheck !== true) { cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext()); }
+		// if cObj is null
 		if (cObj === null) { return 0; }
-		
+
 		cOLength = cObj.length;
+		// if cObj is String
 		if ($.isString(cObj)) { return cOLength; }
 		
 		if (typeof cObj === "object") {
@@ -55,51 +49,48 @@
 				countRecords = cOLength;
 			} else {
 				countRecords = 0;
-				for (i in cObj) {
-					if (cObj.hasOwnProperty(i)
-					&& (
-						filter === false
-						|| this.customFilter(filter, cObj, i, cOLength || null, this, aCheck === true ? "array" : id ? id : this.active)) === true) {
-						countRecords++;
+				for (key in cObj) {
+					if (cObj.hasOwnProperty(key)) {
+						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.config.constants.active) === true) {
+							countRecords++;
+						}
 					}
 				}
 			}
-		} else { throw new Error("Incorrect data type!"); }
+		} else { throw new Error("incorrect data type!"); }
 	
 		return countRecords;
 	};
 	/**
-	 * Перебрать коллекцию (с учётом контекста)
+	 * forEach method (in context)
 	 *
-	 * // Перегрузки:
-	 * 1) Если id имеет логическое значение, то он считается за mult.
+	 * // overloads:
+	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback - функция callback
-	 * @param {Function} [callback.before=undefined] - функция callback, которая срабаывает перед началом итераций
-	 * @param {Function} [callback.after=undefined] - функция callback, которая срабатывает после конца итераций
-	 * @param {Filter|String|Boolean} [filter=false] - фильтр, ИД фильтра, cтроковое условие или false
-	 * @param {String} [id=this.active] - ИД коллекции
-	 * @param {Boolean} [mult=true] - если установлено true, то осуществляется множественный поиск
-	 * @param {Number|Boolean} [count=false] - максимальное количество результатов (по умолчанию: весь объект)
-	 * @param {Number|Boolean} [from=false] - количество пропускаемых элементов (по умолчанию: -1 - начало)
-	 * @param {Number|Boolean} [indexOf=false] - точка отсчёта (по умолчанию: -1 - начало)
+	 * @param {Function} callback - callback
+	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.active;
+		id = $.isExist(id) ? id : this.config.constants.active;
 	
-		// Если id имеет логическое значение
+		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.active;
+			id = this.config.constants.active;
 		}
 	
-		// Значения по умолчанию
+		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -107,30 +98,24 @@
 	
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 	
 			cObj, cOLength, tmpLength,
 	
 			i, j = 0;
 		
-		// Вешаем ссылку
-		dObj.sys.callbackCallee = callback;
-		// Событие "до" итераций
-		if (callback.before) {
-			if (callback.before.apply(this, arguments) === false) {
-				return this;
-			}
-		}
-		
-		cObj = $.Collection.cache.obj.getByLink(id !== this.active ? sys.tmpCollection[id] : prop.activeCollection, prop.activeContext);
+		// "callee" link
+		dObj.sys.callee.callback = callback;
+		//
+		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : active.collection, this.getActiveContext());
 		cOLength = this.length(cObj);
 		
+		//
 		if ($.isArray(cObj)) {
 			tmpLength = cOLength - 1;
 			for (i = indexOf !== false ? indexOf - 1 : -1; i++ < tmpLength;) {
 				if (count !== false && j === count) { break; }
-				
 				if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) { from--; continue; }
 					
@@ -144,7 +129,7 @@
 				if (cObj.hasOwnProperty(i)) {
 					if (count !== false && j === count) { break; }
 					if (indexOf !== false && indexOf !== 0) { indexOf--; continue; }
-						
+					
 					if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) { from--; continue; }
 							
@@ -155,9 +140,6 @@
 				}
 			}
 		}
-		
-		// Событие "после" итераций
-		callback.after && callback.after.apply(this, arguments);
 	
 		return this;
 	};

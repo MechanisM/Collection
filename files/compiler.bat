@@ -9,9 +9,13 @@ copy	^
 		+ txt\closure.start.txt ^
 		^
 		+ core\core.js ^
-		+ core\core.cache.js ^
-		+ core\core.cache.sort.js ^
 		+ core\core.prototype.js ^
+		+ core\core.stat.js ^
+		+ core\core.stat.sort.js ^
+		^
+		+ jquery\collection.js ^
+		+ jquery\compile.js ^
+		+ jquery\other.js ^
 		^
 		+ tm\tm.simple.js ^
 		+ tm\tm.control.js ^
@@ -22,9 +26,8 @@ copy	^
 		+ storage\storage.css.js ^
 		^
 		+ stack\stack.js ^
-		+ stack\stack.bind.js ^
 		+ stack\stack.prop.js ^
-		+ stack\stack.alias.js ^
+		+ stack\stack.aliases.js ^
 		^
 		+ single\single.js ^
 		+ single\single.add.js ^
@@ -41,18 +44,14 @@ copy	^
 		+ other\other.js ^
 		+ other\order.js ^
 		+ other\native.js ^
-		+ other\native.core.js ^
 		+ other\then.js ^
 		^
 		+ design\design.print.js ^
 		+ design\design.extprint.js ^
 		+ design\design.table.js ^
 		^
-		+ jquery\collection.js ^
-		+ jquery\compile.js ^
-		+ jquery\other.js ^
-		^
 		+ txt\closure.end.txt ^
+		^
 		..\jquery.collection.js
 
 goto start

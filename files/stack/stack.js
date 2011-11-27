@@ -1,61 +1,74 @@
 	
+	/////////////////////////////////
+	//// stack methods
+	/////////////////////////////////
+	
 	/**
-	 * Модифицировать свойство (дозаписать)
+	 * new property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {mixed} modProp - дополняемое свойство
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new property
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._mod = function (propName, modProp, id) {
+	$.Collection.fn._$ = function (propName, newProp) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
-			sys = dObj.sys,
+			active = dObj.active,
+			upperCase = $.toUpperCase(propName, 1);
 
-			tmpActiveStr = "active" + propName,
-			tmp = sys["tmp" + propName],
-			activeID = sys[tmpActiveStr + "ID"],
-
-			// Функция модифицирования
-			typeMod = function (target, mod) {
-				if ($.isNumber(target) || $.isString(target)) {
-					target += mod;
-				} else if ($.isArray(target)) {
-					target.push(mod);
-				} else if ($.isBoolean(target)) {
-					if (mod === true && target === true) {
-						target = false;
-					} else {
-						target = true;
-					}
-				}
-
-				return target;
-			};
-		
-		if (id && id !== this.active) {
-			tmp[id] = typeMod(tmp[id], modProp);
-			if (activeID && id === activeID) {
-				prop[tmpActiveStr] = tmp[id];
-			}
-		} else {
-			prop[tmpActiveStr] = typeMod(prop[tmpActiveStr], modProp);
-			if (activeID) {
-				tmp[activeID] = prop[tmpActiveStr];
-			}
-		}
+		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
+		dObj.sys["active" + upperCase + "ID"] = null;
 
 		return this;
 	};
 	/**
-	 * Добавить новое свойство в стек (если свойство с таким ИД уже есть в стеке, то оно перезаписывается и если оно было активное, то активное перезаписывается тоже)
+	 * update active property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Plain Object} objID - ИД свойства или объект (ИД: значение)
-	 * @param {mixed} [newProp=undefined] - новое свойство (перегрузка)
+	 * @param {String} propName - root property
+	 * @param {mixed} newProp - new value
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn._update = function (propName, newProp) {
+		var
+			dObj = this.dObj,
+			active = dObj.active,
+			sys = dObj.sys,
+			
+			upperCase = $.toUpperCase(propName, 1),
+			activeID = sys["active" + upperCase + "ID"];
+		
+		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
+		if (activeID) { sys["tmp" + upperCase][activeID] = active[propName]; }
+
+		return this;
+	};
+	/**
+	 * return property
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} propName - root property
+	 * @param {String} [id=this.config.constants.active] - stack ID
+	 * @return {mixed}
+	 */
+	$.Collection.fn._get = function (propName, id) {
+		var dObj = this.dObj;
+		
+		if (id && id !== this.config.constants.active) {
+			return dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
+		}
+
+		return dObj.active[propName];
+	};
+	
+	/**
+	 * add new value to stack
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} propName - root property
+	 * @param {String|Plain Object} objID - stack ID or object (ID: value)
+	 * @param {mixed} [newProp=undefined] - value (overload)
 	 * @throw {Error} 
 	 * @return {Colletion Object}
 	 */
@@ -63,19 +76,19 @@
 		var
 			dObj = this.dObj,
 			sys = dObj.sys,
-			prop = dObj.prop,
+			active = dObj.active,
 
-			tmpActiveStr = "active" + propName,
-			tmp = sys["tmp" + propName],
-			activeID = sys[tmpActiveStr + "ID"],
+			upperCase = $.toUpperCase(propName, 1),
+			tmp = sys["tmp" + upperCase],
+			activeID = sys["active" + upperCase + "ID"],
 
 			key;
 			
 		if ($.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
-					if (key === this.active) {
-						throw new Error("Invalid property name!");
+					if (key === this.config.constants.active) {
+						throw new Error("invalid property name!");
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
@@ -85,8 +98,8 @@
 				}
 			}
 		} else {
-			if (key === this.active) {
-				throw new Error("Invalid property name!");
+			if (objID === this.config.constants.active) {
+				throw new Error("invalid property name!");
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
@@ -97,66 +110,57 @@
 		return this;
 	};
 	/**
-	 * Установить новое активное свойство
+	 * set new active property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} id - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} id - stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._set = function (propName, id) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
 			sys = dObj.sys,
 
-			lowerCase = propName.substring(0, 1).toLowerCase() + propName.substring(1),
-
-			tmpChangeControlStr = lowerCase + "ChangeControl",
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID";
+			upperCase = $.toUpperCase(propName, 1),
+			tmpChangeControlStr = propName + "ChangeControl",
+			tmpActiveIDStr = "active" + upperCase + "ID";
 
 		if (sys[tmpActiveIDStr] !== id) {
 			sys[tmpChangeControlStr] = true;
 			sys[tmpActiveIDStr] = id;
-		} else {
-			sys[tmpChangeControlStr] = false;
-		}
+		} else { sys[tmpChangeControlStr] = false; }
 
-		sys[lowerCase + "Back"].push(id);
-
-		prop[tmpActiveStr] = sys["tmp" + propName][id];
+		sys[propName + "Back"].push(id);
+		dObj.active[propName] = sys["tmp" + upperCase][id];
 
 		return this;
 	};
 	/**
-	 * Вернуться на N позиций назад по истории свойств
+	 * history back
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {Number} [nmb=1] - количество шагов назад
+	 * @param {String} propName - root property
+	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._back = function (propName, nmb) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
 			sys = dObj.sys,
 
-			lowerCase = propName.substring(0, 1).toLowerCase() + propName.substring(1),
-			tmpActiveStr = "active" + propName,
-			propBack = sys[lowerCase + "Back"],
+			upperCase = $.toUpperCase(propName, 1),
+			propBack = sys[propName + "Back"],
 
 			pos;
 
-		sys[lowerCase + "ChangeControl"] = false;
-
+		sys[propName + "ChangeControl"] = false;
 		pos = propBack.length - (nmb || 1) - 1;
 
 		if (pos >= 0 && propBack[pos]) {
-			if (sys["tmp" + propName][propBack[pos]]) {
-				sys[tmpActiveStr + "ID"] = propBack[pos];
-				prop[tmpActiveStr] = sys["tmp" + propName][propBack[pos]];
+			if (sys["tmp" + upperCase][propBack[pos]]) {
+				sys["active" + upperCase + "ID"] = propBack[pos];
+				dObj.active[propName] = sys["tmp" + upperCase][propBack[pos]];
 
 				propBack.splice(pos + 1, propBack.length);
 			}
@@ -165,27 +169,27 @@
 		return this;
 	};
 	/**
-	 * Вернуться на N позиций назад по истории свойств, если были изменения
+	 * history back (if history changed)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {Number} [nmb=1] - количество шагов назад
+	 * @param {String} propName - root property
+	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._backIf = function (propName, nmb) {
-		if (this.dObj.sys[(propName.substring(0, 1).toLowerCase() + propName.substring(1)) + "ChangeControl"] === true) {
+		if (this.dObj.sys[propName + "ChangeControl"] === true) {
 			return this._back.apply(this, arguments);
 		}
 
 		return this;
 	};
 	/**
-	 * Удалить свойство из стека (при этом, если свойство является активном, то оно тоже удаляется)
+	 * remove property from stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array|Plain Object} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {mixed} [deleteVal=false] - значение при удалении
+	 * @param {String} propName - root property
+	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
+	 * @param {mixed} [deleteVal=false] - default value (for active properties)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._drop = function (propName, objID, deleteVal) {
@@ -193,31 +197,30 @@
 
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
-
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID",
-			tmpTmpStr = "tmp" + propName,
+			
+			upperCase = $.toUpperCase(propName, 1),
+			tmpActiveIDStr = "active" + upperCase + "ID",
+			tmpTmpStr = "tmp" + upperCase,
 
 			activeID = sys[tmpActiveIDStr],
-
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
+			
+			key;
 
-			i;
-
-		if (tmpArray[0] && tmpArray[0] !== this.active) {
-			for (i in tmpArray) {
-				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
-						prop[tmpActiveStr] = deleteVal;
+						active[propName] = deleteVal;
 					} else {
-						delete sys[tmpTmpStr][tmpArray[i]];
-						if (activeID && tmpArray[i] === activeID) {
+						delete sys[tmpTmpStr][tmpArray[key]];
+						if (activeID && tmpArray[key] === activeID) {
 							sys[tmpActiveIDStr] = null;
-							prop[tmpActiveStr] = deleteVal;
+							active[propName] = deleteVal;
 						}
 					}
 				}
@@ -225,18 +228,18 @@
 		} else {
 			if (activeID) { delete sys[tmpTmpStr][activeID]; }
 			sys[tmpActiveIDStr] = null;
-			prop[tmpActiveStr] = deleteVal;
+			active[propName] = deleteVal;
 		}
 
 		return this;
 	};
 	/**
-	 * Сбросить активное свойство (при этом, если свойство является активном, то оно тоже сбрасывается)
+	 * reset property
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array|Plain Object} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {mixed} [resetVal=false] - значение, на которое сбрасывается
+	 * @param {String} propName - root property
+	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
+	 * @param {mixed} [resetVal=false] - reset value
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._reset = function (propName, objID, resetVal) {
@@ -244,97 +247,86 @@
 
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 
-			tmpActiveStr = "active" + propName,
-			tmpActiveIDStr = tmpActiveStr + "ID",
-			tmpTmpStr = "tmp" + propName,
+			upperCase = $.toUpperCase(propName, 1),
+			tmpActiveIDStr = "active" + upperCase + "ID",
+			tmpTmpStr = "tmp" + upperCase,
 
 			activeID = sys[tmpActiveIDStr],
-
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
+			
+			key;
 
-			i;
-
-		if (tmpArray[0] && tmpArray[0] !== this.active) {
-			for (i in tmpArray) {
-				if (tmpArray.hasOwnProperty(i)) {
-					if (!tmpArray[i] || tmpArray[i] === this.active) {
-						if (activeID) {
-							sys[tmpTmpStr][activeID] = resetVal;
-						}
-						prop[tmpActiveStr] = resetVal;
+		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
+						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+						active[propName] = resetVal;
 					} else {
-						sys[tmpTmpStr][tmpArray[i]] = resetVal;
-						if (activeID && tmpArray[i] === activeID) {
-							prop[tmpActiveStr] = resetVal;
-						}
+						sys[tmpTmpStr][tmpArray[key]] = resetVal;
+						if (activeID && tmpArray[key] === activeID) { active[propName] = resetVal; }
 					}
 				}
 			}
 		} else {
-			if (activeID) {
-				sys[tmpTmpStr][activeID] = resetVal;
-			}
-			prop[tmpActiveStr] = resetVal;
+			if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+			active[propName] = resetVal;
 		}
 
 		return this;
 	};
 	/**
-	 * Сбросить свойства в другое значение
+	 * reset property to another value
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String|Array} [objID=active] - ИД свойства или массив ИД-ов
-	 * @param {String} [id=this.active] - ИД со значением для слияния
+	 * @param {String} propName - root property
+	 * @param {String|Array} [objID=active] - stack ID or array of IDs
+	 * @param {String} [id=this.config.constants.active] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._resetTo = function (propName, objID, id) {
 		var
 			dObj = this.dObj,
-			mergeVal = !id || id === this.active ? dObj.prop["active" + propName] : dObj.sys["tmp" + propName][id];
+			mergeVal = !id || id === this.config.constants.active ? dObj.active[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
 
 	/**
-	 * Проверить наличие свойства в стеке
+	 * check the existence of property in the stack
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} [id=this.active] - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} [id=this.config.constants.active] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._exist = function (propName, id) {
 		var 
 			dObj = this.dObj,
-			prop = dObj.prop;
+			upperCase = $.toUpperCase(propName, 1);
 		
-		if ((!id || id === this.active) && dObj.sys["active" + propName + "ID"]) {
+		if ((!id || id === this.config.constants.active) && dObj.sys["active" + upperCase + "ID"]) {
 			return true;
 		}
-		if (dObj.sys["tmp" + propName][id] !== undefined) {
+		if (dObj.sys["tmp" + upperCase][id] !== undefined) {
 			return true;
 		}
 
 		return false;
 	};
 	/**
-	 * Проверить на активность свойства по ИДу
+	 * check the property on the activity
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} propName - имя корневого свойства
-	 * @param {String} id - ИД свойства
+	 * @param {String} propName - root property
+	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._is = function (propName, id) {
-		var 
-			dObj = this.dObj,
-			prop = dObj.prop;
-
-		if (id === dObj.sys["active" + propName + "ID"]) {
+		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) {
 			return true;
 		}
 
@@ -342,48 +334,18 @@
 	};
 	
 	/////////////////////////////////
-	//// Управление сборками
+	//// assembly
 	/////////////////////////////////
 			
 	/**
-	 * Использовать сборку
+	 * use the assembly
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} id - ИД
+	 * @param {String} stack ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.use = function (id) {
-		if (this._exist("Collection", id)) { this._set("Collection", id); }
-		//
-		if (this._exist("Page", id)) { this._set("Page", id); }
-		//
-		if (this._exist("Target", id)) { this._set("Target", id); }
-		//
-		if (this._exist("Template", id)) { this._set("Template", id); }
-		//
-		if (this._exist("TemplateMode", id)) { this._set("TemplateMode", id); }
-		//
-		if (this._exist("Filter", id)) { this._set("Filter", id); }
-		//
-		if (this._exist("Parser", id)) { this._set("Parser", id);  }
-		//
-		if (this._exist("Var", id)) { this._set("Var", id);  }
-		//
-		if (this._exist("Context", id)) {  this._set("Context", id);  }
-		//
-		if (this._exist("CountBreak", id)) {  this._set("CountBreak", id);  }
-		//
-		if (this._exist("PageBreak", id)) {  this._set("PageBreak", id);  }
-		//
-		if (this._exist("SelectorOut", id)) {  this._set("SelectorOut", id);  }
-		//
-		if (this._exist("ResultNull", id)) {  this._set("ResultNull", id);  }
-		//
-		if (this._exist("AppendType", id)) {  this._set("AppendType", id);  }
-		//
-		if (this._exist("Defer", id)) {  this._set("Defer", id); }
-		//
-		if (this._exist("Cache", id)) {  this._set("Cache", id); }
+		for (var i = this.stack.length; i--;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
 				
 		return this;
 	};
