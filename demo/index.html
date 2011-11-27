@@ -68,6 +68,58 @@
 			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
 			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
 			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza1", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks1", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro1", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza2", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks2", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro2", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza3", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks3", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza1", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks1", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro1", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza2", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks2", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro2", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza3", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks3", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza1", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks1", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro1", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza2", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks2", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro2", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza3", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks3", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza1", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks1", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro1", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza2", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks2", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro2", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza3", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks3", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
 			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"}
 		];
 		
@@ -77,12 +129,12 @@
 				templateModel: $.Collection.templateModels.control,
 				target: $("#result"), pager: "#nav2",
 				numberBreak: 5,
-				pageBreak: 7
+				pageBreak: 10
 			});
 			db.dObj.active.cache.iteration = true;
 			db.dObj.active.cache.autoIteration = true;
 			db
-				.$Filter(function ($this, i) { return $this[i].name.search("Kobezz") !== -1; })
+				.$Filter(function ($this, i) { return $this[i].name.search("K") !== -1; })
 				.extPrint(1);
 			
 			$("#nav2").on("click", "a", function () {

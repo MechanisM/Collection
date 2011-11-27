@@ -1,55 +1,53 @@
 ﻿/**
- * $.Collection - JavaScript фреймворк для работы с коллекциями данных (использует jQuery)
+ * $.Collection - Javascript framework for working with collections of data (using jQuery)
  *
- * Автор: Кобец Андрей Александрович (kobezzza)
- * Дата: 25.10.2011 16:03:41
+ * @author: Kobets Andrey Alexandrovich (kobezzza)
+ * @date: 28.11.2011 00:37:41
  *
- * Глоссарий:
- * 1) Коллекция - объект данных JavaScript (далее JS), может быть реализован, как массив, так и как хеш-таблица (можно совмещать массивы с хешем, например: [{...},{...},...]);
- * 2) Фильтр - специальная функция JS, по которой осуществляется выбор из коллекции по тому или иному условию;
- * 3) Парсер - специальная функция JS, осуществляющая постобработку результирующей строки выбора из коллекции;
- * 4) Контекст - строка, указывающая ссылку к определённому контексту (области) коллекции, например строка "Name~1" указывает на obj.Name[1], где obj - коллекция;
- * 5) Шаблон - специальная функция JS, которая преобразует коллекцию в строчный вид, в соответствии с указанными инструкциями, для вставки в DOM;
- * 6) Модель шаблона - специальная функция JS, которая генерирует панель навигации для шаблона.
+ * glossary:
+ * 1) Collection - data object the JavaScript (the JS), can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);
+ * 2) Filter - the special function JS, which are selected from the collection by this or any other condition;
+ * 3) Parser - the special function JS, engaged in post-processing of the resulting string selection from the collection of the;
+ * 4) Context - a string that specifies a link to a certain context (region) collection, for example, the string "Name approximately 1" indicates the obj.Name[1], where obj is a collection of;
+ * 5) Template - the special function JS, which converts the collection in line view, in accordance with these instructions for pasting in the DOM;
+ * 6) Template model - the special function JS, which generates the navigation bar to the template.
  *
- * $.Collection состоит из:
- * 1) Шесть расширений объекта jQuery:
- * 1.1) collection - основной класс;
- * 1.2) tplCompile - функция "компиляции" шаблонов из DOM;
- * 1.3) isString - функция проверки на строку;
- * 1.4) isBoolean - функция проверки на логическое значение;
- * 1.5) isExist - функция проверки существование (отличие от null, undefined и empty string);
- * 1.6) unshiftArguments - функция, для модификации объекта arguments.
- * 2) Одно расширение объекта jQuery.prototype: 
- * 2.1) collection - функция преобразования коллекции jQuery в collection.
+ * $.Collection consists of:
+ * 1) six extensions jQuery object:
+ * 1.1) collection - main class;
+ * 1.2) tplCompile - function for "compilation" templates from the DOM;
+ * 1.3) isString - test of string;
+ * 1.4) isBoolean - test of boolean;
+ * 1.5) isExist - exist (not null, undefined or empty string);
+ * 1.6) unshiftArguments - function for the modification of an object arguments.
+ * 2) one extension of the jQuery.prototype: 
+ * 2.1) collection - the transformation function of the collection of jQuery in the $.Collection.
  *
- * Дополнение:
- * Код документирован в соответсвии со стандартом jsDoc
- * Специфичные типы данных:
- * 1) Colletion Object является сокращённой формой [Object] и означает экземпляр $.Collection;
- * 2) Collection является сокращённой формой [Array|Object] и означает коллекцию;
- * 3) Selector является сокращённой формой [String] и означает селектор css (Sizzle синтаксис);
- * 4) Context является сокращённой формой [String] и означает контекст коллекции;
- * 5) Template является сокращённой формой [Function] и означает функцию-шаблон;
- * 6) Template Mode является сокращённой формой [Function] и означает функцию-модель (режим);
- * 7) Filter является сокращённой формой [Function] и означает функцию-фильтр;
- * 8) Parser является сокращённой формой [Function] и означает функцию-парсер;
- * 9) Plain Object является сокращённой формой [Object] и означает хеш-таблицу;
- * 10) jQuery Object является сокращённой формой [Object] и означает экземпляр jQuery;
- * 11) jQuery Deferred является сокращённой формой [Object] и означает экземпляр jQuery.Deferred.
+ * addition:
+ * the code is documented in accordance with the standard jsDoc
+ * specific data types:
+ * 1) Colletion Object is a reduced form of the [Object] and means an instance of $.Collection;
+ * 2) Colletion is a reduced form of the [Object|Array] and means an collection of data;
+ * 3) Selector is a reduced form of the [String] , and means the css selector (Sizzle syntax);
+ * 4) Context is the reduced form of the [String] , and means the context of the collection;
+ * 5) Template is a reduced form of the [Function] and means function-template;
+ * 6) Template Model is the reduced form of the [Function] and means function-model;
+ * 7) Filter is a reduced form of the [Function] and means the function-filter;
+ * 8) Parser is a reduced form of the [Function] and means function-parser;
+ * 9) Plain Object is a reduced form of the [Object] and means hash table;
+ * 10) Jquery Object is a reduced form of the [Object] and means an instance of jQuery;
+ * 11) Jquery Deferred is the reduced form of the [Object] and means an instance of jQuery.Deferred.
  * --
- * Запись, типа: [active=undefined] означает, что данный параметр не обязательный и если не указан явно, то не определён (не имеет значения по умолчанию)
- * Все перегрузки методов документированны в описании метода, т.к. синтаксис jsDoc не позволяет этого сделать
+ * the record type: [active=undefined] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
+ * all overloading methods documented in the description of the method, because the syntax of the jsDoc not allow it to do
  * --
- * Создание нового экземпляра $.Collection возможно, как с new, так и без
- * --
- * Для комфортной работы рекомендуется использовать последнюю стабильную версию jQuery
+ * for comfortable work it is recommended to use the latest stable version of jQuery
  *
- * Надеюсь данный класс окажеся вам полезным, наслаждайтесь!
+ * enjoy!
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @version 4.0
+ * @version 3.2
  */
 (function ($) {
 	// try to use ECMAScript 5 "strict mode"
@@ -2684,15 +2682,22 @@
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|Object} [id=this.config.constants.active] - collection ID
+	 * @param {String|Collection} [objID=this.config.constants.active] - collection ID or collection
 	 * @param {Function|Array} [replacer=undefined] - an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
 	 */
-	$.Collection.fn.toString = function (id, replacer, space) {
+	$.Collection.fn.toString = function (objID, replacer, space) {
 		var dObj = this.dObj, cObj;
-	
-		cObj = id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection;
+		
+		if (objID && ($.isArray(objID) || $.isPlainObject(objID))) {
+			if (JSON && JSON.stringify) {
+				return JSON.stringify(objID, replacer || "", space || "");
+			}
+			throw new Error("object JSON is not defined!");
+		}
+		
+		cObj = objID && objID !== this.config.constants.active ? dObj.sys.tmpCollection[objID] : dObj.active.collection;
 		cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext());
 		
 		if (JSON && JSON.stringify) {
@@ -2825,7 +2830,7 @@
 			opt = {},
 			
 			cObj, cOLength,
-			start, inc = 0, checkPage,
+			start, inc = 0, checkPage, from = null,
 			
 			result = "", action;
 			
@@ -2874,8 +2879,12 @@
 				}
 				start++;
 				opt.cache.lastIteration = start;
+				from = null;
+			} else if (checkPage < 0 && opt.filter !== false) {
+				from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null;
 			}
-			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, null, start);
+			//
+			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
 		}
 		// cache
 		active.cache.firstIteration = opt.cache.lastIteration;
@@ -2895,7 +2904,7 @@
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			opt.page = "-=1";
-			this.extPrint.call(this, opt);
+			this.extPrint(opt);
 		} else { this.easyPage(opt); }
 	
 		return this;

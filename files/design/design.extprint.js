@@ -29,7 +29,7 @@
 			opt = {},
 			
 			cObj, cOLength,
-			start, inc = 0, checkPage,
+			start, inc = 0, checkPage, from = null,
 			
 			result = "", action;
 			
@@ -78,9 +78,12 @@
 				}
 				start++;
 				opt.cache.lastIteration = start;
+				from = null;
+			} else if (checkPage < 0 && opt.filter !== false) {
+				from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null;
 			}
 			//
-			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, null, start);
+			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
 		}
 		// cache
 		active.cache.firstIteration = opt.cache.lastIteration;
@@ -100,7 +103,7 @@
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			opt.page = "-=1";
-			this.extPrint.call(this, opt);
+			this.extPrint(opt);
 		} else { this.easyPage(opt); }
 	
 		return this;
