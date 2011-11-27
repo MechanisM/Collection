@@ -1,9 +1,6 @@
 ﻿/**
  * $.Collection - Javascript framework for working with collections of data (using jQuery)
  *
- * @author: Kobets Andrey Alexandrovich (kobezzza)
- * @date: 28.11.2011 00:37:41
- *
  * glossary:
  * 1) Collection - data object the JavaScript (the JS), can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);
  * 2) Filter - the special function JS, which are selected from the collection by this or any other condition;
@@ -47,6 +44,7 @@
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * @date: 28.11.2011 00:37:41
  * @version 3.2
  */
 (function ($) {
