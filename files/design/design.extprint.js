@@ -39,7 +39,7 @@
 		$.extend(true, opt, active, param);
 		if (param) { opt.page = $.Collection.obj.expr(opt.page, active.page || ""); }
 		//
-		checkPage = opt.page === (active.page - 1);
+		checkPage = active.page - opt.page;
 		active.page = opt.page;
 		action = function (data, i, aLength, $this, objID) {
 			result += opt.template(data, i, aLength, $this, objID);
@@ -64,13 +64,14 @@
 			// calculate the starting position
 			start = opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
-							checkPage === true ? opt.cache.firstIteration : opt.cache.lastIteration : i;
+							checkPage > 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
 			
 			// rewind cached step back
-			if (checkPage === true && opt.filter !== false) {
+			if (checkPage > 0 && opt.filter !== false) {
+				checkPage = opt.numberBreak * checkPage;
 				for (; start--;) {
 					if (this.customFilter(opt.filter, cObj, start, cOLength, this, this.config.constants.active) === true) {
-						if (inc === opt.numberBreak) {
+						if (inc === checkPage) {
 							break;
 						} else { inc++; }
 					}
@@ -78,6 +79,7 @@
 				start++;
 				opt.cache.lastIteration = start;
 			}
+			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, null, start);
 		}
 		// cache
