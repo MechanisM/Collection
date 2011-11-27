@@ -16,12 +16,6 @@
 				return function (newParam) { return this._$(nm, newParam); };
 			}(data[i]);
 			//
-			if (data[i] === "context") {
-				fn["mod" + nm] = function (nm) {
-					return function (newParam, id) { return this._mod.apply(this, $.unshiftArguments(arguments, nm)); };
-				}(data[i]);
-			}
-			//
 			fn["update" + nm] = function (nm) {
 				return function (newParam) { return this._update(nm, newParam); };
 			}(data[i]);

@@ -4,10 +4,10 @@
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.viewVal = {
-		aPrev: "&lt;&lt;",
-		aNext: "&gt;&gt;",
+		prev: "&lt;&lt;",
+		next: "&gt;&gt;",
 		total: "total",
 		show: "show",
 		from: "from",
-		noResultInSearch: "nothing was found"
+		noResult: "nothing was found"
 	};

@@ -8,13 +8,13 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - object settings
-	 * @param {Template} [param.template=this.dObj.prop.template] - template
-	 * @param {jQuery Object|Boolean} [param.target=this.dObj.prop.target] - element to output the result ("false" - if you print a variable)
+	 * @param {Template} [param.template=this.dObj.active.template] - template
+	 * @param {jQuery Object|Boolean} [param.target=this.dObj.active.target] - element to output the result ("false" - if you print a variable)
 	 * @param {String} [param.variable=this.dObj.sys.variableID] - variable ID (if param.target === false)
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {Parser|String|Boolean} [param.parser=this.dObj.prop.parser] - parser function, string expressions or "false"
-	 * @param {String} [param.appendType=this.dObj.prop.appendType] - type additions to the DOM
-	 * @param {String} [param.resultNull=this.dObj.prop.resultNull] - text displayed if no results
+	 * @param {Parser|String|Boolean} [param.parser=this.dObj.active.parser] - parser function, string expressions or "false"
+	 * @param {String} [param.appendType=this.dObj.active.appendType] - type additions to the DOM
+	 * @param {String} [param.resultNull=this.dObj.active.resultNull] - text displayed if no results
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -34,7 +34,7 @@
 	
 			result = "", action;
 		//
-		$.extend(true, opt, dObj.prop, param);
+		$.extend(true, opt, dObj.active, param);
 		action = function (data, i, aLength, $this, objID) {
 			result += opt.template(data, i, aLength, $this, objID);
 			if (mult !== true) { return false; }
@@ -45,7 +45,7 @@
 		dObj.sys.callee.template = opt.template;		
 		this.each(action, opt.filter, this.config.constants.active, mult, count, from, indexOf);
 		
-		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResultInSearch + '</div>' : opt.resultNull : result;
+		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;
 		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;
 		
 		if (opt.target === false) {

@@ -13,19 +13,19 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._prop = function (propName, objKey, value) {
-		var prop = this.dObj[propName];
+		var active = this.dObj[propName];
 			
 		if (arguments.length !== 3) {
 			if ($.isPlainObject(objKey)) {
-				$.extend(prop, objKey);
-			} else { return prop[objKey]; }
-		} else { prop[objKey] = value; }
+				$.extend(active, objKey);
+			} else { return active[objKey]; }
+		} else { active[objKey] = value; }
 			
 		return this;
 	};
 		
-	$.Collection.fn.prop = function (objKey, value) {
-		return this._prop.apply(this, $.unshiftArguments(arguments, "prop"));
+	$.Collection.fn.active = function (objKey, value) {
+		return this._prop.apply(this, $.unshiftArguments(arguments, "active"));
 	};
 	$.Collection.fn.css = function (objKey, value) {
 		return this._prop.apply(this, $.unshiftArguments(arguments, "css"));

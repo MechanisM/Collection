@@ -7,10 +7,10 @@
 	 * jQuery collection
 	 * 
 	 * @this {jQuery Object}
-	 * @param {Object} prop - user's preferences
+	 * @param {Object} active - user's preferences
 	 * @return {Colletion Object}
 	 */
-	$.fn.collection = function (prop) {
+	$.fn.collection = function (active) {
 		var
 			stat = $.fn.collection.stat,
 			text = function (elem) {
@@ -72,7 +72,7 @@
 			},
 			data = inObj(this);
 	
-		if (prop) { return new $.Collection(data, prop); }
+		if (active) { return new $.Collection(data, active); }
 	
 		return new $.Collection(data);
 	};

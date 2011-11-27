@@ -80,7 +80,7 @@
 				return sortedObj;
 			};
 	
-		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.prop.collection, this.getActiveContext());
+		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext());
 	
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {

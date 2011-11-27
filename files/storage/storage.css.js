@@ -4,13 +4,11 @@
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.css = {
-		pageNumber: "pageNumber",
-		pagePrev: "pagePrev",
-		pageDisablePrev: "pageDisablePrev",
-		pageNext: "pageNext",
-		pageDisableNext: "pageDisableNext",
-		pageActive: "pageActive",
-		pagingRight: "pagingRight",
-		pagingLeft: "pagingLeft",
+		prev: "prev",
+		next: "next",
+		disabled: "disabled",
+		active: "active",
+		nav: "nav",
+		info: "info",
 		noResult: "noResult"
 	};

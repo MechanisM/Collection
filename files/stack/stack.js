@@ -14,9 +14,10 @@
 	$.Collection.fn._$ = function (propName, newProp) {
 		var
 			dObj = this.dObj,
+			active = dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 
-		dObj.prop[propName] = newProp;
+		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
 		dObj.sys["active" + upperCase + "ID"] = null;
 
 		return this;
@@ -32,14 +33,14 @@
 	$.Collection.fn._update = function (propName, newProp) {
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 			
 			upperCase = $.toUpperCase(propName, 1),
 			activeID = sys["active" + upperCase + "ID"];
-
-		prop[propName] = newProp;
-		if (activeID) { sys["tmp" + upperCase][activeID] = prop[propName]; }
+		
+		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
+		if (activeID) { sys["tmp" + upperCase][activeID] = active[propName]; }
 
 		return this;
 	};
@@ -58,54 +59,7 @@
 			return dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		}
 
-		return dObj.prop[propName];
-	};
-	
-	/**
-	 * modify property
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} propName - root property
-	 * @param {mixed} modProp - value
-	 * @param {String} [id=this.config.constants.active] - stack ID
-	 * @return {Colletion Object}
-	 */
-	$.Collection.fn._mod = function (propName, modProp, id) {
-		var
-			dObj = this.dObj,
-			prop = dObj.prop,
-			sys = dObj.sys,
-			
-			upperCase = $.toUpperCase(propName, 1),
-			tmp = sys["tmp" + upperCase],
-			activeID = sys["active" + upperCase + "ID"],
-
-			// extend function
-			typeMod = function (target, mod) {
-				if ($.isNumeric(target) || $.isString(target)) {
-					target += mod;
-				} else if ($.isArray(target)) {
-					target.push(mod);
-				} else if ($.isBoolean(target)) {
-					if (mod === true && target === true) {
-						target = false;
-					} else {
-						target = true;
-					}
-				}
-
-				return target;
-			};
-		
-		if (id && id !== this.config.constants.active) {
-			tmp[id] = typeMod(tmp[id], modProp);
-			if (activeID && id === activeID) { prop[propName] = tmp[id]; }
-		} else {
-			prop[propName] = typeMod(prop[propName], modProp);
-			if (activeID) { tmp[activeID] = prop[propName]; }
-		}
-
-		return this;
+		return dObj.active[propName];
 	};
 	
 	/**
@@ -122,7 +76,7 @@
 		var
 			dObj = this.dObj,
 			sys = dObj.sys,
-			prop = dObj.prop,
+			active = dObj.active,
 
 			upperCase = $.toUpperCase(propName, 1),
 			tmp = sys["tmp" + upperCase],
@@ -178,7 +132,7 @@
 		} else { sys[tmpChangeControlStr] = false; }
 
 		sys[propName + "Back"].push(id);
-		dObj.prop[propName] = sys["tmp" + upperCase][id];
+		dObj.active[propName] = sys["tmp" + upperCase][id];
 
 		return this;
 	};
@@ -206,7 +160,7 @@
 		if (pos >= 0 && propBack[pos]) {
 			if (sys["tmp" + upperCase][propBack[pos]]) {
 				sys["active" + upperCase + "ID"] = propBack[pos];
-				dObj.prop[propName] = sys["tmp" + upperCase][propBack[pos]];
+				dObj.active[propName] = sys["tmp" + upperCase][propBack[pos]];
 
 				propBack.splice(pos + 1, propBack.length);
 			}
@@ -243,7 +197,7 @@
 
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 			
 			upperCase = $.toUpperCase(propName, 1),
@@ -261,12 +215,12 @@
 					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
-						prop[propName] = deleteVal;
+						active[propName] = deleteVal;
 					} else {
 						delete sys[tmpTmpStr][tmpArray[key]];
 						if (activeID && tmpArray[key] === activeID) {
 							sys[tmpActiveIDStr] = null;
-							prop[propName] = deleteVal;
+							active[propName] = deleteVal;
 						}
 					}
 				}
@@ -274,7 +228,7 @@
 		} else {
 			if (activeID) { delete sys[tmpTmpStr][activeID]; }
 			sys[tmpActiveIDStr] = null;
-			prop[propName] = deleteVal;
+			active[propName] = deleteVal;
 		}
 
 		return this;
@@ -293,7 +247,7 @@
 
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 
 			upperCase = $.toUpperCase(propName, 1),
@@ -310,16 +264,16 @@
 				if (tmpArray.hasOwnProperty(key)) {
 					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
 						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
-						prop[propName] = resetVal;
+						active[propName] = resetVal;
 					} else {
 						sys[tmpTmpStr][tmpArray[key]] = resetVal;
-						if (activeID && tmpArray[key] === activeID) { prop[propName] = resetVal; }
+						if (activeID && tmpArray[key] === activeID) { active[propName] = resetVal; }
 					}
 				}
 			}
 		} else {
 			if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
-			prop[propName] = resetVal;
+			active[propName] = resetVal;
 		}
 
 		return this;
@@ -336,7 +290,7 @@
 	$.Collection.fn._resetTo = function (propName, objID, id) {
 		var
 			dObj = this.dObj,
-			mergeVal = !id || id === this.config.constants.active ? dObj.prop[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
+			mergeVal = !id || id === this.config.constants.active ? dObj.active[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
@@ -391,47 +345,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.use = function (id) {
-		if (this._exist("collection", id)) { this._set("collection", id); }
-		//
-		if (this._exist("filter", id)) { this._set("filter", id); }
-		//
-		if (this._exist("context", id)) { this._set("context", id);  }
-		//
-		if (this._exist("cache", id)) { this._set("cache", id); }
-		//
-		if (this._exist("index", id)) { this._set("index", id); }
-		//
-		if (this._exist("map", id)) { this._set("map", id); }
-		//
-		if (this._exist("var", id)) { this._set("var", id); }
-		//
-		if (this._exist("defer", id)) { this._set("defer", id); }
-		
-		
-		///////////
-		
-		
-		if (this._exist("page", id)) { this._set("page", id); }
-		//
-		if (this._exist("parser", id)) { this._set("parser", id); }
-		//
-		if (this._exist("appendType", id)) { this._set("appendType", id); }
-		//
-		if (this._exist("target", id)) { this._set("target", id); }
-		//
-		if (this._exist("calculator", id)) { this._set("calculator", id); }
-		//
-		if (this._exist("pager", id)) { this._set("pager", id); }
-		//
-		if (this._exist("template", id)) { this._set("template", id); }
-		//
-		if (this._exist("templateModel", id)) { this._set("templateModel", id); }
-		//
-		if (this._exist("numberBreak", id)) { this._set("numberBreak", id); }
-		//
-		if (this._exist("pageBreak", id)) { this._set("pageBreak", id); }
-		//
-		if (this._exist("resultNull", id)) { this._set("resultNull", id); }
+		for (var i = this.stack.length; i--;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
 				
 		return this;
 	};

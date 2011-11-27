@@ -113,7 +113,7 @@
 		 * @return {String}
 		 */
 		getActiveContext: function () {
-			return this.config.flags.use.ac === true ? this.dObj.prop.context.toString() : "";
+			return this.config.flags.use.ac === true ? this.dObj.active.context.toString() : "";
 		},
 		/**
 		 * return links to callback function

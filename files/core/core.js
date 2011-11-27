@@ -7,7 +7,7 @@
 	 * @constructor
 	 * @this {Colletion Object}
 	 * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
-	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.prop] - user's preferences
+	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - user's preferences
 	 */
 	$.Collection = function (collection, uProp) {
 		collection = collection || null;
@@ -19,14 +19,14 @@
 		// mixin public fields
 		$.extend(true, this, $.Collection.storage);
 			
-		var prop = this.dObj.prop;
+		var active = this.dObj.active;
 				
 		// extend public fields by user's preferences if need
-		if (uProp) { $.extend(true, prop, uProp); }
+		if (uProp) { $.extend(true, active, uProp); }
 				
 		// if "collection" is string
 		if ($.isString(collection)) {
-			prop.target = $(collection);
-			prop.collection = null;
-		} else { prop.collection = collection; }
+			active.target = $(collection);
+			active.collection = null;
+		} else { active.collection = collection; }
 	};

@@ -17,7 +17,7 @@
 			i = 1,
 			j,
 	
-			target = this.dObj.prop.target,
+			target = this.dObj.active.target,
 			tdLength = target.children("td").length - 1,
 	
 			countDec = count - 1,

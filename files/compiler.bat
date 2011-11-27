@@ -50,9 +50,6 @@ copy	^
 		+ design\design.extprint.js ^
 		+ design\design.table.js ^
 		^
-		+ index\index.js ^
-		+ index\index.map.js ^
-		^
 		+ txt\closure.end.txt ^
 		^
 		..\jquery.collection.js

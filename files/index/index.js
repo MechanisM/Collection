@@ -4,7 +4,7 @@
 		
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 		
 			cObj,

@@ -12,6 +12,30 @@
 		constants: $.Collection.fn.config.constants,
 		
 		/**
+		 * calculate math expression
+		 * 
+		 * @this {Colletion Object}
+		 * @param {mixed} nw - new value
+		 * @param {mixed} old - old value
+		 * @return {mixed}
+		 */
+		expr: function (nw, old) {
+			if (old && $.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
+				nw = nw.split("=");
+				if (!isNaN(nw[1])) { nw[1] = +nw[1]; }
+				// simple math
+				switch (nw[0]) {
+					case "+" : { nw = old + nw[1]; } break;
+					case "-" : { nw = old - nw[1]; } break;
+					case "*" : { nw = old * nw[1]; } break;
+					case "/" : { nw = old / nw[1]; } break;
+				}
+			}
+			
+			return nw;
+		},
+		
+		/**
 		* get object by link
 		* 
 		* @param {Object} obj - some object
@@ -100,7 +124,7 @@
 			for (; i <= cLength; i++) {
 				if (context[i].search(this.constants.subcontextSeparator) === -1) {
 					if (i === cLength) {
-						obj[context[i]] = value;
+						obj[context[i]] = this.expr(value, obj[context[i]]);
 					} else {
 						obj = obj[context[i]];
 					}
@@ -110,7 +134,7 @@
 					if ($.isArray(obj)) {
 						if (i === cLength) {
 							if (pos >= 0) {
-								obj[pos] = value;
+								obj[pos] = this.expr(value, obj[pos]);
 							} else {
 								obj[obj.length + pos] = value;
 							}
@@ -118,7 +142,7 @@
 							if (pos >= 0) {
 								obj = obj[pos];
 							} else {
-								obj = obj[obj.length + pos];
+								obj = this.expr(value, obj[obj.length + pos]);
 							}
 						}
 					} else {
@@ -136,7 +160,7 @@
 							if (obj.hasOwnProperty(key)) {
 								if (pos === n) {
 									if (i === cLength) {
-										obj[key] = value;
+										obj[key] = this.expr(value, obj[key]);
 									} else {
 										obj = obj[key];
 									}
@@ -155,17 +179,17 @@
 		 * add new element to object
 		 * 
 		 * @param {Plain Object} obj - some object
-		 * @param {String} prop - property name (can use "::unshift" - the result will be similar to work for an array "unshift")
+		 * @param {String} active - property name (can use "::unshift" - the result will be similar to work for an array "unshift")
 		 * @param {mixed} value - some value
 		 * @return {Plain Object|Boolean}
 		 */
-		addElementToObject: function (obj, prop, value) {
-			prop = prop.split(this.constants.methodSeparator);
+		addElementToObject: function (obj, active, value) {
+			active = active.split(this.constants.methodSeparator);
 			
 			var key, newObj = {};
 			
-			if (prop[1] && prop[1] == "unshift") {
-				newObj[prop[0]] = value;
+			if (active[1] && active[1] == "unshift") {
+				newObj[active[0]] = value;
 				for (key in obj) {
 					if (obj.hasOwnProperty(key)) {
 						newObj[key] = obj[key];
@@ -174,8 +198,8 @@
 				obj = newObj;
 					
 				return obj;
-			} else if (!prop[1] || prop[1] == "push") {
-				obj[prop[0]] = value;
+			} else if (!active[1] || active[1] == "push") {
+				obj[active[0]] = value;
 			}
 				
 			return true;

@@ -15,9 +15,9 @@
 		var $this = this;
 		
 		if (arguments.length === 1) {
-			$.when($this.prop("defer")).always(function () { done.apply($this, arguments); });
+			$.when($this.active("defer")).always(function () { done.apply($this, arguments); });
 		} else {
-			$.when($this.prop("defer")).then(
+			$.when($this.active("defer")).then(
 				function () { done().apply($this, arguments); },
 				function () { fail().apply($this, arguments); }
 			);

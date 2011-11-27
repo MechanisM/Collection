@@ -28,7 +28,7 @@
 		}
 		
 		if (!id || id === this.config.constants.active) {
-			cObj = dObj.prop.collection;
+			cObj = dObj.active.collection;
 		} else if ($.isString(id)) {
 			cObj = dObj.sys.tmpCollection[id];
 		} else {
@@ -98,7 +98,7 @@
 	
 		var
 			dObj = this.dObj,
-			prop = dObj.prop,
+			active = dObj.active,
 			sys = dObj.sys,
 	
 			cObj, cOLength, tmpLength,
@@ -108,7 +108,7 @@
 		// "callee" link
 		dObj.sys.callee.callback = callback;
 		//
-		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : prop.collection, this.getActiveContext());
+		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : active.collection, this.getActiveContext());
 		cOLength = this.length(cObj);
 		
 		//

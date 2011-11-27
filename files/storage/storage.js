@@ -1,13 +1,13 @@
 	
 	/////////////////////////////////
-	//// public fields (prop)
+	//// public fields (active)
 	/////////////////////////////////
 	
 	$.Collection.storage = {
 		// root
 		dObj: {
 			// active fields
-			prop: {
+			active: {
 				/////////////////////////////////
 				//// data
 				/////////////////////////////////
@@ -60,14 +60,14 @@
 					 * @field
 					 * @type Number
 					 */
-					firstIteration: -1,
+					firstIteration: false,
 					/**
 					 * last iteration
 					 * 
 					 * @field
 					 * @type Number
 					 */
-					lastIteration: -1
+					lastIteration: false
 				},
 				/**
 				 * active index

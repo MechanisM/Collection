@@ -15,7 +15,7 @@
 	$.Collection.fn.toString = function (id, replacer, space) {
 		var dObj = this.dObj, cObj;
 	
-		cObj = id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.prop.collection;
+		cObj = id && id !== this.config.constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection;
 		cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext());
 		
 		if (JSON && JSON.stringify) {

@@ -18,41 +18,100 @@
 			background-color: #EFEFEF;
 			float: left
 		}
-		.info {
+		#result .info {
 			padding: 5px;
 			height: 100px;
 			width: 200px;
 			float: left;
 			background-color: #EFEFEF
 		}
+		.disabled { color: #CCC; text-decoration: none }
+		.active { color: #900; font-size: 200% }
+		.nav a { padding: 0 5px }
 	</style>
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
 	<script src="../jquery.collection.js" type="text/javascript"></script>
 	<script type="text/javascript">
 		var data = [
-			{name: "Kobezzza", status: "Простой пользователь", avatar: "img/1.jpg"},
-			{name: "Koks", status: "Простой пользователь", avatar: "img/2.jpg"},
-			{name: "Torro", status: "Простой пользователь", avatar: "img/3.jpg"},
-			{name: "Kobezzza", status: "Простой пользователь", avatar: "img/1.jpg"},
-			{name: "Koks", status: "Простой пользователь", avatar: "img/2.jpg"},
-			{name: "Torro", status: "Простой пользователь", avatar: "img/3.jpg"},
-			{name: "Kobezzza", status: "Простой пользователь", avatar: "img/1.jpg"},
-			{name: "Koks", status: "Простой пользователь", avatar: "img/2.jpg"},
-			{name: "Torro", status: "Простой пользователь", avatar: "img/3.jpg"},
-			{name: "Kobezzza", status: "Простой пользователь", avatar: "img/1.jpg"},
-			{name: "Koks", status: "Простой пользователь", avatar: "img/2.jpg"},
-			{name: "Torro", status: "Простой пользователь", avatar: "img/3.jpg"}
+			{name: "Kobezzza1", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks1", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro1", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza2", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks2", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro2", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza3", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks3", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza1", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks1", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro1", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza2", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks2", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro2", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza3", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks3", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza1", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks1", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro1", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza2", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks2", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro2", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza3", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks3", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro3", status: "Простой пользователь", avatar: "img/3.jpg"},
+			{name: "Kobezzza4", status: "Простой пользователь", avatar: "img/1.jpg"},
+			{name: "Koks4", status: "Простой пользователь", avatar: "img/2.jpg"},
+			{name: "Torro4", status: "Простой пользователь", avatar: "img/3.jpg"}
 		];
+		
 		$(function () {
-			var db = $.Collection();
-			$.Collection(data).extPrint({template: $("#result").children().tplCompile(), target: $("#result"), pager: "#nav", numberBreak: 3});
+			var db = $.Collection(data, {
+				template: $("#result").children().tplCompile(),
+				templateModel: $.Collection.templateModels.control,
+				target: $("#result"), pager: "#nav2",
+				numberBreak: 5,
+				pageBreak: 7
+			});
+			db.dObj.active.cache.iteration = true;
+			db.dObj.active.cache.autoIteration = true;
+			db
+				.$Filter(function ($this, i) { return $this[i].name.search("Kobezz") !== -1; })
+				.extPrint(1);
+			
+			$("#nav2").on("click", "a", function () {
+				db.extPrint($(this).data("page"));
+			});
+			
+			$(".prev").click(function () {
+				if (!$(this).hasClass("disabled")) {
+					db.extPrint("-=1");
+				}
+			});
+			$(".next").click(function () {
+				if (!$(this).hasClass("disabled")) {
+					db.extPrint("+=1");
+				};
+			});
 		});
 	</script>
 </head>
 
 <body>
-	<div id="pageControl">
-		
+	<div id="nav" style="display: none">
+		<a href="javascript:;" class="prev">&lt;&lt;</a>
+		<a href="javascript:;" class="next">&gt;&gt;</a>
+		<div class="info"></div>
+	</div>
+	<div id="nav2">
+		<div class="info"></div>
+		<div class="nav"></div>
 	</div>
 	<div id="result">
 		<script type="text/html">
