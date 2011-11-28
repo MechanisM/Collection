@@ -1,0 +1,15 @@
+﻿/**
+ * CUI core - extensions for JavaScript framework jQuery for create widgets
+ *
+ * addition:
+ * the code is documented in accordance with the standard jsDoc
+ * specific data types:
+ * 1) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
+ * --
+ * the record type: [active=undefined] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
+ * 
+ * @class
+ * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * @date: 28.11.2011 12:58:17
+ * @version 1.3
+ */

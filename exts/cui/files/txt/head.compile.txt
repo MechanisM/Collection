@@ -1,0 +1,8 @@
+﻿/**
+ * CUI core
+ * 
+ * autor: kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * version: 1.3
+ * date: 28.11.2011 12:58:17
+ */
+ 
