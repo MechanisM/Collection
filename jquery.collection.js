@@ -1,9 +1,6 @@
 ﻿/**
  * $.Collection - Javascript framework for working with collections of data (using jQuery)
  *
- * @author: Kobets Andrey Alexandrovich (kobezzza)
- * @date: 28.11.2011 00:37:41
- *
  * glossary:
  * 1) Collection - data object the JavaScript (the JS), can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);
  * 2) Filter - the special function JS, which are selected from the collection by this or any other condition;
@@ -47,6 +44,7 @@
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * @date: 28.11.2011 00:37:41
  * @version 3.2
  */
 (function ($) {
@@ -101,7 +99,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "4.0",
+		version: "3.2",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -2861,11 +2859,16 @@
 			start = opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, start);
+			//
+			active.cache.firstIteration = opt.cache.lastIteration;
+			active.cache.lastIteration = inc + 1;
+			console.log(active.cache.firstIteration);
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
-							checkPage > 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
+			console.log(start);
 			
 			// rewind cached step back
 			if (checkPage > 0 && opt.filter !== false) {
@@ -2885,10 +2888,12 @@
 			}
 			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
+			// cache
+			if (checkPage !== 0) {
+				active.cache.firstIteration = opt.cache.lastIteration;
+				active.cache.lastIteration = inc + 1;
+			}
 		}
-		// cache
-		active.cache.firstIteration = opt.cache.lastIteration;
-		active.cache.lastIteration = inc + 1;
 		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
 		//
 		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;

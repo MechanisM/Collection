@@ -60,11 +60,15 @@
 			start = opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, start);
+			//
+			active.cache.firstIteration = opt.cache.lastIteration;
+			active.cache.lastIteration = inc + 1;
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
-							checkPage > 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
+			console.log(start);
 			
 			// rewind cached step back
 			if (checkPage > 0 && opt.filter !== false) {
@@ -84,10 +88,12 @@
 			}
 			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
+			// cache
+			if (checkPage !== 0) {
+				active.cache.firstIteration = opt.cache.lastIteration;
+				active.cache.lastIteration = inc + 1;
+			}
 		}
-		// cache
-		active.cache.firstIteration = opt.cache.lastIteration;
-		active.cache.lastIteration = inc + 1;
 		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
 		//
 		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;
