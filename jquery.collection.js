@@ -2776,6 +2776,9 @@
 		//
 		$.extend(true, opt, dObj.active, param);
 		action = function (data, i, aLength, $this, objID) {
+			// callback
+			opt.callback && opt.callback.apply(this, arguments);
+			//
 			result += opt.template(data, i, aLength, $this, objID);
 			if (mult !== true) { return false; }
 			
@@ -2841,6 +2844,9 @@
 		checkPage = active.page - opt.page;
 		active.page = opt.page;
 		action = function (data, i, aLength, $this, objID) {
+			// callback
+			opt.callback && opt.callback.apply(this, arguments);
+			//
 			result += opt.template(data, i, aLength, $this, objID);
 			inc = i;
 				
