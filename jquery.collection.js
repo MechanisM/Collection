@@ -23,17 +23,17 @@
  * addition:
  * the code is documented in accordance with the standard jsDoc
  * specific data types:
- * 1) Colletion Object is a reduced form of the [Object] and means an instance of $.Collection;
- * 2) Colletion is a reduced form of the [Object|Array] and means an collection of data;
- * 3) Selector is a reduced form of the [String] , and means the css selector (Sizzle syntax);
- * 4) Context is the reduced form of the [String] , and means the context of the collection;
- * 5) Template is a reduced form of the [Function] and means function-template;
- * 6) Template Model is the reduced form of the [Function] and means function-model;
- * 7) Filter is a reduced form of the [Function] and means the function-filter;
- * 8) Parser is a reduced form of the [Function] and means function-parser;
- * 9) Plain Object is a reduced form of the [Object] and means hash table;
- * 10) Jquery Object is a reduced form of the [Object] and means an instance of jQuery;
- * 11) Jquery Deferred is the reduced form of the [Object] and means an instance of jQuery.Deferred.
+ * 1) [Colletion Object] is a reduced form of the [Object] and means an instance of $.Collection;
+ * 2) [Colletion] is a reduced form of the [Object|Array] and means an collection of data;
+ * 3) [Selector] is a reduced form of the [String] , and means the css selector (Sizzle syntax);
+ * 4) [Context] is the reduced form of the [String] , and means the context of the collection;
+ * 5) [Template] is a reduced form of the [Function] and means function-template;
+ * 6) [Template Model] is the reduced form of the [Function] and means function-model;
+ * 7) [Filter] is a reduced form of the [Function] and means the function-filter;
+ * 8) [Parser] is a reduced form of the [Function] and means function-parser;
+ * 9) [Plain Object] is a reduced form of the [Object] and means hash table;
+ * 10) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
+ * 11) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.
  * --
  * the record type: [active=undefined] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
  * all overloading methods documented in the description of the method, because the syntax of the jsDoc not allow it to do
