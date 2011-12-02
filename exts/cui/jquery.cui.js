@@ -10,8 +10,8 @@
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 28.11.2011 12:58:17
- * @version 1.3
+ * @date: 02.12.2011 15:18:22
+ * @version 1.3.1
  */
 (function ($) {
 	// try to use ECMAScript 5 "strict mode"
@@ -76,6 +76,35 @@
 				$this.removeData("CUI");
 			}
 		});
+		
+		return this;
+	};
+	/**
+	 * check widget to exist
+	 *
+	 * @this {jQuery Object}
+	 * @param {String} name - widget name
+	 * @param {Array} data - array of parameters
+	 * @return {jQuery Object}
+	 */
+	$.fn.extendCUI = function (name, data) {
+		var
+			cui = this.getCUI(name),
+			i = 1, j, aLength = arguments.length - 1;
+		
+		if (cui) {
+			for (; i++ < aLength;) {
+				for (j = data.length; j--;) {
+					if (arguments[i][data[j]]) {
+						if ($.isPlainObject(cui[data[j]])) {
+							$.extend(true, cui[data[j]], arguments[i][data[j]]);
+						} else {
+							cui[data[j]] = arguments[i][data[j]];
+						}
+					}
+				}
+			}
+		}
 		
 		return this;
 	};

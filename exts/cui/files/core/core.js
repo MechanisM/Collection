@@ -67,6 +67,35 @@
 	 *
 	 * @this {jQuery Object}
 	 * @param {String} name - widget name
+	 * @param {Array} data - array of parameters
+	 * @return {jQuery Object}
+	 */
+	$.fn.extendCUI = function (name, data) {
+		var
+			cui = this.getCUI(name),
+			i = 1, j, aLength = arguments.length - 1;
+		
+		if (cui) {
+			for (; i++ < aLength;) {
+				for (j = data.length; j--;) {
+					if (arguments[i][data[j]]) {
+						if ($.isPlainObject(cui[data[j]])) {
+							$.extend(true, cui[data[j]], arguments[i][data[j]]);
+						} else {
+							cui[data[j]] = arguments[i][data[j]];
+						}
+					}
+				}
+			}
+		}
+		
+		return this;
+	};
+	/**
+	 * check widget to exist
+	 *
+	 * @this {jQuery Object}
+	 * @param {String} name - widget name
 	 * @return {Object|Boolean}
 	 */
 	$.fn.isCUI = function (name) {
