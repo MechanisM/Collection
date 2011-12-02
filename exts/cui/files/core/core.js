@@ -102,9 +102,7 @@
 							}
 						} else {
 							if (arguments[i][data[key]]) {
-								if (isNaN(key)) {
-									obj = collection.obj.getByLink(cui, key);
-								} else { obj = cui; }
+								obj = collection.obj.getByLink(cui, key);
 								//
 								if ($.isPlainObject(obj[data[key]])) {
 									$.extend(true, obj[data[key]], arguments[i][data[key]]);
