@@ -119,7 +119,7 @@
 							}
 						} else {
 							if (arguments[i][data[key]]) {
-								if (isNaN(key)) {
+								if (!$.isNumeric(key)) {
 									obj = collection.obj.getByLink(cui, key);
 								} else { obj = cui; }
 								//

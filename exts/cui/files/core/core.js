@@ -102,7 +102,9 @@
 							}
 						} else {
 							if (arguments[i][data[key]]) {
-								obj = collection.obj.getByLink(cui, key);
+								if (!$.isNumeric(key)) {
+									obj = collection.obj.getByLink(cui, key);
+								} else { obj = cui; }
 								//
 								if ($.isPlainObject(obj[data[key]])) {
 									$.extend(true, obj[data[key]], arguments[i][data[key]]);
