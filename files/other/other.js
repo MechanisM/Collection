@@ -211,10 +211,10 @@
 			dObj = this.dObj,
 			context = "", i;
 	
-		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.active.context).split($.Collection.obj.contextSeparator);
-		for (i = n; i--;) { context.splice(-1, 1); }
+		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.active.context).split(this.config.constants.contextSeparator);
+        for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join($.Collection.obj.contextSeparator);
+		return context.join(this.config.constants.contextSeparator);
 	};
 	/**
 	 * parent
