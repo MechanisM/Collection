@@ -20,8 +20,10 @@
 		 * @return {mixed}
 		 */
 		expr: function (nw, old) {
-			if (old && $.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
-				nw = nw.split("=");
+			old = old !== undefined || old !== null ? old : "";
+            
+            if ($.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
+                nw = nw.split("=");
 				if (!isNaN(nw[1])) { nw[1] = +nw[1]; }
 				// simple math
 				switch (nw[0]) {

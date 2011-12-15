@@ -38,7 +38,7 @@
 					if (j === 0 || j % 2 === 0) {
 						elem[i][j] && (jsStr += elem[i][j]);
 					} else {
-						elem[i][j] && (resStr += "+" + elem[i][j]);
+						elem[i][j] && (resStr += "+ (" + elem[i][j] + ")");
 					}
 				}
 			}
