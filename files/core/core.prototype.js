@@ -115,11 +115,50 @@
 		getActiveContext: function () {
 			return this.config.flags.use.ac === true ? this.dObj.active.context.toString() : "";
 		},
+		
+		/**
+		 * enable property
+		 * 
+		 * @this {Collection Object}
+		 * @param {String} name - property name
+		 * @return {Collection Object}
+		 */
+		enable: function (name) {
+			this.config.flags.use[ac] = true;
+			
+			return this;
+		},
+		/**
+		 * disable property
+		 * 
+		 * @this {Collection Object}
+		 * @param {String} name - property name
+		 * @return {Collection Object}
+		 */
+		disable: function (name) {
+			this.config.flags.use[ac] = false;
+		
+			return this;
+		},
+		/**
+		 * toggle property
+		 * 
+		 * @this {Collection Object}
+		 * @param {String} name - property name
+		 * @return {Collection Object}
+		 */
+		toggle: function (name) {
+			if (this.config.flags.use[name] === true) {
+				return this.disable(name);
+			}
+			return this.enable(name);
+		},
+		
 		/**
 		 * return links to callback function
 		 * 
 		 * @this {Collection Object}
-		 * @param {String} [type='filter']
+		 * @param {String} [type='filter'] - type
 		 * @return {Link}
 		 */
 		callee: function (type) {
