@@ -16,6 +16,7 @@
 		var
 			html = this.eq(0).html(),
 			elem = html
+                .replace(/\/\*.*?\*\//g, "")
 				.split("?>")
 				.join("<?js")
 				.replace(/[\r\t\n]/g, " ")
