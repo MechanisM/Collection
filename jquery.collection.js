@@ -206,7 +206,7 @@
 		 * @return {Collection Object}
 		 */
 		enable: function (name) {
-			this.config.flags.use[ac] = true;
+			this.config.flags.use[name] = true;
 			
 			return this;
 		},
@@ -218,7 +218,7 @@
 		 * @return {Collection Object}
 		 */
 		disable: function (name) {
-			this.config.flags.use[ac] = false;
+			this.config.flags.use[name] = false;
 		
 			return this;
 		},
