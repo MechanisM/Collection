@@ -17,16 +17,14 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "3.2",
+		version: "3.2.5",
 		/**
 		 * return string: framework name + framework version
 		 *
 		 * @this {Collection Prototype}
 		 * @return {String}
 		 */
-		collection: function () {
-			return this.name + " " + this.version;
-		},
+		collection: function () { return this.name + " " + this.version; },
 		
 		// framework config object
 		config: {

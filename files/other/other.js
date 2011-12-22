@@ -8,14 +8,14 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {Collection} $this - link to collection
+	 * @param {Collection} data - link to collection
 	 * @param {Number|String} i - iteration (key)
-	 * @param {Number} cALength - collection length
-	 * @param {Collection Object} $obj - link to collection object
+	 * @param {Number} cOLength - collection length
+	 * @param {Collection Object} self - link to collection object
 	 * @param {String} id - collection ID
 	 * @return {Boolean}
 	 */
-	$.Collection.fn.customFilter = function (filter, $this, i, cALength, $obj, id) {
+	$.Collection.fn.customFilter = function (filter, data, i, cOLength, self, id) {
 		var
 			tmpFilter,
 			constants = this.config.constants,
@@ -36,7 +36,7 @@
 		if ($.isFunction(filter)) {
 			sys.callee.filter = filter;
 			
-			return filter($this, i, cALength, $obj, id);
+			return filter.call(data[i], data, i, cOLength, self, id);
 		}
 		
 		// if filter is not defined or filter is a string constant
@@ -44,7 +44,7 @@
 			if (active.filter) {
 				sys.callee.filter = active.filter;
 				
-				return active.filter($this, i, cALength, $obj, id);
+				return active.filter.call(data[i], data, i, cOLength, self, id);
 			}
 	
 			return true;
@@ -55,7 +55,7 @@
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
 					sys.callee.filter = sys.tmpFilter[filter];
 					
-					return sys.tmpFilter[filter]($this, i, cALength, $obj, id);
+					return sys.tmpFilter[filter].call(data[i], data, i, cOLength, self, id);
 				}
 				
 				filter = $.trim(
@@ -100,7 +100,7 @@
 					tmpFilter = calFilter(filter.slice((j + 1)), j);
 					j = tmpFilter.iter;
 					//
-					tmpResult = this.customFilter(tmpFilter.result, $this, i, cALength, $obj, id);
+					tmpResult = this.customFilter(tmpFilter.result, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -118,7 +118,7 @@
 					tmpFilter = filter[j] === constants.active ? active.filter : sys.tmpFilter[filter[j]];
 					sys.callee.filter = tmpFilter;
 					//
-					tmpResult = tmpFilter($this, i, cALength, $obj, id);
+					tmpResult = tmpFilter.call(data[i], data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -160,7 +160,7 @@
 		if ($.isFunction(parser)) {
 			sys.callee.parser = parser;
 			
-			return parser(str, this);
+			return parser.call(this, str);
 		}
 		
 		// if parser is not defined or parser is a string constant
@@ -168,7 +168,7 @@
 			if (active.parser) {
 				sys.callee.parser = active.parser;
 				
-				return active.parser(str, this);
+				return active.parser.call(this, str);
 			}
 	
 			return str;
@@ -179,7 +179,7 @@
 				if (parser.search("&&") === -1) {
 					sys.callee.parser = sys.tmpParser[parser];
 					
-					return sys.tmpParser[parser](str, this);
+					return sys.tmpParser[parser].call(this, str);
 				}
 				parser = parser.split("&&");
 			}
@@ -189,7 +189,7 @@
 				tmpParser = parser[i] === this.config.constants.active ? active.parser : sys.tmpParser[parser[i]];
 				
 				sys.callee.parser = tmpParser;
-				str = tmpParser(str, this);
+				str = tmpParser.call(this, str);
 			}
 	
 			return str;

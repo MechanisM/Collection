@@ -43,9 +43,9 @@
 			elements, eLength, i = -1;
 	
 		// search elements
-		this.config.flags.use.ac = false;
+		this.disable("ac");
 		elements = this.searchElements(moveFilter, sourceID, mult, count, from, indexOf);
-		this.config.flags.use.ac = true;
+		this.enable("ac");
 	
 		// move
 		if (mult === true) {
@@ -60,11 +60,7 @@
 		}
 	
 		// delete element
-		if (deleteType === true) {
-			this.config.flags.use.ac = false;
-			this.deleteElementsByLink(deleteList, sourceID);
-			this.config.flags.use.ac = true;
-		}
+		if (deleteType === true) { this.disable("ac").deleteElementsByLink(deleteList, sourceID).enable("ac"); }
 	
 		return this;
 	},

@@ -46,5 +46,5 @@
 		}
 		resStr += ";";
 		
-		return new Function("$this", "i", "aLength", "$obj", "id", 'var result = "";' + jsStr + resStr + ' return result;');
+		return new Function("data", "i", "cOLength", "self", "id", 'var key = i, result = "";' + jsStr + resStr + ' return result;');
 	};

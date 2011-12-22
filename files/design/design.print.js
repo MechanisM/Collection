@@ -35,11 +35,11 @@
 			result = "", action;
 		//
 		$.extend(true, opt, dObj.active, param);
-		action = function (data, i, aLength, $this, objID) {
+		action = function (data, i, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template(data, i, aLength, $this, objID);
+			result += opt.template.call(data[i], data, i, cOLength, self, id);
 			if (mult !== true) { return false; }
 			
 			return true;

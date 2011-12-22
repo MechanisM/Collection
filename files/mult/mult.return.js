@@ -39,7 +39,7 @@
 	
 		var
 			result = [],
-			action = function (data, i, aLength, $this, id) {
+			action = function (data, i, aLength, self, id) {
 				if (mult === true) {
 					result.push(data[i]);
 				} else {
