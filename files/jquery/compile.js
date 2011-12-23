@@ -23,28 +23,13 @@
 				.split("<?js"),
 			
 			eLength = elem.length - 1,
-			resStr = "result += ''", jsStr = "",
-			
-			i = -1, j, jelength;
+			resStr = "var key = i, result = ''; ", i = -1;
 		
 		for (; i++ < eLength;) {
 			if (i === 0 || i % 2 === 0) {
-				resStr += "+'" + elem[i] + "'";
-			} else {
-				j = -1;
-				elem[i] = elem[i].split("<<");
-				jelength = elem[i].length;
-				
-				for (; j++ < jelength;) {
-					if (j === 0 || j % 2 === 0) {
-						elem[i][j] && (jsStr += elem[i][j]);
-					} else {
-						elem[i][j] && (resStr += "+ (" + elem[i][j] + ")");
-					}
-				}
-			}
+				resStr += "result +='" + elem[i] + "';";
+			} else { resStr += elem[i].split("echo").join("result +="); }
 		}
-		resStr += ";";
 		
-		return new Function("data", "i", "cOLength", "self", "id", 'var key = i, result = "";' + jsStr + resStr + ' return result;');
+		return new Function("data", "i", "cOLength", "self", "id", resStr + " return result;");
 	};

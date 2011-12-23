@@ -4,21 +4,18 @@
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.sys = {
-		/**
-		 * "callee" object
-		 * 
-		 * @field
-		 * @type Object
-		 */
-		callee: { 
-			callback: null,
-			filter: null,
-			parser: null,
-			template: null,
-			templateModel: null
+		flags: {
+			use: {
+				/**
+				 * use active context in methods
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				ac: true
+			}
 		}
 	};
-	
 	// generate system fields
 	(function (data) {
 		var

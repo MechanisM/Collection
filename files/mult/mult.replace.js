@@ -42,7 +42,7 @@
 			replaceCheck = $.isFunction(replaceObj),
 			action = function (data, i, aLength, self, id) {
 				if (replaceCheck) {
-					replaceObj.call(data[i], data, i, aLength, self, id);
+					replaceObj.call(replaceObj, data, i, aLength, self, id);
 				} else { data[i] = replaceObj; }
 	
 				return true;

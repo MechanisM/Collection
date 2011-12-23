@@ -39,13 +39,12 @@
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(data[i], data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, data, i, cOLength, self, id);
 			if (mult !== true) { return false; }
 			
 			return true;
 		};
-		// "callee" link
-		dObj.sys.callee.template = opt.template;		
+		//
 		this.each(action, opt.filter, this.config.constants.active, mult, count, from, indexOf);
 		
 		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;

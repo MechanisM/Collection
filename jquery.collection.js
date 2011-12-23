@@ -141,17 +141,6 @@
 				 * @type String
 				 */
 				methodSeparator: "::"
-			},
-			flags: {
-				use: {
-					/**
-					 * use active context in methods
-					 * 
-					 * @field
-					 * @type Boolean
-					 */
-					ac: true
-				}
 			}
 		},
 		
@@ -193,7 +182,7 @@
 		 * @return {String}
 		 */
 		getActiveContext: function () {
-			return this.config.flags.use.ac === true ? this.dObj.active.context.toString() : "";
+			return this.dObj.sys.flags.use.ac === true ? this.dObj.active.context.toString() : "";
 		},
 		
 		/**
@@ -204,7 +193,7 @@
 		 * @return {Collection Object}
 		 */
 		enable: function (name) {
-			this.config.flags.use[name] = true;
+			this.dObj.sys.flags.use[name] = true;
 			
 			return this;
 		},
@@ -216,7 +205,7 @@
 		 * @return {Collection Object}
 		 */
 		disable: function (name) {
-			this.config.flags.use[name] = false;
+			this.dObj.sys.flags.use[name] = false;
 		
 			return this;
 		},
@@ -228,23 +217,10 @@
 		 * @return {Collection Object}
 		 */
 		toggle: function (name) {
-			if (this.config.flags.use[name] === true) {
+			if (this.dObj.sys.flags.use[name] === true) {
 				return this.disable(name);
 			}
 			return this.enable(name);
-		},
-		
-		/**
-		 * return links to callback function
-		 * 
-		 * @this {Collection Object}
-		 * @param {String} [type='filter'] - type
-		 * @return {Link}
-		 */
-		callee: function (type) {
-			type = type || "filter";
-			
-			return this.dObj.sys.callee[type];
 		}
 	};	
 	/////////////////////////////////
@@ -643,30 +619,15 @@
 				.split("<?js"),
 			
 			eLength = elem.length - 1,
-			resStr = "result += ''", jsStr = "",
-			
-			i = -1, j, jelength;
+			resStr = "var key = i, result = ''; ", i = -1;
 		
 		for (; i++ < eLength;) {
 			if (i === 0 || i % 2 === 0) {
-				resStr += "+'" + elem[i] + "'";
-			} else {
-				j = -1;
-				elem[i] = elem[i].split("<<");
-				jelength = elem[i].length;
-				
-				for (; j++ < jelength;) {
-					if (j === 0 || j % 2 === 0) {
-						elem[i][j] && (jsStr += elem[i][j]);
-					} else {
-						elem[i][j] && (resStr += "+ (" + elem[i][j] + ")");
-					}
-				}
-			}
+				resStr += "result +='" + elem[i] + "';";
+			} else { resStr += elem[i].split("echo").join("result +="); }
 		}
-		resStr += ";";
 		
-		return new Function("data", "i", "cOLength", "self", "id", 'var key = i, result = "";' + jsStr + resStr + ' return result;');
+		return new Function("data", "i", "cOLength", "self", "id", resStr + " return result;");
 	};	
 	/////////////////////////////////
 	//// jQuery methods (other)
@@ -1033,21 +994,18 @@
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.sys = {
-		/**
-		 * "callee" object
-		 * 
-		 * @field
-		 * @type Object
-		 */
-		callee: { 
-			callback: null,
-			filter: null,
-			parser: null,
-			template: null,
-			templateModel: null
+		flags: {
+			use: {
+				/**
+				 * use active context in methods
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				ac: true
+			}
 		}
 	};
-	
 	// generate system fields
 	(function (data) {
 		var
@@ -1949,8 +1907,6 @@
 	
 			i, j = 0;
 		
-		// "callee" link
-		dObj.sys.callee.callback = callback;
 		//
 		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : active.collection, this.getActiveContext());
 		cOLength = this.length(cObj);
@@ -1963,7 +1919,7 @@
 				if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) { from--; continue; }
 					
-					if (callback.call(this, cObj, i, cOLength, this, id) === false) { break; }
+					if (callback.call(callback, cObj, i, cOLength, this, id) === false) { break; }
 					if (mult === false) { break; }
 					j++;
 				}
@@ -1977,7 +1933,7 @@
 					if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) { from--; continue; }
 							
-						if (callback.call(this, cObj, i, cOLength, this, id) === false) { break; }
+						if (callback.call(callback, cObj, i, cOLength, this, id) === false) { break; }
 						if (mult === false) { break; }
 						j++;
 					}
@@ -2162,7 +2118,7 @@
 			replaceCheck = $.isFunction(replaceObj),
 			action = function (data, i, aLength, self, id) {
 				if (replaceCheck) {
-					replaceObj.call(data[i], data, i, aLength, self, id);
+					replaceObj.call(replaceObj, data, i, aLength, self, id);
 				} else { data[i] = replaceObj; }
 	
 				return true;
@@ -2395,19 +2351,11 @@
 			j = -1;
 		
 		// if filter is function
-		if ($.isFunction(filter)) {
-			sys.callee.filter = filter;
-			
-			return filter.call(data[i], data, i, cOLength, self, id);
-		}
+		if ($.isFunction(filter)) { return filter.call(filter, data, i, cOLength, self, id); }
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === constants.active)) {
-			if (active.filter) {
-				sys.callee.filter = active.filter;
-				
-				return active.filter.call(data[i], data, i, cOLength, self, id);
-			}
+			if (active.filter) { return active.filter.call(active.filter, data, i, cOLength, self, id); }
 	
 			return true;
 		} else {
@@ -2415,9 +2363,7 @@
 			if (!$.isArray(filter)) {
 				// if simple filter
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					sys.callee.filter = sys.tmpFilter[filter];
-					
-					return sys.tmpFilter[filter].call(data[i], data, i, cOLength, self, id);
+					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], data, i, cOLength, self, id);
 				}
 				
 				filter = $.trim(
@@ -2478,9 +2424,7 @@
 					} else { inverse = false; }
 					
 					tmpFilter = filter[j] === constants.active ? active.filter : sys.tmpFilter[filter[j]];
-					sys.callee.filter = tmpFilter;
-					//
-					tmpResult = tmpFilter.call(data[i], data, i, cOLength, self, id);
+					tmpResult = tmpFilter.call(tmpFilter, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -2519,30 +2463,18 @@
 			i;
 		
 		// if parser is function
-		if ($.isFunction(parser)) {
-			sys.callee.parser = parser;
-			
-			return parser.call(this, str);
-		}
+		if ($.isFunction(parser)) { return parser.call(parser, str, this); }
 		
 		// if parser is not defined or parser is a string constant
 		if (!parser || ($.isString(parser) && $.trim(parser) === this.config.constants.active)) {
-			if (active.parser) {
-				sys.callee.parser = active.parser;
-				
-				return active.parser.call(this, str);
-			}
+			if (active.parser) { return active.parser.call(active.parser, str, this); }
 	
 			return str;
 		} else {
 			if ($.isString(parser)) {
 				parser = $.trim(parser);
 				// if simple parser
-				if (parser.search("&&") === -1) {
-					sys.callee.parser = sys.tmpParser[parser];
-					
-					return sys.tmpParser[parser].call(this, str);
-				}
+				if (parser.search("&&") === -1) { return sys.tmpParser[parser].call(sys.tmpParser[parser], str, this); }
 				parser = parser.split("&&");
 			}
 			
@@ -2550,8 +2482,7 @@
 				parser[i] = $.trim(parser[i]);
 				tmpParser = parser[i] === this.config.constants.active ? active.parser : sys.tmpParser[parser[i]];
 				
-				sys.callee.parser = tmpParser;
-				str = tmpParser.call(this, str);
+				str = tmpParser.call(tmpParser, str, this);
 			}
 	
 			return str;
@@ -2815,13 +2746,12 @@
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(data[i], data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, data, i, cOLength, self, id);
 			if (mult !== true) { return false; }
 			
 			return true;
 		};
-		// "callee" link
-		dObj.sys.callee.template = opt.template;		
+		//
 		this.each(action, opt.filter, this.config.constants.active, mult, count, from, indexOf);
 		
 		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;
@@ -2883,7 +2813,7 @@
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(data[i], data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, data, i, cOLength, self, id);
 			inc = i;
 				
 			return true;
@@ -2894,8 +2824,6 @@
 		
 		// number of records per page
 		opt.numberBreak = opt.numberBreak === false ? cOLength : opt.numberBreak;
-		// "callee" link
-		dObj.sys.callee.template = opt.template;
 		
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
@@ -2954,13 +2882,10 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Object} [param=undefined] - object settings (depends on the model template)
-	 * @param {Object} [active=undefined] - collection properties
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.easyPage = function (param) {
-		// "callee" link
-		this.dObj.sys.callee.templateModel = this.dObj.active.templateModel;
-		this.dObj.active.templateModel.call(this, param);
+		this.dObj.active.templateModel.call(this.dObj.active.templateModel, param, this);
 		
 		return this;
 	};	

@@ -45,7 +45,7 @@
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(data[i], data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, data, i, cOLength, self, id);
 			inc = i;
 				
 			return true;
@@ -56,8 +56,6 @@
 		
 		// number of records per page
 		opt.numberBreak = opt.numberBreak === false ? cOLength : opt.numberBreak;
-		// "callee" link
-		dObj.sys.callee.template = opt.template;
 		
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
@@ -116,13 +114,10 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Object} [param=undefined] - object settings (depends on the model template)
-	 * @param {Object} [active=undefined] - collection properties
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.easyPage = function (param) {
-		// "callee" link
-		this.dObj.sys.callee.templateModel = this.dObj.active.templateModel;
-		this.dObj.active.templateModel.call(this, param);
+		this.dObj.active.templateModel.call(this.dObj.active.templateModel, param, this);
 		
 		return this;
 	};

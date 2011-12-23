@@ -33,19 +33,11 @@
 			j = -1;
 		
 		// if filter is function
-		if ($.isFunction(filter)) {
-			sys.callee.filter = filter;
-			
-			return filter.call(data[i], data, i, cOLength, self, id);
-		}
+		if ($.isFunction(filter)) { return filter.call(filter, data, i, cOLength, self, id); }
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === constants.active)) {
-			if (active.filter) {
-				sys.callee.filter = active.filter;
-				
-				return active.filter.call(data[i], data, i, cOLength, self, id);
-			}
+			if (active.filter) { return active.filter.call(active.filter, data, i, cOLength, self, id); }
 	
 			return true;
 		} else {
@@ -53,9 +45,7 @@
 			if (!$.isArray(filter)) {
 				// if simple filter
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					sys.callee.filter = sys.tmpFilter[filter];
-					
-					return sys.tmpFilter[filter].call(data[i], data, i, cOLength, self, id);
+					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], data, i, cOLength, self, id);
 				}
 				
 				filter = $.trim(
@@ -116,9 +106,7 @@
 					} else { inverse = false; }
 					
 					tmpFilter = filter[j] === constants.active ? active.filter : sys.tmpFilter[filter[j]];
-					sys.callee.filter = tmpFilter;
-					//
-					tmpResult = tmpFilter.call(data[i], data, i, cOLength, self, id);
+					tmpResult = tmpFilter.call(tmpFilter, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -157,30 +145,18 @@
 			i;
 		
 		// if parser is function
-		if ($.isFunction(parser)) {
-			sys.callee.parser = parser;
-			
-			return parser.call(this, str);
-		}
+		if ($.isFunction(parser)) { return parser.call(parser, str, this); }
 		
 		// if parser is not defined or parser is a string constant
 		if (!parser || ($.isString(parser) && $.trim(parser) === this.config.constants.active)) {
-			if (active.parser) {
-				sys.callee.parser = active.parser;
-				
-				return active.parser.call(this, str);
-			}
+			if (active.parser) { return active.parser.call(active.parser, str, this); }
 	
 			return str;
 		} else {
 			if ($.isString(parser)) {
 				parser = $.trim(parser);
 				// if simple parser
-				if (parser.search("&&") === -1) {
-					sys.callee.parser = sys.tmpParser[parser];
-					
-					return sys.tmpParser[parser].call(this, str);
-				}
+				if (parser.search("&&") === -1) { return sys.tmpParser[parser].call(sys.tmpParser[parser], str, this); }
 				parser = parser.split("&&");
 			}
 			
@@ -188,8 +164,7 @@
 				parser[i] = $.trim(parser[i]);
 				tmpParser = parser[i] === this.config.constants.active ? active.parser : sys.tmpParser[parser[i]];
 				
-				sys.callee.parser = tmpParser;
-				str = tmpParser.call(this, str);
+				str = tmpParser.call(tmpParser, str, this);
 			}
 	
 			return str;

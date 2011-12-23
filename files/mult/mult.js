@@ -105,8 +105,6 @@
 	
 			i, j = 0;
 		
-		// "callee" link
-		dObj.sys.callee.callback = callback;
 		//
 		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : active.collection, this.getActiveContext());
 		cOLength = this.length(cObj);
@@ -119,7 +117,7 @@
 				if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) { from--; continue; }
 					
-					if (callback.call(this, cObj, i, cOLength, this, id) === false) { break; }
+					if (callback.call(callback, cObj, i, cOLength, this, id) === false) { break; }
 					if (mult === false) { break; }
 					j++;
 				}
@@ -133,7 +131,7 @@
 					if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) { from--; continue; }
 							
-						if (callback.call(this, cObj, i, cOLength, this, id) === false) { break; }
+						if (callback.call(callback, cObj, i, cOLength, this, id) === false) { break; }
 						if (mult === false) { break; }
 						j++;
 					}

@@ -59,17 +59,6 @@
 				 * @type String
 				 */
 				methodSeparator: "::"
-			},
-			flags: {
-				use: {
-					/**
-					 * use active context in methods
-					 * 
-					 * @field
-					 * @type Boolean
-					 */
-					ac: true
-				}
 			}
 		},
 		
@@ -111,7 +100,7 @@
 		 * @return {String}
 		 */
 		getActiveContext: function () {
-			return this.config.flags.use.ac === true ? this.dObj.active.context.toString() : "";
+			return this.dObj.sys.flags.use.ac === true ? this.dObj.active.context.toString() : "";
 		},
 		
 		/**
@@ -122,7 +111,7 @@
 		 * @return {Collection Object}
 		 */
 		enable: function (name) {
-			this.config.flags.use[name] = true;
+			this.dObj.sys.flags.use[name] = true;
 			
 			return this;
 		},
@@ -134,7 +123,7 @@
 		 * @return {Collection Object}
 		 */
 		disable: function (name) {
-			this.config.flags.use[name] = false;
+			this.dObj.sys.flags.use[name] = false;
 		
 			return this;
 		},
@@ -146,22 +135,9 @@
 		 * @return {Collection Object}
 		 */
 		toggle: function (name) {
-			if (this.config.flags.use[name] === true) {
+			if (this.dObj.sys.flags.use[name] === true) {
 				return this.disable(name);
 			}
 			return this.enable(name);
-		},
-		
-		/**
-		 * return links to callback function
-		 * 
-		 * @this {Collection Object}
-		 * @param {String} [type='filter'] - type
-		 * @return {Link}
-		 */
-		callee: function (type) {
-			type = type || "filter";
-			
-			return this.dObj.sys.callee[type];
 		}
 	};
