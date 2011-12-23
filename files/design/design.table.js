@@ -32,7 +32,7 @@
 					if (j !== countDec) { queryString += ","; }
 				}
 	
-				$(queryString, target).wrapAll("<tr></tr>");
+				target.find(queryString).wrapAll("<tr></tr>");
 				i = 0;
 			} else if (n === tdLength && i !== count) {
 				queryString = "";
