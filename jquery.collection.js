@@ -245,9 +245,9 @@
 		 */
 		expr: function (nw, old) {
 			old = old !== undefined || old !== null ? old : "";
-            
-            if ($.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
-                nw = nw.split("=");
+			
+			if ($.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
+				nw = nw.split("=");
 				if (!isNaN(nw[1])) { nw[1] = +nw[1]; }
 				// simple math
 				switch (nw[0]) {
@@ -272,13 +272,13 @@
 			context = context.toString().split(this.constants.contextSeparator);
 			
 			var
-				key, i = 0,
+				key, i = -1,
 				pos, n = 0,
 				
 				objLength,
-				cLength = context.length;
+				cLength = context.length - 1;
 			
-			for (; i < cLength; i++) {
+			for (; i++ < cLength;) {
 				context[i] = $.trim(context[i]);
 				//
 				if (context[i] && context[i] !== this.constants.subcontextSeparator) {
@@ -345,9 +345,9 @@
 			}
 			// recalculate length
 			cLength = context.length - 1;
-			i = 0;
+			i = -1;
 			
-			for (; i <= cLength; i++) {
+			for (; i++ < cLength;) {
 				if (context[i].search(this.constants.subcontextSeparator) === -1) {
 					if (i === cLength) {
 						obj[context[i]] = this.expr(value, obj[context[i]]);
@@ -610,7 +610,7 @@
 		if (this.length === 0) { throw new Error("DOM element isn't exist!"); }
 		
 		var
-			html = this.eq(0).html(),
+			html = this.html(),
 			elem = html
                 .replace(/\/\*.*?\*\//g, "")
 				.split("?>")

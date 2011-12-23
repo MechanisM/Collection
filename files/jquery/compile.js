@@ -14,7 +14,7 @@
 		if (this.length === 0) { throw new Error("DOM element isn't exist!"); }
 		
 		var
-			html = this.eq(0).html(),
+			html = this.html(),
 			elem = html
                 .replace(/\/\*.*?\*\//g, "")
 				.split("?>")
