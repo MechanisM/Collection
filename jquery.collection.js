@@ -273,7 +273,7 @@
 			
 			var
 				key, i = -1,
-				pos, n = 0,
+				pos, n,
 				
 				objLength,
 				cLength = context.length - 1;
@@ -332,8 +332,8 @@
 			context = context.toString().split(this.constants.contextSeparator);
 			
 			var
-				key, i = 0,
-				pos, n = 0,
+				key, i,
+				pos, n,
 				
 				objLength,
 				cLength = context.length;
