@@ -14,8 +14,7 @@
 		count = count || 4;
 	
 		var
-			i = 1,
-			j,
+			i = 1, j,
 	
 			target = this.dObj.active.target,
 			tdLength = target.children("td").length - 1,
@@ -32,7 +31,7 @@
 					if (j !== countDec) { queryString += ","; }
 				}
 	
-				target.find(queryString).wrapAll("<tr></tr>");
+				target.children(queryString).wrapAll("<tr></tr>");
 				i = 0;
 			} else if (n === tdLength && i !== count) {
 				queryString = "";
