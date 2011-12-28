@@ -462,9 +462,7 @@
 			if (active[1] && active[1] == "unshift") {
 				newObj[active[0]] = value;
 				for (key in obj) {
-					if (obj.hasOwnProperty(key)) {
-						newObj[key] = obj[key];
-					}
+					if (obj.hasOwnProperty(key)) { newObj[key] = obj[key]; }
 				}
 				obj = newObj;
 					
@@ -1714,8 +1712,8 @@
 		
 			dObj = this.dObj,
 			
-			key, i = 0,
-			pos, n = 0,
+			key, i,
+			pos, n,
 			
 			objLength,
 			cObj,
@@ -1914,7 +1912,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [filter=this.config.constants.active] - filter function, string expressions or "false"
 	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -1923,7 +1921,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.config.constants.active;
 		id = $.isExist(id) ? id : this.config.constants.active;
 	
 		// if id is Boolean
@@ -2672,9 +2670,7 @@
 			} else {
 				if (field) {
 					cObj = sortObject.call(this, cObj);
-				} else {
-					cObj = sortObjectByKey.call(this, cObj);
-				}
+				} else { cObj = sortObjectByKey.call(this, cObj); }
 	
 				this.setElement("", cObj, id || "");
 			}
@@ -2891,9 +2887,7 @@
 				start++;
 				opt.cache.lastIteration = start;
 				from = null;
-			} else if (checkPage < 0 && opt.filter !== false) {
-				from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null;
-			}
+			} else if (checkPage < 0 && opt.filter !== false) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
 		}
