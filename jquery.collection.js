@@ -140,7 +140,22 @@
 				 * @field
 				 * @type String
 				 */
-				methodSeparator: "::"
+				methodSeparator: "::",
+				
+				/**
+				 * default separator: event request
+				 * 
+				 * @field
+				 * @type String
+				 */
+				querySeparator: "/",
+				/**
+				 * default separator: subevent request
+				 * 
+				 * @field
+				 * @type String
+				 */
+				subquerySeparator: "{"
 			}
 		},
 		
@@ -238,7 +253,6 @@
 		/**
 		 * calculate math expression
 		 * 
-		 * @this {Colletion Object}
 		 * @param {mixed} nw - new value
 		 * @param {mixed} old - old value
 		 * @return {mixed}
@@ -323,10 +337,11 @@
 		/**
 		* set new value to object by link
 		* 
+		* @this {$.Collection.obj}
 		* @param {Object} obj - some object
 		* @param {Context} context - link (sharp (#) char indicates the order)
 		* @param {mixed} value - some value
-		* @return {Boolean}
+		* @return {$.Collection.obj}
 		*/
 		setByLink: function (obj, context, value) {
 			context = context.toString().split(this.constants.contextSeparator);
@@ -399,7 +414,37 @@
 				}
 			}
 			
-			return true;
+			return this;
+		},
+		/**
+		 * execute event
+		 * 
+		 * @this {$.Collection.obj}
+		 * @param {String} query - query string
+		 * @param {Object} event - event request
+         * @param {mixed} [param=undefined] - input parameters
+         * @param {mixed} [_this=event] - this
+		 * @return {$.Collection.obj}
+		 */
+		execEvent: function (query, event, param, _this) {
+            param = $.isExist(param) ? param : [];
+            param = $.isArray(param) ? param : [param];
+			//
+            query = query.split(this.constants.querySeparator);
+			//
+            var i = -1, qLength = query.length - 2, spliter;
+			
+			for (; i++ < qLength;) { event = event[query[i]]; }
+			//
+			if (query[i].search(this.constants.subquerySeparator) !== -1) {
+				spliter = query[i].split(this.constants.subquerySeparator);
+				event = event[spliter[0]];
+				spliter.splice(0, 1);
+                param = param.concat(spliter);
+				event.apply(_this || event, param);
+			} else { event[query[i]].apply(_this || event, param); }
+			
+			return this;
 		},
 		/**
 		 * add new element to object
@@ -424,9 +469,7 @@
 				obj = newObj;
 					
 				return obj;
-			} else if (!active[1] || active[1] == "push") {
-				obj[active[0]] = value;
-			}
+			} else if (!active[1] || active[1] == "push") { obj[active[0]] = value; }
 				
 			return true;
 		}

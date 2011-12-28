@@ -88,9 +88,7 @@
 			} else {
 				if (field) {
 					cObj = sortObject.call(this, cObj);
-				} else {
-					cObj = sortObjectByKey.call(this, cObj);
-				}
+				} else { cObj = sortObjectByKey.call(this, cObj); }
 	
 				this.setElement("", cObj, id || "");
 			}

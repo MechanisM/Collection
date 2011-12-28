@@ -80,9 +80,7 @@
 				start++;
 				opt.cache.lastIteration = start;
 				from = null;
-			} else if (checkPage < 0 && opt.filter !== false) {
-				from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null;
-			}
+			} else if (checkPage < 0 && opt.filter !== false) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
 			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
 		}

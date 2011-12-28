@@ -58,7 +58,22 @@
 				 * @field
 				 * @type String
 				 */
-				methodSeparator: "::"
+				methodSeparator: "::",
+				
+				/**
+				 * default separator: event request
+				 * 
+				 * @field
+				 * @type String
+				 */
+				querySeparator: "/",
+				/**
+				 * default separator: subevent request
+				 * 
+				 * @field
+				 * @type String
+				 */
+				subquerySeparator: "{"
 			}
 		},
 		

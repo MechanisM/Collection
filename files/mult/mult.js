@@ -69,7 +69,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [filter=this.config.constants.active] - filter function, string expressions or "false"
 	 * @param {String} [id=this.config.constants.active] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -78,7 +78,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.config.constants.active;
 		id = $.isExist(id) ? id : this.config.constants.active;
 	
 		// if id is Boolean

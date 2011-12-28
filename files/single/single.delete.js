@@ -19,8 +19,8 @@
 		
 			dObj = this.dObj,
 			
-			key, i = 0,
-			pos, n = 0,
+			key, i,
+			pos, n,
 			
 			objLength,
 			cObj,
