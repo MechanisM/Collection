@@ -12,7 +12,21 @@
 				 * @field
 				 * @type Boolean
 				 */
-				ac: true
+				context: true,
+				/**
+				 * use active filter in methods
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				filter: true,
+				/**
+				 * use active parser in methods
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				parser: true
 			}
 		}
 	};

@@ -37,7 +37,7 @@
 		if ($.isString(param) || $.isNumeric(param)) { param = {page: param}; }
 		//
 		$.extend(true, opt, active, param);
-		if (param) { opt.page = $.Collection.obj.expr(opt.page, active.page || ""); }
+		if (param) { opt.page = nimble.expr(opt.page, active.page || ""); }
 		//
 		checkPage = active.page - opt.page;
 		active.page = opt.page;
@@ -51,7 +51,7 @@
 			return true;
 		};
 		// get collection
-		cObj = $.Collection.obj.getByLink(opt.collection, this.getActiveContext());
+		cObj = nimble.byLink(opt.collection, this.getActiveParam("context").toString());
 		cOLength = this.length();
 		
 		// number of records per page
@@ -60,7 +60,7 @@
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
-			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, start);
+			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = opt.filter === false ?
@@ -71,7 +71,7 @@
 			if (checkPage > 0 && opt.filter !== false) {
 				checkPage = opt.numberBreak * checkPage;
 				for (; start--;) {
-					if (this.customFilter(opt.filter, cObj, start, cOLength, this, this.config.constants.active) === true) {
+					if (this.customFilter(opt.filter, cObj, start, cOLength, this, this.ACTIVE) === true) {
 						if (inc === checkPage) {
 							break;
 						} else { inc++; }
@@ -82,7 +82,7 @@
 				from = null;
 			} else if (checkPage < 0 && opt.filter !== false) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
-			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
+			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		// cache
 		active.cache.firstIteration = opt.cache.lastIteration;

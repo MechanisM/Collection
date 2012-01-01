@@ -11,7 +11,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -20,7 +20,7 @@
 	 */
 	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.config.constants.active;
+		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -28,7 +28,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.config.constants.active;
+			id = this.ACTIVE;
 		}
 	
 		// values by default
@@ -59,7 +59,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
 	$.Collection.fn.searchElement = function (filter, id) {

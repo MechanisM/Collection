@@ -7,16 +7,13 @@
 	 * delete element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - link (sharp (#) char indicates the order)
-	 * @param {String} [id=constants.active] - collection ID
+	 * @param {Context} context - link
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementByLink = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
-		
 		var
-			constants = this.config.constants,
-		
 			dObj = this.dObj,
 			
 			key, i,
@@ -25,26 +22,24 @@
 			objLength,
 			cObj,
 			
-			activeContext = this.getActiveContext();
+			activeContext = this.getActiveParam("context").toString();
 		
 		if (!context && !activeContext) {
 			this.setElement("", null);
 		} else {
 			// prepare context
-			context = (activeContext + constants.contextSeparator + context).split(constants.contextSeparator);
+			context = (activeContext + " " + nimble.CHILDREN + " " + context).split(" " + nimble.CHILDREN + " ");
 			// remove "dead" elements
 			for (i = context.length; i--;) {
 				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === constants.subcontextSeparator) { context.splice(i, 1); }
+				if (context[i] === "") { context.splice(i, 1); }
 			}
-			context = context.join(constants.contextSeparator);
+			context = context.join(" " + nimble.CHILDREN + " ");
 
 			// choice of the parent element to check the type
-			cObj = $.Collection.obj.getByLink(id && id !== constants.active ?
-						dObj.sys.tmpCollection[id] : dObj.active.collection,
-						context.replace(new RegExp("[^" + constants.contextSeparator + "]+$"), ""));
+			cObj = nimble.byLink(this._get("collection", id || ""), context.replace(new RegExp("[^ " + " " + nimble.CHILDREN + " ]+$"), ""));
 			// choice link
-			context = context.replace(new RegExp(".*?([^" + constants.contextSeparator + "]+$)"), "$1");
+			context = context.replace(new RegExp(".*?([^" + " " + nimble.CHILDREN + " " + "]+$)"), "$1");
 
 			if ($.isArray(cObj)) {
 				context = +context.replace(constants.subcontextSeparator, "");
@@ -86,8 +81,8 @@
 	 * delete elements by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context|Array|Plain Object} objContext - link (sharp (#) char indicates the order), array of links or object (collection ID: array of links)
-	 * @param {String} [id=constants.active] - collection ID
+	 * @param {Context|Array|Plain Object} objContext - link, array of links or object (collection ID: array of links)
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementsByLink = function (objContext, id) {

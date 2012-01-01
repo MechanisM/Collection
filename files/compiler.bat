@@ -22,8 +22,6 @@ copy	^
 		^
 		+ storage\storage.js ^
 		+ storage\storage.sys.js ^
-		+ storage\storage.view.js ^
-		+ storage\storage.css.js ^
 		^
 		+ stack\stack.js ^
 		+ stack\stack.prop.js ^

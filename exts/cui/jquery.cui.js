@@ -116,7 +116,7 @@
 						if ($.isArray(data[key])) {
 							for (j = data[key].length; j--;) {
 								if (arguments[i][data[key][j]]) {
-									obj = $.Collection.obj.getByLink(cui, key);
+									obj = nimble.byLink(cui, key);
 									//
 									if ($.isPlainObject(obj[data[key][j]])) {
 										$.extend(obj[data[key][j]], arguments[i][data[key][j]]);
@@ -126,7 +126,7 @@
 						} else {
 							if (arguments[i][data[key]]) {
 								if (!$.isNumeric(key)) {
-									obj = $.Collection.obj.getByLink(cui, key);
+									obj = nimble.byLink(cui, key);
 								} else { obj = cui; }
 								//
 								if ($.isPlainObject(obj[data[key]])) {

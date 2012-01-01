@@ -45,7 +45,7 @@
 			return true;
 		};
 		//
-		this.each(action, opt.filter, this.config.constants.active, mult, count, from, indexOf);
+		this.each(action, opt.filter, this.ACTIVE, mult, count, from, indexOf);
 		
 		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;
 		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;

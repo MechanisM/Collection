@@ -1,5 +1,5 @@
 ﻿/**
- * $.Collection - Javascript framework for working with collections of data (using jQuery)
+ * $.Collection - JavaScript framework for working with collections of data (using jQuery)
  *
  * glossary:
  * 1) Collection - data object the JavaScript (the JS), can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);

@@ -1,5 +1,5 @@
 ﻿/**
- * $.Collection - Javascript framework for working with collections of data (using jQuery)
+ * $.Collection - JavaScript framework for working with collections of data (using jQuery)
  *
  * glossary:
  * 1) Collection - data object the JavaScript (the JS), can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);
@@ -99,7 +99,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "3.2.5",
+		version: "3.3",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -108,56 +108,8 @@
 		 */
 		collection: function () { return this.name + " " + this.version; },
 		
-		// framework config object
-		config: {
-			constants: {
-				/**
-				 * default "active" constant
-				 * 
-				 * @field
-				 * @type String
-				 */
-				active: "active",
-				
-				/**
-				 * default separator: context
-				 * 
-				 * @field
-				 * @type String
-				 */
-				contextSeparator: "~",
-				/**
-				 * default separator: subcontext
-				 * 
-				 * @field
-				 * @type String
-				 */
-				subcontextSeparator: "#",
-				
-				/**
-				 * default separator: method
-				 * 
-				 * @field
-				 * @type String
-				 */
-				methodSeparator: "::",
-				
-				/**
-				 * default separator: event request
-				 * 
-				 * @field
-				 * @type String
-				 */
-				querySeparator: "/",
-				/**
-				 * default separator: subevent request
-				 * 
-				 * @field
-				 * @type String
-				 */
-				subquerySeparator: "{"
-			}
-		},
+		// const
+		ACTIVE: "active",
 		
 		/**
 		 * stack parameters
@@ -182,7 +134,6 @@
 		"calculator",
 		"pager",
 		"template",
-		"templateModel",
 		"numberBreak",
 		"pageBreak",
 		"resultNull"
@@ -191,13 +142,13 @@
 		//////
 		
 		/**
-		 * return active context
+		 * return active property
 		 * 
 		 * @this {Collection Object}
 		 * @return {String}
 		 */
-		getActiveContext: function () {
-			return this.dObj.sys.flags.use.ac === true ? this.dObj.active.context.toString() : "";
+		getActiveParam: function (name) {
+			return this.dObj.sys.flags.use[name] === undefined || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : "";
 		},
 		
 		/**
@@ -232,9 +183,8 @@
 		 * @return {Collection Object}
 		 */
 		toggle: function (name) {
-			if (this.dObj.sys.flags.use[name] === true) {
-				return this.disable(name);
-			}
+			if (this.dObj.sys.flags.use[name] === true) { return this.disable(name); }
+			
 			return this.enable(name);
 		}
 	};	
@@ -243,240 +193,15 @@
 	/////////////////////////////////
 	
 	// static template models
-	$.Collection.templateModels = {};
-	
-	// static methods for object
-	$.Collection.obj = {
-		// link to constants
-		constants: $.Collection.fn.config.constants,
-		
-		/**
-		 * calculate math expression
-		 * 
-		 * @param {mixed} nw - new value
-		 * @param {mixed} old - old value
-		 * @return {mixed}
-		 */
-		expr: function (nw, old) {
-			old = old !== undefined || old !== null ? old : "";
-			
-			if ($.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
-				nw = nw.split("=");
-				if (!isNaN(nw[1])) { nw[1] = +nw[1]; }
-				// simple math
-				switch (nw[0]) {
-					case "+" : { nw = old + nw[1]; } break;
-					case "-" : { nw = old - nw[1]; } break;
-					case "*" : { nw = old * nw[1]; } break;
-					case "/" : { nw = old / nw[1]; } break;
-				}
-			}
-			
-			return nw;
-		},
-		
-		/**
-		* get object by link
-		* 
-		* @param {Object} obj - some object
-		* @param {Context} context - link (sharp (#) char indicates the order)
-		* @return {Object}
-		*/
-		getByLink: function (obj, context) {
-			context = context.toString().split(this.constants.contextSeparator);
-			
-			var
-				key, i = -1,
-				pos, n,
-				
-				objLength,
-				cLength = context.length - 1;
-			
-			for (; i++ < cLength;) {
-				context[i] = $.trim(context[i]);
-				//
-				if (context[i] && context[i] !== this.constants.subcontextSeparator) {
-					if (context[i].search(this.constants.subcontextSeparator) === -1) {
-						obj = obj[context[i]];
-					} else {
-						pos = +context[i].replace(this.constants.subcontextSeparator, "");
-						
-						if ($.isArray(obj)) {
-							if (pos >= 0) {
-								obj = obj[pos];
-							} else {
-								obj = obj[obj.length + pos];
-							}
-						} else {
-							if (pos < 0) { 
-								objLength = 0;
-								for (key in obj) {
-									if (obj.hasOwnProperty(key)) { objLength++; }
-								}
-								//
-								pos += objLength;
-							}
-							
-							n = 0;
-							for (key in obj) {
-								if (obj.hasOwnProperty(key)) {
-									if (pos === n) {
-										obj = obj[key];
-										break;
-									}
-									n++;
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			return obj;
-		},
-		/**
-		* set new value to object by link
-		* 
-		* @this {$.Collection.obj}
-		* @param {Object} obj - some object
-		* @param {Context} context - link (sharp (#) char indicates the order)
-		* @param {mixed} value - some value
-		* @return {$.Collection.obj}
-		*/
-		setByLink: function (obj, context, value) {
-			context = context.toString().split(this.constants.contextSeparator);
-			
-			var
-				key, i,
-				pos, n,
-				
-				objLength,
-				cLength = context.length;
-			
-			// remove "dead" elements
-			for (i = cLength; i--;) {
-				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === this.constants.subcontextSeparator) { context.splice(i, 1); }
-			}
-			// recalculate length
-			cLength = context.length - 1;
-			i = -1;
-			
-			for (; i++ < cLength;) {
-				if (context[i].search(this.constants.subcontextSeparator) === -1) {
-					if (i === cLength) {
-						obj[context[i]] = this.expr(value, obj[context[i]]);
-					} else {
-						obj = obj[context[i]];
-					}
-				} else {
-					pos = +context[i].replace(this.constants.subcontextSeparator, "");
-						
-					if ($.isArray(obj)) {
-						if (i === cLength) {
-							if (pos >= 0) {
-								obj[pos] = this.expr(value, obj[pos]);
-							} else {
-								obj[obj.length + pos] = value;
-							}
-						} else {
-							if (pos >= 0) {
-								obj = obj[pos];
-							} else {
-								obj = this.expr(value, obj[obj.length + pos]);
-							}
-						}
-					} else {
-						if (pos < 0) { 
-							objLength = 0;
-							for (key in obj) {
-								if (obj.hasOwnProperty(key)) { objLength++; }
-							}
-							//
-							pos += objLength;
-						}
-						
-						n = 0;
-						for (key in obj) {
-							if (obj.hasOwnProperty(key)) {
-								if (pos === n) {
-									if (i === cLength) {
-										obj[key] = this.expr(value, obj[key]);
-									} else {
-										obj = obj[key];
-									}
-									break;
-								}
-								n++;
-							}
-						}
-					}
-				}
-			}
-			
-			return this;
-		},
-		/**
-		 * execute event
-		 * 
-		 * @this {$.Collection.obj}
-		 * @param {String} query - query string
-		 * @param {Object} event - event request
-         * @param {mixed} [param=undefined] - input parameters
-         * @param {mixed} [_this=event] - this
-		 * @return {$.Collection.obj}
-		 */
-		execEvent: function (query, event, param, _this) {
-            param = $.isExist(param) ? param : [];
-            param = $.isArray(param) ? param : [param];
-			//
-            query = query.split(this.constants.querySeparator);
-			//
-            var i = -1, qLength = query.length - 2, spliter;
-			
-			for (; i++ < qLength;) { event = event[query[i]]; }
-			//
-			if (query[i].search(this.constants.subquerySeparator) !== -1) {
-				spliter = query[i].split(this.constants.subquerySeparator);
-				event = event[spliter[0]];
-				spliter.splice(0, 1);
-                param = param.concat(spliter);
-				event.apply(_this || event, param);
-			} else { event[query[i]].apply(_this || event, param); }
-			
-			return this;
-		},
-		/**
-		 * add new element to object
-		 * 
-		 * @param {Plain Object} obj - some object
-		 * @param {String} active - property name (can use "::unshift" - the result will be similar to work for an array "unshift")
-		 * @param {mixed} value - some value
-		 * @return {Plain Object|Boolean}
-		 */
-		addElementToObject: function (obj, active, value) {
-			active = active.split(this.constants.methodSeparator);
-			
-			var key, newObj = {};
-			
-			if (active[1] && active[1] == "unshift") {
-				newObj[active[0]] = value;
-				for (key in obj) {
-					if (obj.hasOwnProperty(key)) { newObj[key] = obj[key]; }
-				}
-				obj = newObj;
-					
-				return obj;
-			} else if (!active[1] || active[1] == "push") { obj[active[0]] = value; }
-				
-			return true;
-		}
-	};	
+	$.Collection.templateModels = {};	
 	/////////////////////////////////
 	//// static methods (sort)
 	/////////////////////////////////
 	
 	$.Collection.sort = {
+		// const
+		SHUFFLE: "shuffle",
+		
 		/**
 		 * sort field name
 		 * 
@@ -516,8 +241,8 @@
 		 */
 		sortBy: function (field, rev, fn) {
 			this.field = field || null;
-			this.rev = rev ? rev !== "shuffle" ? rev : false : false;
-			this.shuffle = rev ? rev === "shuffle" ? rev : false : false;
+			this.rev = rev ? rev !== this.SHUFFLE ? rev : false : false;
+			this.shuffle = rev ? rev === this.SHUFFLE ? rev : false : false;
 			this.fn = fn || null;
 				
 			return this.sortHelper;
@@ -530,20 +255,20 @@
 		sortHelper: function (a, b) {	
 			var
 				stat = $.Collection,	
-				$this = stat.sort,
-				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
+				self = stat.sort,
+				rev = self.shuffle ? Math.round(Math.random() * 2  - 1) : self.rev ? self.rev === true ? -1 : 1 : 1;
 			
-			if ($this.field) {
-				a = stat.obj.getByLink(a, $this.field);
-				b = stat.obj.getByLink(b, $this.field);
+			if (self.field) {
+				a = nimble.byLink(a, self.field);
+				b = nimble.byLink(b, self.field);
 			}
 					
-			if ($this.fn) {
-				a = $this.fn(a);
-				b = $this.fn(b);
+			if (self.fn) {
+				a = self.fn(a);
+				b = self.fn(b);
 			}
 			
-			if (!$this.shuffle) {	
+			if (!self.shuffle) {	
 				if (a < b) { return rev * -1; }
 				if (a > b) { return rev; }
 				
@@ -559,10 +284,10 @@
 	 * jQuery collection
 	 * 
 	 * @this {jQuery Object}
-	 * @param {Object} active - user's preferences
+	 * @param {Object} prop - user's preferences
 	 * @return {Colletion Object}
 	 */
-	$.fn.collection = function (active) {
+	$.fn.collection = function (prop) {
 		var
 			stat = $.fn.collection.stat,
 			text = function (elem) {
@@ -571,13 +296,13 @@
 					eLength = elem.length - 1,
 					i = -1,
 					str = "";
-	
+				//
 				for (; i++ < eLength;) {
 					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) {
 						str += elem[i].textContent;
 					}
 				}
-	
+				//
 				if (str) { return str; }
 	
 				return false;
@@ -598,13 +323,13 @@
 						i;
 	
 					array.push({});
-	
+					//
 					for (i in data) {
 						if (data.hasOwnProperty(i)) {
 							array[n][i] = data[i];
 						}
 					}
-	
+					//
 					if (cLength) {
 						cLength--;
 						array[n][stat.classes] = {};
@@ -612,11 +337,11 @@
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}
-	
+					//
 					if ($this.children().length !== 0) {
 						array[n][stat.childNodes] = inObj($this.children());
 					}
-	
+					//
 					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
 				});
 	
@@ -624,7 +349,7 @@
 			},
 			data = inObj(this);
 	
-		if (active) { return new $.Collection(data, active); }
+		if (prop) { return new $.Collection(data, prop); }
 	
 		return new $.Collection(data);
 	};
@@ -680,9 +405,7 @@
 	 * @param {mixed} val
 	 * @return {Boolean}
 	 */
-	$.isString = function (val) {
-		return Object.prototype.toString.call(val) === "[object String]";
-	};
+	$.isString = function (val) { return nimble.isString(val); };
 	/**
 	 * boolean test
 	 * 
@@ -698,21 +421,17 @@
 	 * @param {mixed} val
 	 * @return {Boolean}
 	 */
-	$.isExist = function (val) {
-		return val !== undefined && val !== "undefined" && val !== null && val !== "";
-	};
+	$.isExist = function (val) { return nimble.isExist(val); };
 	/**
 	 * unshift for arguments (object)
 	 * 
 	 * @param {Object} obj - some object
 	 * @param {mixed} pushVal - new value
-	 * @param {String|Number} [pushName=0] - property name
 	 * @return {Array}
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
-		var newObj = [pushVal], i = 0, oLength = obj.length;
-		
-		for (; i < oLength; i++) { newObj.push(obj[i]); }
+		var newObj = [pushVal], i = -1, oLength = obj.length;
+		for (; ++i < oLength;) { newObj.push(obj[i]); }
 		
 		return newObj;
 	};
@@ -951,7 +670,7 @@
 				/////////////////////////////////
 				
 				/**
-				 * active page (used in "extPrint")
+				 * active page
 				 * 
 				 * @field
 				 * @type Number
@@ -979,7 +698,7 @@
 				 */
 				target: null,
 				/**
-				 * active selector (used to calculate the number of records one page)
+				 * active selector (used to calculate the number of records per page)
 				 * 
 				 * @field
 				 * @type Selector
@@ -1000,13 +719,6 @@
 				 */
 				template: null,
 				/**
-				 * active template mode
-				 * 
-				 * @field
-				 * @type Function
-				 */
-				templateModel: $.Collection.templateModels.simple,
-				/**
 				 * active records in one page
 				 * 
 				 * @field
@@ -1021,12 +733,12 @@
 				 */
 				pageBreak: 10,
 				/**
-				 * active empty result ("false" if disabled)
+				 * active empty result
 				 * 
 				 * @field
-				 * @type String|Boolean
+				 * @type String
 				 */
-				resultNull: false
+				resultNull: ""
 			}
 		}
 	};	
@@ -1043,7 +755,21 @@
 				 * @field
 				 * @type Boolean
 				 */
-				ac: true
+				context: true,
+				/**
+				 * use active filter in methods
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				filter: true,
+				/**
+				 * use active parser in methods
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				parser: true
 			}
 		}
 	};
@@ -1064,31 +790,6 @@
 		}
 	})($.Collection.fn.stack);	
 	/////////////////////////////////
-	//// public fields (view value)
-	/////////////////////////////////
-	
-	$.Collection.storage.dObj.viewVal = {
-		prev: "&lt;&lt;",
-		next: "&gt;&gt;",
-		total: "total",
-		show: "show",
-		from: "from",
-		noResult: "nothing was found"
-	};	
-	/////////////////////////////////
-	//// public fields (css)
-	/////////////////////////////////
-	
-	$.Collection.storage.dObj.css = {
-		prev: "prev",
-		next: "next",
-		disabled: "disabled",
-		active: "active",
-		nav: "nav",
-		info: "info",
-		noResult: "noResult"
-	};	
-	/////////////////////////////////
 	//// stack methods
 	/////////////////////////////////
 	
@@ -1106,7 +807,7 @@
 			active = dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 
-		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
+		active[propName] = nimble.expr(newProp, active[propName] || "");
 		dObj.sys["active" + upperCase + "ID"] = null;
 
 		return this;
@@ -1128,7 +829,7 @@
 			upperCase = $.toUpperCase(propName, 1),
 			activeID = sys["active" + upperCase + "ID"];
 		
-		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
+		active[propName] = nimble.expr(newProp, active[propName] || "");
 		if (activeID) { sys["tmp" + upperCase][activeID] = active[propName]; }
 
 		return this;
@@ -1138,13 +839,13 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id=this.config.constants.active] - stack ID
+	 * @param {String} [id=this.ACTIVE] - stack ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn._get = function (propName, id) {
 		var dObj = this.dObj;
 		
-		if (id && id !== this.config.constants.active) {
+		if (id && id !== this.ACTIVE) {
 			return dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		}
 
@@ -1176,7 +877,7 @@
 		if ($.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
-					if (key === this.config.constants.active) {
+					if (key === this.ACTIVE) {
 						throw new Error("invalid property name!");
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
@@ -1187,7 +888,7 @@
 				}
 			}
 		} else {
-			if (objID === this.config.constants.active) {
+			if (objID === this.ACTIVE) {
 				throw new Error("invalid property name!");
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
@@ -1298,10 +999,10 @@
 			
 			key;
 
-		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
-					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
+					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
 						active[propName] = deleteVal;
@@ -1348,10 +1049,10 @@
 			
 			key;
 
-		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
-					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
+					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
 						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
 						active[propName] = resetVal;
 					} else {
@@ -1373,13 +1074,13 @@
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array} [objID=active] - stack ID or array of IDs
-	 * @param {String} [id=this.config.constants.active] - source ID (for merge)
+	 * @param {String} [id=this.ACTIVE] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._resetTo = function (propName, objID, id) {
 		var
 			dObj = this.dObj,
-			mergeVal = !id || id === this.config.constants.active ? dObj.active[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
+			mergeVal = !id || id === this.ACTIVE ? dObj.active[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
@@ -1389,7 +1090,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id=this.config.constants.active] - stack ID
+	 * @param {String} [id=this.ACTIVE] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._exist = function (propName, id) {
@@ -1397,7 +1098,7 @@
 			dObj = this.dObj,
 			upperCase = $.toUpperCase(propName, 1);
 		
-		if ((!id || id === this.config.constants.active) && dObj.sys["active" + upperCase + "ID"]) {
+		if ((!id || id === this.ACTIVE) && dObj.sys["active" + upperCase + "ID"]) {
 			return true;
 		}
 		if (dObj.sys["tmp" + upperCase][id] !== undefined) {
@@ -1452,25 +1153,19 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._prop = function (propName, objKey, value) {
-		var active = this.dObj[propName];
+		var prop = this.dObj[propName];
 			
 		if (arguments.length !== 3) {
 			if ($.isPlainObject(objKey)) {
-				$.extend(active, objKey);
-			} else { return active[objKey]; }
-		} else { active[objKey] = value; }
+				$.extend(prop, objKey);
+			} else { return prop[objKey]; }
+		} else { prop[objKey] = value; }
 			
 		return this;
 	};
 		
 	$.Collection.fn.active = function (objKey, value) {
 		return this._prop.apply(this, $.unshiftArguments(arguments, "active"));
-	};
-	$.Collection.fn.css = function (objKey, value) {
-		return this._prop.apply(this, $.unshiftArguments(arguments, "css"));
-	};
-	$.Collection.fn.viewVal = function (objKey, value) {
-		return this._prop.apply(this, $.unshiftArguments(arguments, "viewVal"));
 	};	
 	/////////////////////////////////
 	//// stack methods (aliases)
@@ -1562,30 +1257,25 @@
 	 * set new value to element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {Context} context - additional context
 	 * @param {mixed} value - new value
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.setElement = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
-	
+		id = id || "";
 		var
-			constants = this.config.constants,
-		
 			dObj = this.dObj,	
-			activeContext = this.getActiveContext();
-		
+			activeContext = this.getActiveParam("context").toString();
+		//
 		if (!context && !activeContext) {
-			if (id && id !== constants.active) {
+			if (id && id !== this.ACTIVE) {
 				return this._push("collection", id, value);
-			} else {
-				return this._update("collection", value);
-			}
+			} else { return this._update("collection", value); }
 		}
-		
-		$.Collection.obj.setByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, activeContext + constants.contextSeparator + context, value);
+		nimble.byLink(this._get("collection", id), activeContext + nimble.CHILDREN + context, value);
 	
 		return this;
 	};
@@ -1593,18 +1283,15 @@
 	 * get element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - additional context (sharp (#) char indicates the order)
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Context} context - additional context
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
+		var dObj = this.dObj;
 		
-		var
-			constants = this.config.constants,
-			dObj = this.dObj;
-		
-		return $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext() + constants.contextSeparator + context);
+		return nimble.byLink(this._get("collection", id || ""), this.getActiveParam("context").toString() + nimble.CHILDREN + context);
 	};	
 	/////////////////////////////////
 	//// single methods (add)
@@ -1614,8 +1301,8 @@
 	 * add new element to object (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} cValue - new element или context for sourceID (sharp (#) char indicates the order)
-	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "::unshift" - the result will be similar to work for an array "unshift")
+	 * @param {mixed|Context} cValue - new element or context for sourceID
+	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "->unshift" - the result will be similar to work for an array "unshift")
 	 * @param {String} [activeID=this.dObj.active.collectionID] - collection ID
 	 * @param {String} [sourceID=undefined] - source ID (if move)
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
@@ -1626,11 +1313,8 @@
 		cValue = cValue !== undefined ? cValue : "";
 		propType = propType || "push";
 		deleteType = deleteType === true ? true : false;
-	
+		//
 		var
-			constants = this.config.constants,
-			statObj = $.Collection.obj,
-		
 			dObj = this.dObj,
 			active = dObj.active,
 			sys = dObj.sys,
@@ -1638,54 +1322,42 @@
 			cObj, sObj,
 	
 			collectionID = sys.collectionID,
-	
 			oCheck, lCheck;
-		
-		cObj = statObj.getByLink(activeID && activeID !== constants.active ? sys.tmpCollection[activeID] : active.collection, this.getActiveContext());
-		
+		//
+		cObj = nimble.byLink(this._get("collection", activeID || ""), this.getActiveParam("context").toString());
+		//
 		if (typeof cObj === "object") {
 			oCheck = $.isPlainObject(cObj);
-	
+			
 			// simple add
 			if (!sourceID) {
 				// add type
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + constants.methodSeparator + "unshift" : propType;
-					lCheck = statObj.addElementToObject(cObj, propType.toString(), cValue);
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
+					lCheck = nimble.addElementToObject(cObj, propType.toString(), cValue);
 				} else {
 					lCheck = true;
-					if (propType === "push") {
-						cObj.push(cValue);
-					} else if (propType === "unshift") {
-						cObj.unshift(cValue);
-					}
+					cObj[propType](cValue);
 				}
+			
 			// move
 			} else {
 				cValue = $.isExist(cValue) ? cValue.toString() : "";
-				sObj = statObj.getByLink(sourceID === constants.active ? active.collection : sys.tmpCollection[sourceID], cValue);
-
+				sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
+				
 				// add type
 				if (oCheck === true) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + constants.methodSeparator + "unshift" : propType;
-					lCheck = statObj.addElementToObject(cObj, propType.toString(), sObj);
+					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
+					lCheck = nimble.addElementToObject(cObj, propType.toString(), sObj);
 				} else {
 					lCheck = true;
-					if (propType === "push") {
-						cObj.push(sObj);
-					} else if (propType === "unshift") {
-						cObj.unshift(sObj);
-					}
+					cObj[propType](sObj);
 				}
 				
 				// delete element
-				if (deleteType === true) {
-					this.config.flags.use.ac = false;
-					this.deleteElementByLink(cValue, sourceID);
-					this.config.flags.use.ac = true;
-				}
+				if (deleteType === true) { this.disable("context").deleteElementByLink(cValue, sourceID).enable("context"); }
 			}
-	
+			
 			// rewrites links (if used for an object "unshift")
 			if (lCheck !== true) { this.setElement("", lCheck, activeID || ""); }
 		} else { throw new Error("unable to set property!"); }
@@ -1700,16 +1372,13 @@
 	 * delete element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - link (sharp (#) char indicates the order)
-	 * @param {String} [id=constants.active] - collection ID
+	 * @param {Context} context - link
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementByLink = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
-		
 		var
-			constants = this.config.constants,
-		
 			dObj = this.dObj,
 			
 			key, i,
@@ -1718,26 +1387,24 @@
 			objLength,
 			cObj,
 			
-			activeContext = this.getActiveContext();
+			activeContext = this.getActiveParam("context").toString();
 		
 		if (!context && !activeContext) {
 			this.setElement("", null);
 		} else {
 			// prepare context
-			context = (activeContext + constants.contextSeparator + context).split(constants.contextSeparator);
+			context = (activeContext + " " + nimble.CHILDREN + " " + context).split(" " + nimble.CHILDREN + " ");
 			// remove "dead" elements
 			for (i = context.length; i--;) {
 				context[i] = $.trim(context[i]);
-				if (context[i] === "" || context[i] === constants.subcontextSeparator) { context.splice(i, 1); }
+				if (context[i] === "") { context.splice(i, 1); }
 			}
-			context = context.join(constants.contextSeparator);
+			context = context.join(" " + nimble.CHILDREN + " ");
 
 			// choice of the parent element to check the type
-			cObj = $.Collection.obj.getByLink(id && id !== constants.active ?
-						dObj.sys.tmpCollection[id] : dObj.active.collection,
-						context.replace(new RegExp("[^" + constants.contextSeparator + "]+$"), ""));
+			cObj = nimble.byLink(this._get("collection", id || ""), context.replace(new RegExp("[^ " + " " + nimble.CHILDREN + " ]+$"), ""));
 			// choice link
-			context = context.replace(new RegExp(".*?([^" + constants.contextSeparator + "]+$)"), "$1");
+			context = context.replace(new RegExp(".*?([^" + " " + nimble.CHILDREN + " " + "]+$)"), "$1");
 
 			if ($.isArray(cObj)) {
 				context = +context.replace(constants.subcontextSeparator, "");
@@ -1779,8 +1446,8 @@
 	 * delete elements by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context|Array|Plain Object} objContext - link (sharp (#) char indicates the order), array of links or object (collection ID: array of links)
-	 * @param {String} [id=constants.active] - collection ID
+	 * @param {Context|Array|Plain Object} objContext - link, array of links or object (collection ID: array of links)
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementsByLink = function (objContext, id) {
@@ -1813,21 +1480,17 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Collection} obj - collection
-	 * @param {Context} context - additional context (sharp (#) char indicates the order)
-	 * @param {String} [id=this.config.constants.active] - collection ID, which is the concatenation
+	 * @param {Context} context - additional context
+	 * @param {String} [id=this.ACTIVE] - collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.concat = function (obj, context, id) {
 		context = $.isExist(context) ? context.toString() : "";
-	
+		id = id || "";
 		var
-			constants = this.config.constants,
-		
 			dObj = this.dObj,
-			cObj;
-		
-		cObj = $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext() + constants.contextSeparator + context);	
+			cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString() + nimble.CHILDREN + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
@@ -1835,8 +1498,9 @@
 			} else if ($.isArray(cObj)) {
 				if ($.isArray(obj)) {
 					cObj = Array.prototype.concat(cObj, obj);
-					this.setElement(context, cObj, id || "");
-				} else { this.addElement(obj, "push", id || ""); }
+					console.log("------");
+					this.setElement(context, cObj, id);
+				} else { this.addElement(obj, "push", id); }
 			}
 		} else { throw new Error("incorrect data type!"); }
 	
@@ -1851,13 +1515,12 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Collection} [filter=false] - filter function, string expressions or "false"
-	 * @param {String|Collection} [id=this.config.constants.active] - collection ID
+	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
 	 */
 	$.Collection.fn.length = function (filter, id) {
 		filter = $.isExist(filter) ? filter : false;
-		
 		var
 			dObj = this.dObj,
 			cObj, cOLength, aCheck,
@@ -1870,7 +1533,7 @@
 			}
 		}
 		
-		if (!id || id === this.config.constants.active) {
+		if (!id || id === this.ACTIVE) {
 			cObj = dObj.active.collection;
 		} else if ($.isString(id)) {
 			cObj = dObj.sys.tmpCollection[id];
@@ -1879,7 +1542,7 @@
 			cObj = id;
 		}
 		//
-		if (aCheck !== true) { cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext()); }
+		if (aCheck !== true) { cObj = nimble.byLink(cObj, this.getActiveParam("context").toString()); }
 		// if cObj is null
 		if (cObj === null) { return 0; }
 
@@ -1894,7 +1557,7 @@
 				countRecords = 0;
 				for (key in cObj) {
 					if (cObj.hasOwnProperty(key)) {
-						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.config.constants.active) === true) {
+						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 							countRecords++;
 						}
 					}
@@ -1912,8 +1575,8 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback
-	 * @param {Filter|String|Boolean} [filter=this.config.constants.active] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Filter|String|Boolean} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -1921,8 +1584,8 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.config.constants.active;
-		id = $.isExist(id) ? id : this.config.constants.active;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1930,7 +1593,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.config.constants.active;
+			id = this.ACTIVE;
 		}
 	
 		// values by default
@@ -1949,7 +1612,7 @@
 			i, j = 0;
 		
 		//
-		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : active.collection, this.getActiveContext());
+		cObj = nimble.byLink(id !== this.ACTIVE ? sys.tmpCollection[id] : active.collection, this.getActiveParam("context").toString());
 		cOLength = this.length(cObj);
 		
 		//
@@ -1996,7 +1659,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2005,7 +1668,7 @@
 	 */
 	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.config.constants.active;
+		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -2013,7 +1676,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.config.constants.active;
+			id = this.ACTIVE;
 		}
 	
 		// values by default
@@ -2044,7 +1707,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
 	$.Collection.fn.searchElement = function (filter, id) {
@@ -2062,7 +1725,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2071,7 +1734,7 @@
 	 */
 	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.config.constants.active;
+		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -2079,7 +1742,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.config.constants.active;
+			id = this.ACTIVE;
 		}
 	
 		// values by default
@@ -2110,7 +1773,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElement = function (filter, id) {
@@ -2129,7 +1792,7 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2138,7 +1801,7 @@
 	 */
 	$.Collection.fn.replaceElements = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.config.constants.active;
+		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -2146,7 +1809,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.config.constants.active;
+			id = this.ACTIVE;
 		}
 	
 		// values by default
@@ -2175,7 +1838,7 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.replaceElement = function (filter, replaceObj, id) {
@@ -2190,9 +1853,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
@@ -2220,7 +1883,7 @@
 			constants = this.config.constants,
 	
 			deleteList = [],
-			aCheckType = $.isArray($.Collection.obj.getByLink(this._get("collection", activeID), this.getActiveContext())),
+			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this.getActiveParam("context").toString())),
 	
 			elements, eLength, i = -1;
 	
@@ -2233,11 +1896,11 @@
 		if (mult === true) {
 			eLength = elements.length - 1;
 			for (; i++ < eLength;) {
-				this.addElement(context + constants.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + constants.methodSeparator + addType, activeID, sourceID);
+				this.addElement(context + " " + nimble.CHILDREN + " " + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + constants.contextSeparator + elements, aCheckType === true ? addType : elements + constants.methodSeparator + addType, activeID, sourceID);
+			this.addElement(context + " " + nimble.CHILDREN + " " + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 	
@@ -2251,9 +1914,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
@@ -2265,9 +1928,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
@@ -2288,9 +1951,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
@@ -2309,7 +1972,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2318,7 +1981,7 @@
 	 */
 	$.Collection.fn.deleteElements = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || false;
-		id = $.isExist(id) ? id : this.config.constants.active;
+		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -2326,7 +1989,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.config.constants.active;
+			id = this.ACTIVE;
 		}
 	
 		// values by default
@@ -2352,7 +2015,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElement = function (filter, id) {
@@ -2376,15 +2039,12 @@
 	 */
 	$.Collection.fn.customFilter = function (filter, data, i, cOLength, self, id) {
 		var
-			tmpFilter,
-			constants = this.config.constants,
-			
 			dObj = this.dObj,
 			active = dObj.active,
 			sys = dObj.sys,
 			
 			fLength,
-			calFilter,
+			calFilter, tmpFilter,
 			
 			result = true, tmpResult,
 			and, or, inverse,
@@ -2395,7 +2055,7 @@
 		if ($.isFunction(filter)) { return filter.call(filter, data, i, cOLength, self, id); }
 		
 		// if filter is not defined or filter is a string constant
-		if (!filter || ($.isString(filter) && $.trim(filter) === constants.active)) {
+		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
 			if (active.filter) { return active.filter.call(active.filter, data, i, cOLength, self, id); }
 	
 			return true;
@@ -2413,8 +2073,7 @@
 								.replace(/\s*(\(|\))\s*/g, " $1 ")
 								.replace(/\s*(\|\||&&)\s*/g, " $1 ")
 								.replace(/(!)\s*/g, "$1")
-							)
-						.split(" ");
+						).split(" ");
 			}
 			// calculate deep filter
 			calFilter = function (array, iter) {
@@ -2464,7 +2123,7 @@
 						filter[j] = filter[j].substring(1);
 					} else { inverse = false; }
 					
-					tmpFilter = filter[j] === constants.active ? active.filter : sys.tmpFilter[filter[j]];
+					tmpFilter = filter[j] === this.ACTIVE ? active.filter : sys.tmpFilter[filter[j]];
 					tmpResult = tmpFilter.call(tmpFilter, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
@@ -2507,7 +2166,7 @@
 		if ($.isFunction(parser)) { return parser.call(parser, str, this); }
 		
 		// if parser is not defined or parser is a string constant
-		if (!parser || ($.isString(parser) && $.trim(parser) === this.config.constants.active)) {
+		if (!parser || ($.isString(parser) && $.trim(parser) === this.ACTIVE)) {
 			if (active.parser) { return active.parser.call(active.parser, str, this); }
 	
 			return str;
@@ -2521,7 +2180,7 @@
 			
 			for (i = parser.length; i--;) {
 				parser[i] = $.trim(parser[i]);
-				tmpParser = parser[i] === this.config.constants.active ? active.parser : sys.tmpParser[parser[i]];
+				tmpParser = parser[i] === this.ACTIVE ? active.parser : sys.tmpParser[parser[i]];
 				
 				str = tmpParser.call(tmpParser, str, this);
 			}
@@ -2535,27 +2194,26 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] - level up
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {String}
 	 */
 	$.Collection.fn.parentContext = function (n, id) {
 		n = n || 1;
-	
 		var
 			dObj = this.dObj,
 			context = "", i;
-	
-		context = (id && id !== this.config.constants.active ? dObj.sys.tmpContext[id] : dObj.active.context).split(this.config.constants.contextSeparator);
+		//
+		context = this._get("collection", id || "").split(" " + nimble.CHILDREN + " ");
         for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join(this.config.constants.contextSeparator);
+		return context.join(" " + nimble.CHILDREN + " ");
 	};
 	/**
 	 * parent
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] - level up
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.parent = function (n, id) {
@@ -2567,16 +2225,12 @@
 			contextID = sys.contextID,
 			context = this.parentContext.apply(this, arguments);
 	
-		if (!id || id === this.config.constants.active) {
-			if (contextID) {
-				sys.tmpContext[contextID] = context;
-			}
+		if (!id || id === this.ACTIVE) {
+			if (contextID) { sys.tmpContext[contextID] = context; }
 			active.context = context;
 		} else {
 			sys.tmpContext[id] = context;
-			if (contextID && id === contextID) {
-				active.context = context;
-			}
+			if (contextID && id === contextID) { active.context = context; }
 		}
 	
 		return this;
@@ -2592,7 +2246,7 @@
 	 * @param {String} [field] - field name
 	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
 	 * @param {Function|Boolean} [fn=toUpperCase] - callback ("false" if disabled)
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -2608,8 +2262,6 @@
 		id = id || "";
 	
 		var
-			statObj = $.Collection,
-		
 			dObj = this.dObj,
 			sys = dObj.sys,
 	
@@ -2622,15 +2274,12 @@
 					sortedKeys = [],
 					sortedObj = {},
 					key;
-	
+				//
 				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
-	
 				sortedKeys.sort(statObj.sort.sortBy(field, rev, fn));
-	
+				//
 				for (key in sortedKeys) {
-					if (sortedKeys.hasOwnProperty(key)) {
-						sortedObj[sortedKeys[key]] = obj[sortedKeys[key]];
-					}
+					if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
 				}
 	
 				return sortedObj;
@@ -2641,7 +2290,7 @@
 					sortedValues = [],
 					sortedObj = {},
 					key;
-	
+				//
 				for (key in obj) {
 					if (obj.hasOwnProperty(key)) {
 						sortedValues.push({
@@ -2650,28 +2299,24 @@
 						});
 					}
 				}
-	
 				sortedValues.sort(statObj.sort.sortBy(field === true ? "value" : "value" + statObj.obj.contextSeparator + field, rev, fn));
-	
+				//
 				for (key in sortedValues) {
-					if (sortedValues.hasOwnProperty(key)) {
-						sortedObj[sortedValues[key].key] = sortedValues[key].value;
-					}
+					if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }
 				}
 	
 				return sortedObj;
 			};
-	
-		cObj = statObj.obj.getByLink(id ? sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext());
-	
+		//
+		cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString());
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
-				cObj.sort(statObj.sort.sortBy(field, rev, fn));
+				cObj.sort($.Collection.sort.sortBy(field, rev, fn));
 			} else {
 				if (field) {
 					cObj = sortObject.call(this, cObj);
 				} else { cObj = sortObjectByKey.call(this, cObj); }
-	
+				//
 				this.setElement("", cObj, id || "");
 			}
 		} else { throw new Error("incorrect data type!"); }
@@ -2686,7 +2331,7 @@
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|Collection} [objID=this.config.constants.active] - collection ID or collection
+	 * @param {String|Collection} [objID=this.ACTIVE] - collection ID or collection
 	 * @param {Function|Array} [replacer=undefined] - an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space=undefined] - indentation of nested structures
 	 * @return {String}
@@ -2695,29 +2340,24 @@
 		var dObj = this.dObj, cObj;
 		
 		if (objID && ($.isArray(objID) || $.isPlainObject(objID))) {
-			if (JSON && JSON.stringify) {
-				return JSON.stringify(objID, replacer || "", space || "");
-			}
+			if (JSON && JSON.stringify) { return JSON.stringify(objID, replacer || "", space || ""); }
 			throw new Error("object JSON is not defined!");
 		}
-		
-		cObj = objID && objID !== this.config.constants.active ? dObj.sys.tmpCollection[objID] : dObj.active.collection;
-		cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext());
-		
-		if (JSON && JSON.stringify) {
-			return JSON.stringify(cObj, replacer || "", space || "");
-		}
+		//
+		cObj = nimble.byLink(this._get("collection", objID || ""), this.getActiveParam("context").toString());
+		//
+		if (JSON && JSON.stringify) { return JSON.stringify(cObj, replacer || "", space || ""); }
 		throw new Error("object JSON is not defined!");
 	};
 	/**
 	 * return collection length
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number}
 	 */
 	$.Collection.fn.valueOf = function (id) {
-		return this.length($.isExist(id) ? id : this.config.constants.active);
+		return this.length($.isExist(id) ? id : this.ACTIVE);
 	};	
 	/////////////////////////////////
 	// other
@@ -2732,14 +2372,14 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.then = function (done, fail) {
-		var $this = this;
+		var self = this;
 		
 		if (arguments.length === 1) {
-			$.when($this.active("defer")).always(function () { done.apply($this, arguments); });
+			$.when(self.active("defer")).always(function () { done.apply(self, arguments); });
 		} else {
-			$.when($this.active("defer")).then(
-				function () { done().apply($this, arguments); },
-				function () { fail().apply($this, arguments); }
+			$.when(self.active("defer")).then(
+				function () { done().apply(self, arguments); },
+				function () { fail().apply(self, arguments); }
 			);
 		}
 			
@@ -2791,7 +2431,7 @@
 			return true;
 		};
 		//
-		this.each(action, opt.filter, this.config.constants.active, mult, count, from, indexOf);
+		this.each(action, opt.filter, this.ACTIVE, mult, count, from, indexOf);
 		
 		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;
 		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;
@@ -2844,7 +2484,7 @@
 		if ($.isString(param) || $.isNumeric(param)) { param = {page: param}; }
 		//
 		$.extend(true, opt, active, param);
-		if (param) { opt.page = $.Collection.obj.expr(opt.page, active.page || ""); }
+		if (param) { opt.page = nimble.expr(opt.page, active.page || ""); }
 		//
 		checkPage = active.page - opt.page;
 		active.page = opt.page;
@@ -2858,7 +2498,7 @@
 			return true;
 		};
 		// get collection
-		cObj = $.Collection.obj.getByLink(opt.collection, this.getActiveContext());
+		cObj = nimble.byLink(opt.collection, this.getActiveParam("context").toString());
 		cOLength = this.length();
 		
 		// number of records per page
@@ -2867,7 +2507,7 @@
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
-			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, start);
+			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = opt.filter === false ?
@@ -2878,7 +2518,7 @@
 			if (checkPage > 0 && opt.filter !== false) {
 				checkPage = opt.numberBreak * checkPage;
 				for (; start--;) {
-					if (this.customFilter(opt.filter, cObj, start, cOLength, this, this.config.constants.active) === true) {
+					if (this.customFilter(opt.filter, cObj, start, cOLength, this, this.ACTIVE) === true) {
 						if (inc === checkPage) {
 							break;
 						} else { inc++; }
@@ -2889,7 +2529,7 @@
 				from = null;
 			} else if (checkPage < 0 && opt.filter !== false) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
-			this.each(action, opt.filter, this.config.constants.active, true, opt.numberBreak, from, start);
+			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		// cache
 		active.cache.firstIteration = opt.cache.lastIteration;

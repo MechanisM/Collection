@@ -17,7 +17,7 @@
 			active = dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 
-		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
+		active[propName] = nimble.expr(newProp, active[propName] || "");
 		dObj.sys["active" + upperCase + "ID"] = null;
 
 		return this;
@@ -39,7 +39,7 @@
 			upperCase = $.toUpperCase(propName, 1),
 			activeID = sys["active" + upperCase + "ID"];
 		
-		active[propName] = $.Collection.obj.expr(newProp, active[propName] || "");
+		active[propName] = nimble.expr(newProp, active[propName] || "");
 		if (activeID) { sys["tmp" + upperCase][activeID] = active[propName]; }
 
 		return this;
@@ -49,13 +49,13 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id=this.config.constants.active] - stack ID
+	 * @param {String} [id=this.ACTIVE] - stack ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn._get = function (propName, id) {
 		var dObj = this.dObj;
 		
-		if (id && id !== this.config.constants.active) {
+		if (id && id !== this.ACTIVE) {
 			return dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		}
 
@@ -87,7 +87,7 @@
 		if ($.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
-					if (key === this.config.constants.active) {
+					if (key === this.ACTIVE) {
 						throw new Error("invalid property name!");
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
@@ -98,7 +98,7 @@
 				}
 			}
 		} else {
-			if (objID === this.config.constants.active) {
+			if (objID === this.ACTIVE) {
 				throw new Error("invalid property name!");
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
@@ -209,10 +209,10 @@
 			
 			key;
 
-		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
-					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
+					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
 						if (activeID) { delete sys[tmpTmpStr][activeID]; }
 						sys[tmpActiveIDStr] = null;
 						active[propName] = deleteVal;
@@ -259,10 +259,10 @@
 			
 			key;
 
-		if (tmpArray[0] && tmpArray[0] !== this.config.constants.active) {
+		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
-					if (!tmpArray[key] || tmpArray[key] === this.config.constants.active) {
+					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
 						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
 						active[propName] = resetVal;
 					} else {
@@ -284,13 +284,13 @@
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array} [objID=active] - stack ID or array of IDs
-	 * @param {String} [id=this.config.constants.active] - source ID (for merge)
+	 * @param {String} [id=this.ACTIVE] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._resetTo = function (propName, objID, id) {
 		var
 			dObj = this.dObj,
-			mergeVal = !id || id === this.config.constants.active ? dObj.active[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
+			mergeVal = !id || id === this.ACTIVE ? dObj.active[propName] : dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
@@ -300,7 +300,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id=this.config.constants.active] - stack ID
+	 * @param {String} [id=this.ACTIVE] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._exist = function (propName, id) {
@@ -308,7 +308,7 @@
 			dObj = this.dObj,
 			upperCase = $.toUpperCase(propName, 1);
 		
-		if ((!id || id === this.config.constants.active) && dObj.sys["active" + upperCase + "ID"]) {
+		if ((!id || id === this.ACTIVE) && dObj.sys["active" + upperCase + "ID"]) {
 			return true;
 		}
 		if (dObj.sys["tmp" + upperCase][id] !== undefined) {

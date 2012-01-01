@@ -103,7 +103,7 @@
 				/////////////////////////////////
 				
 				/**
-				 * active page (used in "extPrint")
+				 * active page
 				 * 
 				 * @field
 				 * @type Number
@@ -131,7 +131,7 @@
 				 */
 				target: null,
 				/**
-				 * active selector (used to calculate the number of records one page)
+				 * active selector (used to calculate the number of records per page)
 				 * 
 				 * @field
 				 * @type Selector
@@ -152,13 +152,6 @@
 				 */
 				template: null,
 				/**
-				 * active template mode
-				 * 
-				 * @field
-				 * @type Function
-				 */
-				templateModel: $.Collection.templateModels.simple,
-				/**
 				 * active records in one page
 				 * 
 				 * @field
@@ -173,12 +166,12 @@
 				 */
 				pageBreak: 10,
 				/**
-				 * active empty result ("false" if disabled)
+				 * active empty result
 				 * 
 				 * @field
-				 * @type String|Boolean
+				 * @type String
 				 */
-				resultNull: false
+				resultNull: ""
 			}
 		}
 	};

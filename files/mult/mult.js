@@ -8,13 +8,12 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Collection} [filter=false] - filter function, string expressions or "false"
-	 * @param {String|Collection} [id=this.config.constants.active] - collection ID
+	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
 	 */
 	$.Collection.fn.length = function (filter, id) {
 		filter = $.isExist(filter) ? filter : false;
-		
 		var
 			dObj = this.dObj,
 			cObj, cOLength, aCheck,
@@ -27,7 +26,7 @@
 			}
 		}
 		
-		if (!id || id === this.config.constants.active) {
+		if (!id || id === this.ACTIVE) {
 			cObj = dObj.active.collection;
 		} else if ($.isString(id)) {
 			cObj = dObj.sys.tmpCollection[id];
@@ -36,7 +35,7 @@
 			cObj = id;
 		}
 		//
-		if (aCheck !== true) { cObj = $.Collection.obj.getByLink(cObj, this.getActiveContext()); }
+		if (aCheck !== true) { cObj = nimble.byLink(cObj, this.getActiveParam("context").toString()); }
 		// if cObj is null
 		if (cObj === null) { return 0; }
 
@@ -51,7 +50,7 @@
 				countRecords = 0;
 				for (key in cObj) {
 					if (cObj.hasOwnProperty(key)) {
-						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.config.constants.active) === true) {
+						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 							countRecords++;
 						}
 					}
@@ -69,8 +68,8 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback
-	 * @param {Filter|String|Boolean} [filter=this.config.constants.active] - filter function, string expressions or "false"
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Filter|String|Boolean} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -78,8 +77,8 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.config.constants.active;
-		id = $.isExist(id) ? id : this.config.constants.active;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -87,7 +86,7 @@
 			from = count;
 			count = mult;
 			mult = id;
-			id = this.config.constants.active;
+			id = this.ACTIVE;
 		}
 	
 		// values by default
@@ -106,7 +105,7 @@
 			i, j = 0;
 		
 		//
-		cObj = $.Collection.obj.getByLink(id !== this.config.constants.active ? sys.tmpCollection[id] : active.collection, this.getActiveContext());
+		cObj = nimble.byLink(id !== this.ACTIVE ? sys.tmpCollection[id] : active.collection, this.getActiveParam("context").toString());
 		cOLength = this.length(cObj);
 		
 		//

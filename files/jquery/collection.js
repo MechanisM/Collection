@@ -7,10 +7,10 @@
 	 * jQuery collection
 	 * 
 	 * @this {jQuery Object}
-	 * @param {Object} active - user's preferences
+	 * @param {Object} prop - user's preferences
 	 * @return {Colletion Object}
 	 */
-	$.fn.collection = function (active) {
+	$.fn.collection = function (prop) {
 		var
 			stat = $.fn.collection.stat,
 			text = function (elem) {
@@ -19,13 +19,13 @@
 					eLength = elem.length - 1,
 					i = -1,
 					str = "";
-	
+				//
 				for (; i++ < eLength;) {
 					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) {
 						str += elem[i].textContent;
 					}
 				}
-	
+				//
 				if (str) { return str; }
 	
 				return false;
@@ -46,13 +46,13 @@
 						i;
 	
 					array.push({});
-	
+					//
 					for (i in data) {
 						if (data.hasOwnProperty(i)) {
 							array[n][i] = data[i];
 						}
 					}
-	
+					//
 					if (cLength) {
 						cLength--;
 						array[n][stat.classes] = {};
@@ -60,11 +60,11 @@
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}
-	
+					//
 					if ($this.children().length !== 0) {
 						array[n][stat.childNodes] = inObj($this.children());
 					}
-	
+					//
 					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
 				});
 	
@@ -72,7 +72,7 @@
 			},
 			data = inObj(this);
 	
-		if (active) { return new $.Collection(data, active); }
+		if (prop) { return new $.Collection(data, prop); }
 	
 		return new $.Collection(data);
 	};

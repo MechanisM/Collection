@@ -4,6 +4,9 @@
 	/////////////////////////////////
 	
 	$.Collection.sort = {
+		// const
+		SHUFFLE: "shuffle",
+		
 		/**
 		 * sort field name
 		 * 
@@ -43,8 +46,8 @@
 		 */
 		sortBy: function (field, rev, fn) {
 			this.field = field || null;
-			this.rev = rev ? rev !== "shuffle" ? rev : false : false;
-			this.shuffle = rev ? rev === "shuffle" ? rev : false : false;
+			this.rev = rev ? rev !== this.SHUFFLE ? rev : false : false;
+			this.shuffle = rev ? rev === this.SHUFFLE ? rev : false : false;
 			this.fn = fn || null;
 				
 			return this.sortHelper;
@@ -57,20 +60,20 @@
 		sortHelper: function (a, b) {	
 			var
 				stat = $.Collection,	
-				$this = stat.sort,
-				rev = $this.shuffle ? Math.round(Math.random() * 2  - 1) : $this.rev ? $this.rev === true ? -1 : 1 : 1;
+				self = stat.sort,
+				rev = self.shuffle ? Math.round(Math.random() * 2  - 1) : self.rev ? self.rev === true ? -1 : 1 : 1;
 			
-			if ($this.field) {
-				a = stat.obj.getByLink(a, $this.field);
-				b = stat.obj.getByLink(b, $this.field);
+			if (self.field) {
+				a = nimble.byLink(a, self.field);
+				b = nimble.byLink(b, self.field);
 			}
 					
-			if ($this.fn) {
-				a = $this.fn(a);
-				b = $this.fn(b);
+			if (self.fn) {
+				a = self.fn(a);
+				b = self.fn(b);
 			}
 			
-			if (!$this.shuffle) {	
+			if (!self.shuffle) {	
 				if (a < b) { return rev * -1; }
 				if (a > b) { return rev; }
 				

@@ -8,21 +8,17 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Collection} obj - collection
-	 * @param {Context} context - additional context (sharp (#) char indicates the order)
-	 * @param {String} [id=this.config.constants.active] - collection ID, which is the concatenation
+	 * @param {Context} context - additional context
+	 * @param {String} [id=this.ACTIVE] - collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.concat = function (obj, context, id) {
 		context = $.isExist(context) ? context.toString() : "";
-	
+		id = id || "";
 		var
-			constants = this.config.constants,
-		
 			dObj = this.dObj,
-			cObj;
-		
-		cObj = $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext() + constants.contextSeparator + context);	
+			cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString() + nimble.CHILDREN + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
@@ -30,8 +26,8 @@
 			} else if ($.isArray(cObj)) {
 				if ($.isArray(obj)) {
 					cObj = Array.prototype.concat(cObj, obj);
-					this.setElement(context, cObj, id || "");
-				} else { this.addElement(obj, "push", id || ""); }
+					this.setElement(context, cObj, id);
+				} else { this.addElement(obj, "push", id); }
 			}
 		} else { throw new Error("incorrect data type!"); }
 	

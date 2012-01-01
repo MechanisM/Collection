@@ -17,7 +17,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "3.2.5",
+		version: "3.3",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -26,56 +26,8 @@
 		 */
 		collection: function () { return this.name + " " + this.version; },
 		
-		// framework config object
-		config: {
-			constants: {
-				/**
-				 * default "active" constant
-				 * 
-				 * @field
-				 * @type String
-				 */
-				active: "active",
-				
-				/**
-				 * default separator: context
-				 * 
-				 * @field
-				 * @type String
-				 */
-				contextSeparator: "~",
-				/**
-				 * default separator: subcontext
-				 * 
-				 * @field
-				 * @type String
-				 */
-				subcontextSeparator: "#",
-				
-				/**
-				 * default separator: method
-				 * 
-				 * @field
-				 * @type String
-				 */
-				methodSeparator: "::",
-				
-				/**
-				 * default separator: event request
-				 * 
-				 * @field
-				 * @type String
-				 */
-				querySeparator: "/",
-				/**
-				 * default separator: subevent request
-				 * 
-				 * @field
-				 * @type String
-				 */
-				subquerySeparator: "{"
-			}
-		},
+		// const
+		ACTIVE: "active",
 		
 		/**
 		 * stack parameters
@@ -100,7 +52,6 @@
 		"calculator",
 		"pager",
 		"template",
-		"templateModel",
 		"numberBreak",
 		"pageBreak",
 		"resultNull"
@@ -109,13 +60,13 @@
 		//////
 		
 		/**
-		 * return active context
+		 * return active property
 		 * 
 		 * @this {Collection Object}
 		 * @return {String}
 		 */
-		getActiveContext: function () {
-			return this.dObj.sys.flags.use.ac === true ? this.dObj.active.context.toString() : "";
+		getActiveParam: function (name) {
+			return this.dObj.sys.flags.use[name] === undefined || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : "";
 		},
 		
 		/**
@@ -150,9 +101,8 @@
 		 * @return {Collection Object}
 		 */
 		toggle: function (name) {
-			if (this.dObj.sys.flags.use[name] === true) {
-				return this.disable(name);
-			}
+			if (this.dObj.sys.flags.use[name] === true) { return this.disable(name); }
+			
 			return this.enable(name);
 		}
 	};

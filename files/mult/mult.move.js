@@ -8,9 +8,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
@@ -38,7 +38,7 @@
 			constants = this.config.constants,
 	
 			deleteList = [],
-			aCheckType = $.isArray($.Collection.obj.getByLink(this._get("collection", activeID), this.getActiveContext())),
+			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this.getActiveParam("context").toString())),
 	
 			elements, eLength, i = -1;
 	
@@ -51,11 +51,11 @@
 		if (mult === true) {
 			eLength = elements.length - 1;
 			for (; i++ < eLength;) {
-				this.addElement(context + constants.contextSeparator + elements[i], aCheckType === true ? addType : elements[i] + constants.methodSeparator + addType, activeID, sourceID);
+				this.addElement(context + " " + nimble.CHILDREN + " " + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + constants.contextSeparator + elements, aCheckType === true ? addType : elements + constants.methodSeparator + addType, activeID, sourceID);
+			this.addElement(context + " " + nimble.CHILDREN + " " + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 	
@@ -69,9 +69,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
@@ -83,9 +83,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
@@ -106,9 +106,9 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context (sharp (#) char indicates the order)
-	 * @param {String} [sourceID=this.config.constants.active] - source ID
-	 * @param {String} [activeID=this.config.constants.active] - collection ID (transferred to)
+	 * @param {Context} context - source context
+	 * @param {String} [sourceID=this.ACTIVE] - source ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */

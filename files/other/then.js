@@ -12,14 +12,14 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.then = function (done, fail) {
-		var $this = this;
+		var self = this;
 		
 		if (arguments.length === 1) {
-			$.when($this.active("defer")).always(function () { done.apply($this, arguments); });
+			$.when(self.active("defer")).always(function () { done.apply(self, arguments); });
 		} else {
-			$.when($this.active("defer")).then(
-				function () { done().apply($this, arguments); },
-				function () { fail().apply($this, arguments); }
+			$.when(self.active("defer")).then(
+				function () { done().apply(self, arguments); },
+				function () { fail().apply(self, arguments); }
 			);
 		}
 			

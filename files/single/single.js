@@ -7,30 +7,25 @@
 	 * set new value to element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - additional context (sharp (#) char indicates the order)
+	 * @param {Context} context - additional context
 	 * @param {mixed} value - new value
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.setElement = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
-	
+		id = id || "";
 		var
-			constants = this.config.constants,
-		
 			dObj = this.dObj,	
-			activeContext = this.getActiveContext();
-		
+			activeContext = this.getActiveParam("context").toString();
+		//
 		if (!context && !activeContext) {
-			if (id && id !== constants.active) {
+			if (id && id !== this.ACTIVE) {
 				return this._push("collection", id, value);
-			} else {
-				return this._update("collection", value);
-			}
+			} else { return this._update("collection", value); }
 		}
-		
-		$.Collection.obj.setByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, activeContext + constants.contextSeparator + context, value);
+		nimble.byLink(this._get("collection", id), activeContext + nimble.CHILDREN + context, value);
 	
 		return this;
 	};
@@ -38,16 +33,13 @@
 	 * get element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - additional context (sharp (#) char indicates the order)
-	 * @param {String} [id=this.config.constants.active] - collection ID
+	 * @param {Context} context - additional context
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.fn.getElement = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
+		var dObj = this.dObj;
 		
-		var
-			constants = this.config.constants,
-			dObj = this.dObj;
-		
-		return $.Collection.obj.getByLink(id && id !== constants.active ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveContext() + constants.contextSeparator + context);
+		return nimble.byLink(this._get("collection", id || ""), this.getActiveParam("context").toString() + nimble.CHILDREN + context);
 	};

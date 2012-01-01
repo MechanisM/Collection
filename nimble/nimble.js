@@ -1,0 +1,214 @@
+var nimble = {
+	// constants
+	CONTEXT_SEPARATOR: " ",
+	QUERY_SEPARATOR: "/",
+	SUBQUERY_SEPARATOR: "{",
+	METHOD_SEPARATOR: "->",
+	
+	CHILDREN: ">",
+	ORDER: ["eq(", ")"],
+	//
+	
+	/**
+	 * trim
+	 *
+	 * @param {String} str
+	 * @return {String}
+	 */
+	trim: function (str) {
+		var
+			str = str.replace(/^\s\s*/, ''),
+			ws = /\s/,
+			i = str.length;
+		//
+		while (ws.test(str.charAt(--i)));
+		return str.substring(0, i + 1);
+	},
+	/**
+	 * string test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isString: function (obj) { return Object.prototype.toString.call(obj === "[object String]"); },
+	/**
+	 * boolean test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isArray: function (obj) { return Object.prototype.toString.call(obj === "[object Array]"); },
+	/**
+	 * null && undefined && empty string test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isExist: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
+	
+	/**
+	 * calculate math expression
+	 * 
+	 * @param {mixed} nw - new value
+	 * @param {mixed} old - old value
+	 * @return {mixed}
+	 */
+	expr: function (nw, old) {
+		old = old !== undefined || old !== null ? old : "";
+		if (this.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
+			nw = nw.split("=");
+			if (!isNaN(nw[1])) { nw[1] = +nw[1]; }
+			// simple math
+			switch (nw[0]) {
+				case "+": { nw = old + nw[1]; } break;
+				case "-": { nw = old - nw[1]; } break;
+				case "*": { nw = old * nw[1]; } break;
+				case "/": { nw = old / nw[1]; } break;
+			}
+		}
+	
+		return nw;
+	},
+	
+	/**
+	 * set new value to object by link or get object by link
+	 * 
+	 * @this {nimble}
+	 * @param {Object} obj - some object
+	 * @param {Context} context - link
+	 * @param {mixed} [value=undefined] - some value
+	 * @return {nimble|mixed}
+	 */
+	byLink: function (obj, context, value) {
+		context = context
+					.toString()
+					.replace(new RegExp("\s*" + this.CHILDREN + "\s*", "g"), " " + this.CHILDREN + " ")
+					.split(this.CONTEXT_SEPARATOR);
+		//
+		var
+			type = "start",
+			
+			key, i,
+			pos, n,
+	
+			objLength, cLength = context.length;
+	
+		// remove "dead" elements
+		for (i = cLength; i--;) {
+			context[i] = this.trim(context[i]);
+			if (context[i] === "") { context.splice(i, 1); }
+		}
+		// recalculate length
+		cLength = context.length;
+		for (i = -1; ++i < cLength;) {
+			switch (context[i]) {
+				case this.CHILDREN : { type = context[i]; } break;
+				default : {
+					if ((type === "start" || type === this.CHILDREN) && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
+						if (i === (cLength - 1) && value !== undefined) {
+							obj[context[i]] = this.expr(value, obj[context[i]]);
+						} else { obj = obj[context[i]]; }
+					} else {
+						pos = +context[i].substring(this.ORDER[0].length).substring(0, (context[i].length - 1));
+						//
+						if (this.isArray(obj)) {
+							if (i === (cLength - 1) && value !== undefined) {
+								if (pos >= 0) {
+									obj[pos] = this.expr(value, obj[pos]);
+								} else { obj[obj.length + pos] = value; }
+							} else {
+								if (pos >= 0) {
+									obj = obj[pos];
+								} else { obj = obj[obj.length + pos]; }
+							}
+						} else {
+							if (pos < 0) {
+								objLength = 0;
+								for (key in obj) {
+									if (obj.hasOwnProperty(key)) { objLength++; }
+								}
+								//
+								pos += objLength;
+							}
+			
+							n = 0;
+							for (key in obj) {
+								if (obj.hasOwnProperty(key)) {
+									if (pos === n) {
+										if (i === (cLength - 1) && value !== undefined) {
+											obj[key] = this.expr(value, obj[key]);
+										} else { obj = obj[key]; }
+										break;
+									}
+									n++;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (value !== undefined) { return this; }
+		return obj;
+	},
+	
+	/**
+	 * execute event
+	 * 
+	 * @this {nimble}
+	 * @param {String} query - query string
+	 * @param {Object} event - event request
+	 * @param {mixed} [param=undefined] - input parameters
+	 * @param {mixed} [_this=event] - this
+	 * @return {nimble}
+	 */
+	execEvent: function (query, event, param, _this) {
+		query = query.split(this.QUERY_SEPARATOR);
+		param = this.isExist(param) ? param : [];
+		param = this.isArray(param) ? param : [param];
+		//
+		var 
+			i = -1,
+			qLength = query.length - 1,
+			spliter;
+	
+		for (; ++i < qLength;) { event = event[query[i]]; }
+		//
+		if (query[i].search(this.SUBQUERY_SEPARATOR) !== -1) {
+			spliter = query[i].split(this.SUBQUERY_SEPARATOR);
+			event = event[spliter[0]];
+			spliter.splice(0, 1);
+			param = param.concat(spliter);
+			event.apply(_this || event, param);
+		} else { event[query[i]].apply(_this || event, param); }
+	
+		return this;
+	},
+	
+	/**
+	 * add new element to object
+	 *
+	 * @this {nimble}
+	 * @param {Plain Object} obj - some object
+	 * @param {String} active - property name (can use "->unshift" - the result will be similar to work for an array "unshift")
+	 * @param {mixed} value - some value
+	 * @return {Plain Object|Boolean}
+	 */
+	addElementToObject: function (obj, active, value) {
+		active = active.split(this.METHOD_SEPARATOR);
+		var key, newObj = {};
+	
+		if (active[1] && active[1] == "unshift") {
+			newObj[active[0]] = value;
+			for (key in obj) {
+				if (obj.hasOwnProperty(key)) { newObj[key] = obj[key]; }
+			}
+			obj = newObj;
+	
+			return obj;
+		} else if (!active[1] || active[1] == "push") { obj[active[0]] = value; }
+	
+		return true;
+	}
+}
