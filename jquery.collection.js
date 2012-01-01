@@ -1498,7 +1498,6 @@
 			} else if ($.isArray(cObj)) {
 				if ($.isArray(obj)) {
 					cObj = Array.prototype.concat(cObj, obj);
-					console.log("------");
 					this.setElement(context, cObj, id);
 				} else { this.addElement(obj, "push", id); }
 			}

@@ -23,7 +23,7 @@
 				
 		// extend public fields by user's preferences if need
 		if (uProp) { $.extend(true, active, uProp); }
-				
+		
 		// if "collection" is string
 		if ($.isString(collection)) {
 			active.target = $(collection);

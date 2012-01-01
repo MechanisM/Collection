@@ -1,3 +1,10 @@
+/**
+ * $.Collection - simple JavaScript framework for working with objects
+ *
+ * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * @date: 01.01.2012 21:55:59
+ * @version 1.0.1
+ */
 var nimble = {
 	// constants
 	CONTEXT_SEPARATOR: " ",
@@ -30,14 +37,14 @@ var nimble = {
 	 * @param {mixed} obj
 	 * @return {Boolean}
 	 */
-	isString: function (obj) { return Object.prototype.toString.call(obj === "[object String]"); },
+	isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
 	/**
 	 * boolean test
 	 *
 	 * @param {mixed} obj
 	 * @return {Boolean}
 	 */
-	isArray: function (obj) { return Object.prototype.toString.call(obj === "[object Array]"); },
+	isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },
 	/**
 	 * null && undefined && empty string test
 	 *
@@ -109,13 +116,15 @@ var nimble = {
 							obj[context[i]] = this.expr(value, obj[context[i]]);
 						} else { obj = obj[context[i]]; }
 					} else {
-						pos = +context[i].substring(this.ORDER[0].length).substring(0, (context[i].length - 1));
+						context[i] = context[i].substring(this.ORDER[0].length);
+						context[i] = context[i].substring(0, (context[i].length - 1));
+						pos = +context[i];
 						//
 						if (this.isArray(obj)) {
 							if (i === (cLength - 1) && value !== undefined) {
 								if (pos >= 0) {
 									obj[pos] = this.expr(value, obj[pos]);
-								} else { obj[obj.length + pos] = value; }
+								} else { obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]); }
 							} else {
 								if (pos >= 0) {
 									obj = obj[pos];
@@ -161,7 +170,7 @@ var nimble = {
 	 * @param {Object} event - event request
 	 * @param {mixed} [param=undefined] - input parameters
 	 * @param {mixed} [_this=event] - this
-	 * @return {nimble}
+	 * @return {mixed}
 	 */
 	execEvent: function (query, event, param, _this) {
 		query = query.split(this.QUERY_SEPARATOR);
@@ -180,10 +189,8 @@ var nimble = {
 			event = event[spliter[0]];
 			spliter.splice(0, 1);
 			param = param.concat(spliter);
-			event.apply(_this || event, param);
-		} else { event[query[i]].apply(_this || event, param); }
-	
-		return this;
+			return event.apply(_this || event, param);
+		} else { return event[query[i]].apply(_this || event, param); }
 	},
 	
 	/**
