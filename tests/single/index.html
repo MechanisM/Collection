@@ -27,7 +27,7 @@
 			test("concat", function () {
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				//console.log(db.concat([1, 2, 3, 4, 5], "first > 0 >").getElement("first > 0 >"));
-				
+				console.log("-----")
 				equal(db
 					.concat([1, 2, 3, 4, 5], "first > 0 >")
 					.getElement("first > 0 >").length, 8,

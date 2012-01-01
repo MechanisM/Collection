@@ -93,7 +93,7 @@ var nimble = {
 					.split(this.CONTEXT_SEPARATOR);
 		//
 		var
-			type = "start",
+			type = this.CHILDREN, last = 0,
 			
 			key, i,
 			pos, n,
@@ -103,7 +103,10 @@ var nimble = {
 		// remove "dead" elements
 		for (i = cLength; i--;) {
 			context[i] = this.trim(context[i]);
-			if (context[i] === "") { context.splice(i, 1); }
+			if (context[i] === "") {
+				context.splice(i, 1);
+				last--;
+			} else if (context[i] !== this.CHILDREN && i > last) {last = i; }
 		}
 		// recalculate length
 		cLength = context.length;
@@ -111,8 +114,8 @@ var nimble = {
 			switch (context[i]) {
 				case this.CHILDREN : { type = context[i]; } break;
 				default : {
-					if ((type === "start" || type === this.CHILDREN) && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
-						if (i === (cLength - 1) && value !== undefined) {
+					if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
+						if (i === last && value !== undefined) {
 							obj[context[i]] = this.expr(value, obj[context[i]]);
 						} else { obj = obj[context[i]]; }
 					} else {
@@ -121,7 +124,7 @@ var nimble = {
 						pos = +context[i];
 						//
 						if (this.isArray(obj)) {
-							if (i === (cLength - 1) && value !== undefined) {
+							if (i === last && value !== undefined) {
 								if (pos >= 0) {
 									obj[pos] = this.expr(value, obj[pos]);
 								} else { obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]); }
@@ -144,7 +147,7 @@ var nimble = {
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
-										if (i === (cLength - 1) && value !== undefined) {
+										if (i === last && value !== undefined) {
 											obj[key] = this.expr(value, obj[key]);
 										} else { obj = obj[key]; }
 										break;
@@ -218,4 +221,4 @@ var nimble = {
 	
 		return true;
 	}
-}
+};
