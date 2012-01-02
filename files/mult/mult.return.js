@@ -19,7 +19,7 @@
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean

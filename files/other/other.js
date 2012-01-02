@@ -29,6 +29,8 @@
 			
 			j = -1;
 		
+		// if filter is disabled
+		if (filter === false) { return true; }
 		// if filter is function
 		if ($.isFunction(filter)) { return filter.call(filter, data, i, cOLength, self, id); }
 		

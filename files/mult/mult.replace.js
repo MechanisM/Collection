@@ -20,7 +20,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.replaceElements = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -43,7 +43,7 @@
 			action = function (data, i, aLength, self, id) {
 				if (replaceCheck) {
 					replaceObj.call(replaceObj, data, i, aLength, self, id);
-				} else { data[i] = replaceObj; }
+				} else { data[i] = nimble.expr(replaceObj, data[i]); }
 	
 				return true;
 			};

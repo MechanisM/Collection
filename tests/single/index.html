@@ -63,16 +63,16 @@
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				
 				equal(db
-					.addElement([1, 2], "next")
-					.getElement("next").length, 2,
-				"addElement - простое добавление");
+					.addElement([1, 2], "second")
+					.getElement("second").length, 2,
+				"addElement - simple add");
 				
 				equal(db
-					.addElement("first~0", "next", "", "active", true)
-					.getElement("next").length, 3,
-				"addElement - перенос");
+					.addElement("first > 0", "second", "", "active", true)
+					.getElement("second").length, 3,
+				"addElement - copy");
 				equal(db.getElement("first").length, 2,
-				"addElement - перенос (проверка удалённого свойства)");
+				"addElement - move");
 			});
 		});
 	</script>

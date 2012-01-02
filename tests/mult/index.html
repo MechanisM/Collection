@@ -3,10 +3,11 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<title>$.Collection: mult test</title>
-	<link rel="stylesheet" href="http://code.jquery.com/qunit/git/qunit.css" type="text/css">
-	<script src="http://code.jquery.com/jquery-latest.js"></script>
-	<script type="text/javascript" src="http://code.jquery.com/qunit/git/qunit.js"></script>
-	<script type="text/javascript" src="../../jquery.collection.min.js"></script>
+	<link rel="stylesheet" href="../../qunit.css" type="text/css">
+	<script src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../qunit.js"></script>
+	<script type="text/javascript" src="../../nimble/nimble.js"></script>
+	<script type="text/javascript" src="../../jquery.collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
 			module("core");
@@ -14,18 +15,18 @@
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3], last: 2});
 				db.push({table1: null, table2: "GO!"});
 				
-				equal(db.length([1, 2, 3]), 3, "Массив");
+				equal(db.length([1, 2, 3]), 3, "array");
 				equal(db.length(function ($this, i) {
 					return $this[i] === 1;
-				}, [1, 2, 3]), 1, "Массив c условием");
+				}, [1, 2, 3]), 1, "array with filter");
 				//
 				equal(db.length(false, "table1"), 0, "null");
-				equal(db.length(false, "table2"), 3, "Строка");
+				equal(db.length(false, "table2"), 3, "string");
 				equal(db.length(), 2, "Объект");
 				equal(db.length(function ($this, i) {
 					return i === "first";
-				}), 1, "Объект c условием");
-				// Закидываем в стек фильтры
+				}), 1, "object with filter");
+				//
 				db.pushFilter({
 					a: function ($this, i) {
 						return $this[i] === 1;
@@ -34,27 +35,68 @@
 						return $this[i] === 2;
 					}
 				});
-				equal(db.length("a || b", [1, 2, 3]), 2, "Массив cо строчным условием: a || b");
-				equal(db.length("a && b", [1, 2, 3]), 0, "Массив cо строчным условием: a && b");
-				equal(db.length("(a && b) || a", [1, 2, 3]), 1, "Массив cо строчным условием: (a && b) || a");
-				equal(db.length("a && !b", [1, 2, 3]), 2, "Массив cо строчным условием: a && !b");
-				equal(db.length("!(a && b)", [1, 2, 3]), 3, "Массив cо строчным условием: !(a && b)");
-				equal(db.length("! (a && b) && a", [1, 2, 3]), 1, "Массив cо строчным условием: ! (! a && b) && a");
+				equal(db.length("a || b", [1, 2, 3]), 2, "array with filter: a || b");
+				equal(db.length("a && b", [1, 2, 3]), 0, "array with filter: a && b");
+				equal(db.length("(a && b) || a", [1, 2, 3]), 1, "array with filter: (a && b) || a");
+				equal(db.length("a && !b", [1, 2, 3]), 2, "array with filter: a && !b");
+				equal(db.length("!(a && b)", [1, 2, 3]), 3, "array with filter: !(a && b)");
+				equal(db.length("! (a && b) && a", [1, 2, 3]), 1, "array with filter: ! (! a && b) && a");
 			});
 			module("each methods");
+			test("each", function () {
+				var db = new $.Collection([1, 2, 3, 4]);
+				
+				equal(db.each(function ($this, i) {
+					$this[i] += 1;
+				}).get()[0], 2, "simple each");
+				//
+				equal(db.each(function ($this, i) {
+					$this[i] += 1;
+				}, function ($this, i) {
+					return $this[i] > 2;
+				}).get()[0], 2, "each with filter: > 2");
+				equal(db.each({denial: function ($this, i) {
+					$this[i] -= 1;
+				}}, function ($this, i) {
+					return $this[i] > 2;
+				}).get()[0], 1, "each with filter: denial > 2");
+				equal(db.each({full: function ($this, i) {
+					$this[i] -= 1;
+				}}, function ($this, i) {
+					return $this[i] > 2;
+				}).get()[0], 0, "each with filter: full > 2");
+			});
 			test("search", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
 				equal(db.searchElements(function ($this, i) {
 					return $this[i] === 1;
-				})[0], 0, "Простое поиск по массиву");
+				})[0], 0, "simple search");
+			});
+			test("return", function () {
+				var db = new $.Collection([1, 2, 3, 4]);
+				
+				equal(db.returnElements(function ($this, i) {
+					return $this[i] === 1;
+				})[0], 1, "simple return");
+			});
+			test("replace", function () {
+				var db = new $.Collection([1, 2, 3, 4]);
+				
+				equal(db.replaceElements(false, 2).get()[0], 2, "simple replace");
+				equal(db.replaceElements(false, "+=2").get()[0], 4, "simple replace: += 2");
 			});
 			test("delete", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
 				equal(db.deleteElements(function ($this, i) {
 					return $this[i] === 1;
-				}).getElement("0"), 2, "Простое удаление из массива");
+				}).getElement("0"), 2, "simple delete");
+			});
+			test("move", function () {
+				var db = new $.Collection([1, 2, 3, 4]).push("table1", [1, 2, []]);
+				
+				equal(db.$Context("eq(-1)").moveElements(false, "", "active", "table1").get().length, 0, "simple move");
 			});
 		});
 	</script>

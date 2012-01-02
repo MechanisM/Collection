@@ -39,6 +39,13 @@ var nimble = {
 	 */
 	isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
 	/**
+	 * number test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },
+	/**
 	 * boolean test
 	 *
 	 * @param {mixed} obj
@@ -116,10 +123,11 @@ var nimble = {
 		}
 		// recalculate length
 		cLength = context.length;
+		
 		// overload
 		if (obj === false) {
 			return context.join("");
-		} else if (!isNaN(obj)) {
+		} else if (this.isNumber(obj)) {
 			obj = +obj;
 			if (obj < 0) { obj += total; }
 			if (value === undefined) { 
@@ -145,7 +153,6 @@ var nimble = {
 			}
 		}
 		//
-		
 		for (i = -1; ++i < cLength;) {
 			switch (context[i]) {
 				case this.CHILDREN : { type = context[i]; } break;

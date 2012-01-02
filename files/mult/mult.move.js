@@ -20,7 +20,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = moveFilter || false;
+		moveFilter = $.isExist(moveFilter) ? moveFilter : this.ACTIVE;
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		
@@ -35,32 +35,29 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			constants = this.config.constants,
-	
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this.getActiveParam("context").toString())),
 	
 			elements, eLength, i = -1;
 	
 		// search elements
-		this.disable("ac");
+		this.disable("context");
 		elements = this.searchElements(moveFilter, sourceID, mult, count, from, indexOf);
-		this.enable("ac");
-	
+		this.enable("context");
 		// move
 		if (mult === true) {
-			eLength = elements.length - 1;
-			for (; i++ < eLength;) {
-				this.addElement(context + " " + nimble.CHILDREN + " " + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+			eLength = elements.length;
+			for (; ++i < eLength;) {
+				this.addElement(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + " " + nimble.CHILDREN + " " + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.addElement(context + nimble.CHILDREN + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
-	
+		
 		// delete element
-		if (deleteType === true) { this.disable("ac").deleteElementsByLink(deleteList, sourceID).enable("ac"); }
+		if (deleteType === true) { this.disable("context").deleteElementsByLink(deleteList, sourceID).enable("context"); }
 	
 		return this;
 	},

@@ -1484,11 +1484,10 @@
 			aCheck = true;
 			cObj = id;
 		}
-		//
-		if (aCheck !== true) { cObj = nimble.byLink(cObj, this.getActiveParam("context").toString()); }
 		// if cObj is null
 		if (cObj === null) { return 0; }
-
+		// if cObj is collection
+		if (aCheck !== true) { cObj = nimble.byLink(cObj, this.getActiveParam("context").toString()); }
 		cOLength = cObj.length;
 		// if cObj is String
 		if ($.isString(cObj)) { return cOLength; }
@@ -1500,7 +1499,7 @@
 				countRecords = 0;
 				for (key in cObj) {
 					if (cObj.hasOwnProperty(key)) {
-						if (filter === false || this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						if (this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 							countRecords++;
 						}
 					}
@@ -1517,7 +1516,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback - callback
+	 * @param {Function|Plain Object} callback - callback
 	 * @param {Filter|String|Boolean} [filter=this.ACTIVE] - filter function, string expressions or "false"
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
@@ -1527,6 +1526,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
+		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
@@ -1547,29 +1547,26 @@
 	
 		var
 			dObj = this.dObj,
-			active = dObj.active,
-			sys = dObj.sys,
-	
-			cObj, cOLength, tmpLength,
+			cObj, cOLength,
 	
 			i, j = 0;
 		
 		//
-		cObj = nimble.byLink(id !== this.ACTIVE ? sys.tmpCollection[id] : active.collection, this.getActiveParam("context").toString());
+		cObj = nimble.byLink(id !== this.ACTIVE ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveParam("context").toString());
 		cOLength = this.length(cObj);
-		
 		//
 		if ($.isArray(cObj)) {
-			tmpLength = cOLength - 1;
-			for (i = indexOf !== false ? indexOf - 1 : -1; i++ < tmpLength;) {
+			for (i = indexOf !== false ? indexOf - 1 : -1; ++i < cOLength;) {
 				if (count !== false && j === count) { break; }
-				if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
+				
+				if (callback.full && callback.full.call(callback.full, cObj, i, cOLength, this, id) === false) { break; }
+				if (this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) { from--; continue; }
 					
-					if (callback.call(callback, cObj, i, cOLength, this, id) === false) { break; }
+					if (callback.filter && callback.filter.call(callback.filter, cObj, i, cOLength, this, id) === false) { break; }
 					if (mult === false) { break; }
 					j++;
-				}
+				} else { if (callback.denial && callback.denial.call(callback.denial, cObj, i, cOLength, this, id) === false) { break; }}
 			}
 		} else {
 			for (i in cObj) {
@@ -1577,14 +1574,15 @@
 					if (count !== false && j === count) { break; }
 					if (indexOf !== false && indexOf !== 0) { indexOf--; continue; }
 					
-					if (filter === false || this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
+					if (callback.full && callback.full.call(callback.full, cObj, i, cOLength, this, id) === false) { break; }
+					if (this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) { from--; continue; }
 							
-						if (callback.call(callback, cObj, i, cOLength, this, id) === false) { break; }
+						if (callback.filter && callback.filter.call(callback.filter, cObj, i, cOLength, this, id) === false) { break; }
 						if (mult === false) { break; }
 						j++;
 					}
-				}
+				} else { if (callback.denial && callback.denial.call(callback.denial, cObj, i, cOLength, this, id) === false) { break; }}
 			}
 		}
 	
@@ -1610,7 +1608,7 @@
 	 * @return {Number|Array}
 	 */
 	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1676,7 +1674,7 @@
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1743,7 +1741,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.replaceElements = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1766,7 +1764,7 @@
 			action = function (data, i, aLength, self, id) {
 				if (replaceCheck) {
 					replaceObj.call(replaceObj, data, i, aLength, self, id);
-				} else { data[i] = replaceObj; }
+				} else { data[i] = nimble.expr(replaceObj, data[i]); }
 	
 				return true;
 			};
@@ -1808,7 +1806,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = moveFilter || false;
+		moveFilter = $.isExist(moveFilter) ? moveFilter : this.ACTIVE;
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		
@@ -1823,32 +1821,29 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var
-			constants = this.config.constants,
-	
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this.getActiveParam("context").toString())),
 	
 			elements, eLength, i = -1;
 	
 		// search elements
-		this.disable("ac");
+		this.disable("context");
 		elements = this.searchElements(moveFilter, sourceID, mult, count, from, indexOf);
-		this.enable("ac");
-	
+		this.enable("context");
 		// move
 		if (mult === true) {
-			eLength = elements.length - 1;
-			for (; i++ < eLength;) {
-				this.addElement(context + " " + nimble.CHILDREN + " " + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+			eLength = elements.length;
+			for (; ++i < eLength;) {
+				this.addElement(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + " " + nimble.CHILDREN + " " + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.addElement(context + nimble.CHILDREN + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
-	
+		
 		// delete element
-		if (deleteType === true) { this.disable("ac").deleteElementsByLink(deleteList, sourceID).enable("ac"); }
+		if (deleteType === true) { this.disable("context").deleteElementsByLink(deleteList, sourceID).enable("context"); }
 	
 		return this;
 	},
@@ -1923,7 +1918,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElements = function (filter, id, mult, count, from, indexOf) {
-		filter = filter || false;
+		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1942,13 +1937,10 @@
 		indexOf = parseInt(indexOf) || false;
 		
 		var elements = this.searchElements(filter, id, mult, count, from, indexOf), i;
-
 		if (mult === false) {
 			this.deleteElementByLink(elements, id);
 		} else {
-			for (i = elements.length; i--;) {
-				this.deleteElementByLink(elements[i], id);
-			}
+			for (i = elements.length; i--;) { this.deleteElementByLink(elements[i], id); }
 		}
 	
 		return this;
@@ -1994,6 +1986,8 @@
 			
 			j = -1;
 		
+		// if filter is disabled
+		if (filter === false) { return true; }
 		// if filter is function
 		if ($.isFunction(filter)) { return filter.call(filter, data, i, cOLength, self, id); }
 		
