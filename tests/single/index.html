@@ -26,8 +26,6 @@
 			//
 			test("concat", function () {
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3]});
-				//console.log(db.concat([1, 2, 3, 4, 5], "first > 0 >").getElement("first > 0 >"));
-				console.log("-----")
 				equal(db
 					.concat([1, 2, 3, 4, 5], "first > 0 >")
 					.getElement("first > 0 >").length, 8,
@@ -35,17 +33,29 @@
 			});
 			//
 			test("delete", function () {
-				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3]});
-				
+				var
+					obj = {first: [[1, 2, {second: 3}], 2, 3], second: [1, 2, 3, 4]},
+					db = new $.Collection(obj);
+				//
 				equal(db
-					.deleteElementByLink("first~0~1")
-					.getElement("first~0").length, 2,
-				"deleteElementByLink");
-				
+					.deleteElementByLink("first > 0 > 1")
+					.getElement("first > 0").length, 2,
+				"deleteElementByLink -> array");
+				//
 				equal(db
-					.deleteElementsByLink(["first~0~1", "first~0~1"])
-					.getElement("first~0").length, 1,
-				"deleteElementsByLink");
+					.deleteElementByLink("first > 0 > eq(-1) > second")
+					.getElement("first > 0 > eq(-1)").second, undefined,
+				"deleteElementByLink -> object");
+				//
+				equal(db
+					.deleteElementsByLink(["first > eq(0)", "first > eq(-1)"])
+					.getElement("first").length, 1,
+				"deleteElementsByLink -> array");
+				//
+				equal(db
+					.deleteElementsByLink({stack: ["second > eq(0)", "second > eq(1)"], active: "second > eq(2)"})
+					.getElement("second").length, 1,
+				"deleteElementsByLink -> object");
 			});
 			//
 			test("add", function () {

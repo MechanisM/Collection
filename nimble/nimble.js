@@ -81,19 +81,22 @@ var nimble = {
 	 * set new value to object by link or get object by link
 	 * 
 	 * @this {nimble}
-	 * @param {Object} obj - some object
+	 * @param {Object|Number|Boolean} obj - some object
 	 * @param {Context} context - link
 	 * @param {mixed} [value=undefined] - some value
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @return {nimble|mixed}
 	 */
-	byLink: function (obj, context, value) {
+	byLink: function (obj, context, value, deleteType) {
 		context = context
 					.toString()
 					.replace(new RegExp("\s*" + this.CHILDREN + "\s*", "g"), " " + this.CHILDREN + " ")
 					.split(this.CONTEXT_SEPARATOR);
+		deleteType = deleteType === true ? true : false;
 		//
 		var
-			type = this.CHILDREN, last = 0,
+			type = this.CHILDREN,
+			last = 0, total = 0,
 			
 			key, i,
 			pos, n,
@@ -106,28 +109,74 @@ var nimble = {
 			if (context[i] === "") {
 				context.splice(i, 1);
 				last--;
-			} else if (context[i] !== this.CHILDREN && i > last) {last = i; }
+			} else if (context[i] !== this.CHILDREN) {
+				if (i > last) { last = i; }
+				total++;
+			}
 		}
 		// recalculate length
 		cLength = context.length;
+		console.log(context);
+		// overload
+		if (obj === false) {
+			return context.join("");
+		} else if (!isNaN(obj)) {
+			obj = +obj;
+			if (obj < 0) { obj += total; }
+			if (value === undefined) { 
+				for (i = -1, n = 0; ++i < cLength;) {
+					if (context[i] !== this.CHILDREN) {
+						n++;
+						if (n === obj) {
+							context.splice(i + 1, cLength);
+							return context.join("");
+						}
+					}
+				}
+			} else {
+				for (i = cLength, n = 0; i--;) {
+					if (context[i] !== this.CHILDREN) {
+						n++;
+						if (n === obj) {
+							context.splice(0, i);
+							return context.join("");
+						}
+					}
+				}
+			}
+		}
+		//
+		
 		for (i = -1; ++i < cLength;) {
 			switch (context[i]) {
 				case this.CHILDREN : { type = context[i]; } break;
 				default : {
 					if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
 						if (i === last && value !== undefined) {
-							obj[context[i]] = this.expr(value, obj[context[i]]);
+							if (deleteType === false) {
+								obj[context[i]] = this.expr(value, obj[context[i]]);
+							} else {
+								if (nimble.isArray(obj)) {
+									obj.splice(context[i], 1);
+								} else { delete obj[context[i]]; }
+							}
 						} else { obj = obj[context[i]]; }
 					} else {
-						context[i] = context[i].substring(this.ORDER[0].length);
-						context[i] = context[i].substring(0, (context[i].length - 1));
-						pos = +context[i];
+						pos = context[i].substring(this.ORDER[0].length);
+						pos = pos.substring(0, (pos.length - 1));
+						pos = +pos;
 						//
 						if (this.isArray(obj)) {
 							if (i === last && value !== undefined) {
 								if (pos >= 0) {
-									obj[pos] = this.expr(value, obj[pos]);
-								} else { obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]); }
+									if (deleteType === false) {
+										obj[pos] = this.expr(value, obj[pos]);
+									} else { obj.splice(pos, 1); }
+								} else {
+									if (deleteType === false) {
+										obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]);
+									} else { obj.splice(obj.length + pos, 1); }
+								}
 							} else {
 								if (pos >= 0) {
 									obj = obj[pos];
@@ -148,7 +197,9 @@ var nimble = {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
 										if (i === last && value !== undefined) {
-											obj[key] = this.expr(value, obj[key]);
+											if (deleteType === false) {
+												obj[key] = this.expr(value, obj[key]);
+											} else { delete obj[key]; }
 										} else { obj = obj[key]; }
 										break;
 									}

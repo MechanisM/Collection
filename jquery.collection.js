@@ -74,7 +74,7 @@
 				
 		// extend public fields by user's preferences if need
 		if (uProp) { $.extend(true, active, uProp); }
-				
+		
 		// if "collection" is string
 		if ($.isString(collection)) {
 			active.target = $(collection);
@@ -1379,66 +1379,12 @@
 	$.Collection.fn.deleteElementByLink = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		var
-			dObj = this.dObj,
-			
-			key, i,
-			pos, n,
-			
-			objLength,
 			cObj,
-			
 			activeContext = this.getActiveParam("context").toString();
 		
 		if (!context && !activeContext) {
 			this.setElement("", null);
-		} else {
-			// prepare context
-			context = (activeContext + " " + nimble.CHILDREN + " " + context).split(" " + nimble.CHILDREN + " ");
-			// remove "dead" elements
-			for (i = context.length; i--;) {
-				context[i] = $.trim(context[i]);
-				if (context[i] === "") { context.splice(i, 1); }
-			}
-			context = context.join(" " + nimble.CHILDREN + " ");
-
-			// choice of the parent element to check the type
-			cObj = nimble.byLink(this._get("collection", id || ""), context.replace(new RegExp("[^ " + " " + nimble.CHILDREN + " ]+$"), ""));
-			// choice link
-			context = context.replace(new RegExp(".*?([^" + " " + nimble.CHILDREN + " " + "]+$)"), "$1");
-
-			if ($.isArray(cObj)) {
-				context = +context.replace(constants.subcontextSeparator, "");
-				if (context >= 0) {
-					cObj.splice(context, 1);
-				} else { cObj.splice(cObj.length + context, 1); }
-			} else {
-				if (context.search(constants.subcontextSeparator) === -1) {
-					delete cObj[context];
-				} else {
-					pos = +context.replace(constants.subcontextSeparator, "");
-					if (pos < 0) { 
-						objLength = 0;
-						// object length
-						for (key in cObj) {
-							if (cObj.hasOwnProperty(key)) { objLength++; }
-						}
-						// if reverse
-						pos += objLength;
-					}
-
-					n = 0;
-					for (key in cObj) {
-						if (cObj.hasOwnProperty(key)) {
-							if (pos === n) {
-								delete cObj[key];
-								break;
-							}
-							n++;
-						}
-					}
-				}
-			}
-		}
+		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }
 	
 		return this;
 	};
@@ -1451,8 +1397,8 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElementsByLink = function (objContext, id) {
+		id = id || "";
 		var key, i;
-	
 		if ($.isPlainObject(objContext)) {
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
@@ -1464,10 +1410,8 @@
 				}
 			}
 		} else if ($.isArray(objContext)) {
-			for (i = objContext.length; i--;) {
-				this.deleteElementByLink(objContext[i], id || "");
-			}
-		} else { this.deleteElementByLink(objContext, id || ""); }
+			for (i = objContext.length; i--;) { this.deleteElementByLink(objContext[i], id); }
+		} else { this.deleteElementByLink(objContext, id); }
 	
 		return this;
 	};	
