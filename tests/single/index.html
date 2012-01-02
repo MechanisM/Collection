@@ -53,7 +53,8 @@
 				"deleteElementsByLink -> array");
 				//
 				equal(db
-					.deleteElementsByLink({stack: ["second > eq(0)", "second > eq(1)"], active: "second > eq(2)"})
+					.push("stack", obj)
+					.deleteElementsByLink({stack: ["second > eq(0)", "second > eq(0)"], active: "second > eq(0)"})
 					.getElement("second").length, 1,
 				"deleteElementsByLink -> object");
 			});

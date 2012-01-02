@@ -90,7 +90,7 @@ var nimble = {
 	byLink: function (obj, context, value, deleteType) {
 		context = context
 					.toString()
-					.replace(new RegExp("\s*" + this.CHILDREN + "\s*", "g"), " " + this.CHILDREN + " ")
+					.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), " " + this.CHILDREN + " ")
 					.split(this.CONTEXT_SEPARATOR);
 		deleteType = deleteType === true ? true : false;
 		//
@@ -116,7 +116,6 @@ var nimble = {
 		}
 		// recalculate length
 		cLength = context.length;
-		console.log(context);
 		// overload
 		if (obj === false) {
 			return context.join("");
