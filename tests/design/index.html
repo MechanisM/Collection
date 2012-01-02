@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>$.Collection: jQuery ext test</title>
+	<link rel="stylesheet" href="../../qunit.css" type="text/css">
+	<script src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../qunit.js"></script>
+	<script type="text/javascript" src="../../nimble/nimble.js"></script>
+	<script type="text/javascript" src="../../jquery.collection.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			module("other");
+			test("table", function () {
+				var db = new $.Collection("#test");
+				
+				db.genTable(3, ".td");
+				equal($("#test tr:first td").length, 3, "simple test");
+				
+				db.$Target($("#test2")).genTable(3, ".td", false);
+				equal($("#test2 tr:last td").length, 1, "simple test without empty cells");
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">$.Collection: jQuery ext test</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="test" style="display: none">
+		<div class="td">1</div>
+		<div class="td">2</div>
+		<div class="td">3</div>
+		<div class="td">4</div>
+		<div class="td">5</div>
+		<div class="td">6</div>
+		<div class="td">7</div>
+		<div class="td">8</div>
+		<div class="td">9</div>
+		<div class="td">10</div>
+	</div>
+	<div id="test2" style="display: none">
+		<div class="td">1</div>
+		<div class="td">2</div>
+		<div class="td">3</div>
+		<div class="td">4</div>
+		<div class="td">5</div>
+		<div class="td">6</div>
+		<div class="td">7</div>
+		<div class="td">8</div>
+		<div class="td">9</div>
+		<div class="td">10</div>
+	</div>
+</body>
+</html>

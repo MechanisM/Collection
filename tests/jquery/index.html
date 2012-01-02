@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>$.Collection: jQuery ext test</title>
+	<link rel="stylesheet" href="../../qunit.css" type="text/css">
+	<script src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../qunit.js"></script>
+	<script type="text/javascript" src="../../nimble/nimble.js"></script>
+	<script type="text/javascript" src="../../jquery.collection.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			module("core");
+			test("collection", function () {
+				var db = $("#test").collection();
+				
+				equal(db.getElement("0 > childNodes > 0 > childNodes").length, 3, "simple test");
+				equal(db.getElement("0 > childNodes > 0 > classes").def, "def", "classes test");
+				equal(db.getElement("0 > childNodes > 0 > childNodes > 0 > name"), "name", "data test");
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">$.Collection: jQuery ext test</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="test" style="display: none">
+		<div class="my def">
+			<div class="def" data-name="name" data-type="def"></div>
+			<div class="def" data-name="name2" data-type="def"></div>
+			<div class="def" data-name="name3" data-type="def"></div>
+		</div>
+	</div>
+</body>
+</html>

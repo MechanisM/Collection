@@ -16,14 +16,12 @@
 			text = function (elem) {
 				elem = elem.childNodes;
 				var
-					eLength = elem.length - 1,
+					eLength = elem.length,
 					i = -1,
 					str = "";
 				//
-				for (; i++ < eLength;) {
-					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) {
-						str += elem[i].textContent;
-					}
+				for (; ++i < eLength;) {
+					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) { str += elem[i].textContent; }
 				}
 				//
 				if (str) { return str; }
@@ -48,15 +46,13 @@
 					array.push({});
 					//
 					for (i in data) {
-						if (data.hasOwnProperty(i)) {
-							array[n][i] = data[i];
-						}
+						if (data.hasOwnProperty(i)) { array[n][i] = data[i]; }
 					}
 					//
 					if (cLength) {
 						cLength--;
 						array[n][stat.classes] = {};
-						for (i = -1; i++ < cLength;) {
+						for (i = -1; ++i <= cLength;) {
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}

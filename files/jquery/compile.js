@@ -22,10 +22,10 @@
 				.replace(/[\r\t\n]/g, " ")
 				.split("<?js"),
 			
-			eLength = elem.length - 1,
+			eLength = elem.length,
 			resStr = "var key = i, result = ''; ", i = -1;
 		
-		for (; i++ < eLength;) {
+		for (; ++i < eLength;) {
 			if (i === 0 || i % 2 === 0) {
 				resStr += "result +='" + elem[i] + "';";
 			} else { resStr += elem[i].split("echo").join("result +="); }

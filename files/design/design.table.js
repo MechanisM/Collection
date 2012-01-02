@@ -4,53 +4,58 @@
 	/////////////////////////////////
 		
 	/**
-	 * generating the table (if the template consisted of td)
+	 * generating the table
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] - td number to a string
+	 * @param {String} [tag="td"] - tag name
+	 * @param {Boolean} [empty=true] - display empty cells
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.genTable = function (count) {
+	$.Collection.fn.genTable = function (count, tag, empty) {
 		count = count || 4;
-	
+		tag = tag || "td";
+		empty = empty === false ? false : true;
 		var
 			i = 1, j,
 	
 			target = this.dObj.active.target,
-			tdLength = target.children("td").length - 1,
+			tagLength = target.find(tag).length,
 	
-			countDec = count - 1,
 			queryString = "";
-	
-		target.children("td").each(function (n) {
+		
+		target.find(tag).each(function (n) {
+			if (this.tagName !== "td") { $(this).wrap("<td></td>"); }
+			//
 			if (i === count) {
 				queryString = "";
-	
-				for (j = -1; j++ < countDec;) {
+				//
+				for (j = -1; ++j < count;) {
 					queryString += "td:eq(" + (n - j) + ")";
-					if (j !== countDec) { queryString += ","; }
+					if (j !== (count - 1)) { queryString += ","; }
 				}
-	
-				target.children(queryString).wrapAll("<tr></tr>");
+				//
+				target.find(queryString).wrapAll("<tr></tr>");
 				i = 0;
-			} else if (n === tdLength && i !== count) {
+			} else if (n === (tagLength - 1) && i !== count) {
 				queryString = "";
-	
-				for (j = 0, i; j < i; j++) {
-					queryString += "td:eq(" + j + ")";
+				//
+				for (j = -1, i; ++j < i;) {
+					queryString += "td:eq(" + (n - j) + ")";
 					if (j !== (i - 1)) { queryString += ","; }
 				}
-	
-				target.children(queryString).wrapAll("<tr></tr>");	
-				queryString = "";
-	
-				for (; i < count; i++) { queryString += "<td></td>"; }	
-				target.children("tr:last").append(queryString);
+				i--;
+				target.find(queryString).wrapAll("<tr></tr>");	
+				//
+				if (empty === true) {
+					queryString = "";
+					for (; ++i < count;) { queryString += "<td></td>"; }
+					target.find("tr:last").append(queryString);
+				}
 			}
 			i++;
 		});
-	
-		target.children("tr").wrapAll("<table></table>");
+		if (target[0].tagName !== "table") { target.children("tr").wrapAll("<table></table>"); }
 	
 		return this;
 	};

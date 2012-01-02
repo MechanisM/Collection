@@ -18,7 +18,7 @@
 	$.Collection.fn.addElement = function (cValue, propType, activeID, sourceID, deleteType) {
 		cValue = cValue !== undefined ? cValue : "";
 		propType = propType || "push";
-		deleteType = deleteType === true ? true : false;
+		deleteType = deleteType || false;
 		//
 		var
 			dObj = this.dObj,

@@ -99,7 +99,7 @@ var nimble = {
 					.toString()
 					.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), " " + this.CHILDREN + " ")
 					.split(this.CONTEXT_SEPARATOR);
-		deleteType = deleteType === true ? true : false;
+		deleteType = deleteType || false;
 		//
 		var
 			type = this.CHILDREN,

@@ -293,14 +293,12 @@
 			text = function (elem) {
 				elem = elem.childNodes;
 				var
-					eLength = elem.length - 1,
+					eLength = elem.length,
 					i = -1,
 					str = "";
 				//
-				for (; i++ < eLength;) {
-					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) {
-						str += elem[i].textContent;
-					}
+				for (; ++i < eLength;) {
+					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) { str += elem[i].textContent; }
 				}
 				//
 				if (str) { return str; }
@@ -325,15 +323,13 @@
 					array.push({});
 					//
 					for (i in data) {
-						if (data.hasOwnProperty(i)) {
-							array[n][i] = data[i];
-						}
+						if (data.hasOwnProperty(i)) { array[n][i] = data[i]; }
 					}
 					//
 					if (cLength) {
 						cLength--;
 						array[n][stat.classes] = {};
-						for (i = -1; i++ < cLength;) {
+						for (i = -1; ++i <= cLength;) {
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}
@@ -384,10 +380,10 @@
 				.replace(/[\r\t\n]/g, " ")
 				.split("<?js"),
 			
-			eLength = elem.length - 1,
+			eLength = elem.length,
 			resStr = "var key = i, result = ''; ", i = -1;
 		
-		for (; i++ < eLength;) {
+		for (; ++i < eLength;) {
 			if (i === 0 || i % 2 === 0) {
 				resStr += "result +='" + elem[i] + "';";
 			} else { resStr += elem[i].split("echo").join("result +="); }
@@ -1312,7 +1308,7 @@
 	$.Collection.fn.addElement = function (cValue, propType, activeID, sourceID, deleteType) {
 		cValue = cValue !== undefined ? cValue : "";
 		propType = propType || "push";
-		deleteType = deleteType === true ? true : false;
+		deleteType = deleteType || false;
 		//
 		var
 			dObj = this.dObj,
@@ -2384,7 +2380,7 @@
 		return this;
 	};	
 	/////////////////////////////////
-	//// design methods (extended print)
+	//// design methods (print)
 	/////////////////////////////////
 		
 	/**
@@ -2406,7 +2402,7 @@
 	 * @param {String} [param.resultNull=this.dObj.active.resultNull] - text displayed if no results
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.extPrint = function (param) {
+	$.Collection.fn.print = function (param) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -2508,53 +2504,58 @@
 	/////////////////////////////////
 		
 	/**
-	 * generating the table (if the template consisted of td)
+	 * generating the table
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] - td number to a string
+	 * @param {String} [tag="td"] - tag name
+	 * @param {Boolean} [empty=true] - display empty cells
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.genTable = function (count) {
+	$.Collection.fn.genTable = function (count, tag, empty) {
 		count = count || 4;
-	
+		tag = tag || "td";
+		empty = empty === false ? false : true;
 		var
 			i = 1, j,
 	
 			target = this.dObj.active.target,
-			tdLength = target.children("td").length - 1,
+			tagLength = target.find(tag).length,
 	
-			countDec = count - 1,
 			queryString = "";
-	
-		target.children("td").each(function (n) {
+		
+		target.find(tag).each(function (n) {
+			if (this.tagName !== "td") { $(this).wrap("<td></td>"); }
+			//
 			if (i === count) {
 				queryString = "";
-	
-				for (j = -1; j++ < countDec;) {
+				//
+				for (j = -1; ++j < count;) {
 					queryString += "td:eq(" + (n - j) + ")";
-					if (j !== countDec) { queryString += ","; }
+					if (j !== (count - 1)) { queryString += ","; }
 				}
-	
-				target.children(queryString).wrapAll("<tr></tr>");
+				//
+				target.find(queryString).wrapAll("<tr></tr>");
 				i = 0;
-			} else if (n === tdLength && i !== count) {
+			} else if (n === (tagLength - 1) && i !== count) {
 				queryString = "";
-	
-				for (j = 0, i; j < i; j++) {
-					queryString += "td:eq(" + j + ")";
+				//
+				for (j = -1, i; ++j < i;) {
+					queryString += "td:eq(" + (n - j) + ")";
 					if (j !== (i - 1)) { queryString += ","; }
 				}
-	
-				target.children(queryString).wrapAll("<tr></tr>");	
-				queryString = "";
-	
-				for (; i < count; i++) { queryString += "<td></td>"; }	
-				target.children("tr:last").append(queryString);
+				i--;
+				target.find(queryString).wrapAll("<tr></tr>");	
+				//
+				if (empty === true) {
+					queryString = "";
+					for (; ++i < count;) { queryString += "<td></td>"; }
+					target.find("tr:last").append(queryString);
+				}
 			}
 			i++;
 		});
-	
-		target.children("tr").wrapAll("<table></table>");
+		if (target[0].tagName !== "table") { target.children("tr").wrapAll("<table></table>"); }
 	
 		return this;
 	};

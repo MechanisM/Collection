@@ -1,6 +1,6 @@
 	
 	/////////////////////////////////
-	//// design methods (extended print)
+	//// design methods (print)
 	/////////////////////////////////
 		
 	/**
@@ -22,7 +22,7 @@
 	 * @param {String} [param.resultNull=this.dObj.active.resultNull] - text displayed if no results
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.extPrint = function (param) {
+	$.Collection.fn.print = function (param) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
