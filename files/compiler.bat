@@ -17,7 +17,6 @@ copy	^
 		+ jquery\compile.js ^
 		+ jquery\other.js ^
 		^
-		+ tm\tm.simple.js ^
 		+ tm\tm.control.js ^
 		^
 		+ storage\storage.js ^

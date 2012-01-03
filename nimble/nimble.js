@@ -36,6 +36,7 @@ var nimble = {
 	
 	CHILDREN: ">",
 	ORDER: ["eq(", ")"],
+	SLICE: ["slice(", ")"],
 	//
 	
 	/**

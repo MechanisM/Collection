@@ -190,9 +190,10 @@
 	 * @param {String} propName - root property
 	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
 	 * @param {mixed} [deleteVal=false] - default value (for active properties)
+	 * @param {mixed} [resetVal=undefined] - reset value
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._drop = function (propName, objID, deleteVal) {
+	$.Collection.fn._drop = function (propName, objID, deleteVal, resetVal) {
 		deleteVal = deleteVal === undefined ? false : deleteVal;
 
 		var
@@ -213,22 +214,37 @@
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
 					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
-						if (activeID) { delete sys[tmpTmpStr][activeID]; }
-						sys[tmpActiveIDStr] = null;
-						active[propName] = deleteVal;
-					} else {
-						delete sys[tmpTmpStr][tmpArray[key]];
-						if (activeID && tmpArray[key] === activeID) {
+						if (resetVal === undefined) {
+							if (activeID) { delete sys[tmpTmpStr][activeID]; }
 							sys[tmpActiveIDStr] = null;
 							active[propName] = deleteVal;
+						} else {
+							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+							active[propName] = resetVal;
+						}
+					} else {
+						if (resetVal === undefined) {
+							delete sys[tmpTmpStr][tmpArray[key]];
+							if (activeID && tmpArray[key] === activeID) {
+								sys[tmpActiveIDStr] = null;
+								active[propName] = deleteVal;
+							}
+						} else {
+							sys[tmpTmpStr][tmpArray[key]] = resetVal;
+							if (activeID && tmpArray[key] === activeID) { active[propName] = resetVal; }
 						}
 					}
 				}
 			}
 		} else {
-			if (activeID) { delete sys[tmpTmpStr][activeID]; }
-			sys[tmpActiveIDStr] = null;
-			active[propName] = deleteVal;
+			if (resetVal === undefined) {
+				if (activeID) { delete sys[tmpTmpStr][activeID]; }
+				sys[tmpActiveIDStr] = null;
+				active[propName] = deleteVal;
+			} else {
+				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+				active[propName] = resetVal;
+			}
 		}
 
 		return this;
@@ -245,38 +261,7 @@
 	$.Collection.fn._reset = function (propName, objID, resetVal) {
 		resetVal = resetVal === undefined ? false : resetVal;
 
-		var
-			dObj = this.dObj,
-			active = dObj.active,
-			sys = dObj.sys,
-
-			upperCase = $.toUpperCase(propName, 1),
-			tmpActiveIDStr = "active" + upperCase + "ID",
-			tmpTmpStr = "tmp" + upperCase,
-
-			activeID = sys[tmpActiveIDStr],
-			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-			
-			key;
-
-		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
-			for (key in tmpArray) {
-				if (tmpArray.hasOwnProperty(key)) {
-					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
-						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
-						active[propName] = resetVal;
-					} else {
-						sys[tmpTmpStr][tmpArray[key]] = resetVal;
-						if (activeID && tmpArray[key] === activeID) { active[propName] = resetVal; }
-					}
-				}
-			}
-		} else {
-			if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
-			active[propName] = resetVal;
-		}
-
-		return this;
+		return this._drop(propName, objID || "", "", resetVal);
 	};
 	/**
 	 * reset property to another value

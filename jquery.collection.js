@@ -460,109 +460,6 @@
 		return str.substring(from, to).toLowerCase() + str.substring(to);
 	};	
 	/////////////////////////////////
-	//// template model (simple)
-	/////////////////////////////////
-	
-	/**
-	 * simple model
-	 * 
-	 * @this {Colletion Object}
-	 * @param param - object settings
-	 * @return {Boolean}
-	 */
-	$.Collection.templateModels.simple = function (param) {		
-		var
-			dObj = this.dObj,
-			vv = dObj.viewVal,
-			css = dObj.css;
-		
-		// next
-		if (param.finNumber === param.nmbOfEntries) {
-			$("." + css.next, param.pager).addClass(css.disabled);
-		} else {
-			$("." + css.next + "." + css.disabled, param.pager).removeClass(css.disabled);
-		}
-		// prev
-		if (param.page === 1) {
-			$("." + css.prev, param.pager).addClass(css.disabled);
-		} else {
-			$("." + css.prev + "." + css.disabled, param.pager).removeClass(css.disabled);
-		}	
-		// info
-		if (param.nmbOfEntriesInPage === 0) {
-			$("." + css.info, param.pager).empty();
-		} else {
-			$("." + css.info, param.pager).text(((param.page - 1) * param.numberBreak + 1) + "-" + param.finNumber + ' ' + vv.from + ' ' + param.nmbOfEntries);
-		}
-							
-		return true;
-	};	
-	/////////////////////////////////
-	//// template model (advansed)
-	/////////////////////////////////
-	
-	/**
-	 * advansed model
-	 * 
-	 * @this {Colletion Object}
-	 * @param param - object settings
-	 * @return {Boolean}
-	 */
-	$.Collection.templateModels.control = function (param) {
-		var
-			dObj = this.dObj,
-			vv = dObj.viewVal,
-			css = dObj.css,
-			
-			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
-			str = "",
-			
-			i, j = 0, z;
-		
-		if (nmbOfPages > param.pageBreak) {	
-			if (param.page !== 1) {
-				str += '<a href="javascript:;" class="' + css.prev + '" data-page="1">' + vv.prev + '</a>';
-			} else {
-				str += '<a href="javascript:;" class="' + css.prev + ' ' + css.disabled + '" data-page="1">' + vv.prev + '</a>';
-			}
-			//
-			for (i = (param.page - 1); i++ < nmbOfPages;) { j++; }
-			if (j < param.pageBreak) { z = param.pageBreak - j + 1; } else { z = 1; }
-			//
-			for (j = 0, i = (param.page - z); i++ < nmbOfPages; j++) {
-				if (j === (param.pageBreak - 1) && i !== param.page) { break; }
-				//
-				if (i === param.page) {
-					if (j === 0 && param.page !== 1) {
-						str += '<a href="javascript:;" data-page="' + (i - 1) + '">' + (i - 1) + '</a>';
-					} else { j--; }
-					
-					str += '<a href="javascript:;" class="' + css.active + '" data-page="' + i + '">' + i + '</a>';
-				} else { str += '<a href="javascript:;" data-page="' + i + '">' + i + '</a>'; }
-			}
-			if (i !== (nmbOfPages + 1)) {
-				str += '<a href="javascript:;" data-page="' + nmbOfPages + '">' + vv.next + '</a>';
-			} else { str += '<a href="javascript:;" class="' + css.next + ' ' + css.disabled + '" data-page="' + nmbOfPages + '">' + vv.next + '</a>'; }
-		} else {
-			for (i = 0; i++ < nmbOfPages;) {
-				if (i === param.page) {
-					str += '<a href="javascript:;" class="' + css.active + '" data-page="' + i + '">' + i + '</a>';
-				} else {
-					str += '<a href="javascript:;" data-page="' + i + '">' + i + '</a>';
-				}
-			}
-		}
-		// show results
-		if (param.nmbOfEntries === 0) {
-			$("." + css.nav + "," + "." + css.info, param.pager).empty();
-		} else {
-			$("." + css.nav, param.pager).html(str);
-			$("." + css.info, param.pager).text(vv.total + ": " + param.nmbOfEntries + ". " + vv.show + ": " + ((param.page - 1) * param.numberBreak + 1) + "-" + param.finNumber);
-		}
-							
-		return true;
-	};	
-	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
 	
@@ -976,9 +873,10 @@
 	 * @param {String} propName - root property
 	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
 	 * @param {mixed} [deleteVal=false] - default value (for active properties)
+	 * @param {mixed} [resetVal=undefined] - reset value
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._drop = function (propName, objID, deleteVal) {
+	$.Collection.fn._drop = function (propName, objID, deleteVal, resetVal) {
 		deleteVal = deleteVal === undefined ? false : deleteVal;
 
 		var
@@ -999,22 +897,37 @@
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
 					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
-						if (activeID) { delete sys[tmpTmpStr][activeID]; }
-						sys[tmpActiveIDStr] = null;
-						active[propName] = deleteVal;
-					} else {
-						delete sys[tmpTmpStr][tmpArray[key]];
-						if (activeID && tmpArray[key] === activeID) {
+						if (resetVal === undefined) {
+							if (activeID) { delete sys[tmpTmpStr][activeID]; }
 							sys[tmpActiveIDStr] = null;
 							active[propName] = deleteVal;
+						} else {
+							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+							active[propName] = resetVal;
+						}
+					} else {
+						if (resetVal === undefined) {
+							delete sys[tmpTmpStr][tmpArray[key]];
+							if (activeID && tmpArray[key] === activeID) {
+								sys[tmpActiveIDStr] = null;
+								active[propName] = deleteVal;
+							}
+						} else {
+							sys[tmpTmpStr][tmpArray[key]] = resetVal;
+							if (activeID && tmpArray[key] === activeID) { active[propName] = resetVal; }
 						}
 					}
 				}
 			}
 		} else {
-			if (activeID) { delete sys[tmpTmpStr][activeID]; }
-			sys[tmpActiveIDStr] = null;
-			active[propName] = deleteVal;
+			if (resetVal === undefined) {
+				if (activeID) { delete sys[tmpTmpStr][activeID]; }
+				sys[tmpActiveIDStr] = null;
+				active[propName] = deleteVal;
+			} else {
+				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+				active[propName] = resetVal;
+			}
 		}
 
 		return this;
@@ -1031,38 +944,7 @@
 	$.Collection.fn._reset = function (propName, objID, resetVal) {
 		resetVal = resetVal === undefined ? false : resetVal;
 
-		var
-			dObj = this.dObj,
-			active = dObj.active,
-			sys = dObj.sys,
-
-			upperCase = $.toUpperCase(propName, 1),
-			tmpActiveIDStr = "active" + upperCase + "ID",
-			tmpTmpStr = "tmp" + upperCase,
-
-			activeID = sys[tmpActiveIDStr],
-			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
-			
-			key;
-
-		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
-			for (key in tmpArray) {
-				if (tmpArray.hasOwnProperty(key)) {
-					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
-						if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
-						active[propName] = resetVal;
-					} else {
-						sys[tmpTmpStr][tmpArray[key]] = resetVal;
-						if (activeID && tmpArray[key] === activeID) { active[propName] = resetVal; }
-					}
-				}
-			}
-		} else {
-			if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
-			active[propName] = resetVal;
-		}
-
-		return this;
+		return this._drop(propName, objID || "", "", resetVal);
 	};
 	/**
 	 * reset property to another value
@@ -1851,7 +1733,7 @@
 		activeID = activeID || "";
 		
 		addType = addType || "push";
-	
+		
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -2468,6 +2350,7 @@
 	
 		return this;
 	};
+	
 	/**
 	 * activation of the model template
 	 * 
@@ -2476,7 +2359,56 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.easyPage = function (param) {
-		//this.dObj.active.templateModel.call(this.dObj.active.templateModel, param, this);
+		var
+			dObj = this.dObj,
+			vv = dObj.viewVal,
+			css = dObj.css,
+			
+			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
+			str = "",
+			
+			i, j = 0, z;
+		
+		if (nmbOfPages > param.pageBreak) {	
+			if (param.page !== 1) {
+				str += '<a href="javascript:;" class="' + css.prev + '" data-page="1">' + vv.prev + '</a>';
+			} else {
+				str += '<a href="javascript:;" class="' + css.prev + ' ' + css.disabled + '" data-page="1">' + vv.prev + '</a>';
+			}
+			//
+			for (i = (param.page - 1); i++ < nmbOfPages;) { j++; }
+			if (j < param.pageBreak) { z = param.pageBreak - j + 1; } else { z = 1; }
+			//
+			for (j = 0, i = (param.page - z); i++ < nmbOfPages; j++) {
+				if (j === (param.pageBreak - 1) && i !== param.page) { break; }
+				//
+				if (i === param.page) {
+					if (j === 0 && param.page !== 1) {
+						str += '<a href="javascript:;" data-page="' + (i - 1) + '">' + (i - 1) + '</a>';
+					} else { j--; }
+					
+					str += '<a href="javascript:;" class="' + css.active + '" data-page="' + i + '">' + i + '</a>';
+				} else { str += '<a href="javascript:;" data-page="' + i + '">' + i + '</a>'; }
+			}
+			if (i !== (nmbOfPages + 1)) {
+				str += '<a href="javascript:;" data-page="' + nmbOfPages + '">' + vv.next + '</a>';
+			} else { str += '<a href="javascript:;" class="' + css.next + ' ' + css.disabled + '" data-page="' + nmbOfPages + '">' + vv.next + '</a>'; }
+		} else {
+			for (i = 0; i++ < nmbOfPages;) {
+				if (i === param.page) {
+					str += '<a href="javascript:;" class="' + css.active + '" data-page="' + i + '">' + i + '</a>';
+				} else {
+					str += '<a href="javascript:;" data-page="' + i + '">' + i + '</a>';
+				}
+			}
+		}
+		// show results
+		if (param.nmbOfEntries === 0) {
+			$("." + css.nav + "," + "." + css.info, param.pager).empty();
+		} else {
+			$("." + css.nav, param.pager).html(str);
+			$("." + css.info, param.pager).text(vv.total + ": " + param.nmbOfEntries + ". " + vv.show + ": " + ((param.page - 1) * param.numberBreak + 1) + "-" + param.finNumber);
+		}
 		
 		return this;
 	};	
