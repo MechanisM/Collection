@@ -18,7 +18,7 @@
 			activeContext = this.getActiveParam("context").toString();
 		
 		if (!context && !activeContext) {
-			this.setElement("", null);
+			this.set("", null);
 		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }
 	
 		return this;
@@ -50,3 +50,18 @@
 	
 		return this;
 	};
+	
+	/**
+	 * pop element
+	 * 
+	 * @this {Colletion Object}
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.pop = function () { return this.deleteElementByLink("eq(-1)"); };
+	/**
+	 * shift element
+	 * 
+	 * @this {Colletion Object}
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.shift = function () { return this.deleteElementByLink("eq(0)"); };

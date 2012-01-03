@@ -45,7 +45,6 @@ copy	^
 		+ other\then.js ^
 		^
 		+ design\design.print.js ^
-		+ design\design.extprint.js ^
 		+ design\design.table.js ^
 		^
 		+ txt\closure.end.txt ^

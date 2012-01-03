@@ -1174,7 +1174,7 @@
 			nm;
 	
 		for (i = data.length; i--;) {
-			nm = data[i] !== "collection" ? $.toUpperCase(data[i], 1) : "";
+			nm = $.toUpperCase(data[i], 1);
 			
 			fn["$" + nm] = function (nm) {
 				return function (newParam) { return this._$(nm, newParam); };
@@ -1258,7 +1258,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.setElement = function (context, value, id) {
+	$.Collection.fn.set = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
 		id = id || "";
@@ -1283,7 +1283,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
-	$.Collection.fn.getElement = function (context, id) {
+	$.Collection.fn.get = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		var dObj = this.dObj;
 		
@@ -1305,7 +1305,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.addElement = function (cValue, propType, activeID, sourceID, deleteType) {
+	$.Collection.fn.add = function (cValue, propType, activeID, sourceID, deleteType) {
 		cValue = cValue !== undefined ? cValue : "";
 		propType = propType || "push";
 		deleteType = deleteType || false;
@@ -1355,9 +1355,35 @@
 			}
 			
 			// rewrites links (if used for an object "unshift")
-			if (lCheck !== true) { this.setElement("", lCheck, activeID || ""); }
+			if (lCheck !== true) { this.set("", lCheck, activeID || ""); }
 		} else { throw new Error("unable to set property!"); }
 	
+		return this;
+	};
+	
+	/**
+	 * push new element
+	 * 
+	 * @this {Colletion Object}
+	 * @param {mixed} [1..n] - new element
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.push = function () {
+		var i = -1, aLength = arguments.length;
+		for (; ++i < aLength;) { this.add(arguments[i]); }
+		
+		return this;
+	};
+	/**
+	 * unshift new element
+	 * 
+	 * @this {Colletion Object}
+	 * @param {mixed} [1..n] - new element
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.unshift = function () {
+		for (var i = arguments.length; i--;) { this.add(arguments[i], "unshift"); }
+		
 		return this;
 	};	
 	/////////////////////////////////
@@ -1379,7 +1405,7 @@
 			activeContext = this.getActiveParam("context").toString();
 		
 		if (!context && !activeContext) {
-			this.setElement("", null);
+			this.set("", null);
 		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }
 	
 		return this;
@@ -1410,7 +1436,22 @@
 		} else { this.deleteElementByLink(objContext, id); }
 	
 		return this;
-	};	
+	};
+	
+	/**
+	 * pop element
+	 * 
+	 * @this {Colletion Object}
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.pop = function () { return this.deleteElementByLink("eq(-1)"); };
+	/**
+	 * shift element
+	 * 
+	 * @this {Colletion Object}
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.shift = function () { return this.deleteElementByLink("eq(0)"); };	
 	/////////////////////////////////
 	//// single methods (concatenation)
 	/////////////////////////////////
@@ -1438,8 +1479,8 @@
 			} else if ($.isArray(cObj)) {
 				if ($.isArray(obj)) {
 					cObj = Array.prototype.concat(cObj, obj);
-					this.setElement(context, cObj, id);
-				} else { this.addElement(obj, "push", id); }
+					this.set(context, cObj, id);
+				} else { this.add(obj, "push", id); }
 			}
 		} else { throw new Error("incorrect data type!"); }
 	
@@ -1830,11 +1871,11 @@
 		if (mult === true) {
 			eLength = elements.length;
 			for (; ++i < eLength;) {
-				this.addElement(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+				this.add(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
 		} else {
-			this.addElement(context + nimble.CHILDREN + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.add(context + nimble.CHILDREN + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 		
@@ -2250,7 +2291,7 @@
 					cObj = sortObject.call(this, cObj);
 				} else { cObj = sortObjectByKey.call(this, cObj); }
 				//
-				this.setElement("", cObj, id || "");
+				this.set("", cObj, id || "");
 			}
 		} else { throw new Error("incorrect data type!"); }
 	
@@ -2321,67 +2362,6 @@
 	/////////////////////////////////
 	//// design methods (print)
 	/////////////////////////////////
-	
-	/**
-	 * simple templating (in context)
-	 * 
-	 * @this {Colletion Object}
-	 * @param param - object settings
-	 * @param {Template} [param.template=this.dObj.active.template] - template
-	 * @param {jQuery Object|Boolean} [param.target=this.dObj.active.target] - element to output the result ("false" - if you print a variable)
-	 * @param {String} [param.variable=this.dObj.sys.variableID] - variable ID (if param.target === false)
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {Parser|String|Boolean} [param.parser=this.dObj.active.parser] - parser function, string expressions or "false"
-	 * @param {String} [param.appendType=this.dObj.active.appendType] - type additions to the DOM
-	 * @param {String} [param.resultNull=this.dObj.active.resultNull] - text displayed if no results
-	 * @param {Boolean} [mult=true] - enable mult mode
-	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
-	 * @return {Colletion Object}
-	 */
-	$.Collection.fn.print = function (param, mult, count, from, indexOf) {
-		// values by default
-		mult = mult === false ? false : true;
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
-		
-		var
-			dObj = this.dObj,
-			opt = {},
-	
-			result = "", action;
-		//
-		$.extend(true, opt, dObj.active, param);
-		action = function (data, i, cOLength, self, id) {
-			// callback
-			opt.callback && opt.callback.apply(this, arguments);
-			//
-			result += opt.template.call(opt.template, data, i, cOLength, self, id);
-			if (mult !== true) { return false; }
-			
-			return true;
-		};
-		//
-		this.each(action, opt.filter, this.ACTIVE, mult, count, from, indexOf);
-		
-		result = !result ? opt.resultNull === false ? '<div class="' + dObj.css.noResult + '">' + dObj.viewVal.noResult + '</div>' : opt.resultNull : result;
-		result = opt.parser !== false ? this.customParser(opt.parser, result) : result;
-		
-		if (opt.target === false) {
-			if (!opt.variable) {
-				this.$_("variable", result);
-			} else {
-				this._push("variable", opt.variable, result);
-			}
-		} else { opt.target[opt.appendType](result); }
-	
-		return this;
-	};	
-	/////////////////////////////////
-	//// design methods (print)
-	/////////////////////////////////
 		
 	/**
 	 * extended templating (in context) (with pager)
@@ -2392,7 +2372,8 @@
 	 * @param {Template} [param.template=this.dObj.active.template] - template
 	 * @param {Number|Boolean} [param.numberBreak=this.dObj.active.param.numberBreak] - number of entries on 1 page (if "false", returns all records)
 	 * @param {Number} [param.pageBreak=this.dObj.active.param.pageBreak] - number of displayed pages (navigation)
-	 * @param {jQuery Object} [param.target=this.dObj.active.target] - element to output the result
+	 * @param {jQuery Object|Boolean} [param.target=this.dObj.active.target] - element to output the result ("false" - if you print a variable)
+	 * @param {String} [param.variable=this.dObj.sys.variableID] - variable ID (if param.target === false)
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
 	 * @param {Parser|String|Boolean} [param.parser=this.dObj.active.parser] - parser function, string expressions or "false"
 	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - if "true", the last iteration is taken from cache
@@ -2495,7 +2476,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.easyPage = function (param) {
-		this.dObj.active.templateModel.call(this.dObj.active.templateModel, param, this);
+		//this.dObj.active.templateModel.call(this.dObj.active.templateModel, param, this);
 		
 		return this;
 	};	

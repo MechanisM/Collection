@@ -15,7 +15,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.addElement = function (cValue, propType, activeID, sourceID, deleteType) {
+	$.Collection.fn.add = function (cValue, propType, activeID, sourceID, deleteType) {
 		cValue = cValue !== undefined ? cValue : "";
 		propType = propType || "push";
 		deleteType = deleteType || false;
@@ -65,8 +65,34 @@
 			}
 			
 			// rewrites links (if used for an object "unshift")
-			if (lCheck !== true) { this.setElement("", lCheck, activeID || ""); }
+			if (lCheck !== true) { this.set("", lCheck, activeID || ""); }
 		} else { throw new Error("unable to set property!"); }
 	
+		return this;
+	};
+	
+	/**
+	 * push new element
+	 * 
+	 * @this {Colletion Object}
+	 * @param {mixed} [1..n] - new element
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.push = function () {
+		var i = -1, aLength = arguments.length;
+		for (; ++i < aLength;) { this.add(arguments[i]); }
+		
+		return this;
+	};
+	/**
+	 * unshift new element
+	 * 
+	 * @this {Colletion Object}
+	 * @param {mixed} [1..n] - new element
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.unshift = function () {
+		for (var i = arguments.length; i--;) { this.add(arguments[i], "unshift"); }
+		
 		return this;
 	};

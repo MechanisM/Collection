@@ -13,7 +13,7 @@
 			module("core");
 			test("length", function () {
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3], last: 2});
-				db.push({table1: null, table2: "GO!"});
+				db.pushCollection({table1: null, table2: "GO!"});
 				
 				equal(db.length([1, 2, 3]), 3, "array");
 				equal(db.length(function ($this, i) {
@@ -91,12 +91,12 @@
 				
 				equal(db.deleteElements(function ($this, i) {
 					return $this[i] === 1;
-				}).getElement("0"), 2, "simple delete");
+				}).get("0"), 2, "simple delete");
 			});
 			test("move", function () {
-				var db = new $.Collection([1, 2, 3, 4]).push("table1", [1, 2, []]);
+				var db = new $.Collection([1, 2, 3, 4]).pushCollection("table1", [1, 2, []]);
 				
-				equal(db.$Context("eq(-1)").moveElements(false, "", "active", "table1").get().length, 0, "simple move");
+				equal(db.$Context("eq(-1)").moveElements(false, "", "active", "table1").getCollection().length, 0, "simple move");
 			});
 		});
 	</script>

@@ -12,7 +12,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.setElement = function (context, value, id) {
+	$.Collection.fn.set = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
 		id = id || "";
@@ -37,7 +37,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
-	$.Collection.fn.getElement = function (context, id) {
+	$.Collection.fn.get = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		var dObj = this.dObj;
 		

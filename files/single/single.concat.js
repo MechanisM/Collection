@@ -26,8 +26,8 @@
 			} else if ($.isArray(cObj)) {
 				if ($.isArray(obj)) {
 					cObj = Array.prototype.concat(cObj, obj);
-					this.setElement(context, cObj, id);
-				} else { this.addElement(obj, "push", id); }
+					this.set(context, cObj, id);
+				} else { this.add(obj, "push", id); }
 			}
 		} else { throw new Error("incorrect data type!"); }
 	

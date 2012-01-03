@@ -81,7 +81,7 @@
 					cObj = sortObject.call(this, cObj);
 				} else { cObj = sortObjectByKey.call(this, cObj); }
 				//
-				this.setElement("", cObj, id || "");
+				this.set("", cObj, id || "");
 			}
 		} else { throw new Error("incorrect data type!"); }
 	

@@ -14,9 +14,9 @@
 			test("collection", function () {
 				var db = $("#test").collection();
 				
-				equal(db.getElement("0 > childNodes > 0 > childNodes").length, 3, "simple test");
-				equal(db.getElement("0 > childNodes > 0 > classes").def, "def", "classes test");
-				equal(db.getElement("0 > childNodes > 0 > childNodes > 0 > name"), "name", "data test");
+				equal(db.get("0 > childNodes > 0 > childNodes").length, 3, "simple test");
+				equal(db.get("0 > childNodes > 0 > classes").def, "def", "classes test");
+				equal(db.get("0 > childNodes > 0 > childNodes > 0 > name"), "name", "data test");
 			});
 		});
 	</script>

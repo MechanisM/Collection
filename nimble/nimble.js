@@ -6,6 +6,28 @@
  * @version 1.0.1
  */
 var nimble = {
+	/**
+	 * framework name
+	 * 
+	 * @constant
+	 * @type String
+	 */
+	name: "nimble",
+	/**
+	 * framework version
+	 * 
+	 * @constant
+	 * @type String
+	 */
+	version: "1.0.1",
+	/**
+	 * return string: framework name + framework version
+	 *
+	 * @this {nimble}
+	 * @return {String}
+	 */
+	nimble: function () { return this.name + " " + this.version; },
+	
 	// constants
 	CONTEXT_SEPARATOR: " ",
 	QUERY_SEPARATOR: "/",
@@ -267,9 +289,9 @@ var nimble = {
 		var key, newObj = {};
 	
 		if (active[1] && active[1] == "unshift") {
-			newObj[active[0]] = value;
+			newObj[!isNaN(Number(active[0])) ? 0 : active[0]] = value;
 			for (key in obj) {
-				if (obj.hasOwnProperty(key)) { newObj[key] = obj[key]; }
+				if (obj.hasOwnProperty(key)) { newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key]; }
 			}
 			obj = newObj;
 	

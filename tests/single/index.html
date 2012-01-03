@@ -13,22 +13,22 @@
 			test("core", function () {
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				
-				equal(db.getElement("first > 0 > eq(-1) > eq(0)"), 3, "getElement");
+				equal(db.get("first > 0 > eq(-1) > eq(0)"), 3, "get");
 				equal(db
-					.setElement("first > 0 > eq(-1) > eq(0)", 99)
-					.getElement("first > 0 > eq(-1) > eq(0)"), 99,
-				"setElement");
+					.set("first > 0 > eq(-1) > eq(0)", 99)
+					.get("first > 0 > eq(-1) > eq(0)"), 99,
+				"set");
 				equal(db
-					.setElement("", 99)
-					.getElement(), 99,
-				"setElement - without context");
+					.set("", 99)
+					.get(), 99,
+				"set - without context");
 			});
 			//
 			test("concat", function () {
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				equal(db
 					.concat([1, 2, 3, 4, 5], "first > 0 >")
-					.getElement("first > 0 >").length, 8,
+					.get("first > 0 >").length, 8,
 				"simple test");
 			});
 			//
@@ -39,23 +39,23 @@
 				//
 				equal(db
 					.deleteElementByLink("first > 0 > 1")
-					.getElement("first > 0").length, 2,
+					.get("first > 0").length, 2,
 				"deleteElementByLink -> array");
 				//
 				equal(db
 					.deleteElementByLink("first > 0 > eq(-1) > second")
-					.getElement("first > 0 > eq(-1)").second, undefined,
+					.get("first > 0 > eq(-1)").second, undefined,
 				"deleteElementByLink -> object");
 				//
 				equal(db
 					.deleteElementsByLink(["first > eq(0)", "first > eq(-1)"])
-					.getElement("first").length, 1,
+					.get("first").length, 1,
 				"deleteElementsByLink -> array");
 				//
 				equal(db
-					.push("stack", obj)
+					.pushCollection("stack", obj)
 					.deleteElementsByLink({stack: ["second > eq(0)", "second > eq(0)"], active: "second > eq(0)"})
-					.getElement("second").length, 1,
+					.get("second").length, 1,
 				"deleteElementsByLink -> object");
 			});
 			//
@@ -63,16 +63,16 @@
 				var db = new $.Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				
 				equal(db
-					.addElement([1, 2], "second")
-					.getElement("second").length, 2,
-				"addElement - simple add");
+					.add([1, 2], "second")
+					.get("second").length, 2,
+				"add - simple add");
 				
 				equal(db
-					.addElement("first > 0", "second", "", "active", true)
-					.getElement("second").length, 3,
-				"addElement - copy");
-				equal(db.getElement("first").length, 2,
-				"addElement - move");
+					.add("first > 0", "second", "", "active", true)
+					.get("second").length, 3,
+				"add - copy");
+				equal(db.get("first").length, 2,
+				"add - move");
 			});
 		});
 	</script>

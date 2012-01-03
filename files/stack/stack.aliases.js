@@ -10,7 +10,7 @@
 			nm;
 	
 		for (i = data.length; i--;) {
-			nm = data[i] !== "collection" ? $.toUpperCase(data[i], 1) : "";
+			nm = $.toUpperCase(data[i], 1);
 			
 			fn["$" + nm] = function (nm) {
 				return function (newParam) { return this._$(nm, newParam); };

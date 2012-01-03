@@ -3,14 +3,32 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>$.Collection</title>
-	<!--<script type="text/javascript" src="jquery.js"></script>
-	<script type="text/javascript" src="jquery.collection.js"></script>-->
+	<script type="text/javascript" src="jquery.js"></script>
 	<script type="text/javascript" src="nimble/nimble.js"></script>
+	<script type="text/javascript" src="jquery.collection.js"></script>
 	<script type="text/javascript">
-		//var db = new $.Collection([{a: [1, 2]}]);
+		var data = [
+			{name: "Коба"},
+			{name: "Коба"},
+			{name: "Коба"},
+			{name: "Коба"}
+		], db = new $.Collection(data);
+		$(function () {
+			db
+				.$Target($("#result"))
+				.$Pager($("#pager").tplCompile())
+				.$Template($("#template").tplCompile())
+				.print();
+		});
 	</script>
 </head>
 
 <body>
+	<div id="pager">
+	</div>
+	<div id="result"></div>
+	<script type="text/ctpl" id="template">
+		<div class="row"><?js echo data[key].name; ?></div>
+	</script>
 </body>
 </html>
