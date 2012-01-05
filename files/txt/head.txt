@@ -35,7 +35,7 @@
  * 10) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
  * 11) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.
  * --
- * the record type: [active] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
+ * the record type: [some parameter] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
  * all overloading methods documented in the description of the method, because the syntax of the jsDoc not allow it to do
  * --
  * for comfortable work it is recommended to use the latest stable version of jQuery
