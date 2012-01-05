@@ -54,10 +54,7 @@
 	 */
 	$.Collection.fn._get = function (propName, id) {
 		var dObj = this.dObj;
-		
-		if (id && id !== this.ACTIVE) {
-			return dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
-		}
+		if (id && id !== this.ACTIVE) { return dObj.sys["tmp" + $.toUpperCase(propName, 1)][id]; }
 
 		return dObj.active[propName];
 	};
@@ -68,7 +65,7 @@
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Plain Object} objID - stack ID or object (ID: value)
-	 * @param {mixed} [newProp=undefined] - value (overload)
+	 * @param {mixed} [newProp] - value (overload)
 	 * @throw {Error} 
 	 * @return {Colletion Object}
 	 */
@@ -190,7 +187,7 @@
 	 * @param {String} propName - root property
 	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
 	 * @param {mixed} [deleteVal=false] - default value (for active properties)
-	 * @param {mixed} [resetVal=undefined] - reset value
+	 * @param {mixed} [resetVal] - reset value
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._drop = function (propName, objID, deleteVal, resetVal) {

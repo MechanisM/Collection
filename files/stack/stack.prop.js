@@ -9,7 +9,7 @@
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Plain Object} objKey - property name or object (name: value)
-	 * @param {mixed} [value=undefined] - value (overload)
+	 * @param {mixed} [value] - value (overload)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn._prop = function (propName, objKey, value) {

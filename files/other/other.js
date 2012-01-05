@@ -59,11 +59,11 @@
 			calFilter = function (array, iter) {
 				var
 					i = -1,
-					aLength = array.length - 1,
+					aLength = array.length,
 					pos = 0,
 					result = [];
 				
-				for (; i++ < aLength;) {
+				for (; ++i < aLength;) {
 					iter++;
 					if (array[i] === "(") { pos++; }
 					if (array[i] === ")") {
@@ -75,9 +75,9 @@
 				}
 			};
 			// calculate filter
-			fLength = filter.length - 1;
+			fLength = filter.length;
 			
-			for (; j++ < fLength;) {
+			for (; ++j < fLength;) {
 				// calculate atoms
 				if (filter[j] === "(" || filter[j] === "!(") {
 					if (filter[j].substring(0, 1) === "!") {
@@ -93,9 +93,7 @@
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
 						result = inverse === true ? !tmpResult : tmpResult && result;
-					} else {
-						result = inverse === true ? !tmpResult : tmpResult || result;
-					}
+					} else { result = inverse === true ? !tmpResult : tmpResult || result; }
 				// calculate outer filter
 				} else if (filter[j] !== ")" && filter[j] !== "||" && filter[j] !== "&&") {
 					if (filter[j].substring(0, 1) === "!") {
@@ -109,9 +107,7 @@
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
 						result = inverse === true ? !tmpResult : tmpResult && result;
-					} else {
-						result = inverse === true ? !tmpResult : tmpResult || result;
-					}
+					} else { result = inverse === true ? !tmpResult : tmpResult || result; }
 				// "and" or "or"
 				} else if (filter[j] === "||") {
 					and = false;
@@ -129,7 +125,7 @@
 	 * calculate multi parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|String} parser - parser function or string expressions
+	 * @param {Parser|String|Boolean} parser - parser function or string expressions or "false"
 	 * @param {String} str - source string
 	 * @return {String}
 	 */
@@ -142,6 +138,8 @@
 			tmpParser,
 			i;
 		
+		// if parser is disabled
+		if (parser === false) { return str; }
 		// if parser is function
 		if ($.isFunction(parser)) { return parser.call(parser, str, this); }
 		
@@ -183,10 +181,10 @@
 			dObj = this.dObj,
 			context = "", i;
 		//
-		context = this._get("collection", id || "").split(" " + nimble.CHILDREN + " ");
+		context = this._get("collection", id || "").split(nimble.CHILDREN);
         for (i = n; i--;) { context.splice(-1, 1); }
 	
-		return context.join(" " + nimble.CHILDREN + " ");
+		return context.join(nimble.CHILDREN);
 	};
 	/**
 	 * parent

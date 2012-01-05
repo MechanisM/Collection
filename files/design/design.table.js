@@ -8,13 +8,13 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] - td number to a string
-	 * @param {String} [tag="td"] - tag name
+	 * @param {String} [tag="div"] - tag name
 	 * @param {Boolean} [empty=true] - display empty cells
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.genTable = function (count, tag, empty) {
 		count = count || 4;
-		tag = tag || "td";
+		tag = tag || "div";
 		empty = empty === false ? false : true;
 		var
 			i = 1, j,

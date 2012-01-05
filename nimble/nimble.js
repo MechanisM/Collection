@@ -113,7 +113,7 @@ var nimble = {
 	 * @this {nimble}
 	 * @param {Object|Number|Boolean} obj - some object
 	 * @param {Context} context - link
-	 * @param {mixed} [value=undefined] - some value
+	 * @param {mixed} [value] - some value
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @return {nimble|mixed}
 	 */
@@ -251,7 +251,7 @@ var nimble = {
 	 * @this {nimble}
 	 * @param {String} query - query string
 	 * @param {Object} event - event request
-	 * @param {mixed} [param=undefined] - input parameters
+	 * @param {mixed} [param] - input parameters
 	 * @param {mixed} [_this=event] - this
 	 * @return {mixed}
 	 */

@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Collection} obj - collection
-	 * @param {Context} context - additional context
+	 * @param {Context} [context] - additional context
 	 * @param {String} [id=this.ACTIVE] - collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}

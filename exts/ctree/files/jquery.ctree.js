@@ -13,7 +13,7 @@
  * 4) Plain Object является сокращённой формой [Object] и означает хеш-таблицу
  * 5) jQuery Object является сокращённой формой [Object] и означает экземпляр jQuery
  * --
- * Запись, типа: [prop=undefined] означает, что данный параметр не обязательный и если не указан явно, то не определён (не имеет значения по умолчанию)
+ * Запись, типа: [prop] означает, что данный параметр не обязательный и если не указан явно, то не определён (не имеет значения по умолчанию)
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
@@ -27,7 +27,7 @@
 	 * @constructor
 	 * @this {jQuery Object}
 	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.prop] - пользовательские настройки
-	 * @param {Tree View} [data=undefined] - представление дерева
+	 * @param {Tree View} [data] - представление дерева
 	 * @return {Colletion Object}
 	 */
 	$.fn.cTree = function (uProp, data) {

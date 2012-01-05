@@ -8,17 +8,17 @@
 	 * @param {Object} param - advanced option
 	 * @return {jQuery Object}
 	 */
-	$.fn.setCUI = function (name, obj, param) {
+	$.fn.cuiSet = function (name, obj, param) {
 		this.each(function () {
 			var $this = $(this), key;
 			//
-			if ($this.data("CUI")) {
-				if (!$this.data("CUI")[name]) { $this.data("CUI")[name] = {obj: obj}; }
-			} else { $this.data("CUI", {}).data("CUI")[name] = {obj: obj}; }
+			if ($this.data("cui")) {
+				if (!$this.data("cui")[name]) { $this.data("cui")[name] = {obj: obj}; }
+			} else { $this.data("cui", {}).data("cui")[name] = {obj: obj}; }
 			
 			if (param) {
 				for (key in param) {
-					if (param.hasOwnProperty(key)) { $this.data("CUI")[name][key] = param[key]; }
+					if (param.hasOwnProperty(key)) { $this.data("cui")[name][key] = param[key]; }
 				}
 			}
 		});
@@ -29,35 +29,31 @@
 	 * get widget for the elements
 	 *
 	 * @this {jQuery Object}
-	 * @param {String} [name=undefined] - widget name
+	 * @param {String} [name] - widget name
 	 * @return {Array}
 	 */
-	$.fn.getCUI = function (name) {
+	$.fn.cuiGet = function (name) {
 		var $this = $(this);
 		//
 		if (name) {
-			if ($this.data("CUI") && $this.data("CUI")[name]) { return $this.data("CUI")[name]; }
-		} else {
-			if ($this.data("CUI")) { return $this.data("CUI"); }
-		}
+			if ($this.data("cui") && $this.data("cui")[name]) { return $this.data("cui")[name]; }
+		} else { if ($this.data("cui")) { return $this.data("cui"); } }
 		
 		return false;
 	};
 	/**
-	 * remove widget from the element
+	 * remove widget from the elements
 	 *
 	 * @this {jQuery Object}
-	 * @param {String} [name=undefined] - widget name
+	 * @param {String} [name] - widget name
 	 * @return {jQuery Object}
 	 */
-	$.fn.removeCUI = function (name) {
+	$.fn.cuiRemove = function (name) {
 		this.each(function () {
 			var $this = $(this);
 			if (name) {
-				if ($this.data("CUI") && $this.data("CUI")[name]) { delete $this.data("CUI")[name]; }
-			} else if ($this.data("CUI")) {
-				$this.removeData("CUI");
-			}
+				if ($this.data("cui") && $this.data("cui")[name]) { delete $this.data("cui")[name]; }
+			} else if ($this.data("cui")) { $this.removeData("cui"); }
 		});
 		
 		return this;
@@ -70,16 +66,16 @@
 	 * @param {Array|Plain Object} data - array of parameters
 	 * @return {jQuery Object}
 	 */
-	$.fn.extendCUI = function (name, data) {
+	$.fn.cuiExtend = function (name, data) {
 		var
-			cui = this.getCUI(name),
+			cui = this.cuiGet(name),
 			i = 1, j, n, key, inKey, splitKey,
 			
-			aLength = arguments.length - 1,
+			aLength = arguments.length,
 			obj;
 		
 		if (cui) {
-			for (; i++ < aLength;) {
+			for (; ++i < aLength;) {
 				//
 				for (inKey in arguments[i]) {
 					if (arguments[i].hasOwnProperty(inKey)) {
@@ -93,9 +89,7 @@
 				}
 				//
 				for (key in data) {
-					//
 					if (data.hasOwnProperty(key)) {
-						//
 						if ($.isArray(data[key])) {
 							for (j = data[key].length; j--;) {
 								if (arguments[i][data[key][j]]) {
@@ -103,7 +97,7 @@
 									//
 									if ($.isPlainObject(obj[data[key][j]])) {
 										$.extend(obj[data[key][j]], arguments[i][data[key][j]]);
-									} else { $.Collection.obj.setByLink(obj, data[key][j], arguments[i][data[key][j]]); }
+									} else { nimble.byLink(obj, data[key][j], arguments[i][data[key][j]]); }
 								}
 							}
 						} else {
@@ -114,7 +108,7 @@
 								//
 								if ($.isPlainObject(obj[data[key]])) {
 									$.extend(true, obj[data[key]], arguments[i][data[key]]);
-								} else { $.Collection.obj.setByLink(obj, data[key], arguments[i][data[key]]); }
+								} else { nimble.byLink(obj, data[key], arguments[i][data[key]]); }
 							}
 						}
 					}
@@ -131,8 +125,8 @@
 	 * @param {String} name - widget name
 	 * @return {Object|Boolean}
 	 */
-	$.fn.isCUI = function (name) {
-		var cui = this.getCUI(name);
+	$.fn.cuiIs = function (name) {
+		var cui = this.cuiGet(name);
 		if (cui) { var obj = cui.obj; return obj; }
 		
 		return false;
@@ -145,16 +139,13 @@
 	 * @param {Plain Object} def - custom settings
 	 * @return {Object}
 	 */
-	$.fn.newCUIData = function (data, def) {
+	$.fn.cuiNewCollection = function (data, def) {
+		def = def || "";
 		var obj;
 	
 		if (data && data.name && data.name === "$.Collection") {
 			obj = data;
-		} else {
-			obj = data && data !== false ? new $.Collection(data, def || "") :
-						data && data === false ? new $.Collection("", def || "") :
-							this.collection(def || "");
-		}
+		} else { obj = data && data !== false ? new $.Collection(data, def) : data && data === false ? new $.Collection("", def) : this.collection(def); }
 		
 		return obj;
 	};
@@ -165,15 +156,13 @@
 	 * @param {String} name - widget name
 	 * @return {jQuery Object}
 	 */
-	$.fn.addCUIEvents = function (name, events) {
+	$.fn.cuiAddEvents = function (name, events) {
 		events = events || this[name].events || {};
-		var obj = this.isCUI(name), key;
+		var obj = this.cuiIs(name), key;
 		
 		if (obj !== false) {
 			for (key in events) {
-				if (events.hasOwnProperty(key)) {
-					events[key].call(this, obj);
-				}
+				if (events.hasOwnProperty(key)) { events[key].call(this, obj); }
 			}
 		}
 		
@@ -181,18 +170,18 @@
 	};
 	// filter for the Sizzle
 	$.extend($.expr[':'], {
-		CUI: function (elem, n, name) {
+		cui: function (elem, n, name) {
 			var i, elem;
 			name = name[name.length - 1];
 				
 			if (name) {
 				name = name.split(",");
 				for (i = name.length; i--;) {
-					if (!$(elem).data("CUI") || !$(elem).data("CUI")[name[i]]) { return false; }
+					if (!$(elem).data("cui") || !$(elem).data("cui")[name[i]]) { return false; }
 				}
 						
 				return true;
-			} else if ($(elem).data("CUI")) {
+			} else if ($(elem).data("cui")) {
 				return true;
 			} else { return false; }
 		}

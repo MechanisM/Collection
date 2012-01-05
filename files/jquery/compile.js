@@ -10,7 +10,7 @@
 	 * @throw {Error}
 	 * @return {Function}
 	 */
-	$.fn.tplCompile = function () {
+	$.fn.ctplCompile = function () {
 		if (this.length === 0) { throw new Error("DOM element isn't exist!"); }
 		
 		var
@@ -32,4 +32,25 @@
 		}
 		
 		return new Function("data", "i", "cOLength", "self", "id", resStr + " return result;");
+	};
+	
+	/**
+	 * make template
+	 * 
+	 * @this {jQuery Object}
+	 * @param {Collection Object} cObj - an instance of $.Collection
+	 * @throw {Error}
+	 * @return {Function}
+	 */
+	$.fn.ctplMake = function (cObj) {
+		this.find("[type='text/ctpl']").each(function () {
+			var
+				$this = $(this),
+				data = $this.data(),
+				
+				prefix = data.prefix ? data.prefix + "_" : "";
+			//
+			cObj.pushTemplate(prefix + data.name, $this.ctplCompile());
+			if (data.set && data.set === true) { cObj.setTemplate(prefix + data.name); }
+		});
 	};

@@ -79,7 +79,7 @@
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = $.isExist(filter) ? filter : this.ACTIVE;
 		id = $.isExist(id) ? id : this.ACTIVE;
-	
+		
 		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;

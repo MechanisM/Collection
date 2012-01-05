@@ -7,7 +7,7 @@
 	 * delete element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - link
+	 * @param {Context} [context] - link
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */

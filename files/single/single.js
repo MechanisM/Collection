@@ -7,7 +7,7 @@
 	 * set new value to element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - additional context
+	 * @param {Context} [context] - additional context
 	 * @param {mixed} value - new value
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
@@ -33,7 +33,7 @@
 	 * get element by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} context - additional context
+	 * @param {Context} [context] - additional context
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */

@@ -8,8 +8,8 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String|Collection} [objID=this.ACTIVE] - collection ID or collection
-	 * @param {Function|Array} [replacer=undefined] - an paramional parameter that determines how object values are stringified for objects
-	 * @param {Number|String} [space=undefined] - indentation of nested structures
+	 * @param {Function|Array} [replacer] - an paramional parameter that determines how object values are stringified for objects
+	 * @param {Number|String} [space] - indentation of nested structures
 	 * @return {String}
 	 */
 	$.Collection.fn.toString = function (objID, replacer, space) {

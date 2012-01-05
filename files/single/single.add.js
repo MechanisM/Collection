@@ -7,10 +7,10 @@
 	 * add new element to object (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} cValue - new element or context for sourceID
+	 * @param {mixed|Context} [cValue] - new element or context for sourceID
 	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "->unshift" - the result will be similar to work for an array "unshift")
 	 * @param {String} [activeID=this.dObj.active.collectionID] - collection ID
-	 * @param {String} [sourceID=undefined] - source ID (if move)
+	 * @param {String} [sourceID] - source ID (if move)
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @throw {Error}
 	 * @return {Colletion Object}

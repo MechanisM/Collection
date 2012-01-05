@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
-	 * @param {Context} context - source context
+	 * @param {Context} [context] - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")

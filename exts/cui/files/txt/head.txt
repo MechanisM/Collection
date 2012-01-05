@@ -6,10 +6,10 @@
  * specific data types:
  * 1) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
  * --
- * the record type: [active=undefined] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
+ * the record type: [some parameter] means that this parameter is optional, and if not specified explicitly, it is not defined (has no default value)
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 22.12.2011 17:49:24
- * @version 1.3.2
+ * @date: 05.01.2012 12:25:24
+ * @version 1.4
  */
