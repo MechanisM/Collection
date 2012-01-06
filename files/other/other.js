@@ -177,9 +177,7 @@
 	 */
 	$.Collection.fn.parentContext = function (n, id) {
 		n = n || 1;
-		var
-			dObj = this.dObj,
-			context = "", i;
+		var context = "", i;
 		//
 		context = this._get("collection", id || "").split(nimble.CHILDREN);
         for (i = n; (i -= 1) > -1;) { context.splice(-1, 1); }

@@ -1,5 +1,5 @@
 ﻿/**
- * Nimble - simple JavaScript framework for working with objects
+ * nimble - simple JavaScript framework for working with objects
  *
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 01.01.2012 21:55:59
