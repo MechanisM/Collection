@@ -2528,7 +2528,7 @@ var nimble = {
 	 * @param {Number} [param.page=this.dObj.active.page] - page number
 	 * @param {Template} [param.template=this.dObj.active.template] - template
 	 * @param {Number|Boolean} [param.numberBreak=this.dObj.active.numberBreak] - number of entries on 1 page (if "false", returns all records)
-	 * @param {Number} [param.pageBreak=this.dObj.active.pageBreak] - number of displayed pages (navigation)
+	 * @param {Number} [param.pageBreak=this.dObj.active.pageBreak] - number of displayed pages (navigation, > 2)
 	 * @param {jQuery Object|Boolean} [param.target=this.dObj.active.target] - element to output the result ("false" - if you print a variable)
 	 * @param {String} [param.variable=this.dObj.sys.variableID] - variable ID (if param.target === false)
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
@@ -2671,11 +2671,13 @@ var nimble = {
 			i, j = 0, from, to;
 		//
 		param.pager.find("[data-ctm]").each(function () {
+			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
+			
 			var
 				$this = $(this),
 				data = $this.data("ctm"),
 				classes = data.classes;
-				
+
 			if (data.nav) {
 				if ((data.nav === "prev" && param.page === 1) || (data.nav === "next" && param.finNumber === param.nmbOfEntries)) {
 					$this.addClass(classes && classes.disabled || "disabled");
@@ -2683,19 +2685,15 @@ var nimble = {
 				//
 				if (data.nav === "pageList") {
 					if (nmbOfPages > param.pageBreak) {	
-						if (param.page === 1) {
+						j = param.pageBreak % 2 !== 0 ? 1 : 0;
+						from = (param.pageBreak - j) / 2;
+						to = from;
+						if (param.page - j < from) {
 							from = 0;
-						} else if (param.pageBreak % 2 !== 0) {
-							from = (param.pageBreak - 1) / 2;
-							to = from;
-							
-							if (param.page - 1 < from) {
-								from = 0;
-							} else {
-								from = param.page - from - 1;
-								if (param.page + to > nmbOfPages) {
-									from -= param.page + to - nmbOfPages;
-								}
+						} else {
+							from = param.page - from - j;
+							if (param.page + to > nmbOfPages) {
+								from -= param.page + to - nmbOfPages;
 							}
 						}
 						
