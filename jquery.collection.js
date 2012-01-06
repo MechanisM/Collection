@@ -2560,6 +2560,7 @@ var nimble = {
 		//
 		$.extend(true, opt, active, param);
 		if (param) { opt.page = nimble.expr(opt.page, active.page || ""); }
+		if (opt.page < 1) { opt.page = 1; }
 		//
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
@@ -2635,7 +2636,7 @@ var nimble = {
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			opt.page = "-=1";
-			this.extPrint(opt);
+			this.print(opt, true);
 		} else { this.easyPage(opt); }
 	
 		return this;
@@ -2667,7 +2668,7 @@ var nimble = {
 				return str += ">" + i + "</" + (data.tag || "span") + ">";
 			},
 			//
-			i, j = 0, z;
+			i, j = 0, from, to;
 		//
 		param.pager.find("[data-ctm]").each(function () {
 			var
@@ -2682,17 +2683,25 @@ var nimble = {
 				//
 				if (data.nav === "pageList") {
 					if (nmbOfPages > param.pageBreak) {	
-						for (i = param.page; (i += 1) < nmbOfPages;) { j += 1; }
-						if (j < param.pageBreak) { z = param.pageBreak - j + 1; } else { z = 1; }
-						//
-						for (j = -1, i = (param.page - z); (i += 1) < nmbOfPages && (j += 1) !== -1;) {
-							if (j === (param.pageBreak - 1) && i !== param.page) { break; }
-							if (i === param.page) {
-								if (j === 0 && param.page !== 1) {
-									str += genPage(data, classes || "", i - 1);
-								} else { j -= 1; }
-								str += genPage(data, classes || "", i);
-							} else { str += genPage(data, classes || "", i); }
+						if (param.page === 1) {
+							from = 0;
+						} else if (param.pageBreak % 2 !== 0) {
+							from = (param.pageBreak - 1) / 2;
+							to = from;
+							
+							if (param.page - 1 < from) {
+								from = 0;
+							} else {
+								from = param.page - from - 1;
+								if (param.page + to > nmbOfPages) {
+									from -= param.page + to - nmbOfPages;
+								}
+							}
+						}
+						
+						for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
+							if (j === param.pageBreak && i !== param.page) { break; }
+							str += genPage(data, classes || "", i);
 						}
 					} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
 					$this.html(str);
@@ -2708,6 +2717,7 @@ var nimble = {
 					case "from" : { $this.html((param.page - 1) * param.numberBreak + 1); } break;
 					case "to" : { $this.html(param.finNumber); } break;
 					case "inPage" : { $this.html(param.nmbOfEntriesInPage); } break;
+					case "nmbOfPages" : { $this.html(param.nmbOfPages); } break;
 				}
 			}
 		});

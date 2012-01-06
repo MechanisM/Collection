@@ -4,49 +4,48 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>$.Collection</title>
 	<script type="text/javascript" src="../jquery.js"></script>
-	<script type="text/javascript" src="../nimble/nimble.js"></script>
 	<script type="text/javascript" src="../jquery.collection.js"></script>
 	<script type="text/javascript">
 		var data = [
-			{avatar: "img/1.jpg", name: "Коба", url: "http://kobezzza.com"},
-			{avatar: "img/2.jpg", name: "Серый", url: "http://kobezzza.com/2"},
-			{avatar: "img/3.jpg", name: "Креведка", url: "http://kobezzza.com/3"},
-			{avatar: "img/4.jpg", name: "Кисель", url: "http://kobezzza.com/4"},
-			{avatar: "img/5.jpg", name: "Егор", url: "http://kobezzza.com/5"},
-			{avatar: "img/6.jpg", name: "Димон", url: "http://kobezzza.com/6"},
-			{avatar: "img/1.jpg", name: "Коба", url: "http://kobezzza.com"},
-			{avatar: "img/2.jpg", name: "Серый", url: "http://kobezzza.com/2"},
-			{avatar: "img/3.jpg", name: "Креведка", url: "http://kobezzza.com/3"},
-			{avatar: "img/4.jpg", name: "Кисель", url: "http://kobezzza.com/4"},
-			{avatar: "img/5.jpg", name: "Егор", url: "http://kobezzza.com/5"},
-			{avatar: "img/6.jpg", name: "Димон", url: "http://kobezzza.com/6"},
-			{avatar: "img/1.jpg", name: "Коба", url: "http://kobezzza.com"},
-			{avatar: "img/2.jpg", name: "Серый", url: "http://kobezzza.com/2"},
-			{avatar: "img/3.jpg", name: "Креведка", url: "http://kobezzza.com/3"},
-			{avatar: "img/4.jpg", name: "Кисель", url: "http://kobezzza.com/4"},
-			{avatar: "img/5.jpg", name: "Егор", url: "http://kobezzza.com/5"},
-			{avatar: "img/6.jpg", name: "Димон", url: "http://kobezzza.com/6"},
-			{avatar: "img/1.jpg", name: "Коба", url: "http://kobezzza.com"},
-			{avatar: "img/2.jpg", name: "Серый", url: "http://kobezzza.com/2"},
-			{avatar: "img/3.jpg", name: "Креведка", url: "http://kobezzza.com/3"},
-			{avatar: "img/4.jpg", name: "Кисель", url: "http://kobezzza.com/4"},
-			{avatar: "img/5.jpg", name: "Егор", url: "http://kobezzza.com/5"},
-			{avatar: "img/6.jpg", name: "Димон", url: "http://kobezzza.com/6"},
-			{avatar: "img/1.jpg", name: "Коба", url: "http://kobezzza.com"},
-			{avatar: "img/2.jpg", name: "Серый", url: "http://kobezzza.com/2"},
-			{avatar: "img/3.jpg", name: "Креведка", url: "http://kobezzza.com/3"},
-			{avatar: "img/4.jpg", name: "Кисель", url: "http://kobezzza.com/4"},
-			{avatar: "img/5.jpg", name: "Егор", url: "http://kobezzza.com/5"},
-			{avatar: "img/6.jpg", name: "Димон", url: "http://kobezzza.com/6"}
+			{avatar: "img/1.jpg", name: "Коба1", url: "http://kobezzza.com"},
+			{avatar: "img/2.jpg", name: "Серый1", url: "http://kobezzza.com/2"},
+			{avatar: "img/3.jpg", name: "Креведка1", url: "http://kobezzza.com/3"},
+			{avatar: "img/4.jpg", name: "Кисель2", url: "http://kobezzza.com/4"},
+			{avatar: "img/5.jpg", name: "Егор2", url: "http://kobezzza.com/5"},
+			{avatar: "img/6.jpg", name: "Димон2", url: "http://kobezzza.com/6"},
+			{avatar: "img/1.jpg", name: "Коба3", url: "http://kobezzza.com"},
+			{avatar: "img/2.jpg", name: "Серый3", url: "http://kobezzza.com/2"},
+			{avatar: "img/3.jpg", name: "Креведка3", url: "http://kobezzza.com/3"},
+			{avatar: "img/4.jpg", name: "Кисель4", url: "http://kobezzza.com/4"},
+			{avatar: "img/5.jpg", name: "Егор4", url: "http://kobezzza.com/5"},
+			{avatar: "img/6.jpg", name: "Димон4", url: "http://kobezzza.com/6"},
+			{avatar: "img/1.jpg", name: "Коба5", url: "http://kobezzza.com"},
+			{avatar: "img/2.jpg", name: "Серый5", url: "http://kobezzza.com/2"},
+			{avatar: "img/3.jpg", name: "Креведка5", url: "http://kobezzza.com/3"},
+			{avatar: "img/4.jpg", name: "Кисель6", url: "http://kobezzza.com/4"},
+			{avatar: "img/5.jpg", name: "Егор6", url: "http://kobezzza.com/5"},
+			{avatar: "img/6.jpg", name: "Димон6", url: "http://kobezzza.com/6"},
+			{avatar: "img/1.jpg", name: "Коба7", url: "http://kobezzza.com"},
+			{avatar: "img/2.jpg", name: "Серый7", url: "http://kobezzza.com/2"},
+			{avatar: "img/3.jpg", name: "Креведка7", url: "http://kobezzza.com/3"},
+			{avatar: "img/4.jpg", name: "Кисель8", url: "http://kobezzza.com/4"},
+			{avatar: "img/5.jpg", name: "Егор8", url: "http://kobezzza.com/5"},
+			{avatar: "img/6.jpg", name: "Димон8", url: "http://kobezzza.com/6"},
+			{avatar: "img/1.jpg", name: "Коба9", url: "http://kobezzza.com"},
+			{avatar: "img/2.jpg", name: "Серый9", url: "http://kobezzza.com/2"},
+			{avatar: "img/3.jpg", name: "Креведка9", url: "http://kobezzza.com/3"},
+			{avatar: "img/4.jpg", name: "Кисель10", url: "http://kobezzza.com/4"},
+			{avatar: "img/5.jpg", name: "Егор10", url: "http://kobezzza.com/5"},
+			{avatar: "img/6.jpg", name: "Димон10", url: "http://kobezzza.com/6"}
 		], db = new $.Collection(data);
 		$(function () {
 			db
 				.$Target($("#result"))
 				.$Pager($("#pager"))
 				.$Calculator(".row")
-				.$PageBreak(4)
-				.$NumberBreak(2)
-				.$Template($("#template").tplCompile())
+				.$PageBreak(5)
+				.$NumberBreak(3)
+				.$Template($("#template").ctplCompile())
 				.$Parser(function (str) {
 					return str.replace(/http:\/\/(.*?).com/gi, '<a href="http://$1.com">$1</a>');
 				})
@@ -54,6 +53,12 @@
 				
 			$("#nav").delegate("a", "click", function () {
 				db.print($(this).data("page"), true);
+			});
+			$("#prev").on("click", function () {
+				db.print("-=1", true);
+			});
+			$("#next").on("click", function () {
+				db.print("+=1", true);
 			});
 		});
 	</script>
@@ -63,13 +68,14 @@
 			padding: 5px;
 			background-color: #F9F9F9
 		}
+		.active { font-size: 24px; color: #036 }
 	</style>
 </head>
 
 <body>
 	<div id="pager">
-		<a href="javascript:;" data-ctm='{"nav": "prev", "classes": {"disabled": "disabled2"}}'> prev </a>
-		<a href="javascript:;" data-ctm='{"nav": "next"}'> next </a>
+		<a href="javascript:;" id="prev" data-ctm='{"nav": "prev", "classes": {"disabled": "disabled2"}}'> prev </a>
+		<a href="javascript:;" id="next" data-ctm='{"nav": "next"}'> next </a>
 		
 		<div id="nav" data-ctm='{"nav": "pageList", "tag": "a", "attr": {"href": "javascript:;"}}'></div>
 	</div>
