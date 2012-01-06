@@ -15,7 +15,7 @@
 	 * @param {String} id - collection ID
 	 * @return {Boolean}
 	 */
-	$.Collection.fn.customFilter = function (filter, data, i, cOLength, self, id) {
+	$.Collection.fn.customFilter = function (filter, el, data, i, cOLength, self, id) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -32,19 +32,19 @@
 		// if filter is disabled
 		if (filter === false) { return true; }
 		// if filter is function
-		if ($.isFunction(filter)) { return filter.call(filter, data, i, cOLength, self, id); }
+		if ($.isFunction(filter)) { return filter.call(filter, el, data, i, cOLength, self, id); }
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
-			if (active.filter) { return active.filter.call(active.filter, data, i, cOLength, self, id); }
-	
+			if (active.filter) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
+			
 			return true;
 		} else {
 			// if filter is string
 			if (!$.isArray(filter)) {
 				// if simple filter
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], data, i, cOLength, self, id);
+					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id);
 				}
 				
 				filter = $.trim(
@@ -63,13 +63,13 @@
 					pos = 0,
 					result = [];
 				
-				for (; ++i < aLength;) {
-					iter++;
-					if (array[i] === "(") { pos++; }
+				for (; (i += 1) < aLength;) {
+					iter += 1;
+					if (array[i] === "(") { pos += 1; }
 					if (array[i] === ")") {
 						if (pos === 0) {
 							return {result: result, iter: iter};
-						} else { pos--; }
+						} else { pos -= 1; }
 					}
 					result.push(array[i]);
 				}
@@ -77,7 +77,7 @@
 			// calculate filter
 			fLength = filter.length;
 			
-			for (; ++j < fLength;) {
+			for (; (j += 1) < fLength;) {
 				// calculate atoms
 				if (filter[j] === "(" || filter[j] === "!(") {
 					if (filter[j].substring(0, 1) === "!") {
@@ -88,7 +88,7 @@
 					tmpFilter = calFilter(filter.slice((j + 1)), j);
 					j = tmpFilter.iter;
 					//
-					tmpResult = this.customFilter(tmpFilter.result, data, i, cOLength, self, id);
+					tmpResult = this.customFilter(tmpFilter.result, el, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -102,7 +102,7 @@
 					} else { inverse = false; }
 					
 					tmpFilter = filter[j] === this.ACTIVE ? active.filter : sys.tmpFilter[filter[j]];
-					tmpResult = tmpFilter.call(tmpFilter, data, i, cOLength, self, id);
+					tmpResult = tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -156,7 +156,7 @@
 				parser = parser.split("&&");
 			}
 			
-			for (i = parser.length; i--;) {
+			for (i = parser.length; (i -= 1) > -1;) {
 				parser[i] = $.trim(parser[i]);
 				tmpParser = parser[i] === this.ACTIVE ? active.parser : sys.tmpParser[parser[i]];
 				
@@ -182,7 +182,7 @@
 			context = "", i;
 		//
 		context = this._get("collection", id || "").split(nimble.CHILDREN);
-        for (i = n; i--;) { context.splice(-1, 1); }
+        for (i = n; (i -= 1) > -1;) { context.splice(-1, 1); }
 	
 		return context.join(nimble.CHILDREN);
 	};

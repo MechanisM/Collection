@@ -5,7 +5,10 @@
 :start
 
 copy	^
-		txt\head.txt ^
+        ..\nimble\txt\head.txt ^
+        + ..\nimble\nimble.js ^
+        ^
+		+ txt\head.txt ^
 		+ txt\closure.start.txt ^
 		^
 		+ core\core.js ^

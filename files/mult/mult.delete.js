@@ -19,7 +19,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElements = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -40,9 +40,7 @@
 		var elements = this.searchElements(filter, id, mult, count, from, indexOf), i;
 		if (mult === false) {
 			this.deleteElementByLink(elements, id);
-		} else {
-			for (i = elements.length; i--;) { this.deleteElementByLink(elements[i], id); }
-		}
+		} else { for (i = elements.length; (i -= 1) > -1;) { this.deleteElementByLink(elements[i], id); } }
 	
 		return this;
 	};

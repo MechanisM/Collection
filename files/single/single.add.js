@@ -72,7 +72,7 @@
 	};
 	
 	/**
-	 * push new element
+	 * push new element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} [1..n] - new element
@@ -80,19 +80,19 @@
 	 */
 	$.Collection.fn.push = function () {
 		var i = -1, aLength = arguments.length;
-		for (; ++i < aLength;) { this.add(arguments[i]); }
+		for (; (i += 1) < aLength;) { this.add(arguments[i]); }
 		
 		return this;
 	};
 	/**
-	 * unshift new element
+	 * unshift new element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} [1..n] - new element
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.unshift = function () {
-		for (var i = arguments.length; i--;) { this.add(arguments[i], "unshift"); }
+		for (var i = arguments.length; (i -= 1) > -1;) { this.add(arguments[i], "unshift"); }
 		
 		return this;
 	};

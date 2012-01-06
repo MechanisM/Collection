@@ -13,11 +13,11 @@
 	 * @return {Number}
 	 */
 	$.Collection.fn.length = function (filter, id) {
-		filter = $.isExist(filter) ? filter : false;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		var
 			dObj = this.dObj,
 			cObj, cOLength, aCheck,
-			key, countRecords;
+			i, countRecords;
 		
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
@@ -47,10 +47,26 @@
 				countRecords = cOLength;
 			} else {
 				countRecords = 0;
-				for (key in cObj) {
-					if (cObj.hasOwnProperty(key)) {
-						if (this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-							countRecords++;
+				if (cOLength !== undefined) {
+					if (cObj.forEach) {
+						cObj.forEach(function (el, i, obj) {
+							if (this.customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+								countRecords += 1;
+							}
+						}, this);
+					} else {
+						for (i = cOLength; (i -= 1) > -1;) {
+							if (this.customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+								countRecords += 1;
+							}
+						}
+					}
+				} else {
+					for (i in cObj) {
+						if (cObj.hasOwnProperty(i)) {
+							if (this.customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+								countRecords += 1;
+							}
 						}
 					}
 				}
@@ -77,7 +93,7 @@
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
@@ -98,6 +114,7 @@
 		var
 			dObj = this.dObj,
 			cObj, cOLength,
+			cloneObj,
 	
 			i, j = 0;
 		
@@ -106,33 +123,63 @@
 		cOLength = this.length(cObj);
 		//
 		if ($.isArray(cObj)) {
-			for (i = indexOf !== false ? indexOf - 1 : -1; ++i < cOLength;) {
-				if (count !== false && j === count) { break; }
-				
-				if (callback.full && callback.full.call(callback.full, cObj, i, cOLength, this, id) === false) { break; }
-				if (this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
-					if (from !== false && from !== 0) { from--; continue; }
+			if (cObj.some) {
+				//
+				if (indexOf !== false) {
+					cloneObj = cObj.slice(indexOf);
+				} else { cloneObj = cObj; }
+				//
+				cloneObj.some(function (el, i, obj) {
+					i += indexOf;
+					if (count !== false && j === count) { return true; }
 					
-					if (callback.filter && callback.filter.call(callback.filter, cObj, i, cOLength, this, id) === false) { break; }
-					if (mult === false) { break; }
-					j++;
-				} else { if (callback.denial && callback.denial.call(callback.denial, cObj, i, cOLength, this, id) === false) { break; }}
+					if (this.customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {
+							if (callback.filter && callback.filter.call(callback.filter, el, cObj, i, cOLength, this, id) === false) { return true; }
+							if (mult === false) { return true; }
+							j += 1;
+						}
+					} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, el, cObj, i, cOLength, this, id) === false) { return true; }}
+					//
+					if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, el, cObj, i, cOLength, this, id) === false) { return true; }
+				}, this);
+			} else {
+				for (i = indexOf !== false ? indexOf - 1 : -1; (i += 1) < cOLength;) {
+					if (count !== false && j === count) { break; }
+					
+					if (this.customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {
+							if (callback.filter && callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
+							if (mult === false) { break; }
+							j += 1;
+						}
+					} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id) === false) { break; }}
+					//
+					if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
+				}
 			}
 		} else {
 			for (i in cObj) {
 				if (cObj.hasOwnProperty(i)) {
 					if (count !== false && j === count) { break; }
-					if (indexOf !== false && indexOf !== 0) { indexOf--; continue; }
+					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 					
-					if (callback.full && callback.full.call(callback.full, cObj, i, cOLength, this, id) === false) { break; }
-					if (this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
-						if (from !== false && from !== 0) { from--; continue; }
-							
-						if (callback.filter && callback.filter.call(callback.filter, cObj, i, cOLength, this, id) === false) { break; }
-						if (mult === false) { break; }
-						j++;
+					if (this.customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {	
+							if (callback.filter && callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
+							if (mult === false) { break; }
+							j += 1;
+						}
 					}
-				} else { if (callback.denial && callback.denial.call(callback.denial, cObj, i, cOLength, this, id) === false) { break; }}
+				} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id) === false) { break; }}
+				//
+				if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
 			}
 		}
 	

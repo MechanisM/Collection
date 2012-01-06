@@ -327,7 +327,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.use = function (id) {
-		for (var i = this.stack.length; i--;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
+		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
 				
 		return this;
 	};

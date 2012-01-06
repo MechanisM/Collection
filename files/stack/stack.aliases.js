@@ -9,7 +9,7 @@
 			i, fn = $.Collection.fn,
 			nm;
 	
-		for (i = data.length; i--;) {
+		for (i = data.length; (i -= 1) > -1;) {
 			nm = $.toUpperCase(data[i], 1);
 			
 			fn["$" + nm] = function (nm) {

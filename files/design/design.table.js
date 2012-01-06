@@ -30,7 +30,7 @@
 			if (i === count) {
 				queryString = "";
 				//
-				for (j = -1; ++j < count;) {
+				for (j = -1; (j += 1) < count;) {
 					queryString += "td:eq(" + (n - j) + ")";
 					if (j !== (count - 1)) { queryString += ","; }
 				}
@@ -40,20 +40,20 @@
 			} else if (n === (tagLength - 1) && i !== count) {
 				queryString = "";
 				//
-				for (j = -1, i; ++j < i;) {
+				for (j = -1, i; (j += 1) < i;) {
 					queryString += "td:eq(" + (n - j) + ")";
 					if (j !== (i - 1)) { queryString += ","; }
 				}
-				i--;
+				i -= 1;
 				target.find(queryString).wrapAll("<tr></tr>");	
 				//
 				if (empty === true) {
 					queryString = "";
-					for (; ++i < count;) { queryString += "<td></td>"; }
+					for (; (i += 1) < count;) { queryString += "<td></td>"; }
 					target.find("tr:last").append(queryString);
 				}
 			}
-			i++;
+			i += 1;
 		});
 		if (target[0].tagName !== "table") { target.children("tr").wrapAll("<table></table>"); }
 	

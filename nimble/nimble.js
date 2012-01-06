@@ -1,10 +1,4 @@
-/**
- * $.Collection - simple JavaScript framework for working with objects
- *
- * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 01.01.2012 21:55:59
- * @version 1.0.1
- */
+
 var nimble = {
 	/**
 	 * framework name
@@ -36,7 +30,6 @@ var nimble = {
 	
 	CHILDREN: ">",
 	ORDER: ["eq(", ")"],
-	SLICE: ["slice(", ")"],
 	//
 	
 	/**
@@ -51,7 +44,7 @@ var nimble = {
 			ws = /\s/,
 			i = str.length;
 		//
-		while (ws.test(str.charAt(--i)));
+		while (ws.test(str.charAt((i -= 1))));
 		return str.substring(0, i + 1);
 	},
 	/**
@@ -134,14 +127,14 @@ var nimble = {
 			objLength, cLength = context.length;
 	
 		// remove "dead" elements
-		for (i = cLength; i--;) {
+		for (i = cLength; (i -= 1) > -1;) {
 			context[i] = this.trim(context[i]);
 			if (context[i] === "") {
 				context.splice(i, 1);
-				last--;
+				last -= 1;
 			} else if (context[i] !== this.CHILDREN) {
 				if (i > last) { last = i; }
-				total++;
+				total += 1;
 			}
 		}
 		// recalculate length
@@ -151,23 +144,20 @@ var nimble = {
 		if (obj === false) {
 			return context.join("");
 		} else if (this.isNumber(obj)) {
-			obj = +obj;
-			if (obj < 0) { obj += total; }
+			if ((obj = +obj) < 0) { obj += total; }
 			if (value === undefined) { 
-				for (i = -1, n = 0; ++i < cLength;) {
+				for (i = -1, n = 0; (i += 1) < cLength;) {
 					if (context[i] !== this.CHILDREN) {
-						n++;
-						if (n === obj) {
+						if ((n += 1) === obj) {
 							context.splice(i + 1, cLength);
 							return context.join("");
 						}
 					}
 				}
 			} else {
-				for (i = cLength, n = 0; i--;) {
+				for (i = cLength, n = 0; (i -= 1) > -1;) {
 					if (context[i] !== this.CHILDREN) {
-						n++;
-						if (n === obj) {
+						if ((n += 1) === obj) {
 							context.splice(0, i);
 							return context.join("");
 						}
@@ -176,7 +166,7 @@ var nimble = {
 			}
 		}
 		//
-		for (i = -1; ++i < cLength;) {
+		for (i = -1; (i += 1) < cLength;) {
 			switch (context[i]) {
 				case this.CHILDREN : { type = context[i]; } break;
 				default : {
@@ -215,7 +205,7 @@ var nimble = {
 							if (pos < 0) {
 								objLength = 0;
 								for (key in obj) {
-									if (obj.hasOwnProperty(key)) { objLength++; }
+									if (obj.hasOwnProperty(key)) { objLength += 1; }
 								}
 								//
 								pos += objLength;
@@ -232,7 +222,7 @@ var nimble = {
 										} else { obj = obj[key]; }
 										break;
 									}
-									n++;
+									n += 1;
 								}
 							}
 						}
@@ -265,7 +255,7 @@ var nimble = {
 			qLength = query.length - 1,
 			spliter;
 	
-		for (; ++i < qLength;) { event = event[query[i]]; }
+		for (; (i += 1) < qLength;) { event = event[query[i]]; }
 		//
 		if (query[i].search(this.SUBQUERY_SEPARATOR) !== -1) {
 			spliter = query[i].split(this.SUBQUERY_SEPARATOR);

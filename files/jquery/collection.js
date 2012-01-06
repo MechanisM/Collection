@@ -20,7 +20,7 @@
 					i = -1,
 					str = "";
 				//
-				for (; ++i < eLength;) {
+				for (; (i += 1) < eLength;) {
 					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) { str += elem[i].textContent; }
 				}
 				//
@@ -50,9 +50,9 @@
 					}
 					//
 					if (cLength) {
-						cLength--;
+						cLength -= 1;
 						array[n][stat.classes] = {};
-						for (i = -1; ++i <= cLength;) {
+						for (i = -1; (i += 1) <= cLength;) {
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}

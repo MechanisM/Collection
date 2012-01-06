@@ -49,6 +49,9 @@
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		//
+		opt.filter = $.isExist(param.filter) ? param.filter : this.getActiveParam("filter");
+		opt.parser = $.isExist(param.parser) ? param.parser : this.getActiveParam("parser");
+		//
 		checkPage = active.page - opt.page;
 		active.page = opt.page;
 		//
@@ -81,15 +84,14 @@
 			// rewind cached step back
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
-				for (; start--;) {
-					if (this.customFilter(opt.filter, cObj, start, cOLength, this, this.ACTIVE) === true) {
+				for (; (start -= 1) > -1;) {
+					if (this.customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
 						if (inc === checkPage) {
 							break;
-						} else { inc++; }
+						} else { inc += 1; }
 					}
 				}
-				start++;
-				opt.cache.lastIteration = start;
+				opt.cache.lastIteration = (start += 1);
 				from = null;
 			} else if (checkPage < 0 && (page === true && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
@@ -165,19 +167,19 @@
 				//
 				if (data.nav === "pageList") {
 					if (nmbOfPages > param.pageBreak) {	
-						for (i = param.page; ++i < nmbOfPages;) { j++; }
+						for (i = param.page; (i += 1) < nmbOfPages;) { j += 1; }
 						if (j < param.pageBreak) { z = param.pageBreak - j + 1; } else { z = 1; }
 						//
-						for (j = 0, i = (param.page - z); ++i < nmbOfPages; j++) {
+						for (j = -1, i = (param.page - z); (i += 1) < nmbOfPages && (j += 1) !== -1;) {
 							if (j === (param.pageBreak - 1) && i !== param.page) { break; }
 							if (i === param.page) {
 								if (j === 0 && param.page !== 1) {
-									str += genPage(data, classes || "", i - 1);;
-								} else { j--; }
+									str += genPage(data, classes || "", i - 1);
+								} else { j -= 1; }
 								str += genPage(data, classes || "", i);
 							} else { str += genPage(data, classes || "", i); }
 						}
-					} else { for (i = 0; ++i <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
+					} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
 					$this.html(str);
 				}
 			} else if (data.info) {

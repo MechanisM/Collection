@@ -38,28 +38,28 @@
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
 					if ($.isArray(objContext[key])) {
-						for (i = objContext[key].length; i--;) {
+						for (i = objContext[key].length; (i -= 1) > -1;) {
 							this.deleteElementByLink(objContext[key][i], key);
 						}
 					} else { this.deleteElementByLink(objContext[key], key); }
 				}
 			}
 		} else if ($.isArray(objContext)) {
-			for (i = objContext.length; i--;) { this.deleteElementByLink(objContext[i], id); }
+			for (i = objContext.length; (i -= 1) > -1;) { this.deleteElementByLink(objContext[i], id); }
 		} else { this.deleteElementByLink(objContext, id); }
 	
 		return this;
 	};
 	
 	/**
-	 * pop element
+	 * pop element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.pop = function () { return this.deleteElementByLink("eq(-1)"); };
 	/**
-	 * shift element
+	 * shift element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @return {Colletion Object}

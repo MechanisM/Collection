@@ -92,14 +92,14 @@
 			obj;
 		
 		if (cui) {
-			for (; ++i < aLength;) {
+			for (; (i += 1) < aLength;) {
 				//
 				for (inKey in arguments[i]) {
 					if (arguments[i].hasOwnProperty(inKey)) {
 						splitKey = inKey.split(" ");
 						n = splitKey.length;
 						if (n > 1) {
-							for (; n--;) { arguments[i][splitKey[n]] = arguments[i][inKey]; }
+							for (; (n =- 1) > -1;) { arguments[i][splitKey[n]] = arguments[i][inKey]; }
 							delete arguments[i][inKey];
 						}
 					}
@@ -108,7 +108,7 @@
 				for (key in data) {
 					if (data.hasOwnProperty(key)) {
 						if ($.isArray(data[key])) {
-							for (j = data[key].length; j--;) {
+							for (j = data[key].length; (j -= 1) > -1;) {
 								if (arguments[i][data[key][j]]) {
 									obj = nimble.byLink(cui, key);
 									//
@@ -193,7 +193,7 @@
 				
 			if (name) {
 				name = name.split(",");
-				for (i = name.length; i--;) {
+				for (i = name.length; (i -= 1) > -1;) {
 					if (!$(elem).data("cui") || !$(elem).data("cui")[name[i]]) { return false; }
 				}
 						

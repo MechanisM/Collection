@@ -20,7 +20,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = $.isExist(moveFilter) ? moveFilter : this.ACTIVE;
+		moveFilter = $.isExist(moveFilter) ? moveFilter : this.getActiveParam("filter");
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		
@@ -47,7 +47,7 @@
 		// move
 		if (mult === true) {
 			eLength = elements.length;
-			for (; ++i < eLength;) {
+			for (; (i += 1) < eLength;) {
 				this.add(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}

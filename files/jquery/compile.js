@@ -16,7 +16,7 @@
 		var
 			html = this.html(),
 			elem = html
-                .replace(/\/\*.*?\*\//g, "")
+				.replace(/\/\*.*?\*\//g, "")
 				.split("?>")
 				.join("<?js")
 				.replace(/[\r\t\n]/g, " ")
@@ -25,13 +25,13 @@
 			eLength = elem.length,
 			resStr = "var key = i, result = ''; ", i = -1;
 		
-		for (; ++i < eLength;) {
+		for (; (i += 1) < eLength;) {
 			if (i === 0 || i % 2 === 0) {
 				resStr += "result +='" + elem[i] + "';";
 			} else { resStr += elem[i].split("echo").join("result +="); }
 		}
 		
-		return new Function("data", "i", "cOLength", "self", "id", resStr + " return result;");
+		return new Function("el", "data", "i", "cOLength", "self", "id", resStr + " return result;");
 	};
 	
 	/**

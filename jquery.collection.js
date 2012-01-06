@@ -1,4 +1,304 @@
 ﻿/**
+ * Nimble - simple JavaScript framework for working with objects
+ *
+ * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * @date: 01.01.2012 21:55:59
+ * @version 1.0.1
+ */
+var nimble = {
+	/**
+	 * framework name
+	 * 
+	 * @constant
+	 * @type String
+	 */
+	name: "nimble",
+	/**
+	 * framework version
+	 * 
+	 * @constant
+	 * @type String
+	 */
+	version: "1.0.1",
+	/**
+	 * return string: framework name + framework version
+	 *
+	 * @this {nimble}
+	 * @return {String}
+	 */
+	nimble: function () { return this.name + " " + this.version; },
+	
+	// constants
+	CONTEXT_SEPARATOR: " ",
+	QUERY_SEPARATOR: "/",
+	SUBQUERY_SEPARATOR: "{",
+	METHOD_SEPARATOR: "->",
+	
+	CHILDREN: ">",
+	ORDER: ["eq(", ")"],
+	//
+	
+	/**
+	 * trim
+	 *
+	 * @param {String} str
+	 * @return {String}
+	 */
+	trim: function (str) {
+		var
+			str = str.replace(/^\s\s*/, ''),
+			ws = /\s/,
+			i = str.length;
+		//
+		while (ws.test(str.charAt((i -= 1))));
+		return str.substring(0, i + 1);
+	},
+	/**
+	 * string test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
+	/**
+	 * number test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },
+	/**
+	 * boolean test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },
+	/**
+	 * null && undefined && empty string test
+	 *
+	 * @param {mixed} obj
+	 * @return {Boolean}
+	 */
+	isExist: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
+	
+	/**
+	 * calculate math expression
+	 * 
+	 * @param {mixed} nw - new value
+	 * @param {mixed} old - old value
+	 * @return {mixed}
+	 */
+	expr: function (nw, old) {
+		old = old !== undefined || old !== null ? old : "";
+		if (this.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
+			nw = nw.split("=");
+			if (!isNaN(nw[1])) { nw[1] = +nw[1]; }
+			// simple math
+			switch (nw[0]) {
+				case "+": { nw = old + nw[1]; } break;
+				case "-": { nw = old - nw[1]; } break;
+				case "*": { nw = old * nw[1]; } break;
+				case "/": { nw = old / nw[1]; } break;
+			}
+		}
+	
+		return nw;
+	},
+	
+	/**
+	 * set new value to object by link or get object by link
+	 * 
+	 * @this {nimble}
+	 * @param {Object|Number|Boolean} obj - some object
+	 * @param {Context} context - link
+	 * @param {mixed} [value] - some value
+	 * @param {Boolean} [deleteType=false] - if "true", remove source element
+	 * @return {nimble|mixed}
+	 */
+	byLink: function (obj, context, value, deleteType) {
+		context = context
+					.toString()
+					.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), " " + this.CHILDREN + " ")
+					.split(this.CONTEXT_SEPARATOR);
+		deleteType = deleteType || false;
+		//
+		var
+			type = this.CHILDREN,
+			last = 0, total = 0,
+			
+			key, i,
+			pos, n,
+	
+			objLength, cLength = context.length;
+	
+		// remove "dead" elements
+		for (i = cLength; (i -= 1) > -1;) {
+			context[i] = this.trim(context[i]);
+			if (context[i] === "") {
+				context.splice(i, 1);
+				last -= 1;
+			} else if (context[i] !== this.CHILDREN) {
+				if (i > last) { last = i; }
+				total += 1;
+			}
+		}
+		// recalculate length
+		cLength = context.length;
+		
+		// overload
+		if (obj === false) {
+			return context.join("");
+		} else if (this.isNumber(obj)) {
+			if ((obj = +obj) < 0) { obj += total; }
+			if (value === undefined) { 
+				for (i = -1, n = 0; (i += 1) < cLength;) {
+					if (context[i] !== this.CHILDREN) {
+						if ((n += 1) === obj) {
+							context.splice(i + 1, cLength);
+							return context.join("");
+						}
+					}
+				}
+			} else {
+				for (i = cLength, n = 0; (i -= 1) > -1;) {
+					if (context[i] !== this.CHILDREN) {
+						if ((n += 1) === obj) {
+							context.splice(0, i);
+							return context.join("");
+						}
+					}
+				}
+			}
+		}
+		//
+		for (i = -1; (i += 1) < cLength;) {
+			switch (context[i]) {
+				case this.CHILDREN : { type = context[i]; } break;
+				default : {
+					if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
+						if (i === last && value !== undefined) {
+							if (deleteType === false) {
+								obj[context[i]] = this.expr(value, obj[context[i]]);
+							} else {
+								if (nimble.isArray(obj)) {
+									obj.splice(context[i], 1);
+								} else { delete obj[context[i]]; }
+							}
+						} else { obj = obj[context[i]]; }
+					} else {
+						pos = context[i].substring(this.ORDER[0].length);
+						pos = pos.substring(0, (pos.length - 1));
+						pos = +pos;
+						//
+						if (this.isArray(obj)) {
+							if (i === last && value !== undefined) {
+								if (pos >= 0) {
+									if (deleteType === false) {
+										obj[pos] = this.expr(value, obj[pos]);
+									} else { obj.splice(pos, 1); }
+								} else {
+									if (deleteType === false) {
+										obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]);
+									} else { obj.splice(obj.length + pos, 1); }
+								}
+							} else {
+								if (pos >= 0) {
+									obj = obj[pos];
+								} else { obj = obj[obj.length + pos]; }
+							}
+						} else {
+							if (pos < 0) {
+								objLength = 0;
+								for (key in obj) {
+									if (obj.hasOwnProperty(key)) { objLength += 1; }
+								}
+								//
+								pos += objLength;
+							}
+			
+							n = 0;
+							for (key in obj) {
+								if (obj.hasOwnProperty(key)) {
+									if (pos === n) {
+										if (i === last && value !== undefined) {
+											if (deleteType === false) {
+												obj[key] = this.expr(value, obj[key]);
+											} else { delete obj[key]; }
+										} else { obj = obj[key]; }
+										break;
+									}
+									n += 1;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (value !== undefined) { return this; }
+		return obj;
+	},
+	
+	/**
+	 * execute event
+	 * 
+	 * @this {nimble}
+	 * @param {String} query - query string
+	 * @param {Object} event - event request
+	 * @param {mixed} [param] - input parameters
+	 * @param {mixed} [_this=event] - this
+	 * @return {mixed}
+	 */
+	execEvent: function (query, event, param, _this) {
+		query = query.split(this.QUERY_SEPARATOR);
+		param = this.isExist(param) ? param : [];
+		param = this.isArray(param) ? param : [param];
+		//
+		var 
+			i = -1,
+			qLength = query.length - 1,
+			spliter;
+	
+		for (; (i += 1) < qLength;) { event = event[query[i]]; }
+		//
+		if (query[i].search(this.SUBQUERY_SEPARATOR) !== -1) {
+			spliter = query[i].split(this.SUBQUERY_SEPARATOR);
+			event = event[spliter[0]];
+			spliter.splice(0, 1);
+			param = param.concat(spliter);
+			return event.apply(_this || event, param);
+		} else { return event[query[i]].apply(_this || event, param); }
+	},
+	
+	/**
+	 * add new element to object
+	 *
+	 * @this {nimble}
+	 * @param {Plain Object} obj - some object
+	 * @param {String} active - property name (can use "->unshift" - the result will be similar to work for an array "unshift")
+	 * @param {mixed} value - some value
+	 * @return {Plain Object|Boolean}
+	 */
+	addElementToObject: function (obj, active, value) {
+		active = active.split(this.METHOD_SEPARATOR);
+		var key, newObj = {};
+	
+		if (active[1] && active[1] == "unshift") {
+			newObj[!isNaN(Number(active[0])) ? 0 : active[0]] = value;
+			for (key in obj) {
+				if (obj.hasOwnProperty(key)) { newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key]; }
+			}
+			obj = newObj;
+	
+			return obj;
+		} else if (!active[1] || active[1] == "push") { obj[active[0]] = value; }
+	
+		return true;
+	}
+};
+﻿/**
  * $.Collection - JavaScript framework for working with collections of data (using jQuery)
  *
  * glossary:
@@ -209,7 +509,7 @@
 					i = -1,
 					str = "";
 				//
-				for (; ++i < eLength;) {
+				for (; (i += 1) < eLength;) {
 					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) { str += elem[i].textContent; }
 				}
 				//
@@ -239,9 +539,9 @@
 					}
 					//
 					if (cLength) {
-						cLength--;
+						cLength -= 1;
 						array[n][stat.classes] = {};
-						for (i = -1; ++i <= cLength;) {
+						for (i = -1; (i += 1) <= cLength;) {
 							array[n][stat.classes][classes[i]] = classes[i];
 						}
 					}
@@ -286,7 +586,7 @@
 		var
 			html = this.html(),
 			elem = html
-                .replace(/\/\*.*?\*\//g, "")
+				.replace(/\/\*.*?\*\//g, "")
 				.split("?>")
 				.join("<?js")
 				.replace(/[\r\t\n]/g, " ")
@@ -295,13 +595,13 @@
 			eLength = elem.length,
 			resStr = "var key = i, result = ''; ", i = -1;
 		
-		for (; ++i < eLength;) {
+		for (; (i += 1) < eLength;) {
 			if (i === 0 || i % 2 === 0) {
 				resStr += "result +='" + elem[i] + "';";
 			} else { resStr += elem[i].split("echo").join("result +="); }
 		}
 		
-		return new Function("data", "i", "cOLength", "self", "id", resStr + " return result;");
+		return new Function("el", "data", "i", "cOLength", "self", "id", resStr + " return result;");
 	};
 	
 	/**
@@ -360,7 +660,7 @@
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
 		var newObj = [pushVal], i = -1, oLength = obj.length;
-		for (; ++i < oLength;) { newObj.push(obj[i]); }
+		for (; (i += 1) < oLength;) { newObj.push(obj[i]); }
 		
 		return newObj;
 	};
@@ -606,7 +906,7 @@
 			upperCase,
 			sys = $.Collection.storage.dObj.sys;
 	
-		for (i = data.length; i--;) {
+		for (i = data.length; (i -= 1) > -1;) {
 			upperCase = $.toUpperCase(data[i], 1);
 			
 			sys["active" + upperCase + "ID"] = null;
@@ -943,7 +1243,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.use = function (id) {
-		for (var i = this.stack.length; i--;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
+		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
 				
 		return this;
 	};	
@@ -985,7 +1285,7 @@
 			i, fn = $.Collection.fn,
 			nm;
 	
-		for (i = data.length; i--;) {
+		for (i = data.length; (i -= 1) > -1;) {
 			nm = $.toUpperCase(data[i], 1);
 			
 			fn["$" + nm] = function (nm) {
@@ -1174,7 +1474,7 @@
 	};
 	
 	/**
-	 * push new element
+	 * push new element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} [1..n] - new element
@@ -1182,19 +1482,19 @@
 	 */
 	$.Collection.fn.push = function () {
 		var i = -1, aLength = arguments.length;
-		for (; ++i < aLength;) { this.add(arguments[i]); }
+		for (; (i += 1) < aLength;) { this.add(arguments[i]); }
 		
 		return this;
 	};
 	/**
-	 * unshift new element
+	 * unshift new element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} [1..n] - new element
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.unshift = function () {
-		for (var i = arguments.length; i--;) { this.add(arguments[i], "unshift"); }
+		for (var i = arguments.length; (i -= 1) > -1;) { this.add(arguments[i], "unshift"); }
 		
 		return this;
 	};	
@@ -1237,28 +1537,28 @@
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
 					if ($.isArray(objContext[key])) {
-						for (i = objContext[key].length; i--;) {
+						for (i = objContext[key].length; (i -= 1) > -1;) {
 							this.deleteElementByLink(objContext[key][i], key);
 						}
 					} else { this.deleteElementByLink(objContext[key], key); }
 				}
 			}
 		} else if ($.isArray(objContext)) {
-			for (i = objContext.length; i--;) { this.deleteElementByLink(objContext[i], id); }
+			for (i = objContext.length; (i -= 1) > -1;) { this.deleteElementByLink(objContext[i], id); }
 		} else { this.deleteElementByLink(objContext, id); }
 	
 		return this;
 	};
 	
 	/**
-	 * pop element
+	 * pop element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.pop = function () { return this.deleteElementByLink("eq(-1)"); };
 	/**
-	 * shift element
+	 * shift element (only active)
 	 * 
 	 * @this {Colletion Object}
 	 * @return {Colletion Object}
@@ -1312,11 +1612,11 @@
 	 * @return {Number}
 	 */
 	$.Collection.fn.length = function (filter, id) {
-		filter = $.isExist(filter) ? filter : false;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		var
 			dObj = this.dObj,
 			cObj, cOLength, aCheck,
-			key, countRecords;
+			i, countRecords;
 		
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
@@ -1346,10 +1646,26 @@
 				countRecords = cOLength;
 			} else {
 				countRecords = 0;
-				for (key in cObj) {
-					if (cObj.hasOwnProperty(key)) {
-						if (this.customFilter(filter, cObj, key, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-							countRecords++;
+				if (cOLength !== undefined) {
+					if (cObj.forEach) {
+						cObj.forEach(function (el, i, obj) {
+							if (this.customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+								countRecords += 1;
+							}
+						}, this);
+					} else {
+						for (i = cOLength; (i -= 1) > -1;) {
+							if (this.customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+								countRecords += 1;
+							}
+						}
+					}
+				} else {
+					for (i in cObj) {
+						if (cObj.hasOwnProperty(i)) {
+							if (this.customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+								countRecords += 1;
+							}
 						}
 					}
 				}
@@ -1376,7 +1692,7 @@
 	 */
 	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
@@ -1397,6 +1713,7 @@
 		var
 			dObj = this.dObj,
 			cObj, cOLength,
+			cloneObj,
 	
 			i, j = 0;
 		
@@ -1405,33 +1722,63 @@
 		cOLength = this.length(cObj);
 		//
 		if ($.isArray(cObj)) {
-			for (i = indexOf !== false ? indexOf - 1 : -1; ++i < cOLength;) {
-				if (count !== false && j === count) { break; }
-				
-				if (callback.full && callback.full.call(callback.full, cObj, i, cOLength, this, id) === false) { break; }
-				if (this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
-					if (from !== false && from !== 0) { from--; continue; }
+			if (cObj.some) {
+				//
+				if (indexOf !== false) {
+					cloneObj = cObj.slice(indexOf);
+				} else { cloneObj = cObj; }
+				//
+				cloneObj.some(function (el, i, obj) {
+					i += indexOf;
+					if (count !== false && j === count) { return true; }
 					
-					if (callback.filter && callback.filter.call(callback.filter, cObj, i, cOLength, this, id) === false) { break; }
-					if (mult === false) { break; }
-					j++;
-				} else { if (callback.denial && callback.denial.call(callback.denial, cObj, i, cOLength, this, id) === false) { break; }}
+					if (this.customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {
+							if (callback.filter && callback.filter.call(callback.filter, el, cObj, i, cOLength, this, id) === false) { return true; }
+							if (mult === false) { return true; }
+							j += 1;
+						}
+					} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, el, cObj, i, cOLength, this, id) === false) { return true; }}
+					//
+					if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, el, cObj, i, cOLength, this, id) === false) { return true; }
+				}, this);
+			} else {
+				for (i = indexOf !== false ? indexOf - 1 : -1; (i += 1) < cOLength;) {
+					if (count !== false && j === count) { break; }
+					
+					if (this.customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {
+							if (callback.filter && callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
+							if (mult === false) { break; }
+							j += 1;
+						}
+					} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id) === false) { break; }}
+					//
+					if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
+				}
 			}
 		} else {
 			for (i in cObj) {
 				if (cObj.hasOwnProperty(i)) {
 					if (count !== false && j === count) { break; }
-					if (indexOf !== false && indexOf !== 0) { indexOf--; continue; }
+					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 					
-					if (callback.full && callback.full.call(callback.full, cObj, i, cOLength, this, id) === false) { break; }
-					if (this.customFilter(filter, cObj, i, cOLength, this, id) === true) {
-						if (from !== false && from !== 0) { from--; continue; }
-							
-						if (callback.filter && callback.filter.call(callback.filter, cObj, i, cOLength, this, id) === false) { break; }
-						if (mult === false) { break; }
-						j++;
+					if (this.customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {	
+							if (callback.filter && callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
+							if (mult === false) { break; }
+							j += 1;
+						}
 					}
-				} else { if (callback.denial && callback.denial.call(callback.denial, cObj, i, cOLength, this, id) === false) { break; }}
+				} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id) === false) { break; }}
+				//
+				if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
 			}
 		}
 	
@@ -1457,7 +1804,7 @@
 	 * @return {Number|Array}
 	 */
 	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1477,7 +1824,7 @@
 	
 		var
 			result = [],
-			action = function (data, i, aLength, self, id) {
+			action = function (el, data, i, aLength, self, id) {
 				if (mult === true) {
 					result.push(i);
 				} else {
@@ -1523,7 +1870,7 @@
 	 * @return {mixed}
 	 */
 	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1543,7 +1890,7 @@
 	
 		var
 			result = [],
-			action = function (data, i, aLength, self, id) {
+			action = function (el, data, i, aLength, self, id) {
 				if (mult === true) {
 					result.push(data[i]);
 				} else {
@@ -1590,7 +1937,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.replaceElements = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1610,9 +1957,9 @@
 	
 		var
 			replaceCheck = $.isFunction(replaceObj),
-			action = function (data, i, aLength, self, id) {
+			action = function (el, data, i, aLength, self, id) {
 				if (replaceCheck) {
-					replaceObj.call(replaceObj, data, i, aLength, self, id);
+					replaceObj.call(replaceObj, el, data, i, aLength, self, id);
 				} else { data[i] = nimble.expr(replaceObj, data[i]); }
 	
 				return true;
@@ -1655,7 +2002,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = $.isExist(moveFilter) ? moveFilter : this.ACTIVE;
+		moveFilter = $.isExist(moveFilter) ? moveFilter : this.getActiveParam("filter");
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		
@@ -1682,7 +2029,7 @@
 		// move
 		if (mult === true) {
 			eLength = elements.length;
-			for (; ++i < eLength;) {
+			for (; (i += 1) < eLength;) {
 				this.add(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(elements[i]);
 			}
@@ -1767,7 +2114,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.deleteElements = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1788,9 +2135,7 @@
 		var elements = this.searchElements(filter, id, mult, count, from, indexOf), i;
 		if (mult === false) {
 			this.deleteElementByLink(elements, id);
-		} else {
-			for (i = elements.length; i--;) { this.deleteElementByLink(elements[i], id); }
-		}
+		} else { for (i = elements.length; (i -= 1) > -1;) { this.deleteElementByLink(elements[i], id); } }
 	
 		return this;
 	};
@@ -1821,7 +2166,7 @@
 	 * @param {String} id - collection ID
 	 * @return {Boolean}
 	 */
-	$.Collection.fn.customFilter = function (filter, data, i, cOLength, self, id) {
+	$.Collection.fn.customFilter = function (filter, el, data, i, cOLength, self, id) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -1838,19 +2183,19 @@
 		// if filter is disabled
 		if (filter === false) { return true; }
 		// if filter is function
-		if ($.isFunction(filter)) { return filter.call(filter, data, i, cOLength, self, id); }
+		if ($.isFunction(filter)) { return filter.call(filter, el, data, i, cOLength, self, id); }
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
-			if (active.filter) { return active.filter.call(active.filter, data, i, cOLength, self, id); }
-	
+			if (active.filter) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
+			
 			return true;
 		} else {
 			// if filter is string
 			if (!$.isArray(filter)) {
 				// if simple filter
 				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], data, i, cOLength, self, id);
+					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id);
 				}
 				
 				filter = $.trim(
@@ -1869,13 +2214,13 @@
 					pos = 0,
 					result = [];
 				
-				for (; ++i < aLength;) {
-					iter++;
-					if (array[i] === "(") { pos++; }
+				for (; (i += 1) < aLength;) {
+					iter += 1;
+					if (array[i] === "(") { pos += 1; }
 					if (array[i] === ")") {
 						if (pos === 0) {
 							return {result: result, iter: iter};
-						} else { pos--; }
+						} else { pos -= 1; }
 					}
 					result.push(array[i]);
 				}
@@ -1883,7 +2228,7 @@
 			// calculate filter
 			fLength = filter.length;
 			
-			for (; ++j < fLength;) {
+			for (; (j += 1) < fLength;) {
 				// calculate atoms
 				if (filter[j] === "(" || filter[j] === "!(") {
 					if (filter[j].substring(0, 1) === "!") {
@@ -1894,7 +2239,7 @@
 					tmpFilter = calFilter(filter.slice((j + 1)), j);
 					j = tmpFilter.iter;
 					//
-					tmpResult = this.customFilter(tmpFilter.result, data, i, cOLength, self, id);
+					tmpResult = this.customFilter(tmpFilter.result, el, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -1908,7 +2253,7 @@
 					} else { inverse = false; }
 					
 					tmpFilter = filter[j] === this.ACTIVE ? active.filter : sys.tmpFilter[filter[j]];
-					tmpResult = tmpFilter.call(tmpFilter, data, i, cOLength, self, id);
+					tmpResult = tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -1962,7 +2307,7 @@
 				parser = parser.split("&&");
 			}
 			
-			for (i = parser.length; i--;) {
+			for (i = parser.length; (i -= 1) > -1;) {
 				parser[i] = $.trim(parser[i]);
 				tmpParser = parser[i] === this.ACTIVE ? active.parser : sys.tmpParser[parser[i]];
 				
@@ -1988,7 +2333,7 @@
 			context = "", i;
 		//
 		context = this._get("collection", id || "").split(nimble.CHILDREN);
-        for (i = n; i--;) { context.splice(-1, 1); }
+        for (i = n; (i -= 1) > -1;) { context.splice(-1, 1); }
 	
 		return context.join(nimble.CHILDREN);
 	};
@@ -2219,6 +2564,9 @@
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		//
+		opt.filter = $.isExist(param.filter) ? param.filter : this.getActiveParam("filter");
+		opt.parser = $.isExist(param.parser) ? param.parser : this.getActiveParam("parser");
+		//
 		checkPage = active.page - opt.page;
 		active.page = opt.page;
 		//
@@ -2251,15 +2599,14 @@
 			// rewind cached step back
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
-				for (; start--;) {
-					if (this.customFilter(opt.filter, cObj, start, cOLength, this, this.ACTIVE) === true) {
+				for (; (start -= 1) > -1;) {
+					if (this.customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
 						if (inc === checkPage) {
 							break;
-						} else { inc++; }
+						} else { inc += 1; }
 					}
 				}
-				start++;
-				opt.cache.lastIteration = start;
+				opt.cache.lastIteration = (start += 1);
 				from = null;
 			} else if (checkPage < 0 && (page === true && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
@@ -2335,19 +2682,19 @@
 				//
 				if (data.nav === "pageList") {
 					if (nmbOfPages > param.pageBreak) {	
-						for (i = param.page; ++i < nmbOfPages;) { j++; }
+						for (i = param.page; (i += 1) < nmbOfPages;) { j += 1; }
 						if (j < param.pageBreak) { z = param.pageBreak - j + 1; } else { z = 1; }
 						//
-						for (j = 0, i = (param.page - z); ++i < nmbOfPages; j++) {
+						for (j = -1, i = (param.page - z); (i += 1) < nmbOfPages && (j += 1) !== -1;) {
 							if (j === (param.pageBreak - 1) && i !== param.page) { break; }
 							if (i === param.page) {
 								if (j === 0 && param.page !== 1) {
-									str += genPage(data, classes || "", i - 1);;
-								} else { j--; }
+									str += genPage(data, classes || "", i - 1);
+								} else { j -= 1; }
 								str += genPage(data, classes || "", i);
 							} else { str += genPage(data, classes || "", i); }
 						}
-					} else { for (i = 0; ++i <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
+					} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
 					$this.html(str);
 				}
 			} else if (data.info) {
@@ -2398,7 +2745,7 @@
 			if (i === count) {
 				queryString = "";
 				//
-				for (j = -1; ++j < count;) {
+				for (j = -1; (j += 1) < count;) {
 					queryString += "td:eq(" + (n - j) + ")";
 					if (j !== (count - 1)) { queryString += ","; }
 				}
@@ -2408,20 +2755,20 @@
 			} else if (n === (tagLength - 1) && i !== count) {
 				queryString = "";
 				//
-				for (j = -1, i; ++j < i;) {
+				for (j = -1, i; (j += 1) < i;) {
 					queryString += "td:eq(" + (n - j) + ")";
 					if (j !== (i - 1)) { queryString += ","; }
 				}
-				i--;
+				i -= 1;
 				target.find(queryString).wrapAll("<tr></tr>");	
 				//
 				if (empty === true) {
 					queryString = "";
-					for (; ++i < count;) { queryString += "<td></td>"; }
+					for (; (i += 1) < count;) { queryString += "<td></td>"; }
 					target.find("tr:last").append(queryString);
 				}
 			}
-			i++;
+			i += 1;
 		});
 		if (target[0].tagName !== "table") { target.children("tr").wrapAll("<table></table>"); }
 	

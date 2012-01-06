@@ -19,7 +19,7 @@
 	 * @return {Number|Array}
 	 */
 	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.ACTIVE;
+		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -39,7 +39,7 @@
 	
 		var
 			result = [],
-			action = function (data, i, aLength, self, id) {
+			action = function (el, data, i, aLength, self, id) {
 				if (mult === true) {
 					result.push(i);
 				} else {

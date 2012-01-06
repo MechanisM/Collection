@@ -37,7 +37,7 @@
 			upperCase,
 			sys = $.Collection.storage.dObj.sys;
 	
-		for (i = data.length; i--;) {
+		for (i = data.length; (i -= 1) > -1;) {
 			upperCase = $.toUpperCase(data[i], 1);
 			
 			sys["active" + upperCase + "ID"] = null;

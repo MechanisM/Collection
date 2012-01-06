@@ -35,7 +35,7 @@
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
 		var newObj = [pushVal], i = -1, oLength = obj.length;
-		for (; ++i < oLength;) { newObj.push(obj[i]); }
+		for (; (i += 1) < oLength;) { newObj.push(obj[i]); }
 		
 		return newObj;
 	};

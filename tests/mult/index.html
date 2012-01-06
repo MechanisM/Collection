@@ -6,7 +6,6 @@
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
-	<script type="text/javascript" src="../../nimble/nimble.js"></script>
 	<script type="text/javascript" src="../../jquery.collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
@@ -16,23 +15,23 @@
 				db.pushCollection({table1: null, table2: "GO!"});
 				
 				equal(db.length([1, 2, 3]), 3, "array");
-				equal(db.length(function ($this, i) {
-					return $this[i] === 1;
+				equal(db.length(function (el, data, i) {
+					return el === 1;
 				}, [1, 2, 3]), 1, "array with filter");
 				//
 				equal(db.length(false, "table1"), 0, "null");
 				equal(db.length(false, "table2"), 3, "string");
 				equal(db.length(), 2, "Объект");
-				equal(db.length(function ($this, i) {
+				equal(db.length(function (el, data, i) {
 					return i === "first";
 				}), 1, "object with filter");
 				//
 				db.pushFilter({
-					a: function ($this, i) {
-						return $this[i] === 1;
+					a: function (el, data, i) {
+						return el === 1;
 					},
-					b: function ($this, i) {
-						return $this[i] === 2;
+					b: function (el, data, i) {
+						return el === 2;
 					}
 				});
 				equal(db.length("a || b", [1, 2, 3]), 2, "array with filter: a || b");
@@ -44,40 +43,46 @@
 			});
 			module("each methods");
 			test("each", function () {
-				var db = new $.Collection([1, 2, 3, 4]);
+				var
+					db = new $.Collection([1, 2, 3, 4]),
+					db2 = new $.Collection([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 				
-				equal(db.each(function ($this, i) {
-					$this[i] += 1;
+				equal(db.each(function (el, data, i) {
+					data[i] += 1;
 				}).get()[0], 2, "simple each");
 				//
-				equal(db.each(function ($this, i) {
-					$this[i] += 1;
-				}, function ($this, i) {
-					return $this[i] > 2;
+				equal(db.each(function (el, data, i) {
+					data[i] += 1;
+				}, function (el, data, i) {
+					return el > 2;
 				}).get()[0], 2, "each with filter: > 2");
-				equal(db.each({denial: function ($this, i) {
-					$this[i] -= 1;
-				}}, function ($this, i) {
-					return $this[i] > 2;
+				equal(db.each({denial: function (el, data, i) {
+					data[i] -= 1;
+				}}, function (el, data, i) {
+					return el > 2;
 				}).get()[0], 1, "each with filter: denial > 2");
-				equal(db.each({full: function ($this, i) {
-					$this[i] -= 1;
-				}}, function ($this, i) {
-					return $this[i] > 2;
+				equal(db.each({full: function (el, data, i) {
+					data[i] -= 1;
+				}}, function (el, data, i) {
+					return el > 2;
 				}).get()[0], 0, "each with filter: full > 2");
+				//
+				equal(db2.each(function (el, data, i) {
+					data[i] += 1;
+				}, "", "", "", 2, 2, 5).get("eq(-1)"), 10, "with indexOf");
 			});
 			test("search", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
-				equal(db.searchElements(function ($this, i) {
-					return $this[i] === 1;
+				equal(db.searchElements(function (el, data, i) {
+					return el === 1;
 				})[0], 0, "simple search");
 			});
 			test("return", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
-				equal(db.returnElements(function ($this, i) {
-					return $this[i] === 1;
+				equal(db.returnElements(function (el, data, i) {
+					return el === 1;
 				})[0], 1, "simple return");
 			});
 			test("replace", function () {
@@ -89,8 +94,8 @@
 			test("delete", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
-				equal(db.deleteElements(function ($this, i) {
-					return $this[i] === 1;
+				equal(db.deleteElements(function (el, data, i) {
+					return el === 1;
 				}).get("0"), 2, "simple delete");
 			});
 			test("move", function () {
