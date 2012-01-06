@@ -137,7 +137,7 @@
 	$.Collection.fn.easyPage = function (param) {
 		var
 			str = "",
-			
+			//
 			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
 			genPage = function (data, classes, i) {
 				var key, str = "<" + (data.tag || "span") + ' data-page="' + i + '"';

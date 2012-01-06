@@ -307,18 +307,6 @@ var nimble = {
  * 3) Parser - the special function JS, engaged in post-processing of the resulting string selection from the collection of the;
  * 4) Context - a string that specifies a link to a certain context (region) collection, for example, the string "Name approximately 1" indicates the obj.Name[1], where obj is a collection of;
  * 5) Template - the special function JS, which converts the collection in line view, in accordance with these instructions for pasting in the DOM;
- * 6) Template model - the special function JS, which generates the navigation bar to the template.
- *
- * $.Collection consists of:
- * 1) six extensions jQuery object:
- * 1.1) collection - main class;
- * 1.2) tplCompile - function for "compilation" templates from the DOM;
- * 1.3) isString - test of string;
- * 1.4) isBoolean - test of boolean;
- * 1.5) isExist - exist (not null, undefined or empty string);
- * 1.6) unshiftArguments - function for the modification of an object arguments.
- * 2) one extension of the jQuery.prototype: 
- * 2.1) collection - the transformation function of the collection of jQuery in the $.Collection.
  *
  * addition:
  * the code is documented in accordance with the standard jsDoc
@@ -328,12 +316,11 @@ var nimble = {
  * 3) [Selector] is a reduced form of the [String] , and means the css selector (Sizzle syntax);
  * 4) [Context] is the reduced form of the [String] , and means the context of the collection;
  * 5) [Template] is a reduced form of the [Function] and means function-template;
- * 6) [Template Model] is the reduced form of the [Function] and means function-model;
- * 7) [Filter] is a reduced form of the [Function] and means the function-filter;
- * 8) [Parser] is a reduced form of the [Function] and means function-parser;
- * 9) [Plain Object] is a reduced form of the [Object] and means hash table;
- * 10) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
- * 11) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.
+ * 6) [Filter] is a reduced form of the [Function] and means the function-filter;
+ * 7) [Parser] is a reduced form of the [Function] and means function-parser;
+ * 8) [Plain Object] is a reduced form of the [Object] and means hash table;
+ * 9) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
+ * 10) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.
  * --
  * the record type: [some parameter] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
  * all overloading methods documented in the description of the method, because the syntax of the jsDoc not allow it to do
@@ -344,8 +331,8 @@ var nimble = {
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 22.12.2011 20:08:43
- * @version 3.2.5
+ * @date: 06.01.2012 17:54:46
+ * @version 3.3
  */
 (function ($) {
 	// try to use ECMAScript 5 "strict mode"
@@ -2652,7 +2639,7 @@ var nimble = {
 	$.Collection.fn.easyPage = function (param) {
 		var
 			str = "",
-			
+			//
 			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
 			genPage = function (data, classes, i) {
 				var key, str = "<" + (data.tag || "span") + ' data-page="' + i + '"';
