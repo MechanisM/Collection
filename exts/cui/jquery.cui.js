@@ -26,7 +26,7 @@
 	 * @return {jQuery Object}
 	 */
 	$.fn.cuiSet = function (name, obj, param) {
-		this.each(function () {
+		this.forEach(function () {
 			var $this = $(this), key;
 			//
 			if ($this.data("cui")) {
@@ -66,7 +66,7 @@
 	 * @return {jQuery Object}
 	 */
 	$.fn.cuiRemove = function (name) {
-		this.each(function () {
+		this.forEach(function () {
 			var $this = $(this);
 			if (name) {
 				if ($this.data("cui") && $this.data("cui")[name]) { delete $this.data("cui")[name]; }

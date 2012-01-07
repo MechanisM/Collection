@@ -82,7 +82,7 @@
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !page || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
-			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
@@ -104,7 +104,7 @@
 				from = null;
 			} else if (checkPage < 0 && (page === true && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
-			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		if (checkPage !== 0 && opt.cache.iteration !== false) {
 			// cache

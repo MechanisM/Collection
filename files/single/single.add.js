@@ -75,24 +75,21 @@
 	 * push new element (only active)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} [1..n] - new element
+	 * @param {mixed} obj - new element
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.push = function () {
-		var i = -1, aLength = arguments.length;
-		for (; (i += 1) < aLength;) { this.add(arguments[i]); }
-		
-		return this;
+	$.Collection.fn.push = function (obj, id) {
+		return this.add(obj, "", id || "");
 	};
 	/**
 	 * unshift new element (only active)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} [1..n] - new element
+	 * @param {mixed} obj - new element
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.unshift = function () {
-		for (var i = arguments.length; (i -= 1) > -1;) { this.add(arguments[i], "unshift"); }
-		
-		return this;
+	$.Collection.fn.unshift = function (obj, id) {
+		return this.add(obj, "unshift", id || "");
 	};

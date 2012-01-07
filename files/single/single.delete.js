@@ -52,16 +52,18 @@
 	};
 	
 	/**
-	 * pop element (only active)
+	 * pop element
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.pop = function () { return this.deleteElementByLink("eq(-1)"); };
+	$.Collection.fn.pop = function (id) { return this.deleteElementByLink("eq(-1)", id || ""); };
 	/**
-	 * shift element (only active)
+	 * shift element
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.shift = function () { return this.deleteElementByLink("eq(0)"); };
+	$.Collection.fn.shift = function (id) { return this.deleteElementByLink("eq(0)", id || ""); };

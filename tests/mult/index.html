@@ -41,33 +41,33 @@
 				equal(db.length("!(a && b)", [1, 2, 3]), 3, "array with filter: !(a && b)");
 				equal(db.length("! (a && b) && a", [1, 2, 3]), 1, "array with filter: ! (! a && b) && a");
 			});
-			module("each methods");
-			test("each", function () {
+			module("forEach methods");
+			test("forEach", function () {
 				var
 					db = new $.Collection([1, 2, 3, 4]),
 					db2 = new $.Collection([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 				
-				equal(db.each(function (el, data, i) {
+				equal(db.forEach(function (el, data, i) {
 					data[i] += 1;
-				}).get()[0], 2, "simple each");
+				}).get()[0], 2, "simple forEach");
 				//
-				equal(db.each(function (el, data, i) {
+				equal(db.forEach(function (el, data, i) {
 					data[i] += 1;
 				}, function (el, data, i) {
 					return el > 2;
-				}).get()[0], 2, "each with filter: > 2");
-				equal(db.each({denial: function (el, data, i) {
+				}).get()[0], 2, "forEach with filter: > 2");
+				equal(db.forEach({denial: function (el, data, i) {
 					data[i] -= 1;
 				}}, function (el, data, i) {
 					return el > 2;
-				}).get()[0], 1, "each with filter: denial > 2");
-				equal(db.each({full: function (el, data, i) {
+				}).get()[0], 1, "forEach with filter: denial > 2");
+				equal(db.forEach({full: function (el, data, i) {
 					data[i] -= 1;
 				}}, function (el, data, i) {
 					return el > 2;
-				}).get()[0], 0, "each with filter: full > 2");
+				}).get()[0], 0, "forEach with filter: full > 2");
 				//
-				equal(db2.each(function (el, data, i) {
+				equal(db2.forEach(function (el, data, i) {
 					data[i] += 1;
 				}, "", "", "", 2, 2, 5).get("eq(-1)"), 10, "with indexOf");
 			});

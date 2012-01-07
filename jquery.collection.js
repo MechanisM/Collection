@@ -331,8 +331,8 @@ var nimble = {
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 06.01.2012 17:54:46
- * @version 3.3.1
+ * @date: 08.01.2012 02:29:21
+ * @version 3.3.2
  */
 (function ($) {
 	// try to use ECMAScript 5 "strict mode"
@@ -411,7 +411,7 @@ var nimble = {
 		 * @constant
 		 * @type String
 		 */
-		version: "3.3.1",
+		version: "3.3.2",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -1479,26 +1479,23 @@ var nimble = {
 	 * push new element (only active)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} [1..n] - new element
+	 * @param {mixed} obj - new element
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.push = function () {
-		var i = -1, aLength = arguments.length;
-		for (; (i += 1) < aLength;) { this.add(arguments[i]); }
-		
-		return this;
+	$.Collection.fn.push = function (obj, id) {
+		return this.add(obj, "", id || "");
 	};
 	/**
 	 * unshift new element (only active)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} [1..n] - new element
+	 * @param {mixed} obj - new element
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.unshift = function () {
-		for (var i = arguments.length; (i -= 1) > -1;) { this.add(arguments[i], "unshift"); }
-		
-		return this;
+	$.Collection.fn.unshift = function (obj, id) {
+		return this.add(obj, "unshift", id || "");
 	};	
 	/////////////////////////////////
 	//// single methods (delete)
@@ -1553,19 +1550,21 @@ var nimble = {
 	};
 	
 	/**
-	 * pop element (only active)
+	 * pop element
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.pop = function () { return this.deleteElementByLink("eq(-1)"); };
+	$.Collection.fn.pop = function (id) { return this.deleteElementByLink("eq(-1)", id || ""); };
 	/**
-	 * shift element (only active)
+	 * shift element
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.shift = function () { return this.deleteElementByLink("eq(0)"); };	
+	$.Collection.fn.shift = function (id) { return this.deleteElementByLink("eq(0)", id || ""); };	
 	/////////////////////////////////
 	//// single methods (concatenation)
 	/////////////////////////////////
@@ -1684,7 +1683,7 @@ var nimble = {
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.each = function (callback, filter, id, mult, count, from, indexOf) {
+	$.Collection.fn.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
@@ -1811,7 +1810,7 @@ var nimble = {
 				return true;
 			};
 	
-		this.each(action, filter, id, mult, count, from, indexOf);
+		this.forEach(action, filter, id, mult, count, from, indexOf);
 	
 		return result;
 	};
@@ -1877,7 +1876,7 @@ var nimble = {
 				return true;
 			};
 	
-		this.each(action, filter, id, mult, count, from, indexOf);
+		this.forEach(action, filter, id, mult, count, from, indexOf);
 	
 		return result;
 	};
@@ -1941,7 +1940,7 @@ var nimble = {
 				return true;
 			};
 	
-		this.each(action, filter, id, mult, count, from, indexOf);
+		this.forEach(action, filter, id, mult, count, from, indexOf);
 	
 		return this;
 	};
@@ -2569,7 +2568,7 @@ var nimble = {
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !page || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
-			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
@@ -2591,7 +2590,7 @@ var nimble = {
 				from = null;
 			} else if (checkPage < 0 && (page === true && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
-			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		if (checkPage !== 0 && opt.cache.iteration !== false) {
 			// cache
