@@ -1476,7 +1476,7 @@ var nimble = {
 	};
 	
 	/**
-	 * push new element (only active)
+	 * push new element
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element
@@ -1487,7 +1487,7 @@ var nimble = {
 		return this.add(obj, "", id || "");
 	};
 	/**
-	 * unshift new element (only active)
+	 * unshift new element
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element
