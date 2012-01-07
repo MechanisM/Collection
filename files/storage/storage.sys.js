@@ -33,16 +33,15 @@
 	// generate system fields
 	(function (data) {
 		var
-			i,
 			upperCase,
 			sys = $.Collection.storage.dObj.sys;
-	
-		for (i = data.length; (i -= 1) > -1;) {
-			upperCase = $.toUpperCase(data[i], 1);
+		//
+		data.forEach(function (el) {
+			upperCase = $.toUpperCase(el, 1);
 			
 			sys["active" + upperCase + "ID"] = null;
 			sys["tmp" + upperCase] = {};
-			sys[data[i] + "ChangeControl"] = null;
-			sys[data[i] + "Back"] = [];
-		}
+			sys[el + "ChangeControl"] = null;
+			sys[el + "Back"] = [];
+		});
 	})($.Collection.fn.stack);

@@ -41,26 +41,19 @@
 	
 						txt = text($this[0]),
 	
-						i;
+						key;
 	
 					array.push({});
-					//
-					for (i in data) {
-						if (data.hasOwnProperty(i)) { array[n][i] = data[i]; }
-					}
+					for (key in data) { if (data.hasOwnProperty(key)) { array[n][key] = data[key]; } }
 					//
 					if (cLength) {
-						cLength -= 1;
 						array[n][stat.classes] = {};
-						for (i = -1; (i += 1) <= cLength;) {
-							array[n][stat.classes][classes[i]] = classes[i];
-						}
+						classes.forEach(function (el) {
+							array[n][stat.classes][el] = el;
+						});
 					}
 					//
-					if ($this.children().length !== 0) {
-						array[n][stat.childNodes] = inObj($this.children());
-					}
-					//
+					if ($this.children().length !== 0) { array[n][stat.childNodes] = inObj($this.children()); }
 					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
 				});
 	

@@ -1,5 +1,5 @@
 ﻿/**
- * Nimble - simple JavaScript framework for working with objects
+ * nimble - simple JavaScript framework for working with objects
  *
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 01.01.2012 21:55:59
@@ -332,7 +332,7 @@ var nimble = {
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 06.01.2012 17:54:46
- * @version 3.3
+ * @version 3.3.1
  */
 (function ($) {
 	// try to use ECMAScript 5 "strict mode"
@@ -367,7 +367,32 @@ var nimble = {
 			active.target = $(collection);
 			active.collection = null;
 		} else { active.collection = collection; }
-	};	
+	};
+	
+	//
+	if (!Array.prototype.forEach) {
+		Array.prototype.forEach = function (callback, _this) {
+			var i = -1, aLength = this.length;
+			
+			for (; (i += 1) < aLength;) {
+				if (!_this) {
+					callback(this[i], i, this);
+				} else { callback.call(_this, this[i], i, this); }
+			}
+		}
+	}
+	if (!Array.prototype.some) {
+		Array.prototype.some = function (callback, _this) {
+			var i = -1, aLength = this.length, res;
+			
+			for (; (i += 1) < aLength;) {
+				if (!_this) {
+					res = callback(this[i], i, this);
+				} else { res = callback.call(_this, this[i], i, this); }
+				if (res === true) { break; }
+			}
+		}
+	}	
 	/////////////////////////////////
 	//// prototype
 	/////////////////////////////////
@@ -386,7 +411,7 @@ var nimble = {
 		 * @constant
 		 * @type String
 		 */
-		version: "3.3",
+		version: "3.3.1",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -517,26 +542,19 @@ var nimble = {
 	
 						txt = text($this[0]),
 	
-						i;
+						key;
 	
 					array.push({});
-					//
-					for (i in data) {
-						if (data.hasOwnProperty(i)) { array[n][i] = data[i]; }
-					}
+					for (key in data) { if (data.hasOwnProperty(key)) { array[n][key] = data[key]; } }
 					//
 					if (cLength) {
-						cLength -= 1;
 						array[n][stat.classes] = {};
-						for (i = -1; (i += 1) <= cLength;) {
-							array[n][stat.classes][classes[i]] = classes[i];
-						}
+						classes.forEach(function (el) {
+							array[n][stat.classes][el] = el;
+						});
 					}
 					//
-					if ($this.children().length !== 0) {
-						array[n][stat.childNodes] = inObj($this.children());
-					}
-					//
+					if ($this.children().length !== 0) { array[n][stat.childNodes] = inObj($this.children()); }
 					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
 				});
 	
@@ -580,13 +598,13 @@ var nimble = {
 				.split("<?js"),
 			
 			eLength = elem.length,
-			resStr = "var key = i, result = ''; ", i = -1;
+			resStr = "var key = i, result = ''; ";
 		
-		for (; (i += 1) < eLength;) {
+		elem.forEach(function (el, i) {
 			if (i === 0 || i % 2 === 0) {
-				resStr += "result +='" + elem[i] + "';";
-			} else { resStr += elem[i].split("echo").join("result +="); }
-		}
+				resStr += "result +='" + el + "';";
+			} else { resStr += el.split("echo").join("result +="); }
+		});
 		
 		return new Function("el", "data", "i", "cOLength", "self", "id", resStr + " return result;");
 	};
@@ -889,18 +907,17 @@ var nimble = {
 	// generate system fields
 	(function (data) {
 		var
-			i,
 			upperCase,
 			sys = $.Collection.storage.dObj.sys;
-	
-		for (i = data.length; (i -= 1) > -1;) {
-			upperCase = $.toUpperCase(data[i], 1);
+		//
+		data.forEach(function (el) {
+			upperCase = $.toUpperCase(el, 1);
 			
 			sys["active" + upperCase + "ID"] = null;
 			sys["tmp" + upperCase] = {};
-			sys[data[i] + "ChangeControl"] = null;
-			sys[data[i] + "Back"] = [];
-		}
+			sys[el + "ChangeControl"] = null;
+			sys[el + "Back"] = [];
+		});
 	})($.Collection.fn.stack);	
 	/////////////////////////////////
 	//// stack methods
@@ -1268,81 +1285,79 @@ var nimble = {
 		
 	// generate aliases
 	(function (data) {
-		var
-			i, fn = $.Collection.fn,
-			nm;
-	
-		for (i = data.length; (i -= 1) > -1;) {
-			nm = $.toUpperCase(data[i], 1);
+		var fn = $.Collection.fn, nm;
+		
+		data.forEach(function (el) {
+			nm = $.toUpperCase(el, 1);
 			
 			fn["$" + nm] = function (nm) {
 				return function (newParam) { return this._$(nm, newParam); };
-			}(data[i]);
+			}(el);
 			//
 			fn["update" + nm] = function (nm) {
 				return function (newParam) { return this._update(nm, newParam); };
-			}(data[i]);
+			}(el);
 			//
 			fn["reset" + nm + "To"] = function (nm) {
 				return function (objID, id) { return this._resetTo(nm, objID, id); };
-			}(data[i]);	
+			}(el);	
 			//
 			fn["push" + nm] = function (nm) {
 				return function (objID, newParam) { return this._push.apply(this, $.unshiftArguments(arguments, nm)); }
-			}(data[i]);
+			}(el);
 			//
 			fn["set" + nm] = function (nm) {
 				return function (id) { return this._set(nm, id); };
-			}(data[i]);
+			}(el);
 			//
 			fn["pushSet" + nm] = function (nm) {
 				return function (id, newParam) { return this._push(nm, id, newParam)._set(nm, id); };
-			}(data[i]);
+			}(el);
 			//
 			fn["back" + nm] = function (nm) {
 				return function (nmb) { return this._back(nm, nmb || ""); };
-			}(data[i]);	
+			}(el);	
 			//
 			fn["back" + nm + "If"] = function (nm) {
 				return function (nmb) { return this._backIf(nm, nmb || ""); };
-			}(data[i]);	
+			}(el);	
 			//
-			if (data[i] === "filter" || data[i] === "parser") {
+			if (el === "filter" || el === "parser") {
 				fn["drop" + nm] = function (nm) {
 					return function () { return this._drop(nm, arguments); };
-				}(data[i]);	
+				}(el);	
 			} else {
 				fn["drop" + nm] = function (nm) {
 					return function () { return this._drop(nm, arguments, null); };
-				}(data[i]);	
+				}(el);	
 			}
 			//
-			if (data[i] === "filter" || data[i] === "parser") {
+			if (el === "filter" || el === "parser") {
 				fn["reset" + nm] = function (nm) {
 					return function () { return this._reset(nm, arguments); };
-				}(data[i]);	
-			} else if (data[i] === "page") {
+				}(el);	
+			} else if (el === "page") {
 				fn["reset" + nm] = function (nm) {
 					return function () { return this._reset(nm, arguments, 1); };
-				}(data[i]);	
-			} else if (data[i] === "context") {
+				}(el);	
+			} else if (el === "context") {
 				fn["reset" + nm] = function (nm) {
 					return function () { return this._reset(nm, arguments, ""); };
-				}(data[i]);	
+				}(el);	
 			}
 			//
 			fn["is" + nm] = function (nm) {
 				return function (id) { return this._is(nm, id); };
-			}(data[i]);	
+			}(el);	
 			//
 			fn["exist" + nm] = function (nm) {
 				return function (id) { return this._exist(nm, id || ""); };
-			}(data[i]);
+			}(el);
 			//
 			fn["get" + nm] = function (nm) {
 				return function (id) { return this._get(nm, id || ""); };
-			}(data[i]);
-		}
+			}(el);
+		});
 	})($.Collection.fn.stack);	
 	/////////////////////////////////
 	//// single methods (core)
@@ -1634,19 +1649,11 @@ var nimble = {
 			} else {
 				countRecords = 0;
 				if (cOLength !== undefined) {
-					if (cObj.forEach) {
-						cObj.forEach(function (el, i, obj) {
-							if (this.customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-								countRecords += 1;
-							}
-						}, this);
-					} else {
-						for (i = cOLength; (i -= 1) > -1;) {
-							if (this.customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-								countRecords += 1;
-							}
+					cObj.forEach(function (el, i, obj) {
+						if (this.customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+							countRecords += 1;
 						}
-					}
+					}, this);
 				} else {
 					for (i in cObj) {
 						if (cObj.hasOwnProperty(i)) {
@@ -1709,45 +1716,27 @@ var nimble = {
 		cOLength = this.length(cObj);
 		//
 		if ($.isArray(cObj)) {
-			if (cObj.some) {
-				//
-				if (indexOf !== false) {
-					cloneObj = cObj.slice(indexOf);
-				} else { cloneObj = cObj; }
-				//
-				cloneObj.some(function (el, i, obj) {
-					i += indexOf;
-					if (count !== false && j === count) { return true; }
+			//
+			if (indexOf !== false) {
+				cloneObj = cObj.slice(indexOf);
+			} else { cloneObj = cObj; }
+			//
+			cloneObj.some(function (el, i, obj) {
+				i += indexOf;
+				if (count !== false && j === count) { return true; }
 					
-					if (this.customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
-						if (from !== false && from !== 0) {
-							from -= 1;
-						} else {
-							if (callback.filter && callback.filter.call(callback.filter, el, cObj, i, cOLength, this, id) === false) { return true; }
-							if (mult === false) { return true; }
-							j += 1;
-						}
-					} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, el, cObj, i, cOLength, this, id) === false) { return true; }}
-					//
-					if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, el, cObj, i, cOLength, this, id) === false) { return true; }
-				}, this);
-			} else {
-				for (i = indexOf !== false ? indexOf - 1 : -1; (i += 1) < cOLength;) {
-					if (count !== false && j === count) { break; }
-					
-					if (this.customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
-						if (from !== false && from !== 0) {
-							from -= 1;
-						} else {
-							if (callback.filter && callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
-							if (mult === false) { break; }
-							j += 1;
-						}
-					} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id) === false) { break; }}
-					//
-					if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
-				}
-			}
+				if (this.customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
+					if (from !== false && from !== 0) {
+						from -= 1;
+					} else {
+						if (callback.filter && callback.filter.call(callback.filter, el, cObj, i, cOLength, this, id) === false) { return true; }
+						if (mult === false) { return true; }
+						j += 1;
+					}
+				} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, el, cObj, i, cOLength, this, id) === false) { return true; }}
+				//
+				if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, el, cObj, i, cOLength, this, id) === false) { return true; }
+			}, this);
 		} else {
 			for (i in cObj) {
 				if (cObj.hasOwnProperty(i)) {
@@ -2007,7 +1996,7 @@ var nimble = {
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this.getActiveParam("context").toString())),
 	
-			elements, eLength, i = -1;
+			elements;
 	
 		// search elements
 		this.disable("context");
@@ -2015,11 +2004,10 @@ var nimble = {
 		this.enable("context");
 		// move
 		if (mult === true) {
-			eLength = elements.length;
-			for (; (i += 1) < eLength;) {
-				this.add(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
-				deleteType === true && deleteList.push(elements[i]);
-			}
+			elements.forEach(function (el) {
+				this.add(context + nimble.CHILDREN + el, aCheckType === true ? addType : el + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+				deleteType === true && deleteList.push(el);
+			}, this);
 		} else {
 			this.add(context + nimble.CHILDREN + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
@@ -2212,9 +2200,9 @@ var nimble = {
 					result.push(array[i]);
 				}
 			};
+			
 			// calculate filter
 			fLength = filter.length;
-			
 			for (; (j += 1) < fLength;) {
 				// calculate atoms
 				if (filter[j] === "(" || filter[j] === "!(") {
@@ -2273,8 +2261,7 @@ var nimble = {
 			active = dObj.active,
 			sys = dObj.sys,
 			
-			tmpParser,
-			i;
+			tmpParser;
 		
 		// if parser is disabled
 		if (parser === false) { return str; }
@@ -2293,13 +2280,13 @@ var nimble = {
 				if (parser.search("&&") === -1) { return sys.tmpParser[parser].call(sys.tmpParser[parser], str, this); }
 				parser = parser.split("&&");
 			}
-			
-			for (i = parser.length; (i -= 1) > -1;) {
-				parser[i] = $.trim(parser[i]);
-				tmpParser = parser[i] === this.ACTIVE ? active.parser : sys.tmpParser[parser[i]];
+			//
+			parser.forEach(function (el) {
+				el = $.trim(el);
+				tmpParser = el === this.ACTIVE ? active.parser : sys.tmpParser[el];
 				
 				str = tmpParser.call(tmpParser, str, this);
-			}
+			}, this);
 	
 			return str;
 		}
@@ -2315,9 +2302,7 @@ var nimble = {
 	 */
 	$.Collection.fn.parentContext = function (n, id) {
 		n = n || 1;
-		var
-			dObj = this.dObj,
-			context = "", i;
+		var context = "", i;
 		//
 		context = this._get("collection", id || "").split(nimble.CHILDREN);
         for (i = n; (i -= 1) > -1;) { context.splice(-1, 1); }
@@ -2526,10 +2511,12 @@ var nimble = {
 	 * @param {String} [param.appendType=this.dObj.active.appendType] - type additions to the DOM
 	 * @param {String} [param.resultNull=this.dObj.active.resultNull] - text displayed if no results
 	 * @param {Boolean} [page=false] - break on page
+	 * @param {Boolean} [clear=false] - clear the cache
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.print = function (param, page) {
+	$.Collection.fn.print = function (param, page, clear) {
 		page = page || false;
+		clear = clear || false;
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -2541,9 +2528,12 @@ var nimble = {
 			result = "", action;
 			
 		// easy implementation
-		if ($.isString(param) || $.isNumeric(param)) {
+		if ($.isExist(param) && ($.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if ($.isBoolean(param)) { page = param; }
+		} else if ($.isBoolean(param)) {
+			page = param;
+		} else if (!$.isExist(param)) { param = {page: active.page} }
+		
 		//
 		$.extend(true, opt, active, param);
 		if (param) { opt.page = nimble.expr(opt.page, active.page || ""); }
@@ -2555,14 +2545,16 @@ var nimble = {
 		opt.filter = $.isExist(param.filter) ? param.filter : this.getActiveParam("filter");
 		opt.parser = $.isExist(param.parser) ? param.parser : this.getActiveParam("parser");
 		//
-		checkPage = active.page - opt.page;
-		active.page = opt.page;
+		if (clear === true) { opt.cache.iteration = false; }
 		//
-		action = function (data, i, cOLength, self, id) {
+		checkPage = active.page - opt.page;
+		this.updatePage(opt.page);
+		//
+		action = function (el, data, i, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(opt.template, data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, el, data, i, cOLength, self, id);
 			inc = i;
 				
 			return true;
@@ -2578,12 +2570,13 @@ var nimble = {
 			start = !page || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
+			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !page || opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
-							checkPage > 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
-			
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
+							
 			// rewind cached step back
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
@@ -2600,9 +2593,11 @@ var nimble = {
 			//
 			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
-		// cache
-		active.cache.firstIteration = opt.cache.lastIteration;
-		active.cache.lastIteration = inc + 1;
+		if (checkPage !== 0 && opt.cache.iteration !== false) {
+			// cache
+			active.cache.firstIteration = opt.cache.lastIteration;
+			active.cache.lastIteration = inc + 1;
+		}
 		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
 		//
 		result = !result ? opt.resultNull : this.customParser(opt.parser, result);
@@ -2622,8 +2617,7 @@ var nimble = {
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
-			opt.page = "-=1";
-			this.print(opt, true);
+			this.updatePage((opt.page -= 1)).print(opt, true, true);
 		} else { this.easyPage(opt); }
 	
 		return this;

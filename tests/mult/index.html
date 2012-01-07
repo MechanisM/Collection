@@ -21,7 +21,7 @@
 				//
 				equal(db.length(false, "table1"), 0, "null");
 				equal(db.length(false, "table2"), 3, "string");
-				equal(db.length(), 2, "Объект");
+				equal(db.length(), 2, "object");
 				equal(db.length(function (el, data, i) {
 					return i === "first";
 				}), 1, "object with filter");

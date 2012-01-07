@@ -30,3 +30,28 @@
 			active.collection = null;
 		} else { active.collection = collection; }
 	};
+	
+	//
+	if (!Array.prototype.forEach) {
+		Array.prototype.forEach = function (callback, _this) {
+			var i = -1, aLength = this.length;
+			
+			for (; (i += 1) < aLength;) {
+				if (!_this) {
+					callback(this[i], i, this);
+				} else { callback.call(_this, this[i], i, this); }
+			}
+		}
+	}
+	if (!Array.prototype.some) {
+		Array.prototype.some = function (callback, _this) {
+			var i = -1, aLength = this.length, res;
+			
+			for (; (i += 1) < aLength;) {
+				if (!_this) {
+					res = callback(this[i], i, this);
+				} else { res = callback.call(_this, this[i], i, this); }
+				if (res === true) { break; }
+			}
+		}
+	}

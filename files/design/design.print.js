@@ -24,10 +24,12 @@
 	 * @param {String} [param.appendType=this.dObj.active.appendType] - type additions to the DOM
 	 * @param {String} [param.resultNull=this.dObj.active.resultNull] - text displayed if no results
 	 * @param {Boolean} [page=false] - break on page
+	 * @param {Boolean} [clear=false] - clear the cache
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.print = function (param, page) {
+	$.Collection.fn.print = function (param, page, clear) {
 		page = page || false;
+		clear = clear || false;
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -39,9 +41,12 @@
 			result = "", action;
 			
 		// easy implementation
-		if ($.isString(param) || $.isNumeric(param)) {
+		if ($.isExist(param) && ($.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if ($.isBoolean(param)) { page = param; }
+		} else if ($.isBoolean(param)) {
+			page = param;
+		} else if (!$.isExist(param)) { param = {page: active.page} }
+		
 		//
 		$.extend(true, opt, active, param);
 		if (param) { opt.page = nimble.expr(opt.page, active.page || ""); }
@@ -53,14 +58,16 @@
 		opt.filter = $.isExist(param.filter) ? param.filter : this.getActiveParam("filter");
 		opt.parser = $.isExist(param.parser) ? param.parser : this.getActiveParam("parser");
 		//
-		checkPage = active.page - opt.page;
-		active.page = opt.page;
+		if (clear === true) { opt.cache.iteration = false; }
 		//
-		action = function (data, i, cOLength, self, id) {
+		checkPage = active.page - opt.page;
+		this.updatePage(opt.page);
+		//
+		action = function (el, data, i, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(opt.template, data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, el, data, i, cOLength, self, id);
 			inc = i;
 				
 			return true;
@@ -76,12 +83,13 @@
 			start = !page || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
+			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !page || opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
-							checkPage > 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
-			
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
+							
 			// rewind cached step back
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
@@ -98,9 +106,11 @@
 			//
 			this.each(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
-		// cache
-		active.cache.firstIteration = opt.cache.lastIteration;
-		active.cache.lastIteration = inc + 1;
+		if (checkPage !== 0 && opt.cache.iteration !== false) {
+			// cache
+			active.cache.firstIteration = opt.cache.lastIteration;
+			active.cache.lastIteration = inc + 1;
+		}
 		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
 		//
 		result = !result ? opt.resultNull : this.customParser(opt.parser, result);
@@ -120,8 +130,7 @@
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
-			opt.page = "-=1";
-			this.print(opt, true);
+			this.updatePage((opt.page -= 1)).print(opt, true, true);
 		} else { this.easyPage(opt); }
 	
 		return this;

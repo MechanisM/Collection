@@ -23,13 +23,13 @@
 				.split("<?js"),
 			
 			eLength = elem.length,
-			resStr = "var key = i, result = ''; ", i = -1;
+			resStr = "var key = i, result = ''; ";
 		
-		for (; (i += 1) < eLength;) {
+		elem.forEach(function (el, i) {
 			if (i === 0 || i % 2 === 0) {
-				resStr += "result +='" + elem[i] + "';";
-			} else { resStr += elem[i].split("echo").join("result +="); }
-		}
+				resStr += "result +='" + el + "';";
+			} else { resStr += el.split("echo").join("result +="); }
+		});
 		
 		return new Function("el", "data", "i", "cOLength", "self", "id", resStr + " return result;");
 	};

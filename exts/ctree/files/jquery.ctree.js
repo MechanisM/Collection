@@ -1,5 +1,5 @@
 /**
- * $.cTree - плагин для JavaScript фреймворка $.Collection для построения деревьев
+ * $.cuiTree - плагин для JavaScript фреймворка $.Collection для построения деревьев
  *
  * Автор: Кобец Андрей Александрович (kobezzza)
  * Дата: 27.10.2011 14:39:15
@@ -30,50 +30,42 @@
 	 * @param {Tree View} [data] - представление дерева
 	 * @return {Colletion Object}
 	 */
-	$.fn.cTree = function (uProp, data) {
-		var key, obj;
-
-		if (this.data("CUI") && this.data("CUI").cTree) {
-			obj = this.data("CUI").cTree.obj;
+	$.fn.cuiTree = function (uProp, data) {
+		var obj = this.cuiIs("cuiTree");
+		//
+		if (obj !== false) {
 			if (uProp && uProp === true) {
-				if (!obj.existTemplate("cTree_standartTpl")) { obj.pushTemplate("cTree_standartTpl", $.fn.cTree.template); }
-				obj.prop("activeTarget", this).setTemplate("cTree_standartTpl").print();
+				if (!obj.existTemplate("cuiTree_standartTpl")) { obj.pushTemplate("cuiTree_standartTpl", $.fn.cuiTree.template); }
+				obj.$Target(this).setTemplate("cuiTree_standartTpl").print();
 			}
 			
 			return obj;
 		}
-		
-		uProp = uProp && uProp !== true ? uProp : {};
-		uProp.def = uProp.def || "";
-		
-		if (data && data.name && data.name === "$.Collection") {
-			obj = data;
-		} else {
-			obj = data && data !== false ? new $.Collection(data, uProp.def) : data && data === false ? new $.Collection("", uProp.def) : this.collection(uProp.def);
-		}
+		uProp = uProp || {};
+		obj = this.cuiNewCollection(data, uProp.def || "");
 		//
-		obj.prop("activeTarget", this).pushSetTemplate("cTree_standartTpl", $.fn.cTree.template);
+		this
+			.cuiSet("cuiTree", obj, {events: {}})
+			.cuiAddEvents("cuiTree")
+			.cuiExtend("pathmap", {events: [
+				"animate",
+				
+				"click",
+				"open",
+				"close"
+			 ]}, uProp)
+		//
+		obj
+			.$Target(this)
+			.pushSetTemplate("cuiTree_standartTpl", $.fn.cuiTree.template);
+		//
 		if (!data || data !== false) { obj.print(); }
-		this.setCUI("cTree", obj);
-		
-		// События
-		for (key in uProp) {
-			if (uProp.hasOwnProperty(key) && key !== "def") {
-				this.data("CUI").cTree.events[key] = uProp[key];
-			}
-		}
-		// Делегаты
-		for (key in $.fn.cTree.events) {
-			if ($.fn.cTree.events.hasOwnProperty(key) && key !== "animate") {
-				$.fn.cTree.events[key](this, obj);
-			}
-		}
 		
 		return obj;
 	};
 	// Стандартные данные
-	if (!$.fn.cTree.stat) {
-		$.fn.cTree.stat = {
+	if (!$.fn.cuiTree.stat) {
+		$.fn.cuiTree.stat = {
 			val: "val",
 			childNodes: "childNodes",
 			doctype: "doctype",
@@ -85,9 +77,9 @@
 		};
 	}
 	// Шаблон $.Collection
-	$.fn.cTree.template = function ($this, i, aLength, $obj, id, context, pos) {
+	$.fn.cuiTree.template = function ($this, i, aLength, $obj, id, context, pos) {
 		var
-			stat = $.fn.cTree.stat,
+			stat = $.fn.cuiTree.stat,
 		
 			str = "",
 			last = aLength - 1,
@@ -100,7 +92,7 @@
 			
 			j = -1;
 		
-		if (i === 0) { str = '<ul class="cTree_container">'; }
+		if (i === 0) { str = '<ul class="cuiTree_container">'; }
 		
 		if (!context && $this[i].context) {
 			context = $this[i].context;
@@ -114,13 +106,13 @@
 		<li'
 		+ (context ? ' data-context="' + context + '"' : ' data-context=""')
 		+ (context ? ' data-pos="' + pos + '"' : ' data-pos="' + i + '"')
-		+ ' class="cTree_node'
-		+ (!context ? ' cTree_isRoot' : '')
-		+ (aCheck ? $this[i][stat.childNodes].length === 0 ? ' cTree_emptyChildNodes' : '' : ' cTree_expandLeaf')
-		+ (i === last ? ' cTree_isLast' : '')
-		+ ($this[i][stat.eopen] ? ' cTree_expandOpen' : ' cTree_expandClosed') + '">\
-			<div class="cTree_expand"></div>\
-			<div class="cTree_content">'
+		+ ' class="cuiTree_node'
+		+ (!context ? ' cuiTree_isRoot' : '')
+		+ (aCheck ? $this[i][stat.childNodes].length === 0 ? ' cuiTree_emptyChildNodes' : '' : ' cuiTree_expandLeaf')
+		+ (i === last ? ' cuiTree_isLast' : '')
+		+ ($this[i][stat.eopen] ? ' cuiTree_expandOpen' : ' cuiTree_expandClosed') + '">\
+			<div class="cuiTree_expand"></div>\
+			<div class="cuiTree_content">'
 				+ ($this[i][stat.html] ? $this[i][stat.html] : '')
 				+ ($this[i][stat.ico] ? '<img src="' + $this[i][stat.ico] + '" alt="' + ($this[i][stat.alt] ? $this[i][stat.alt] : '') + '"' + (!$this[i][stat.doctype] || $this[i][stat.doctype] == "xhtml" ? ' /' : '') + '>' : '')
 				+ ($this[i][stat.href] && $this[i][stat.val] ? '<a href="' + $this[i][stat.href] + '">' + $this[i][stat.val] + '</a>' : $this[i][stat.val] ? '<span>' + $this[i][stat.val] + '</span>' : '')
@@ -134,7 +126,7 @@
 			newContext = context ? context + "~" + i + "~" + stat.childNodes : i + "~" + stat.childNodes;
 			
 			for (; j++ < tmpLength;) {
-				str += $.fn.cTree.template($this[i][stat.childNodes], j, childLength, $obj, id, newContext, j);
+				str += $.fn.cuiTree.template($this[i][stat.childNodes], j, childLength, $obj, id, newContext, j);
 			}
 		}
 								
@@ -144,25 +136,25 @@
 		return str;
 	};
 	// Стандартное событие
-	$.fn.cTree.events = {};
-	$.fn.cTree.events.standart = function (target, $this) {
-		target.delegate(".cTree_expand", "click", function (e) {
+	$.fn.cuiTree.events = {};
+	$.fn.cuiTree.events.standart = function (obj) {
+		this.on(".cuiTree_expand", "click", function (e) {
 			var
 				$parent = $(e.target).parent(),
-				events = target.data("CUI").cTree.events,
+				events = target.data("CUI").cuiTree.events,
 				status,
 				
 				context = $parent.data("context"),
 				pos = $parent.data("pos");
 			
-			if (!$parent.hasClass("cTree_expandLeaf")) {
-				if ($parent.hasClass("cTree_expandOpen")) {
+			if (!$parent.hasClass("cuiTree_expandLeaf")) {
+				if ($parent.hasClass("cuiTree_expandOpen")) {
 					
 					if (!events.animate || !events.animate.close) {
-						$parent.removeClass("cTree_expandOpen").addClass("cTree_expandClosed");
+						$parent.removeClass("cuiTree_expandOpen").addClass("cuiTree_expandClosed");
 					} else if (events.animate && events.animate.close) {
 						events.animate.close.call($parent).queue(function () {
-							$parent.removeClass("cTree_expandOpen").addClass("cTree_expandClosed");
+							$parent.removeClass("cuiTree_expandOpen").addClass("cuiTree_expandClosed");
 							$(this).removeAttr("style").dequeue();
 						});
 					}
@@ -170,10 +162,10 @@
 					status = "close";
 				} else {
 					if (!events.animate || !events.animate.open) {
-						$parent.removeClass("cTree_expandClosed").addClass("cTree_expandOpen");
+						$parent.removeClass("cuiTree_expandClosed").addClass("cuiTree_expandOpen");
 					} else if (events.animate && events.animate.open) {
 						events.animate.open.call($parent).queue(function () {
-							$parent.removeClass("cTree_expandClosed").addClass("cTree_expandOpen");
+							$parent.removeClass("cuiTree_expandClosed").addClass("cuiTree_expandOpen");
 							$(this).removeAttr("style").dequeue();
 						});
 					}

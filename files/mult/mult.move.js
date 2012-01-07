@@ -38,7 +38,7 @@
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this.getActiveParam("context").toString())),
 	
-			elements, eLength, i = -1;
+			elements;
 	
 		// search elements
 		this.disable("context");
@@ -46,11 +46,10 @@
 		this.enable("context");
 		// move
 		if (mult === true) {
-			eLength = elements.length;
-			for (; (i += 1) < eLength;) {
-				this.add(context + nimble.CHILDREN + elements[i], aCheckType === true ? addType : elements[i] + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
-				deleteType === true && deleteList.push(elements[i]);
-			}
+			elements.forEach(function (el) {
+				this.add(context + nimble.CHILDREN + el, aCheckType === true ? addType : el + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
+				deleteType === true && deleteList.push(el);
+			}, this);
 		} else {
 			this.add(context + nimble.CHILDREN + elements, aCheckType === true ? addType : elements + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);

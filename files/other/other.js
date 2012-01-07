@@ -74,9 +74,9 @@
 					result.push(array[i]);
 				}
 			};
+			
 			// calculate filter
 			fLength = filter.length;
-			
 			for (; (j += 1) < fLength;) {
 				// calculate atoms
 				if (filter[j] === "(" || filter[j] === "!(") {
@@ -135,8 +135,7 @@
 			active = dObj.active,
 			sys = dObj.sys,
 			
-			tmpParser,
-			i;
+			tmpParser;
 		
 		// if parser is disabled
 		if (parser === false) { return str; }
@@ -155,13 +154,13 @@
 				if (parser.search("&&") === -1) { return sys.tmpParser[parser].call(sys.tmpParser[parser], str, this); }
 				parser = parser.split("&&");
 			}
-			
-			for (i = parser.length; (i -= 1) > -1;) {
-				parser[i] = $.trim(parser[i]);
-				tmpParser = parser[i] === this.ACTIVE ? active.parser : sys.tmpParser[parser[i]];
+			//
+			parser.forEach(function (el) {
+				el = $.trim(el);
+				tmpParser = el === this.ACTIVE ? active.parser : sys.tmpParser[el];
 				
 				str = tmpParser.call(tmpParser, str, this);
-			}
+			}, this);
 	
 			return str;
 		}
