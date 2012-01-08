@@ -19,8 +19,8 @@
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.moveElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = $.isExist(moveFilter) ? moveFilter : this.getActiveParam("filter");
+	$.Collection.fn.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
+		moveFilter = $.isExist(moveFilter) && moveFilter !== true ? moveFilter : this.getActiveParam("filter");
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		
@@ -42,7 +42,7 @@
 	
 		// search elements
 		this.disable("context");
-		elements = this.searchElements(moveFilter, sourceID, mult, count, from, indexOf);
+		elements = this.search(moveFilter, sourceID, mult, count, from, indexOf);
 		this.enable("context");
 		// move
 		if (mult === true) {
@@ -56,7 +56,7 @@
 		}
 		
 		// delete element
-		if (deleteType === true) { this.disable("context").deleteElementsByLink(deleteList, sourceID).enable("context"); }
+		if (deleteType === true) { this.disable("context")._remove(deleteList, sourceID).enable("context"); }
 	
 		return this;
 	},
@@ -71,8 +71,8 @@
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.moveElement = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+	$.Collection.fn.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
+		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
 	 * copy elements (in context)
@@ -89,13 +89,13 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.copyElements = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
+	$.Collection.fn.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
 	 * copy element (in context)
@@ -108,6 +108,6 @@
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.copyElement = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.moveElements(moveFilter || "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+	$.Collection.fn.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
+		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};

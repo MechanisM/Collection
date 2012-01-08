@@ -1,10 +1,10 @@
 
 	/////////////////////////////////
-	//// mult methods (replace)
+	//// mult methods (set)
 	/////////////////////////////////
 	
 	/**
-	 * replace elements (in context)
+	 * set elements (in context)
 	 *
 	 * // overloads:
 	 * 1) if the id is a Boolean, it is considered as mult.
@@ -19,8 +19,13 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.replaceElements = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
+	$.Collection.fn.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
+		if ((arguments.length < 3 && $.isString(filter)
+			&& !this._exist("filter", filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
+				return this._setOne(filter, replaceObj, id || "");
+			}
+		//
+		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -42,7 +47,7 @@
 			replaceCheck = $.isFunction(replaceObj),
 			action = function (el, data, i, aLength, self, id) {
 				if (replaceCheck) {
-					replaceObj.call(replaceObj, el, data, i, aLength, self, id);
+					data[i] = replaceObj.call(replaceObj, el, data, i, aLength, self, id);
 				} else { data[i] = nimble.expr(replaceObj, data[i]); }
 	
 				return true;
@@ -61,6 +66,18 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.replaceElement = function (filter, replaceObj, id) {
-		return this.replaceElements(filter || "", replaceObj, id || "", false);
+	$.Collection.fn.setOne = function (filter, replaceObj, id) {
+		return this.set($.isExist(filter) ? filter : "", replaceObj, id || "", false);
+	};
+	
+	/**
+	 * map (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @return {Colletion Object}
+	 */
+	$.Collection.fn.map = function (replaceObj, id) {
+		return this.set(false, replaceObj, id || "");
 	};

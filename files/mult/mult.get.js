@@ -1,16 +1,16 @@
 	
 	/////////////////////////////////
-	//// mult methods (return)
+	//// mult methods (get)
 	/////////////////////////////////
 	
 	/**
-	 * return elements (in context)
+	 * get elements (in context)
 	 *
 	 * // overloads:
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean|Context|Null} [filter=false] - filter function, string expressions or "false" or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -18,8 +18,13 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {mixed}
 	 */
-	$.Collection.fn.returnElements = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
+	$.Collection.fn.get = function (filter, id, mult, count, from, indexOf) {
+		if ((arguments.length < 2 && $.isString(filter)
+			&& !this._exist("filter", filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
+				return this._getOne(filter, id || "");
+			}
+		//
+		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -38,14 +43,11 @@
 		indexOf = parseInt(indexOf) || false;
 	
 		var
-			result = [],
+			result = mult === true ? [] : -1,
 			action = function (el, data, i, aLength, self, id) {
 				if (mult === true) {
 					result.push(data[i]);
-				} else {
-					result = data[i];
-					return false;
-				}
+				} else { result = data[i]; }
 	
 				return true;
 			};
@@ -55,13 +57,13 @@
 		return result;
 	};
 	/**
-	 * return element (in context)
+	 * get element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean|Context} [filter=false] - filter function, string expressions or "false" or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
-	$.Collection.fn.returnElement = function (filter, id) {
-		return this.returnElements(filter || "", id || "", false);
+	$.Collection.fn.getOne = function (filter, id) {
+		return this.get($.isExist(filter) ? filter : "", id || "", false);
 	};

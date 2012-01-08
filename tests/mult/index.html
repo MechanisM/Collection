@@ -74,34 +74,34 @@
 			test("search", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
-				equal(db.searchElements(function (el, data, i) {
+				equal(db.search(function (el, data, i) {
 					return el === 1;
 				})[0], 0, "simple search");
 			});
-			test("return", function () {
+			test("get", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
-				equal(db.returnElements(function (el, data, i) {
+				equal(db.get(function (el, data, i) {
 					return el === 1;
 				})[0], 1, "simple return");
 			});
-			test("replace", function () {
+			test("set", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
-				equal(db.replaceElements(false, 2).get()[0], 2, "simple replace");
-				equal(db.replaceElements(false, "+=2").get()[0], 4, "simple replace: += 2");
+				equal(db.set(false, 2).get()[0], 2, "simple replace");
+				equal(db.set(false, "+=2").get()[0], 4, "simple replace: += 2");
 			});
-			test("delete", function () {
+			test("remove", function () {
 				var db = new $.Collection([1, 2, 3, 4]);
 				
-				equal(db.deleteElements(function (el, data, i) {
+				equal(db.remove(function (el, data, i) {
 					return el === 1;
-				}).get("0"), 2, "simple delete");
+				}).get("0"), 2, "simple remove");
 			});
 			test("move", function () {
 				var db = new $.Collection([1, 2, 3, 4]).pushCollection("table1", [1, 2, []]);
 				
-				equal(db.$Context("eq(-1)").moveElements(false, "", "active", "table1").getCollection().length, 0, "simple move");
+				equal(db.$Context("eq(-1)").move(false, "", "active", "table1").getCollection().length, 0, "simple move");
 			});
 		});
 	</script>

@@ -19,7 +19,7 @@
 				"set");
 				equal(db
 					.set("", 99)
-					.get(), 99,
+					.get(" "), 99,
 				"set - without context");
 			});
 			//
@@ -31,31 +31,31 @@
 				"simple test");
 			});
 			//
-			test("delete", function () {
+			test("remove", function () {
 				var
 					obj = {first: [[1, 2, {second: 3}], 2, 3], second: [1, 2, 3, 4]},
 					db = new $.Collection(obj);
 				//
 				equal(db
-					.deleteElementByLink("first > 0 > 1")
+					.remove("first > 0 > 1")
 					.get("first > 0").length, 2,
-				"deleteElementByLink -> array");
+				"remove -> array");
 				//
 				equal(db
-					.deleteElementByLink("first > 0 > eq(-1) > second")
+					.remove("first > 0 > eq(-1) > second")
 					.get("first > 0 > eq(-1)").second, undefined,
-				"deleteElementByLink -> object");
+				"remove -> object");
 				//
 				equal(db
-					.deleteElementsByLink(["first > eq(0)", "first > eq(-1)"])
+					.remove(["first > eq(0)", "first > eq(-1)"])
 					.get("first").length, 1,
-				"deleteElementsByLink -> array");
+				"remove -> array");
 				//
 				equal(db
 					.pushCollection("stack", obj)
-					.deleteElementsByLink({stack: ["second > eq(0)", "second > eq(0)"], active: "second > eq(0)"})
+					.remove({stack: ["second > eq(0)", "second > eq(0)"], active: "second > eq(0)"})
 					.get("second").length, 1,
-				"deleteElementsByLink -> object");
+				"remove -> object");
 			});
 			//
 			test("add", function () {

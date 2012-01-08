@@ -18,8 +18,8 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Number|Array}
 	 */
-	$.Collection.fn.searchElements = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
+	$.Collection.fn.search = function (filter, id, mult, count, from, indexOf) {
+		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -38,15 +38,12 @@
 		indexOf = parseInt(indexOf) || false;
 	
 		var
-			result = [],
+			result = mult === true ? [] : -1,
 			action = function (el, data, i, aLength, self, id) {
 				if (mult === true) {
 					result.push(i);
-				} else {
-					result = i;
-					return false;
-				}
-	
+				} else { result = i; }
+				
 				return true;
 			};
 	
@@ -62,6 +59,46 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
-	$.Collection.fn.searchElement = function (filter, id) {
-		return this.searchElements(filter || "", id || "", false);
+	$.Collection.fn.searchOne = function (filter, id) {
+		return this.search($.isExist(filter) ? filter : "", id || "", false);
 	};
+	
+	/**
+	 * indexOf (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {mixed} searchElement - element to locate in the array
+	 * @param {fromIndex} [fromIndex=0] - the index at which to start searching backwards
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @return {Number|String}
+	 */
+	$.Collection.fn.indexOf = function (searchElement, fromIndex, id) {
+		id = id || "";
+		fromIndex = fromIndex || "";
+		var cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString());
+		if ($.isArray(cObj) && cObj.indexOf) {
+			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
+			return cObj.indexOf(searchElement);
+		} else { return this.search(function (el) { return el === searchElement; }, id, false, "", "", fromIndex); }
+	}
+	/**
+	 * lastIndexOf (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {mixed} searchElement - element to locate in the array
+	 * @param {fromIndex} [fromIndex=0] - the index at which to start searching backwards
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @return {Number|String}
+	 */
+	$.Collection.fn.lastIndexOf = function (searchElement, fromIndex, id) {
+		id = id || "";
+		fromIndex = fromIndex || "";
+		var el, cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString());
+		if ($.isArray(cObj) && cObj.lastIndexOf) {
+			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }
+			return cObj.lastIndexOf(searchElement);
+		} else {
+			el = this.search(function (el) { return el === searchElement; }, id, "", "", "", fromIndex);
+			return el[el.length - 1] !== undefined ? el[el.length - 1] : -1;
+		}
+	}

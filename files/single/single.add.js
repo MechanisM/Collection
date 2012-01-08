@@ -61,18 +61,18 @@
 				}
 				
 				// delete element
-				if (deleteType === true) { this.disable("context").deleteElementByLink(cValue, sourceID).enable("context"); }
+				if (deleteType === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
 			}
 			
 			// rewrites links (if used for an object "unshift")
-			if (lCheck !== true) { this.set("", lCheck, activeID || ""); }
+			if (lCheck !== true) { this._setOne("", lCheck, activeID || ""); }
 		} else { throw new Error("unable to set property!"); }
 	
 		return this;
 	};
 	
 	/**
-	 * push new element
+	 * push new element (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element
@@ -83,7 +83,7 @@
 		return this.add(obj, "", id || "");
 	};
 	/**
-	 * unshift new element
+	 * unshift new element (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element

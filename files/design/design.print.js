@@ -55,7 +55,7 @@
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		//
-		opt.filter = $.isExist(param.filter) ? param.filter : this.getActiveParam("filter");
+		opt.filter = $.isExist(param.filter) && param.filter !== true ? param.filter : this.getActiveParam("filter");
 		opt.parser = $.isExist(param.parser) ? param.parser : this.getActiveParam("parser");
 		//
 		if (clear === true) { opt.cache.iteration = false; }

@@ -13,7 +13,7 @@
 	 * @return {Number}
 	 */
 	$.Collection.fn.length = function (filter, id) {
-		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
+		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
 		var
 			dObj = this.dObj,
 			cObj, cOLength, aCheck,
@@ -79,13 +79,13 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: 0)
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
-		filter = $.isExist(filter) ? filter : this.getActiveParam("filter");
+		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
@@ -108,10 +108,10 @@
 			cObj, cOLength,
 			cloneObj,
 	
-			i, j = 0;
+			i, j = 0, res = false, tmpRes;
 		
 		//
-		cObj = nimble.byLink(id !== this.ACTIVE ? dObj.sys.tmpCollection[id] : dObj.active.collection, this.getActiveParam("context").toString());
+		cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString());
 		cOLength = this.length(cObj);
 		//
 		if ($.isArray(cObj)) {
@@ -128,13 +128,24 @@
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
-						if (callback.filter && callback.filter.call(callback.filter, el, cObj, i, cOLength, this, id) === false) { return true; }
-						if (mult === false) { return true; }
+						if (callback.filter) { res = callback.filter.call(callback.filter, el, cObj, i, cOLength, this, id) === false; }
+						if (mult === false) { res = true; }
 						j += 1;
 					}
-				} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, el, cObj, i, cOLength, this, id) === false) { return true; }}
+				} else {
+					if (callback.denial && (from === false || from === 0)) {
+						tmpRes = callback.denial.call(callback.denial, el, cObj, i, cOLength, this, id);
+						if (res === false && tmpRes === false) { res = true; }
+					}
+				}
 				//
-				if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, el, cObj, i, cOLength, this, id) === false) { return true; }
+				if (callback.full && (from === false || from === 0)) {
+					tmpRes = callback.full.call(callback.full, el, cObj, i, cOLength, this, id);
+					if (res === false && tmpRes === false) { res = true; }
+				}
+				//
+				if (res === true) { return true; }
+				tmpRes = "";
 			}, this);
 		} else {
 			for (i in cObj) {
@@ -146,14 +157,25 @@
 						if (from !== false && from !== 0) {
 							from -= 1;
 						} else {	
-							if (callback.filter && callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
-							if (mult === false) { break; }
+							if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false; }
+							if (mult === false) { res = true; }
 							j += 1;
 						}
 					}
-				} else { if (callback.denial && (from === false || from === 0) && callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id) === false) { break; }}
+				} else {
+					if (callback.denial && (from === false || from === 0)) {
+						tmpRes = callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id);
+						if (res === false && tmpRes === false) { res = true; }
+					}
+				}
 				//
-				if (callback.full && (from === false || from === 0) && callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id) === false) { break; }
+				if (callback.full && (from === false || from === 0)) {
+					tmpRes = callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id);
+					if (res === false && tmpRes === false) { res = true; }
+				}
+				//
+				if (res === true) { break; }
+				tmpRes = "";
 			}
 		}
 	

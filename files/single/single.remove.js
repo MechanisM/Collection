@@ -1,6 +1,6 @@
 	
 	/////////////////////////////////
-	//// single methods (delete)
+	//// single methods (remove)
 	/////////////////////////////////
 		
 	/**
@@ -11,14 +11,14 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.deleteElementByLink = function (context, id) {
+	$.Collection.fn._removeOne = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		var
 			cObj,
 			activeContext = this.getActiveParam("context").toString();
 		
 		if (!context && !activeContext) {
-			this.set("", null);
+			this._setOne("", null);
 		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }
 	
 		return this;
@@ -31,7 +31,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.deleteElementsByLink = function (objContext, id) {
+	$.Collection.fn._remove = function (objContext, id) {
 		id = id || "";
 		var key, i;
 		if ($.isPlainObject(objContext)) {
@@ -39,31 +39,31 @@
 				if (objContext.hasOwnProperty(key)) {
 					if ($.isArray(objContext[key])) {
 						for (i = objContext[key].length; (i -= 1) > -1;) {
-							this.deleteElementByLink(objContext[key][i], key);
+							this._removeOne(objContext[key][i], key);
 						}
-					} else { this.deleteElementByLink(objContext[key], key); }
+					} else { this._removeOne(objContext[key], key); }
 				}
 			}
 		} else if ($.isArray(objContext)) {
-			for (i = objContext.length; (i -= 1) > -1;) { this.deleteElementByLink(objContext[i], id); }
-		} else { this.deleteElementByLink(objContext, id); }
+			for (i = objContext.length; (i -= 1) > -1;) { this._removeOne(objContext[i], id); }
+		} else { this._removeOne(objContext, id); }
 	
 		return this;
 	};
 	
 	/**
-	 * pop element
+	 * pop element (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.pop = function (id) { return this.deleteElementByLink("eq(-1)", id || ""); };
+	$.Collection.fn.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
 	/**
-	 * shift element
+	 * shift element (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.shift = function (id) { return this.deleteElementByLink("eq(0)", id || ""); };
+	$.Collection.fn.shift = function (id) { return this._removeOne("eq(0)", id || ""); };

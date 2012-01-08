@@ -28,15 +28,15 @@ copy	^
 		^
 		+ single\single.js ^
 		+ single\single.add.js ^
-		+ single\single.delete.js ^
+		+ single\single.remove.js ^
 		+ single\single.concat.js ^
 		^
 		+ mult\mult.js ^
 		+ mult\mult.search.js ^
-		+ mult\mult.return.js ^
-		+ mult\mult.replace.js ^
+		+ mult\mult.get.js ^
+		+ mult\mult.set.js ^
 		+ mult\mult.move.js ^
-		+ mult\mult.delete.js ^
+		+ mult\mult.remove.js ^
 		^
 		+ other\other.js ^
 		+ other\order.js ^
