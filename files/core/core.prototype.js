@@ -70,6 +70,17 @@
 		},
 		
 		/**
+		 * filter test
+		 * 
+		 * @this {Collection Object}
+		 * @param {mixed} val - some object
+		 * @return {Boolean}
+		 */
+		filterTest: function (val) {
+			return val === this.ACTIVE || this._exist("filter", val) || val.search(/&&|\|\|/) !== -1;
+		},
+		
+		/**
 		 * enable property
 		 * 
 		 * @this {Collection Object}

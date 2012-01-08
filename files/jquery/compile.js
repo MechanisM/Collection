@@ -35,7 +35,7 @@
 	};
 	
 	/**
-	 * make template
+	 * make templates
 	 * 
 	 * @this {jQuery Object}
 	 * @param {Collection Object} cObj - an instance of $.Collection

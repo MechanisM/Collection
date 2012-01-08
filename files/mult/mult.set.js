@@ -21,7 +21,7 @@
 	 */
 	$.Collection.fn.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		if ((arguments.length < 3 && $.isString(filter)
-			&& !this._exist("filter", filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
+			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
 				return this._setOne(filter, replaceObj, id || "");
 			}
 		//

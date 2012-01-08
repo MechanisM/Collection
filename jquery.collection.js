@@ -468,6 +468,17 @@ var nimble = {
 		},
 		
 		/**
+		 * filter test
+		 * 
+		 * @this {Collection Object}
+		 * @param {mixed} val - some object
+		 * @return {Boolean}
+		 */
+		filterTest: function (val) {
+			return val === this.ACTIVE || this._exist("filter", val) || val.search(/&&|\|\|/) !== -1;
+		},
+		
+		/**
 		 * enable property
 		 * 
 		 * @this {Collection Object}
@@ -614,7 +625,7 @@ var nimble = {
 	};
 	
 	/**
-	 * make template
+	 * make templates
 	 * 
 	 * @this {jQuery Object}
 	 * @param {Collection Object} cObj - an instance of $.Collection
@@ -1909,7 +1920,7 @@ var nimble = {
 	 */
 	$.Collection.fn.get = function (filter, id, mult, count, from, indexOf) {
 		if ((arguments.length < 2 && $.isString(filter)
-			&& !this._exist("filter", filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
+			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._getOne(filter, id || "");
 			}
 		//
@@ -1978,7 +1989,7 @@ var nimble = {
 	 */
 	$.Collection.fn.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		if ((arguments.length < 3 && $.isString(filter)
-			&& !this._exist("filter", filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
+			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
 				return this._setOne(filter, replaceObj, id || "");
 			}
 		//
@@ -2171,7 +2182,7 @@ var nimble = {
 	 */
 	$.Collection.fn.remove = function (filter, id, mult, count, from, indexOf) {
 		if ((arguments.length < 2 && $.isString(filter)
-			&& !this._exist("filter", filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
+			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
 		//
