@@ -19,7 +19,7 @@
 	 * @return {mixed}
 	 */
 	$.Collection.fn.get = function (filter, id, mult, count, from, indexOf) {
-		if ((arguments.length < 2 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
 			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._getOne(filter, id || "");
 			}

@@ -99,7 +99,7 @@
 						splitKey = inKey.split(" ");
 						n = splitKey.length;
 						if (n > 1) {
-							for (; (n =- 1) > -1;) { arguments[i][splitKey[n]] = arguments[i][inKey]; }
+							for (; (n -= 1) > -1;) { arguments[i][splitKey[n]] = arguments[i][inKey]; }
 							delete arguments[i][inKey];
 						}
 					}

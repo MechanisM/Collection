@@ -114,7 +114,6 @@ var nimble = {
 	 * @param {Context} context - link
 	 * @param {mixed} [value] - some value
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
-	 * @throw {Error}
 	 * @return {nimble|Boolean|mixed}
 	 */
 	byLink: function (obj, context, value, deleteType) {
@@ -178,7 +177,6 @@ var nimble = {
 				case this.CHILDREN : { type = context[i]; } break;
 				default : {
 					if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
-						if (obj[context[i]] === undefined) { throw new Error("an invalid reference to the object"); }
 						if (i === last && value !== undefined) {
 							if (deleteType === false) {
 								obj[context[i]] = this.expr(value, obj[context[i]]);
@@ -194,7 +192,6 @@ var nimble = {
 						pos = +pos;
 						//
 						if (this.isArray(obj)) {
-							if ((pos >= 0 ? pos : obj.length + pos) === undefined) { throw new Error("an invalid reference to the object"); }
 							if (i === last && value !== undefined) {
 								if (pos >= 0) {
 									if (deleteType === false) {
@@ -224,7 +221,6 @@ var nimble = {
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
-										if (obj[key] === undefined) { throw new Error("an invalid reference to the object"); }
 										if (i === last && value !== undefined) {
 											if (deleteType === false) {
 												obj[key] = this.expr(value, obj[key]);
@@ -1919,7 +1915,7 @@ var nimble = {
 	 * @return {mixed}
 	 */
 	$.Collection.fn.get = function (filter, id, mult, count, from, indexOf) {
-		if ((arguments.length < 2 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
 			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._getOne(filter, id || "");
 			}
@@ -1988,7 +1984,7 @@ var nimble = {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		if ((arguments.length < 3 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 3 && $.isString(filter)
 			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
 				return this._setOne(filter, replaceObj, id || "");
 			}
@@ -2181,7 +2177,7 @@ var nimble = {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.remove = function (filter, id, mult, count, from, indexOf) {
-		if ((arguments.length < 2 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
 			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }

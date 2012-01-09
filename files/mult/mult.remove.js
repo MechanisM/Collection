@@ -19,7 +19,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.remove = function (filter, id, mult, count, from, indexOf) {
-		if ((arguments.length < 2 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
 			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }

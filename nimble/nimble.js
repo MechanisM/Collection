@@ -108,7 +108,6 @@ var nimble = {
 	 * @param {Context} context - link
 	 * @param {mixed} [value] - some value
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
-	 * @throw {Error}
 	 * @return {nimble|Boolean|mixed}
 	 */
 	byLink: function (obj, context, value, deleteType) {
@@ -172,7 +171,6 @@ var nimble = {
 				case this.CHILDREN : { type = context[i]; } break;
 				default : {
 					if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
-						if (obj[context[i]] === undefined) { throw new Error("an invalid reference to the object"); }
 						if (i === last && value !== undefined) {
 							if (deleteType === false) {
 								obj[context[i]] = this.expr(value, obj[context[i]]);
@@ -188,7 +186,6 @@ var nimble = {
 						pos = +pos;
 						//
 						if (this.isArray(obj)) {
-							if ((pos >= 0 ? pos : obj.length + pos) === undefined) { throw new Error("an invalid reference to the object"); }
 							if (i === last && value !== undefined) {
 								if (pos >= 0) {
 									if (deleteType === false) {
@@ -218,7 +215,6 @@ var nimble = {
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
-										if (obj[key] === undefined) { throw new Error("an invalid reference to the object"); }
 										if (i === last && value !== undefined) {
 											if (deleteType === false) {
 												obj[key] = this.expr(value, obj[key]);
