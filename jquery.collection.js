@@ -617,7 +617,7 @@ var nimble = {
 			} else { resStr += el.split("echo").join("result +="); }
 		});
 		
-		return new Function("el", "data", "i", "cOLength", "self", "id", resStr + " return result;");
+		return new Function("el", "data", "i", "cOLength", "cObj", "id", resStr + " return result;");
 	};
 	
 	/**
