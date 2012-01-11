@@ -117,11 +117,13 @@ var nimble = {
 	 * @return {nimble|Boolean|mixed}
 	 */
 	byLink: function (obj, context, value, deleteType) {
+		if (obj === undefined) { return false; }
 		context = context
 					.toString()
 					.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), " " + this.CHILDREN + " ")
 					.split(this.CONTEXT_SEPARATOR);
 		deleteType = deleteType || false;
+		
 		//
 		var
 			type = this.CHILDREN,
@@ -1235,13 +1237,12 @@ var nimble = {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} id - stack ID
+	 * @param {String} [id] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._is = function (propName, id) {
-		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) {
-			return true;
-		}
+		if (!id) { return this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]; }
+		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) { return true; }
 
 		return false;
 	};
@@ -1730,6 +1731,7 @@ var nimble = {
 			if (indexOf !== false) {
 				cloneObj = cObj.slice(indexOf);
 			} else { cloneObj = cObj; }
+			
 			//
 			cloneObj.some(function (el, i, obj) {
 				i += indexOf;
@@ -2043,7 +2045,7 @@ var nimble = {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.map = function (replaceObj, id) {
-		return this.set(false, replaceObj, id || "");
+		return this.set(true, replaceObj, id || "");
 	};
 	/////////////////////////////////
 	//// mult methods (move && copy)
@@ -2255,17 +2257,26 @@ var nimble = {
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
-			if (active.filter) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
+			if (active.filter) {
+				if ($.isFunction(active.filter)) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
+				return this.customFilter(active.filter, el, data, i, cOLength, self, id)
+			}
 			
 			return true;
 		} else {
 			// if filter is string
 			if (!$.isArray(filter)) {
 				// if simple filter
-				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id);
+				if (filter.search(/\|\||&&|!/) === -1) {
+					if (filter.search(/^\s*=/) !== -1) {
+						tmpFilter = new Function("el", "data", "i", "cOLength", "self", "id", "var key = i; return " + filter.replace(/^\s*=/, "") + ";");
+						return tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
+					}
+					//
+					if ($.isFunction(sys.tmpFilter[filter])) { return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id); }
+					//
+					return this.customFilter(sys.tmpFilter[filter], el, data, i, cOLength, self, id)
 				}
-				
 				filter = $.trim(
 							filter
 								.toString()
@@ -2544,15 +2555,12 @@ var nimble = {
 		throw new Error("object JSON is not defined!");
 	};
 	/**
-	 * return collection length
+	 * return collection length (only active)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number}
 	 */
-	$.Collection.fn.valueOf = function (id) {
-		return this.length($.isExist(id) ? id : this.ACTIVE);
-	};	
+	$.Collection.fn.valueOf = function () { return this.length(this.ACTIVE); };	
 	/////////////////////////////////
 	// other
 	/////////////////////////////////

@@ -26,12 +26,9 @@
 		throw new Error("object JSON is not defined!");
 	};
 	/**
-	 * return collection length
+	 * return collection length (only active)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number}
 	 */
-	$.Collection.fn.valueOf = function (id) {
-		return this.length($.isExist(id) ? id : this.ACTIVE);
-	};
+	$.Collection.fn.valueOf = function () { return this.length(this.ACTIVE); };

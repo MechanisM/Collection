@@ -36,17 +36,26 @@
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
-			if (active.filter) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
+			if (active.filter) {
+				if ($.isFunction(active.filter)) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
+				return this.customFilter(active.filter, el, data, i, cOLength, self, id)
+			}
 			
 			return true;
 		} else {
 			// if filter is string
 			if (!$.isArray(filter)) {
 				// if simple filter
-				if (filter.search(/\|\||&&|!|\(|\)/) === -1) {
-					return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id);
+				if (filter.search(/\|\||&&|!/) === -1) {
+					if (filter.search(/^\s*=/) !== -1) {
+						tmpFilter = new Function("el", "data", "i", "cOLength", "self", "id", "var key = i; return " + filter.replace(/^\s*=/, "") + ";");
+						return tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
+					}
+					//
+					if ($.isFunction(sys.tmpFilter[filter])) { return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id); }
+					//
+					return this.customFilter(sys.tmpFilter[filter], el, data, i, cOLength, self, id)
 				}
-				
 				filter = $.trim(
 							filter
 								.toString()

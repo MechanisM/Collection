@@ -111,11 +111,13 @@ var nimble = {
 	 * @return {nimble|Boolean|mixed}
 	 */
 	byLink: function (obj, context, value, deleteType) {
+		if (obj === undefined) { return false; }
 		context = context
 					.toString()
 					.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), " " + this.CHILDREN + " ")
 					.split(this.CONTEXT_SEPARATOR);
 		deleteType = deleteType || false;
+		
 		//
 		var
 			type = this.CHILDREN,

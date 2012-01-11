@@ -119,6 +119,7 @@
 			if (indexOf !== false) {
 				cloneObj = cObj.slice(indexOf);
 			} else { cloneObj = cObj; }
+			
 			//
 			cloneObj.some(function (el, i, obj) {
 				i += indexOf;

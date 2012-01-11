@@ -304,13 +304,12 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} id - stack ID
+	 * @param {String} [id] - stack ID
 	 * @return {Boolean}
 	 */
 	$.Collection.fn._is = function (propName, id) {
-		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) {
-			return true;
-		}
+		if (!id) { return this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]; }
+		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) { return true; }
 
 		return false;
 	};

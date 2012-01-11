@@ -79,5 +79,5 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.fn.map = function (replaceObj, id) {
-		return this.set(false, replaceObj, id || "");
+		return this.set(true, replaceObj, id || "");
 	};
