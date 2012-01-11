@@ -7,8 +7,8 @@
 		id = id || this.ACTIVE;
 		
 		if (local === false) {
-			sessionStorage.setItem("__collection" + id, this.toString(id));
-		} else { localStorage.setItem("__collection" + id, this.toString(id)); }
+			sessionStorage.setItem("__" + this.name + id, this.toString(id));
+		} else { localStorage.setItem("__" + this.name + id, this.toString(id)); }
 		
 		return this;
 	};
@@ -21,12 +21,12 @@
 
 		if (local === false) {
 			if (id === this.ACTIVE) {
-				this._new("collection", sessionStorage.getItem("__collection" + id));
-			} else { this._push("collection", id, $.parseJSON(sessionStorage.getItem("__collection" + id))); }
+				this._new("collection", sessionStorage.getItem("__" + this.name + id));
+			} else { this._push("collection", id, $.parseJSON(sessionStorage.getItem("__" + this.name + id))); }
 		} else {
 			if (id === this.ACTIVE) {
-				this._new("collection", $.parseJSON(localStorage.getItem("__collection" + id)));
-			} else { this._push("collection", id, $.parseJSON(localStorage.getItem("__collection" + id))); }
+				this._new("collection", $.parseJSON(localStorage.getItem("__" + this.name + id)));
+			} else { this._push("collection", id, $.parseJSON(localStorage.getItem("__" + this.name + id))); }
 		}
 		
 		return this;
@@ -39,8 +39,8 @@
 		id = id || this.ACTIVE;
 		
 		if (local === false) {
-			sessionStorage.removeItem("__collection" + id);
-		} else { localStorage.removeItem("__collection" + id); }
+			sessionStorage.removeItem("__" + this.name + id);
+		} else { localStorage.removeItem("__" + this.name + id); }
 		
 		return this;
 	};
