@@ -63,11 +63,11 @@
 		checkPage = active.page - opt.page;
 		this.updatePage(opt.page);
 		//
-		action = function (el, data, i, cOLength, self, id) {
+		action = function (el, i, data, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(opt.template, el, data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, el, i, data, cOLength, self, id);
 			inc = i;
 				
 			return true;
@@ -94,7 +94,7 @@
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
 				for (; (start -= 1) > -1;) {
-					if (this.customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
+					if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
 						if (inc === checkPage) {
 							break;
 						} else { inc += 1; }
@@ -113,11 +113,11 @@
 		}
 		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
 		//
-		result = !result ? opt.resultNull : this.customParser(opt.parser, result);
+		result = !result ? opt.resultNull : this._customParser(opt.parser, result);
 		// append to DOM
 		if (opt.target === false) {
 			if (!opt.variable) {
-				this._$("variable", result);
+				this._new("variable", result);
 			} else { this._push("variable", opt.variable, result); }
 			
 			return this;

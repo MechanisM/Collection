@@ -31,7 +31,7 @@
 			} else { resStr += el.split("echo").join("result +="); }
 		});
 		
-		return new Function("el", "data", "i", "cOLength", "cObj", "id", resStr + " return result;");
+		return new Function("el", "i", "data", "cOLength", "cObj", "id", resStr + " return result;");
 	};
 	
 	/**

@@ -38,6 +38,8 @@ copy	^
 		+ mult\mult.move.js ^
 		+ mult\mult.remove.js ^
 		^
+		+ local\local.js ^
+		^
 		+ other\other.js ^
 		+ other\order.js ^
 		+ other\native.js ^

@@ -39,7 +39,7 @@
 	
 		var
 			result = mult === true ? [] : -1,
-			action = function (el, data, i, aLength, self, id) {
+			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
 					result.push(i);
 				} else { result = i; }

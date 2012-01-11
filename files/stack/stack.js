@@ -11,7 +11,7 @@
 	 * @param {mixed} newProp - new property
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._$ = function (propName, newProp) {
+	$.Collection.fn._new = function (propName, newProp) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -290,12 +290,8 @@
 			dObj = this.dObj,
 			upperCase = $.toUpperCase(propName, 1);
 		
-		if ((!id || id === this.ACTIVE) && dObj.sys["active" + upperCase + "ID"]) {
-			return true;
-		}
-		if (dObj.sys["tmp" + upperCase][id] !== undefined) {
-			return true;
-		}
+		if ((!id || id === this.ACTIVE) && dObj.sys["active" + upperCase + "ID"]) { return true; }
+		if (dObj.sys["tmp" + upperCase][id] !== undefined) { return true; }
 
 		return false;
 	};
@@ -304,11 +300,10 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id] - stack ID
+	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.fn._is = function (propName, id) {
-		if (!id) { return this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]; }
+	$.Collection.fn._isActive = function (propName, id) {
 		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) { return true; }
 
 		return false;

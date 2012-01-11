@@ -45,9 +45,9 @@
 	
 		var
 			replaceCheck = $.isFunction(replaceObj),
-			action = function (el, data, i, aLength, self, id) {
+			action = function (el, i, data, aLength, self, id) {
 				if (replaceCheck) {
-					data[i] = replaceObj.call(replaceObj, el, data, i, aLength, self, id);
+					data[i] = replaceObj.call(replaceObj, el, i, data, aLength, self, id);
 				} else { data[i] = nimble.expr(replaceObj, data[i]); }
 	
 				return true;

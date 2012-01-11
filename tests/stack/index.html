@@ -9,9 +9,9 @@
 	<script type="text/javascript" src="../../jquery.collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			test("_$", function () {
+			test("_new", function () {
 				var db = new $.Collection([[1, 2, 3, 4, 5], 2, 3, 4], {context: "0"});
-				equal(+db._$("context", ""), 4, "simple test");
+				equal(+db._new("context", ""), 4, "simple test");
 			});
 			//
 			test("_update", function () {
@@ -139,12 +139,12 @@
 				equal(db._exist("collection"), true, "with active parameter");
 			});
 			//
-			test("_is", function () {
+			test("_isActive", function () {
 				var db = new $.Collection()
 					._push("collection", {table1: [1, 2], table2: [1]})
 					._set("collection", "table1");
 
-				equal(db._is("collection", "table1"), true, "simple test");
+				equal(db._isActive("collection", "table1"), true, "simple test");
 			});
 		});
 	</script>

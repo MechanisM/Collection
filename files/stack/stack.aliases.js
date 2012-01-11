@@ -10,8 +10,8 @@
 		data.forEach(function (el) {
 			nm = $.toUpperCase(el, 1);
 			
-			fn["$" + nm] = function (nm) {
-				return function (newParam) { return this._$(nm, newParam); };
+			fn["new" + nm] = function (nm) {
+				return function (newParam) { return this._new(nm, newParam); };
 			}(el);
 			//
 			fn["update" + nm] = function (nm) {
@@ -66,8 +66,8 @@
 				}(el);	
 			}
 			//
-			fn["is" + nm] = function (nm) {
-				return function (id) { return this._is(nm, id); };
+			fn["isActive" + nm] = function (nm) {
+				return function (id) { return this._isActive(nm, id); };
 			}(el);	
 			//
 			fn["exist" + nm] = function (nm) {

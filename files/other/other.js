@@ -4,7 +4,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * calculate multi filter
+	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
@@ -15,7 +15,7 @@
 	 * @param {String} id - collection ID
 	 * @return {Boolean}
 	 */
-	$.Collection.fn.customFilter = function (filter, el, data, i, cOLength, self, id) {
+	$.Collection.fn._customFilter = function (filter, el, i, data, cOLength, self, id) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -32,13 +32,13 @@
 		// if filter is disabled
 		if (filter === false) { return true; }
 		// if filter is function
-		if ($.isFunction(filter)) { return filter.call(filter, el, data, i, cOLength, self, id); }
+		if ($.isFunction(filter)) { return filter.call(filter, el, i, data, cOLength, self, id); }
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
 			if (active.filter) {
-				if ($.isFunction(active.filter)) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
-				return this.customFilter(active.filter, el, data, i, cOLength, self, id)
+				if ($.isFunction(active.filter)) { return active.filter.call(active.filter, el, i, data, cOLength, self, id); }
+				return this._customFilter(active.filter, el, i, data, cOLength, self, id)
 			}
 			
 			return true;
@@ -47,14 +47,14 @@
 			if (!$.isArray(filter)) {
 				// if simple filter
 				if (filter.search(/\|\||&&|!/) === -1) {
-					if (filter.search(/^\s*=/) !== -1) {
-						tmpFilter = new Function("el", "data", "i", "cOLength", "self", "id", "var key = i; return " + filter.replace(/^\s*=/, "") + ";");
-						return tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
+					if (filter.search(/^\s*:/) !== -1) {
+						tmpFilter = new Function("el", "i", "data", "cOLength", "self", "id", "var key = i; return " + filter.replace(/^\s*:/, "") + ";");
+						return tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
 					}
 					//
-					if ($.isFunction(sys.tmpFilter[filter])) { return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id); }
+					if ($.isFunction(sys.tmpFilter[filter])) { return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, i, data, cOLength, self, id); }
 					//
-					return this.customFilter(sys.tmpFilter[filter], el, data, i, cOLength, self, id)
+					return this._customFilter(sys.tmpFilter[filter], el, i, data, cOLength, self, id)
 				}
 				filter = $.trim(
 							filter
@@ -97,7 +97,7 @@
 					tmpFilter = calFilter(filter.slice((j + 1)), j);
 					j = tmpFilter.iter;
 					//
-					tmpResult = this.customFilter(tmpFilter.result, el, data, i, cOLength, self, id);
+					tmpResult = this._customFilter(tmpFilter.result, el, i, data, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -111,7 +111,7 @@
 					} else { inverse = false; }
 					
 					tmpFilter = filter[j] === this.ACTIVE ? active.filter : sys.tmpFilter[filter[j]];
-					tmpResult = tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
+					tmpResult = tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -131,14 +131,14 @@
 		}
 	};
 	/**
-	 * calculate multi parser
+	 * calculate custom parser
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Parser|String|Boolean} parser - parser function or string expressions or "false"
 	 * @param {String} str - source string
 	 * @return {String}
 	 */
-	$.Collection.fn.customParser = function (parser, str) {
+	$.Collection.fn._customParser = function (parser, str) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,

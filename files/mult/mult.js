@@ -49,14 +49,14 @@
 				countRecords = 0;
 				if (cOLength !== undefined) {
 					cObj.forEach(function (el, i, obj) {
-						if (this.customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						if (this._customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 							countRecords += 1;
 						}
 					}, this);
 				} else {
 					for (i in cObj) {
 						if (cObj.hasOwnProperty(i)) {
-							if (this.customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+							if (this._customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 								countRecords += 1;
 							}
 						}
@@ -125,7 +125,7 @@
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
 					
-				if (this.customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
+				if (this._customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
@@ -154,7 +154,7 @@
 					if (count !== false && j === count) { break; }
 					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 					
-					if (this.customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
+					if (this._customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) {
 							from -= 1;
 						} else {	

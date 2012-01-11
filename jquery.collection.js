@@ -619,7 +619,7 @@ var nimble = {
 			} else { resStr += el.split("echo").join("result +="); }
 		});
 		
-		return new Function("el", "data", "i", "cOLength", "cObj", "id", resStr + " return result;");
+		return new Function("el", "i", "data", "cOLength", "cObj", "id", resStr + " return result;");
 	};
 	
 	/**
@@ -944,7 +944,7 @@ var nimble = {
 	 * @param {mixed} newProp - new property
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._$ = function (propName, newProp) {
+	$.Collection.fn._new = function (propName, newProp) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -1223,12 +1223,8 @@ var nimble = {
 			dObj = this.dObj,
 			upperCase = $.toUpperCase(propName, 1);
 		
-		if ((!id || id === this.ACTIVE) && dObj.sys["active" + upperCase + "ID"]) {
-			return true;
-		}
-		if (dObj.sys["tmp" + upperCase][id] !== undefined) {
-			return true;
-		}
+		if ((!id || id === this.ACTIVE) && dObj.sys["active" + upperCase + "ID"]) { return true; }
+		if (dObj.sys["tmp" + upperCase][id] !== undefined) { return true; }
 
 		return false;
 	};
@@ -1237,11 +1233,10 @@ var nimble = {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
-	 * @param {String} [id] - stack ID
+	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.fn._is = function (propName, id) {
-		if (!id) { return this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]; }
+	$.Collection.fn._isActive = function (propName, id) {
 		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) { return true; }
 
 		return false;
@@ -1302,8 +1297,8 @@ var nimble = {
 		data.forEach(function (el) {
 			nm = $.toUpperCase(el, 1);
 			
-			fn["$" + nm] = function (nm) {
-				return function (newParam) { return this._$(nm, newParam); };
+			fn["new" + nm] = function (nm) {
+				return function (newParam) { return this._new(nm, newParam); };
 			}(el);
 			//
 			fn["update" + nm] = function (nm) {
@@ -1358,8 +1353,8 @@ var nimble = {
 				}(el);	
 			}
 			//
-			fn["is" + nm] = function (nm) {
-				return function (id) { return this._is(nm, id); };
+			fn["isActive" + nm] = function (nm) {
+				return function (id) { return this._isActive(nm, id); };
 			}(el);	
 			//
 			fn["exist" + nm] = function (nm) {
@@ -1661,14 +1656,14 @@ var nimble = {
 				countRecords = 0;
 				if (cOLength !== undefined) {
 					cObj.forEach(function (el, i, obj) {
-						if (this.customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						if (this._customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 							countRecords += 1;
 						}
 					}, this);
 				} else {
 					for (i in cObj) {
 						if (cObj.hasOwnProperty(i)) {
-							if (this.customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+							if (this._customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 								countRecords += 1;
 							}
 						}
@@ -1737,7 +1732,7 @@ var nimble = {
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
 					
-				if (this.customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
+				if (this._customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
@@ -1766,7 +1761,7 @@ var nimble = {
 					if (count !== false && j === count) { break; }
 					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 					
-					if (this.customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
+					if (this._customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) {
 							from -= 1;
 						} else {	
@@ -1834,7 +1829,7 @@ var nimble = {
 	
 		var
 			result = mult === true ? [] : -1,
-			action = function (el, data, i, aLength, self, id) {
+			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
 					result.push(i);
 				} else { result = i; }
@@ -1942,7 +1937,7 @@ var nimble = {
 	
 		var
 			result = mult === true ? [] : -1,
-			action = function (el, data, i, aLength, self, id) {
+			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
 					result.push(data[i]);
 				} else { result = data[i]; }
@@ -2011,9 +2006,9 @@ var nimble = {
 	
 		var
 			replaceCheck = $.isFunction(replaceObj),
-			action = function (el, data, i, aLength, self, id) {
+			action = function (el, i, data, aLength, self, id) {
 				if (replaceCheck) {
-					data[i] = replaceObj.call(replaceObj, el, data, i, aLength, self, id);
+					data[i] = replaceObj.call(replaceObj, el, i, data, aLength, self, id);
 				} else { data[i] = nimble.expr(replaceObj, data[i]); }
 	
 				return true;
@@ -2219,13 +2214,58 @@ var nimble = {
 	 */
 	$.Collection.fn.removeOne = function (filter, id) {
 		return this.remove($.isExist(filter) ? filter : "", id || "", false);
+	};
+	$.Collection.fn.save = function (id, local) {
+		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
+		if (!JSON) { throw new Error("object JSON is not defined!"); }
+		
+		local = local === false ? false : true;
+		id = id || this.ACTIVE;
+		
+		if (local === false) {
+			sessionStorage.setItem("__collection" + id, this.toString(id));
+		} else { localStorage.setItem("__collection" + id, this.toString(id)); }
+		
+		return this;
+	};
+	
+	$.Collection.fn.load = function (id, local) {
+		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
+		
+		local = local === false ? false : true;
+		id = id || this.ACTIVE;
+
+		if (local === false) {
+			if (id === this.ACTIVE) {
+				this._new("collection", sessionStorage.getItem("__collection" + id));
+			} else { this._push("collection", id, $.parseJSON(sessionStorage.getItem("__collection" + id))); }
+		} else {
+			if (id === this.ACTIVE) {
+				this._new("collection", $.parseJSON(localStorage.getItem("__collection" + id)));
+			} else { this._push("collection", id, $.parseJSON(localStorage.getItem("__collection" + id))); }
+		}
+		
+		return this;
+	};
+	
+	$.Collection.fn.drop = function (id, local) {
+		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
+		
+		local = local === false ? false : true;
+		id = id || this.ACTIVE;
+		
+		if (local === false) {
+			sessionStorage.removeItem("__collection" + id);
+		} else { localStorage.removeItem("__collection" + id); }
+		
+		return this;
 	};	
 	/////////////////////////////////
 	// additional methods
 	/////////////////////////////////
 	
 	/**
-	 * calculate multi filter
+	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
@@ -2236,7 +2276,7 @@ var nimble = {
 	 * @param {String} id - collection ID
 	 * @return {Boolean}
 	 */
-	$.Collection.fn.customFilter = function (filter, el, data, i, cOLength, self, id) {
+	$.Collection.fn._customFilter = function (filter, el, i, data, cOLength, self, id) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -2253,13 +2293,13 @@ var nimble = {
 		// if filter is disabled
 		if (filter === false) { return true; }
 		// if filter is function
-		if ($.isFunction(filter)) { return filter.call(filter, el, data, i, cOLength, self, id); }
+		if ($.isFunction(filter)) { return filter.call(filter, el, i, data, cOLength, self, id); }
 		
 		// if filter is not defined or filter is a string constant
 		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
 			if (active.filter) {
-				if ($.isFunction(active.filter)) { return active.filter.call(active.filter, el, data, i, cOLength, self, id); }
-				return this.customFilter(active.filter, el, data, i, cOLength, self, id)
+				if ($.isFunction(active.filter)) { return active.filter.call(active.filter, el, i, data, cOLength, self, id); }
+				return this._customFilter(active.filter, el, i, data, cOLength, self, id)
 			}
 			
 			return true;
@@ -2268,14 +2308,14 @@ var nimble = {
 			if (!$.isArray(filter)) {
 				// if simple filter
 				if (filter.search(/\|\||&&|!/) === -1) {
-					if (filter.search(/^\s*=/) !== -1) {
-						tmpFilter = new Function("el", "data", "i", "cOLength", "self", "id", "var key = i; return " + filter.replace(/^\s*=/, "") + ";");
-						return tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
+					if (filter.search(/^\s*:/) !== -1) {
+						tmpFilter = new Function("el", "i", "data", "cOLength", "self", "id", "var key = i; return " + filter.replace(/^\s*:/, "") + ";");
+						return tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
 					}
 					//
-					if ($.isFunction(sys.tmpFilter[filter])) { return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, data, i, cOLength, self, id); }
+					if ($.isFunction(sys.tmpFilter[filter])) { return sys.tmpFilter[filter].call(sys.tmpFilter[filter], el, i, data, cOLength, self, id); }
 					//
-					return this.customFilter(sys.tmpFilter[filter], el, data, i, cOLength, self, id)
+					return this._customFilter(sys.tmpFilter[filter], el, i, data, cOLength, self, id)
 				}
 				filter = $.trim(
 							filter
@@ -2318,7 +2358,7 @@ var nimble = {
 					tmpFilter = calFilter(filter.slice((j + 1)), j);
 					j = tmpFilter.iter;
 					//
-					tmpResult = this.customFilter(tmpFilter.result, el, data, i, cOLength, self, id);
+					tmpResult = this._customFilter(tmpFilter.result, el, i, data, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -2332,7 +2372,7 @@ var nimble = {
 					} else { inverse = false; }
 					
 					tmpFilter = filter[j] === this.ACTIVE ? active.filter : sys.tmpFilter[filter[j]];
-					tmpResult = tmpFilter.call(tmpFilter, el, data, i, cOLength, self, id);
+					tmpResult = tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
 					if (!and && !or) {
 						result = inverse === true ? !tmpResult : tmpResult;
 					} else if (and) {
@@ -2352,14 +2392,14 @@ var nimble = {
 		}
 	};
 	/**
-	 * calculate multi parser
+	 * calculate custom parser
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Parser|String|Boolean} parser - parser function or string expressions or "false"
 	 * @param {String} str - source string
 	 * @return {String}
 	 */
-	$.Collection.fn.customParser = function (parser, str) {
+	$.Collection.fn._customParser = function (parser, str) {
 		var
 			dObj = this.dObj,
 			active = dObj.active,
@@ -2651,11 +2691,11 @@ var nimble = {
 		checkPage = active.page - opt.page;
 		this.updatePage(opt.page);
 		//
-		action = function (el, data, i, cOLength, self, id) {
+		action = function (el, i, data, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
 			//
-			result += opt.template.call(opt.template, el, data, i, cOLength, self, id);
+			result += opt.template.call(opt.template, el, i, data, cOLength, self, id);
 			inc = i;
 				
 			return true;
@@ -2682,7 +2722,7 @@ var nimble = {
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
 				for (; (start -= 1) > -1;) {
-					if (this.customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
+					if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
 						if (inc === checkPage) {
 							break;
 						} else { inc += 1; }
@@ -2701,11 +2741,11 @@ var nimble = {
 		}
 		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
 		//
-		result = !result ? opt.resultNull : this.customParser(opt.parser, result);
+		result = !result ? opt.resultNull : this._customParser(opt.parser, result);
 		// append to DOM
 		if (opt.target === false) {
 			if (!opt.variable) {
-				this._$("variable", result);
+				this._new("variable", result);
 			} else { this._push("variable", opt.variable, result); }
 			
 			return this;

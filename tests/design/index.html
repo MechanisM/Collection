@@ -16,7 +16,7 @@
 				db.genTable(3, ".td");
 				equal($("#test tr:first td").length, 3, "simple test");
 				
-				db.$Target($("#test2")).genTable(3, ".td", false);
+				db.newTarget($("#test2")).genTable(3, ".td", false);
 				equal($("#test2 tr:last td").length, 1, "simple test without empty cells");
 			});
 		});
