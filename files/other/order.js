@@ -40,7 +40,7 @@
 					key;
 				//
 				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
-				sortedKeys.sort(statObj.sort.sortBy(field, rev, fn));
+				sortedKeys.sort($.Collection.sort.sortBy(field, rev, fn));
 				//
 				for (key in sortedKeys) {
 					if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
@@ -63,7 +63,7 @@
 						});
 					}
 				}
-				sortedValues.sort(statObj.sort.sortBy(field === true ? "value" : "value" + statObj.obj.contextSeparator + field, rev, fn));
+				sortedValues.sort($.Collection.sort.sortBy(field === true ? "value" : "value" + nimble.CHILDREN + field, rev, fn));
 				//
 				for (key in sortedValues) {
 					if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }

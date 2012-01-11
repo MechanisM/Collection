@@ -13,7 +13,7 @@ copy	^
 		^
 		+ core\core.js ^
 		+ core\core.prototype.js ^
-		+ core\core.stat.sort.js ^
+		+ core\core.sort.js ^
 		^
 		+ jquery\collection.js ^
 		+ jquery\compile.js ^
