@@ -43,16 +43,13 @@
 			db.getCache().iteration = true;
 			//
 			db
-				.$Target($("#result"))
-				.$Pager($("#pager"))
-				.$Calculator(".row")
-				.$PageBreak(5)
-				.pushFilter("f1", function (el) { return el.name.search("Коба") === -1 })
-				.pushFilter("f2", function (el) { return el.name.search("Креведка") === -1 })
-				.$NumberBreak(3)
-				.$Template($("#template").ctplCompile())
-				.$Parser(function (str) {
-					return str.replace(/http:\/\/(.*?).com/gi, '<a href="http://$1.com">$1</a>');
+				.active({
+					target: $("#result"),
+					pager: $("#pager"),
+					calculator: $(".row"),
+					pageBreak: 5,
+					numberBreak: 3,
+					template: $("#template").ctplCompile()
 				})
 				.print(true);
 				

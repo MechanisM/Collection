@@ -49,14 +49,14 @@
 				countRecords = 0;
 				if (cOLength !== undefined) {
 					cObj.forEach(function (el, i, obj) {
-						if (this._customFilter(filter, el, cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 							countRecords += 1;
 						}
 					}, this);
 				} else {
 					for (i in cObj) {
 						if (cObj.hasOwnProperty(i)) {
-							if (this._customFilter(filter, cObj[i], cObj, i, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+							if (this._customFilter(filter, cObj[i], i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
 								countRecords += 1;
 							}
 						}
@@ -125,23 +125,23 @@
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
 					
-				if (this._customFilter(filter, el, cObj, i, cOLength, this, id) === true) {
+				if (this._customFilter(filter, el, i, cObj, cOLength, this, id) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
-						if (callback.filter) { res = callback.filter.call(callback.filter, el, cObj, i, cOLength, this, id) === false; }
+						if (callback.filter) { res = callback.filter.call(callback.filter, el, i, cObj, cOLength, this, id) === false; }
 						if (mult === false) { res = true; }
 						j += 1;
 					}
 				} else {
 					if (callback.denial && (from === false || from === 0)) {
-						tmpRes = callback.denial.call(callback.denial, el, cObj, i, cOLength, this, id);
+						tmpRes = callback.denial.call(callback.denial, el, i, cObj, cOLength, this, id);
 						if (res === false && tmpRes === false) { res = true; }
 					}
 				}
 				//
 				if (callback.full && (from === false || from === 0)) {
-					tmpRes = callback.full.call(callback.full, el, cObj, i, cOLength, this, id);
+					tmpRes = callback.full.call(callback.full, el, i, cObj, cOLength, this, id);
 					if (res === false && tmpRes === false) { res = true; }
 				}
 				//
@@ -154,24 +154,24 @@
 					if (count !== false && j === count) { break; }
 					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 					
-					if (this._customFilter(filter, cObj[i], cObj, i, cOLength, this, id) === true) {
+					if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id) === true) {
 						if (from !== false && from !== 0) {
 							from -= 1;
 						} else {	
-							if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], cObj, i, cOLength, this, id) === false; }
+							if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], i, cObj, cOLength, this, id) === false; }
 							if (mult === false) { res = true; }
 							j += 1;
 						}
 					}
 				} else {
 					if (callback.denial && (from === false || from === 0)) {
-						tmpRes = callback.denial.call(callback.denial, cObj[i], cObj, i, cOLength, this, id);
+						tmpRes = callback.denial.call(callback.denial, cObj[i], i, cObj, cOLength, this, id);
 						if (res === false && tmpRes === false) { res = true; }
 					}
 				}
 				//
 				if (callback.full && (from === false || from === 0)) {
-					tmpRes = callback.full.call(callback.full, cObj[i], cObj, i, cOLength, this, id);
+					tmpRes = callback.full.call(callback.full, cObj[i], i, cObj, cOLength, this, id);
 					if (res === false && tmpRes === false) { res = true; }
 				}
 				//
