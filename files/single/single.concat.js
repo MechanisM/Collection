@@ -13,12 +13,11 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.concat = function (obj, context, id) {
+	$.Collection.prototype.concat = function (obj, context, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		id = id || "";
-		var
-			dObj = this.dObj,
-			cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString() + nimble.CHILDREN + context);	
+		//
+		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);	
 		
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {

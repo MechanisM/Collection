@@ -7,22 +7,21 @@
 	 * @constructor
 	 * @this {Colletion Object}
 	 * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
-	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - user's preferences
+	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - additional properties
 	 */
-	$.Collection = function (collection, uProp) {
+	$.Collection = function (collection, prop) {
 		collection = collection || null;
-		uProp = uProp || null;
+		prop = prop || null;
 		
-		// create "factory" function if need	
-		if (this.fn && (!this.fn.name || this.fn.name !== "$.Collection")) { return new $.Collection(collection, uProp); }
+		// create "factory" function if need
+		if (this.fn && (!this.fn.name || this.fn.name !== "$.Collection")) { return new $.Collection(collection, prop); }
 		
 		// mixin public fields
 		$.extend(true, this, $.Collection.storage);
-			
 		var active = this.dObj.active;
-				
-		// extend public fields by user's preferences if need
-		if (uProp) { $.extend(true, active, uProp); }
+		
+		// extend public fields by additional properties if need
+		if (prop) { $.extend(true, active, prop); }
 		
 		// if "collection" is string
 		if ($.isString(collection)) {
@@ -30,28 +29,3 @@
 			active.collection = null;
 		} else { active.collection = collection; }
 	};
-	
-	//
-	if (!Array.prototype.forEach) {
-		Array.prototype.forEach = function (callback, _this) {
-			var i = -1, aLength = this.length;
-			
-			for (; (i += 1) < aLength;) {
-				if (!_this) {
-					callback(this[i], i, this);
-				} else { callback.call(_this, this[i], i, this); }
-			}
-		}
-	}
-	if (!Array.prototype.some) {
-		Array.prototype.some = function (callback, _this) {
-			var i = -1, aLength = this.length, res;
-			
-			for (; (i += 1) < aLength;) {
-				if (!_this) {
-					res = callback(this[i], i, this);
-				} else { res = callback.call(_this, this[i], i, this); }
-				if (res === true) { break; }
-			}
-		}
-	}

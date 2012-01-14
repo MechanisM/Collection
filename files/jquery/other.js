@@ -2,7 +2,7 @@
 	/////////////////////////////////
 	//// jQuery methods (other)
 	/////////////////////////////////
-		
+	
 	/**
 	 * string test
 	 * 
@@ -35,7 +35,7 @@
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
 		var newObj = [pushVal], i = -1, oLength = obj.length;
-		for (; (i += 1) < oLength;) { newObj.push(obj[i]); }
+		while ((i += 1) < oLength) { newObj.push(obj[i]); }
 		
 		return newObj;
 	};
@@ -43,27 +43,27 @@
 	 * toUpperCase function
 	 * 
 	 * @param {String} str - some str
-	 * @param {Number} [to=str.length] - end
-	 * @param {Number} [from=0] - start
+	 * @param {Number} [max=str.length] - the maximum number of characters
+	 * @param {Number} [from=0] - start position
 	 * @return {String}
 	 */
-	$.toUpperCase = function (str, to, from) {
+	$.toUpperCase = function (str, max, from) {
 		from = from || 0;
+		max = $.isExist(max) ? from + max : str.length;
 		
-		if (!to) { return str.toUpperCase(); }
-		return str.substring(from, to).toUpperCase() + str.substring(to);
+		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
 	};
 	/**
 	 * toLowerCase function
 	 * 
 	 * @param {String} str - some str
-	 * @param {Number} [to=str.length] - end
-	 * @param {Number} [from=0] - start
+	 * @param {Number} [max=str.length] - the maximum number of characters
+	 * @param {Number} [from=0] - start position
 	 * @return {String}
 	 */
-	$.toLowerCase = function (str, to, from) {
+	$.toLowerCase = function (str, max, from) {
 		from = from || 0;
+		max = $.isExist(max) ? from + max : str.length;
 		
-		if (!to) { return str.toLowerCase(); }
-		return str.substring(from, to).toLowerCase() + str.substring(to);
+		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
 	};

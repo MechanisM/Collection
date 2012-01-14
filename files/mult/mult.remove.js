@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context|Array|Plain Object|Null} [filter=false] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|Context|Array|Null} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
@@ -18,13 +18,13 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.remove = function (filter, id, mult, count, from, indexOf) {
+	$.Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
 		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
-			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
+			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
 		//
-		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
+		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
@@ -53,10 +53,10 @@
 	 * delete element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=false] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.removeOne = function (filter, id) {
+	$.Collection.prototype.removeOne = function (filter, id) {
 		return this.remove($.isExist(filter) ? filter : "", id || "", false);
 	};

@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
@@ -19,13 +19,13 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
+	$.Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		if ($.isNumeric(filter) || (arguments.length < 3 && $.isString(filter)
-			&& !this.filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
+			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
 				return this._setOne(filter, replaceObj, id || "");
 			}
 		//
-		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
+		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -61,12 +61,12 @@
 	 * replace element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.setOne = function (filter, replaceObj, id) {
+	$.Collection.prototype.setOne = function (filter, replaceObj, id) {
 		return this.set($.isExist(filter) ? filter : "", replaceObj, id || "", false);
 	};
 	
@@ -78,6 +78,19 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.map = function (replaceObj, id) {
+	$.Collection.prototype.map = function (replaceObj, id) {
 		return this.set(true, replaceObj, id || "");
+	};
+	
+	/**
+	 * some (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Function} callback - callback function
+	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @return {Colletion Object}
+	 */
+	$.Collection.prototype.some = function (callback, filter, id) {
+		return this.forEach(callback, filter || "", id || "", false);
 	};

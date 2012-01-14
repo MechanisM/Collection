@@ -12,13 +12,12 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._setOne = function (context, value, id) {
+	$.Collection.prototype._setOne = function (context, value, id) {
 		context = $.isExist(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
 		id = id || "";
-		var
-			dObj = this.dObj,	
-			activeContext = this.getActiveParam("context").toString();
+		//
+		var activeContext = this._getActiveParam("context");
 		//
 		if (!context && !activeContext) {
 			if (id && id !== this.ACTIVE) {
@@ -37,9 +36,8 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
-	$.Collection.fn._getOne = function (context, id) {
+	$.Collection.prototype._getOne = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
-		var dObj = this.dObj;
-		
-		return nimble.byLink(this._get("collection", id || ""), this.getActiveParam("context").toString() + nimble.CHILDREN + context);
+		//
+		return nimble.byLink(this._get("collection", id || ""), this._getActiveParam("context") + nimble.CHILDREN + context);
 	};

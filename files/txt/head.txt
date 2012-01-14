@@ -16,8 +16,8 @@
  * 3) [Selector] is a reduced form of the [String] , and means the css selector (Sizzle syntax);
  * 4) [Context] is the reduced form of the [String] , and means the context of the collection;
  * 5) [Template] is a reduced form of the [Function] and means function-template;
- * 6) [Filter] is a reduced form of the [Function] and means the function-filter;
- * 7) [Parser] is a reduced form of the [Function] and means function-parser;
+ * 6) [Filter] is a reduced form of the [Filter|String|Boolean] and means the function-filter, string expressions or "false";
+ * 7) [Parser] is a reduced form of the [Parser|String|Boolean] and means function-parser, string expressions or "false";
  * 8) [Plain Object] is a reduced form of the [Object] and means hash table;
  * 9) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
  * 10) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.
@@ -32,5 +32,5 @@
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 08.01.2012 14:23:06
- * @version 3.3.5
+ * @version 4
  */

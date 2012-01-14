@@ -12,14 +12,15 @@
 	 * @param {Boolean} [empty=true] - display empty cells
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.genTable = function (count, tag, empty) {
+	$.Collection.prototype.genTable = function (count, tag, empty) {
 		count = count || 4;
 		tag = tag || "div";
 		empty = empty === false ? false : true;
+		//
 		var
 			i = 1, j,
 	
-			target = this.dObj.active.target,
+			target = this._get("target"),
 			tagLength = target.find(tag).length,
 	
 			queryString = "";

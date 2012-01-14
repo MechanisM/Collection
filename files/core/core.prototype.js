@@ -3,7 +3,7 @@
 	//// prototype
 	/////////////////////////////////
 	
-	$.Collection.fn = $.Collection.prototype = {
+	$.Collection.prototype = {
 		/**
 		 * framework name
 		 * 
@@ -17,7 +17,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "3.3.5",
+		version: "3.4",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -28,6 +28,7 @@
 		
 		// const
 		ACTIVE: "active",
+		SHUFFLE: "shuffle",
 		
 		/**
 		 * stack parameters
@@ -40,8 +41,6 @@
 		"filter",
 		"context",
 		"cache",
-		"index",
-		"map",
 		"variable",
 		"defer",
 		
@@ -55,65 +54,5 @@
 		"numberBreak",
 		"pageBreak",
 		"resultNull"
-		],
-		
-		//////
-		
-		/**
-		 * return active property
-		 * 
-		 * @this {Collection Object}
-		 * @return {String}
-		 */
-		getActiveParam: function (name) {
-			return this.dObj.sys.flags.use[name] === undefined || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : "";
-		},
-		
-		/**
-		 * filter test
-		 * 
-		 * @this {Collection Object}
-		 * @param {mixed} val - some object
-		 * @return {Boolean}
-		 */
-		filterTest: function (val) {
-			return val === this.ACTIVE || this._exist("filter", val) || val.search(/&&|\|\|/) !== -1;
-		},
-		
-		/**
-		 * enable property
-		 * 
-		 * @this {Collection Object}
-		 * @param {String} name - property name
-		 * @return {Collection Object}
-		 */
-		enable: function (name) {
-			this.dObj.sys.flags.use[name] = true;
-			
-			return this;
-		},
-		/**
-		 * disable property
-		 * 
-		 * @this {Collection Object}
-		 * @param {String} name - property name
-		 * @return {Collection Object}
-		 */
-		disable: function (name) {
-			this.dObj.sys.flags.use[name] = false;
-		
-			return this;
-		},
-		/**
-		 * toggle property
-		 * 
-		 * @this {Collection Object}
-		 * @param {String} name - property name
-		 * @return {Collection Object}
-		 */
-		toggle: function (name) {
-			if (this.dObj.sys.flags.use[name] === true) { return this.disable(name); }
-			
-			return this.enable(name);
-		}
+		]
 	};

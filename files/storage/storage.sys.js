@@ -44,4 +44,4 @@
 			sys[el + "ChangeControl"] = null;
 			sys[el + "Back"] = [];
 		});
-	})($.Collection.fn.stack);
+	})($.Collection.prototype.stack);

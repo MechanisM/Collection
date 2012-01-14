@@ -12,18 +12,18 @@
 	 * @param {mixed} [value] - value (overload)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._prop = function (propName, objKey, value) {
+	$.Collection.prototype._prop = function (propName, objKey, value) {
 		var prop = this.dObj[propName];
-			
+		
 		if (arguments.length !== 3) {
 			if ($.isPlainObject(objKey)) {
 				$.extend(prop, objKey);
 			} else { return prop[objKey]; }
 		} else { prop[objKey] = value; }
-			
+		
 		return this;
 	};
 		
-	$.Collection.fn.active = function (objKey, value) {
+	$.Collection.prototype.active = function (objKey, value) {
 		return this._prop.apply(this, $.unshiftArguments(arguments, "active"));
 	};

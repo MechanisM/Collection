@@ -7,21 +7,21 @@
 	 * jQuery "then" method
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} done - callback (if success)
-	 * @param {Function} [fail=done] - callback (if failed)
+	 * @param {Function} done - callback function (if success)
+	 * @param {Function} [fail=done] - callback function (if failed)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.then = function (done, fail) {
+	$.Collection.prototype.then = function (done, fail) {
 		var self = this;
 		
 		if (arguments.length === 1) {
-			$.when(self.active("defer")).always(function () { done.apply(self, arguments); });
+			$.when(this.active("defer")).always(function () { done.apply(self, arguments); });
 		} else {
-			$.when(self.active("defer")).then(
+			$.when(this.active("defer")).then(
 				function () { done().apply(self, arguments); },
 				function () { fail().apply(self, arguments); }
 			);
 		}
-			
+		
 		return this;
 	};

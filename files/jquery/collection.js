@@ -20,7 +20,7 @@
 					i = -1,
 					str = "";
 				//
-				for (; (i += 1) < eLength;) {
+				while ((i += 1) < eLength) {
 					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) { str += elem[i].textContent; }
 				}
 				//
@@ -35,18 +35,15 @@
 					var
 						$this = $(this),
 						data = $this.data(),
-	
 						classes = $this.attr("class") ? $this.attr("class").split(" ") : "",
-						cLength = classes ? classes.length : 0,
 	
-						txt = text($this[0]),
-	
+						txt = text(this),
 						key;
 	
 					array.push({});
 					for (key in data) { if (data.hasOwnProperty(key)) { array[n][key] = data[key]; } }
 					//
-					if (cLength) {
+					if (classes) {
 						array[n][stat.classes] = {};
 						classes.forEach(function (el) {
 							array[n][stat.classes][el] = el;

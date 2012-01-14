@@ -9,36 +9,27 @@
 	 * @this {Colletion Object}
 	 * @param {mixed|Context} [cValue] - new element or context for sourceID
 	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "->unshift" - the result will be similar to work for an array "unshift")
-	 * @param {String} [activeID=this.dObj.active.collectionID] - collection ID
+	 * @param {String} [activeID=this.ACTIVE] - collection ID
 	 * @param {String} [sourceID] - source ID (if move)
-	 * @param {Boolean} [deleteType=false] - if "true", remove source element
+	 * @param {Boolean} [del=false] - if "true", remove source element
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.add = function (cValue, propType, activeID, sourceID, deleteType) {
+	$.Collection.prototype.add = function (cValue, propType, activeID, sourceID, del) {
 		cValue = cValue !== undefined ? cValue : "";
 		propType = propType || "push";
-		deleteType = deleteType || false;
+		activeID = activeID || "";
+		del = del || false;
 		//
-		var
-			dObj = this.dObj,
-			active = dObj.active,
-			sys = dObj.sys,
-	
-			cObj, sObj,
-	
-			collectionID = sys.collectionID,
-			oCheck, lCheck;
+		var cObj, sObj, lCheck;
 		//
-		cObj = nimble.byLink(this._get("collection", activeID || ""), this.getActiveParam("context").toString());
+		cObj = nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"));
 		//
 		if (typeof cObj === "object") {
-			oCheck = $.isPlainObject(cObj);
-			
 			// simple add
 			if (!sourceID) {
 				// add type
-				if (oCheck === true) {
+				if ($.isPlainObject(cObj)) {
 					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
 					lCheck = nimble.addElementToObject(cObj, propType.toString(), cValue);
 				} else {
@@ -52,7 +43,7 @@
 				sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
 				
 				// add type
-				if (oCheck === true) {
+				if ($.isPlainObject(cObj)) {
 					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
 					lCheck = nimble.addElementToObject(cObj, propType.toString(), sObj);
 				} else {
@@ -61,11 +52,11 @@
 				}
 				
 				// delete element
-				if (deleteType === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
+				if (del === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
 			}
 			
 			// rewrites links (if used for an object "unshift")
-			if (lCheck !== true) { this._setOne("", lCheck, activeID || ""); }
+			if (lCheck !== true) { this._setOne("", lCheck, activeID); }
 		} else { throw new Error("unable to set property!"); }
 	
 		return this;
@@ -79,7 +70,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.push = function (obj, id) {
+	$.Collection.prototype.push = function (obj, id) {
 		return this.add(obj, "", id || "");
 	};
 	/**
@@ -90,6 +81,6 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.unshift = function (obj, id) {
+	$.Collection.prototype.unshift = function (obj, id) {
 		return this.add(obj, "unshift", id || "");
 	};

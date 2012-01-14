@@ -8,26 +8,26 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - object settings
-	 * @param {Collection|String} [param.collection=this.dObj.active.collection] - collection or collection ID
+	 * @param {Collection|String} [param.collection=this.ACTIVE] - collection or collection ID
 	 * @param {String} [param.context] - additional context
-	 * @param {Number} [param.page=this.dObj.active.page] - page number
-	 * @param {Template} [param.template=this.dObj.active.template] - template
-	 * @param {Number|Boolean} [param.numberBreak=this.dObj.active.numberBreak] - number of entries on 1 page (if "false", returns all records)
-	 * @param {Number} [param.pageBreak=this.dObj.active.pageBreak] - number of displayed pages (navigation, > 2)
-	 * @param {jQuery Object|Boolean} [param.target=this.dObj.active.target] - element to output the result ("false" - if you print a variable)
-	 * @param {String} [param.variable=this.dObj.sys.variableID] - variable ID (if param.target === false)
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
-	 * @param {Parser|String|Boolean} [param.parser=this.dObj.active.parser] - parser function, string expressions or "false"
-	 * @param {Boolean} [param.cacheIteration=this.dObj.cache.iteration] - if "true", the last iteration is taken from cache
-	 * @param {Selector} [param.calculator=this.dObj.active.calculator] - selector, on which is the number of records per page
-	 * @param {Selector} [param.pager=this.dObj.active.pager] - selector to pager
-	 * @param {String} [param.appendType=this.dObj.active.appendType] - type additions to the DOM
-	 * @param {String} [param.resultNull=this.dObj.active.resultNull] - text displayed if no results
+	 * @param {Number} [param.page=this.ACTIVE] - page number
+	 * @param {Template} [param.template=this.ACTIVE] - template
+	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] - number of entries on 1 page (if "false", returns all records)
+	 * @param {Number} [param.pageBreak=this.ACTIVE] - number of displayed pages (navigation, > 2)
+	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] - element to output the result ("false" - if you print a variable)
+	 * @param {String} [param.variable=this.ACTIVE] - variable ID (if param.target === false)
+	 * @param {Filter} [param.filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Parser} [param.parser=this.ACTIVE] - parser function, string expressions or "false"
+	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] - if "true", the last iteration is taken from cache
+	 * @param {Selector} [param.calculator=this.ACTIVE] - selector, on which is the number of records per page
+	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager
+	 * @param {String} [param.appendType=this.ACTIVE] - type additions to the DOM
+	 * @param {String} [param.resultNull=this.ACTIVE] - text displayed if no results
 	 * @param {Boolean} [page=false] - break on page
 	 * @param {Boolean} [clear=false] - clear the cache
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.print = function (param, page, clear) {
+	$.Collection.prototype.print = function (param, page, clear) {
 		page = page || false;
 		clear = clear || false;
 		var
@@ -55,8 +55,8 @@
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		//
-		opt.filter = $.isExist(param.filter) && param.filter !== true ? param.filter : this.getActiveParam("filter");
-		opt.parser = $.isExist(param.parser) ? param.parser : this.getActiveParam("parser");
+		opt.filter = $.isExist(param.filter) && param.filter !== true ? param.filter : this._getActiveParam("filter");
+		opt.parser = $.isExist(param.parser) ? param.parser : this._getActiveParam("parser");
 		//
 		if (clear === true) { opt.cache.iteration = false; }
 		//
@@ -73,7 +73,7 @@
 			return true;
 		};
 		// get collection
-		cObj = nimble.byLink(opt.collection, this.getActiveParam("context").toString() + nimble.CHILDREN + ((param && param.context) || ""));
+		cObj = nimble.byLink(opt.collection, this._getActiveParam("context") + nimble.CHILDREN + ((param && param.context) || ""));
 		cOLength = this.length();
 		
 		// number of records per page
@@ -143,7 +143,7 @@
 	 * @param {Object} [param] - object settings (depends on the model template)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.easyPage = function (param) {
+	$.Collection.prototype.easyPage = function (param) {
 		var
 			str = "",
 			//

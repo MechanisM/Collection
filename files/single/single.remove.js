@@ -11,11 +11,9 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._removeOne = function (context, id) {
+	$.Collection.prototype._removeOne = function (context, id) {
 		context = $.isExist(context) ? context.toString() : "";
-		var
-			cObj,
-			activeContext = this.getActiveParam("context").toString();
+		var activeContext = this._getActiveParam("context");
 		
 		if (!context && !activeContext) {
 			this._setOne("", null);
@@ -31,9 +29,10 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn._remove = function (objContext, id) {
+	$.Collection.prototype._remove = function (objContext, id) {
 		id = id || "";
 		var key, i;
+		//
 		if ($.isPlainObject(objContext)) {
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
@@ -58,7 +57,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
+	$.Collection.prototype.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
 	/**
 	 * shift element (in context)
 	 * 
@@ -66,4 +65,4 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.shift = function (id) { return this._removeOne("eq(0)", id || ""); };
+	$.Collection.prototype.shift = function (id) { return this._removeOne("eq(0)", id || ""); };

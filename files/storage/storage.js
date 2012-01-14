@@ -70,20 +70,6 @@
 					lastIteration: false
 				},
 				/**
-				 * active index
-				 * 
-				 * @field
-				 * @type Plain Object
-				 */
-				index: null,
-				/**
-				 * active map
-				 * 
-				 * @field
-				 * @type Plain Object
-				 */
-				map: null,
-				/**
 				 * active var
 				 * 
 				 * @field

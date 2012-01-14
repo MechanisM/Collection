@@ -1,5 +1,5 @@
 
-	$.Collection.fn.save = function (id, local) {
+	$.Collection.prototype.save = function (id, local) {
 		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
 		if (!JSON) { throw new Error("object JSON is not defined!"); }
 		
@@ -13,7 +13,7 @@
 		return this;
 	};
 	
-	$.Collection.fn.load = function (id, local) {
+	$.Collection.prototype.load = function (id, local) {
 		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
 		
 		local = local === false ? false : true;
@@ -32,7 +32,7 @@
 		return this;
 	};
 	
-	$.Collection.fn.drop = function (id, local) {
+	$.Collection.prototype.drop = function (id, local) {
 		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
 		
 		local = local === false ? false : true;

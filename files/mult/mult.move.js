@@ -19,8 +19,8 @@
 	 * @param {Boolean} [deleteType=false] - if "true", remove source element
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = $.isExist(moveFilter) && moveFilter !== true ? moveFilter : this.getActiveParam("filter");
+	$.Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
+		moveFilter = $.isExist(moveFilter) && moveFilter !== true ? moveFilter : this._getActiveParam("filter");
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		
@@ -36,7 +36,7 @@
 		
 		var
 			deleteList = [],
-			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this.getActiveParam("context").toString())),
+			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
 	
 			elements;
 	
@@ -71,7 +71,7 @@
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
+	$.Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
@@ -89,7 +89,7 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
+	$.Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -108,6 +108,6 @@
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
+	$.Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};

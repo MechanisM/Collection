@@ -5,7 +5,7 @@
 		
 	// generate aliases
 	(function (data) {
-		var fn = $.Collection.fn, nm;
+		var fn = $.Collection.prototype, nm;
 		
 		data.forEach(function (el) {
 			nm = $.toUpperCase(el, 1);
@@ -78,4 +78,4 @@
 				return function (id) { return this._get(nm, id || ""); };
 			}(el);
 		});
-	})($.Collection.fn.stack);
+	})($.Collection.prototype.stack);

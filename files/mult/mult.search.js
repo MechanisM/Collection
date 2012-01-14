@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -18,8 +18,8 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Number|Array}
 	 */
-	$.Collection.fn.search = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
+	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
+		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -55,11 +55,11 @@
 	 * search element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
-	$.Collection.fn.searchOne = function (filter, id) {
+	$.Collection.prototype.searchOne = function (filter, id) {
 		return this.search($.isExist(filter) ? filter : "", id || "", false);
 	};
 	
@@ -72,12 +72,15 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|String}
 	 */
-	$.Collection.fn.indexOf = function (searchElement, fromIndex, id) {
+	$.Collection.prototype.indexOf = function (searchElement, fromIndex, id) {
 		id = id || "";
 		fromIndex = fromIndex || "";
-		var cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString());
+		//
+		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		//
 		if ($.isArray(cObj) && cObj.indexOf) {
 			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
+			//
 			return cObj.indexOf(searchElement);
 		} else { return this.search(function (el) { return el === searchElement; }, id, false, "", "", fromIndex); }
 	}
@@ -90,15 +93,19 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|String}
 	 */
-	$.Collection.fn.lastIndexOf = function (searchElement, fromIndex, id) {
+	$.Collection.prototype.lastIndexOf = function (searchElement, fromIndex, id) {
 		id = id || "";
 		fromIndex = fromIndex || "";
-		var el, cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString());
+		//
+		var el, cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		//
 		if ($.isArray(cObj) && cObj.lastIndexOf) {
 			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }
+			//
 			return cObj.lastIndexOf(searchElement);
 		} else {
 			el = this.search(function (el) { return el === searchElement; }, id, "", "", "", fromIndex);
+			//
 			return el[el.length - 1] !== undefined ? el[el.length - 1] : -1;
 		}
 	}

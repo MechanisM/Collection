@@ -7,29 +7,27 @@
 	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function, string expressions or "false"
 	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
 	 */
-	$.Collection.fn.length = function (filter, id) {
-		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
-		var
-			dObj = this.dObj,
-			cObj, cOLength, aCheck,
-			i, countRecords;
-		
+	$.Collection.prototype.length = function (filter, id) {
+		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		//
+		var cObj, aCheck, key, cOLength;
+		//
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
 		}
-		
+		//
 		if (!id || id === this.ACTIVE) {
-			cObj = dObj.active.collection;
+			cObj = this._get("collection");
 		} else if ($.isString(id)) {
-			cObj = dObj.sys.tmpCollection[id];
+			cObj = this._get("collection", id);
 		} else {
 			aCheck = true;
 			cObj = id;
@@ -37,27 +35,27 @@
 		// if cObj is null
 		if (cObj === null) { return 0; }
 		// if cObj is collection
-		if (aCheck !== true) { cObj = nimble.byLink(cObj, this.getActiveParam("context").toString()); }
-		cOLength = cObj.length;
-		// if cObj is String
-		if ($.isString(cObj)) { return cOLength; }
+		if (aCheck !== true) { cObj = nimble.byLink(cObj, this._getActiveParam("context")); }
 		
+		// if cObj is String
+		if ($.isString(cObj)) { return cObj.length; }
+		//
 		if (typeof cObj === "object") {
-			if (filter === false && cOLength !== undefined) {
-				countRecords = cOLength;
+			if (filter === false && cObj.length !== undefined) {
+				cOLength = cObj.length;
 			} else {
-				countRecords = 0;
-				if (cOLength !== undefined) {
+				cOLength = 0;
+				if (cObj.length !== undefined) {
 					cObj.forEach(function (el, i, obj) {
 						if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-							countRecords += 1;
+							cOLength += 1;
 						}
 					}, this);
 				} else {
-					for (i in cObj) {
-						if (cObj.hasOwnProperty(i)) {
-							if (this._customFilter(filter, cObj[i], i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-								countRecords += 1;
+					for (key in cObj) {
+						if (cObj.hasOwnProperty(key)) {
+							if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+								cOLength += 1;
 							}
 						}
 					}
@@ -65,7 +63,7 @@
 			}
 		} else { throw new Error("incorrect data type!"); }
 	
-		return countRecords;
+		return cOLength;
 	};
 	/**
 	 * forEach method (in context)
@@ -74,18 +72,19 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function|Plain Object} callback - callback
-	 * @param {Filter|String|Boolean} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Function} callback - callback function
+	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: 0)
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: 0)
+	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.fn.forEach = function (callback, filter, id, mult, count, from, indexOf) {
+	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
-		filter = $.isExist(filter) && filter !== true ? filter : this.getActiveParam("filter");
+		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
 		id = $.isExist(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
@@ -104,14 +103,16 @@
 		indexOf = parseInt(indexOf) || false;
 	
 		var
-			dObj = this.dObj,
 			cObj, cOLength,
 			cloneObj,
 	
 			i, j = 0, res = false, tmpRes;
 		
 		//
-		cObj = nimble.byLink(this._get("collection", id), this.getActiveParam("context").toString());
+		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		//
+		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
+		//
 		cOLength = this.length(cObj);
 		//
 		if ($.isArray(cObj)) {

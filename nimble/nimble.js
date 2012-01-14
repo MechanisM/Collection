@@ -79,25 +79,25 @@ var nimble = {
 	/**
 	 * calculate math expression
 	 * 
-	 * @param {mixed} nw - new value
+	 * @param {mixed} val - new value
 	 * @param {mixed} old - old value
 	 * @return {mixed}
 	 */
-	expr: function (nw, old) {
+	expr: function (val, old) {
 		old = old !== undefined || old !== null ? old : "";
-		if (this.isString(nw) && nw.search(/^[+-\\*/]{1}=/) !== -1) {
-			nw = nw.split("=");
-			if (!isNaN(nw[1])) { nw[1] = +nw[1]; }
+		if (this.isString(val) && val.search(/^[+-\\*/]{1}=/) !== -1) {
+			val = val.split("=");
+			if (!isNaN(val[1])) { val[1] = +val[1]; }
 			// simple math
-			switch (nw[0]) {
-				case "+": { nw = old + nw[1]; } break;
-				case "-": { nw = old - nw[1]; } break;
-				case "*": { nw = old * nw[1]; } break;
-				case "/": { nw = old / nw[1]; } break;
+			switch (val[0]) {
+				case "+": { val = old + val[1]; } break;
+				case "-": { val = old - val[1]; } break;
+				case "*": { val = old * val[1]; } break;
+				case "/": { val = old / val[1]; } break;
 			}
 		}
 	
-		return nw;
+		return val;
 	},
 	
 	/**
@@ -107,29 +107,28 @@ var nimble = {
 	 * @param {Object|Number|Boolean} obj - some object
 	 * @param {Context} context - link
 	 * @param {mixed} [value] - some value
-	 * @param {Boolean} [deleteType=false] - if "true", remove source element
+	 * @param {Boolean} [del=false] - if "true", remove source element
 	 * @return {nimble|Boolean|mixed}
 	 */
-	byLink: function (obj, context, value, deleteType) {
-		if (obj === undefined) { return false; }
+	byLink: function (obj, context, value, del) {
 		context = context
 					.toString()
 					.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), " " + this.CHILDREN + " ")
 					.split(this.CONTEXT_SEPARATOR);
-		deleteType = deleteType || false;
+		del = del || false;
 		
 		//
 		var
 			type = this.CHILDREN,
 			last = 0, total = 0,
 			
-			key, i,
+			key, i = context.length,
 			pos, n,
 	
-			objLength, cLength = context.length;
+			objLength, cLength;
 	
 		// remove "dead" elements
-		for (i = cLength; (i -= 1) > -1;) {
+		while ((i -= 1) > -1) {
 			context[i] = this.trim(context[i]);
 			if (context[i] === "") {
 				context.splice(i, 1);
@@ -174,7 +173,7 @@ var nimble = {
 				default : {
 					if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
 						if (i === last && value !== undefined) {
-							if (deleteType === false) {
+							if (del === false) {
 								obj[context[i]] = this.expr(value, obj[context[i]]);
 							} else {
 								if (nimble.isArray(obj)) {
@@ -190,11 +189,11 @@ var nimble = {
 						if (this.isArray(obj)) {
 							if (i === last && value !== undefined) {
 								if (pos >= 0) {
-									if (deleteType === false) {
+									if (del === false) {
 										obj[pos] = this.expr(value, obj[pos]);
 									} else { obj.splice(pos, 1); }
 								} else {
-									if (deleteType === false) {
+									if (del === false) {
 										obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]);
 									} else { obj.splice(obj.length + pos, 1); }
 								}
@@ -218,7 +217,7 @@ var nimble = {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
 										if (i === last && value !== undefined) {
-											if (deleteType === false) {
+											if (del === false) {
 												obj[key] = this.expr(value, obj[key]);
 											} else { delete obj[key]; }
 										} else { obj = obj[key]; }
@@ -244,7 +243,7 @@ var nimble = {
 	 * @param {String} query - query string
 	 * @param {Object} event - event request
 	 * @param {mixed} [param] - input parameters
-	 * @param {mixed} [_this=event] - this
+	 * @param {mixed} [_this=event] - this object
 	 * @return {mixed}
 	 */
 	execEvent: function (query, event, param, _this) {
@@ -257,7 +256,7 @@ var nimble = {
 			qLength = query.length - 1,
 			spliter;
 	
-		for (; (i += 1) < qLength;) { event = event[query[i]]; }
+		while ((i += 1) < qLength) { event = event[query[i]]; }
 		//
 		if (query[i].search(this.SUBQUERY_SEPARATOR) !== -1) {
 			spliter = query[i].split(this.SUBQUERY_SEPARATOR);

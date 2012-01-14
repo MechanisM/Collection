@@ -1,6 +1,6 @@
 ﻿goto start
 --------------------------------------
-Сборка файлов
+compile
 --------------------------------------
 :start
 
@@ -32,17 +32,24 @@ copy	^
 		+ single\single.concat.js ^
 		^
 		+ mult\mult.js ^
+		+ mult\mult.prototype.js ^
 		+ mult\mult.search.js ^
 		+ mult\mult.get.js ^
 		+ mult\mult.set.js ^
 		+ mult\mult.move.js ^
 		+ mult\mult.remove.js ^
+        ^
+		+ sort\sort.js ^
+        + sort\sort.reverse.js ^
 		^
 		+ local\local.js ^
 		^
+		+ compile\compile.filter.js ^
+        + compile\compile.parser.js ^
+        ^
+		+ context\context.js ^
+        ^
 		+ other\other.js ^
-		+ other\order.js ^
-		+ other\native.js ^
 		+ other\then.js ^
 		^
 		+ design\design.print.js ^
@@ -54,7 +61,7 @@ copy	^
 
 goto start
 --------------------------------------
-Минификация 
+compression
 --------------------------------------
 :start
 
