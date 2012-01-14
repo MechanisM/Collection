@@ -46,7 +46,7 @@
 				.active({
 					target: $("#result"),
 					pager: $("#pager"),
-					calculator: $(".row"),
+					calculator: ".row",
 					pageBreak: 5,
 					numberBreak: 3,
 					template: $("#template").ctplCompile()
@@ -62,12 +62,6 @@
 			$("#next").on("click", function () {
 				db.print("+=1", true);
 			});
-			$("#f1").on("click", function () {
-				db.setFilter("f1").print("", true, true);
-			});
-			$("#f2").on("click", function () {
-				db.setFilter("f2").print("", true, true);
-			});
 		});
 	</script>
 	<style type="text/css">
@@ -82,7 +76,6 @@
 
 <body>
 	<div id="pager">
-		<a href="javascript:;" id="f1">f1</a> <a href="javascript:;" id="f2">f2</a>
 	
 		<a href="javascript:;" id="prev" data-ctm='{"nav": "prev", "classes": {"disabled": "disabled2"}}'> prev </a>
 		<a href="javascript:;" id="next" data-ctm='{"nav": "next"}'> next </a>

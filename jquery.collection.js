@@ -2316,49 +2316,77 @@ var nimble = {
 		} else { throw new Error("incorrect data type!"); }
 		
 		return this;
-	};
+	};	
+	/////////////////////////////////
+	//// local storage
+	/////////////////////////////////
+	
+	/**
+	 * collection length (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
+	 * @throw {Error}
+	 * @return {Number}
+	 */
 	$.Collection.prototype.save = function (id, local) {
 		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
-		if (!JSON) { throw new Error("object JSON is not defined!"); }
-		
-		local = local === false ? false : true;
+		//
+		local = local === false ? local : true;
 		id = id || this.ACTIVE;
-		
+		//
 		if (local === false) {
-			sessionStorage.setItem("__" + this.name + id, this.toString(id));
-		} else { localStorage.setItem("__" + this.name + id, this.toString(id)); }
+			sessionStorage.setItem("__" + this.name + ":" + id, this.toString(id));
+		} else { localStorage.setItem("__" + this.name + ":" + id, this.toString(id)); }
 		
 		return this;
 	};
-	
+	/**
+	 * collection length (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
+	 * @throw {Error}
+	 * @return {Number}
+	 */
 	$.Collection.prototype.load = function (id, local) {
 		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
-		
-		local = local === false ? false : true;
+		//
+		local = local === false ? local : true;
 		id = id || this.ACTIVE;
-
+		//
 		if (local === false) {
 			if (id === this.ACTIVE) {
-				this._new("collection", sessionStorage.getItem("__" + this.name + id));
-			} else { this._push("collection", id, $.parseJSON(sessionStorage.getItem("__" + this.name + id))); }
+				this._new("collection", sessionStorage.getItem("__" + this.name + ":" + id));
+			} else { this._push("collection", id, $.parseJSON(sessionStorage.getItem("__" + this.name + ":" + id))); }
 		} else {
 			if (id === this.ACTIVE) {
-				this._new("collection", $.parseJSON(localStorage.getItem("__" + this.name + id)));
-			} else { this._push("collection", id, $.parseJSON(localStorage.getItem("__" + this.name + id))); }
+				this._new("collection", $.parseJSON(localStorage.getItem("__" + this.name + ":" + id)));
+			} else { this._push("collection", id, $.parseJSON(localStorage.getItem("__" + this.name + ":" + id))); }
 		}
 		
 		return this;
 	};
-	
+	/**
+	 * collection length (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
+	 * @throw {Error}
+	 * @return {Number}
+	 */
 	$.Collection.prototype.drop = function (id, local) {
 		if (!localStorage) { throw new Error("your browser does't support web storage!"); }
-		
-		local = local === false ? false : true;
+		//
+		local = local === false ? local : true;
 		id = id || this.ACTIVE;
-		
+		//
 		if (local === false) {
-			sessionStorage.removeItem("__" + this.name + id);
-		} else { localStorage.removeItem("__" + this.name + id); }
+			sessionStorage.removeItem("__" + this.name + ":" + id);
+		} else { localStorage.removeItem("__" + this.name + ":" + id); }
 		
 		return this;
 	};	
@@ -2749,8 +2777,6 @@ var nimble = {
 		page = page || false;
 		clear = clear || false;
 		var
-			dObj = this.dObj,
-			active = dObj.active,
 			opt = {},
 			
 			cObj, cOLength,
@@ -2763,11 +2789,11 @@ var nimble = {
 			param = {page: param};
 		} else if ($.isBoolean(param)) {
 			page = param;
-		} else if (!$.isExist(param)) { param = {page: active.page} }
+		} else if (!$.isExist(param)) { param = {page: this._get("page")} }
 		
 		//
-		$.extend(true, opt, active, param);
-		if (param) { opt.page = nimble.expr(opt.page, active.page || ""); }
+		$.extend(true, opt, this.dObj.active, param);
+		if (param) { opt.page = nimble.expr(opt.page, this._get("page")); }
 		if (opt.page < 1) { opt.page = 1; }
 		//
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
@@ -2778,7 +2804,7 @@ var nimble = {
 		//
 		if (clear === true) { opt.cache.iteration = false; }
 		//
-		checkPage = active.page - opt.page;
+		checkPage = this._get("page") - opt.page;
 		this.updatePage(opt.page);
 		//
 		action = function (el, i, data, cOLength, self, id) {
@@ -2807,7 +2833,7 @@ var nimble = {
 			start = !page || opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
 							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
-							
+						
 			// rewind cached step back
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
@@ -2826,10 +2852,10 @@ var nimble = {
 		}
 		if (checkPage !== 0 && opt.cache.iteration !== false) {
 			// cache
-			active.cache.firstIteration = opt.cache.lastIteration;
-			active.cache.lastIteration = inc + 1;
+			this._get("cache").firstIteration = opt.cache.lastIteration;
+			this._get("cache").lastIteration = inc + 1;
 		}
-		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
+		if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
 		//
 		result = !result ? opt.resultNull : this._customParser(opt.parser, result);
 		// append to DOM
@@ -2846,6 +2872,7 @@ var nimble = {
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
 		opt.nmbOfEntriesInPage = opt.target.find(opt.calculator).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
+		
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			this.updatePage((opt.page -= 1)).print(opt, true, true);

@@ -31,8 +31,6 @@
 		page = page || false;
 		clear = clear || false;
 		var
-			dObj = this.dObj,
-			active = dObj.active,
 			opt = {},
 			
 			cObj, cOLength,
@@ -45,11 +43,11 @@
 			param = {page: param};
 		} else if ($.isBoolean(param)) {
 			page = param;
-		} else if (!$.isExist(param)) { param = {page: active.page} }
+		} else if (!$.isExist(param)) { param = {page: this._get("page")} }
 		
 		//
-		$.extend(true, opt, active, param);
-		if (param) { opt.page = nimble.expr(opt.page, active.page || ""); }
+		$.extend(true, opt, this.dObj.active, param);
+		if (param) { opt.page = nimble.expr(opt.page, this._get("page")); }
 		if (opt.page < 1) { opt.page = 1; }
 		//
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
@@ -60,7 +58,7 @@
 		//
 		if (clear === true) { opt.cache.iteration = false; }
 		//
-		checkPage = active.page - opt.page;
+		checkPage = this._get("page") - opt.page;
 		this.updatePage(opt.page);
 		//
 		action = function (el, i, data, cOLength, self, id) {
@@ -89,7 +87,7 @@
 			start = !page || opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
 							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
-							
+						
 			// rewind cached step back
 			if (checkPage > 0 && (page === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
@@ -108,10 +106,10 @@
 		}
 		if (checkPage !== 0 && opt.cache.iteration !== false) {
 			// cache
-			active.cache.firstIteration = opt.cache.lastIteration;
-			active.cache.lastIteration = inc + 1;
+			this._get("cache").firstIteration = opt.cache.lastIteration;
+			this._get("cache").lastIteration = inc + 1;
 		}
-		if (opt.cache.autoIteration === true) { active.cache.iteration = true; }
+		if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
 		//
 		result = !result ? opt.resultNull : this._customParser(opt.parser, result);
 		// append to DOM
@@ -128,6 +126,7 @@
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
 		opt.nmbOfEntriesInPage = opt.target.find(opt.calculator).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
+		
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			this.updatePage((opt.page -= 1)).print(opt, true, true);
