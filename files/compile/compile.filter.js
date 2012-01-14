@@ -48,12 +48,12 @@
 				// if simple filter
 				if (filter.search(/\|\||&&|!/) === -1) {
 					filter = $.trim(filter);
-					if (filter.search(/^(?:\(|):/) !== -1) {
+					if (filter.search(/^(?:\(|)*:/) !== -1) {
 						tmpFilter = this._compileFilter(filter);
 						return tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
 					}
 					//
-					return this._customFilter(this_get("filter", filter), el, i, data, cOLength, self, id);
+					return this._customFilter(this._get("filter", filter), el, i, data, cOLength, self, id);
 				}
 				filter = $.trim(
 							filter
@@ -150,7 +150,10 @@
 	 * @return {Function}
 	 */
 	$.Collection.prototype._compileFilter = function (str) {
-		if (str.search(/^\(/) !== -1) { str = str.substring(1, str.length - 1); }
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
 		str = str.split("<:").join('self.getVariable("').split(":>").join('")');
 		//
 		return new Function("el", "i", "data", "cOLength", "self", "id", "var key = i; return " + str.replace(/^\s*:/, "") + ";");

@@ -5,9 +5,9 @@ compile
 :start
 
 copy	^
-        ..\nimble\txt\head.txt ^
-        + ..\nimble\nimble.js ^
-        ^
+		..\nimble\txt\head.txt ^
+		+ ..\nimble\nimble.js ^
+		^
 		+ txt\head.txt ^
 		+ txt\closure.start.txt ^
 		^
@@ -38,17 +38,17 @@ copy	^
 		+ mult\mult.set.js ^
 		+ mult\mult.move.js ^
 		+ mult\mult.remove.js ^
-        ^
+		^
 		+ sort\sort.js ^
-        + sort\sort.reverse.js ^
+		+ sort\sort.reverse.js ^
 		^
 		+ local\local.js ^
 		^
 		+ compile\compile.filter.js ^
-        + compile\compile.parser.js ^
-        ^
+		+ compile\compile.parser.js ^
+		^
 		+ context\context.js ^
-        ^
+		^
 		+ other\other.js ^
 		+ other\then.js ^
 		^
