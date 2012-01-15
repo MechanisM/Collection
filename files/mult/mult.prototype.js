@@ -9,7 +9,7 @@
 		 *
 		 * @this {Array}
 		 * @param {Function} callback - callback function
-		 * @param {mixed} _this - object to use as this when executing callback
+		 * @param {mixed} [_this] - object to use as this when executing callback
 		 * @return {undefined}
 		 */
 		Array.prototype.forEach = function (callback, _this) {
@@ -29,7 +29,7 @@
 		 *
 		 * @this {Array}
 		 * @param {Function} callback - callback function
-		 * @param {mixed} _this - object to use as this when executing callback
+		 * @param {mixed} [_this] - object to use as this when executing callback
 		 * @return {undefined}
 		 */
 		Array.prototype.some = function (callback, _this) {

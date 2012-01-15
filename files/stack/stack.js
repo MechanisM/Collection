@@ -47,7 +47,7 @@
 		return this;
 	};
 	/**
-	 * return property
+	 * get property
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property

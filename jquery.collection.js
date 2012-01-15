@@ -3,7 +3,7 @@
  *
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 01.01.2012 21:55:59
- * @version 1.0.1
+ * @version 1.0.2
  */
 var nimble = (function () {
 	// try to use ECMAScript 5 "strict mode"
@@ -382,7 +382,7 @@ var nimble = (function () {
 		 *
 		 * @this {Array}
 		 * @param {Function} callback - callback function
-		 * @param {mixed} _this - object to use as this when executing callback
+		 * @param {mixed} [_this] - object to use as this when executing callback
 		 * @return {undefined}
 		 */
 		Array.prototype.forEach = function (callback, _this) {
@@ -402,7 +402,7 @@ var nimble = (function () {
 		 *
 		 * @this {Array}
 		 * @param {Function} callback - callback function
-		 * @param {mixed} _this - object to use as this when executing callback
+		 * @param {mixed} [_this] - object to use as this when executing callback
 		 * @return {undefined}
 		 */
 		Array.prototype.some = function (callback, _this) {
@@ -923,7 +923,7 @@ var nimble = (function () {
 		return this;
 	};
 	/**
-	 * return property
+	 * get property
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property

@@ -3,5 +3,5 @@
  *
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 01.01.2012 21:55:59
- * @version 1.0.1
+ * @version 1.0.2
  */
