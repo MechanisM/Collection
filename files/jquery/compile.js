@@ -11,7 +11,7 @@
 	 * @return {Function}
 	 */
 	$.fn.ctplCompile = function () {
-		if (this.length === 0) { throw new Error("DOM element isn't exist!"); }
+		if (this.length === 0) { throw new Error("DOM element does't exist!"); }
 		
 		var
 			html = this.html(),

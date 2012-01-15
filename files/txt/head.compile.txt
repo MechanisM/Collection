@@ -2,7 +2,7 @@
  * $.Collection
  * 
  * autor: kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * version: 3.3.5
- * date: 08.01.2012 14:23:06
+ * version: 3.4
+ * date: 15.01.2012 23:16:19
  */
  

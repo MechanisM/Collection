@@ -74,6 +74,10 @@
 				return function (id) { return this._exist(nm, id || ""); };
 			}(el);
 			//
+			fn["get" + nm + "ActiveID"] = function (nm) {
+				return function (id) { return this._getActiveID(nm); };
+			}(el);
+			//
 			fn["get" + nm] = function (nm) {
 				return function (id) { return this._get(nm, id || ""); };
 			}(el);

@@ -57,7 +57,7 @@
 	 */
 	$.Collection.prototype._get = function (propName, id) {
 		if (id && id !== this.ACTIVE) {
-			if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" isn\'t exist in the stack!'); }
+			if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 			//
 			return this.dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		}
@@ -136,7 +136,7 @@
 			tmpChangeControlStr = propName + "ChangeControl",
 			tmpActiveIDStr = "active" + upperCase + "ID";
 		
-		if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" isn\'t exist in the stack!'); }
+		if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 		//
 		if (sys[tmpActiveIDStr] !== id) {
 			sys[tmpChangeControlStr] = true;
@@ -298,6 +298,16 @@
 		if (this.dObj.sys["tmp" + upperCase][id] !== undefined) { return true; }
 
 		return false;
+	};
+	/**
+	 * get active ID
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} propName - root property
+	 * @return {String|Null}
+	 */
+	$.Collection.prototype._getActiveID = function (propName) {
+		return this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"];
 	};
 	/**
 	 * check the property on the activity
