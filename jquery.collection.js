@@ -912,13 +912,12 @@ var nimble = (function () {
 			active = this.dObj.active,
 			sys = this.dObj.sys,
 			
-			upperCase = $.toUpperCase(propName, 1),
-			activeID = sys["active" + upperCase + "ID"];
+			activeID = this._getActiveID(propName);
 		
 		if (propName === "filter" && $.isString(newProp)) {
 			active[propName] = this._compileFilter(newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
-		if (activeID) { sys["tmp" + upperCase][activeID] = active[propName]; }
+		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
 
 		return this;
 	};
@@ -953,12 +952,8 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype._push = function (propName, objID, newProp) {
 		var
-			sys = this.dObj.sys,
-			active = this.dObj.active,
-
-			upperCase = $.toUpperCase(propName, 1),
-			tmp = sys["tmp" + upperCase],
-			activeID = sys["active" + upperCase + "ID"],
+			tmp = this.dObj.sys["tmp" + $.toUpperCase(propName, 1)],
+			activeID = this._getActiveID(propName),
 
 			key;
 			
@@ -1039,9 +1034,8 @@ var nimble = (function () {
 			upperCase = $.toUpperCase(propName, 1),
 			propBack = sys[propName + "Back"],
 
-			pos;
+			pos = propBack.length - (nmb || 1) - 1;
 		//
-		pos = propBack.length - (nmb || 1) - 1;
 		if (pos >= 0 && propBack[pos]) {
 			if (sys["tmp" + upperCase][propBack[pos]]) {
 				this._set(propName, propBack[pos]);
@@ -1086,7 +1080,7 @@ var nimble = (function () {
 			tmpActiveIDStr = "active" + upperCase + "ID",
 			tmpTmpStr = "tmp" + upperCase,
 
-			activeID = sys[tmpActiveIDStr],
+			activeID = this._getActiveID(propName),
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
 			
 			key;
@@ -1170,7 +1164,7 @@ var nimble = (function () {
 	$.Collection.prototype._exist = function (propName, id) {
 		var upperCase = $.toUpperCase(propName, 1);
 		
-		if ((!id || id === this.ACTIVE) && this.dObj.sys["active" + upperCase + "ID"]) { return true; }
+		if ((!id || id === this.ACTIVE) && this._getActiveID(propName)) { return true; }
 		if (this.dObj.sys["tmp" + upperCase][id] !== undefined) { return true; }
 
 		return false;
@@ -1194,7 +1188,7 @@ var nimble = (function () {
 	 * @return {Boolean}
 	 */
 	$.Collection.prototype._isActive = function (propName, id) {
-		if (id === this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"]) { return true; }
+		if (id === this._getActiveID(propName)) { return true; }
 
 		return false;
 	};
