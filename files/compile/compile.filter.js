@@ -156,5 +156,5 @@
 		}
 		str = str.split("<:").join('self.getVariable("').split(":>").join('")');
 		//
-		return new Function("el", "i", "data", "cOLength", "self", "id", "var key = i; return " + str.replace(/^\s*:/, "") + ";");
+		return new Function("el", "i", "data", "cOLength", "cObj", "id", "var key = i; return " + str.replace(/^\s*:/, "") + ";");
 	}

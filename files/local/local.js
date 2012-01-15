@@ -4,7 +4,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * collection length (in context)
+	 * sa
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function, string expressions or "false"
@@ -20,7 +20,11 @@
 		//
 		if (local === false) {
 			sessionStorage.setItem("__" + this.name + ":" + id, this.toString(id));
-		} else { localStorage.setItem("__" + this.name + ":" + id, this.toString(id)); }
+			sessionStorage.setItem("__" + this.name + "__date:" + id, new Data().toString());
+		} else {
+			localStorage.setItem("__" + this.name + ":" + id, this.toString(id));
+			localStorage.setItem("__" + this.name + "__date:" + id, new Data().toString());
+		}
 		
 		return this;
 	};
