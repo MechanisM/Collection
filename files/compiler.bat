@@ -12,6 +12,7 @@ copy	^
 		+ txt\closure.start.txt ^
 		^
 		+ core\core.js ^
+		+ mult\mult.prototype.js ^
 		+ core\core.prototype.js ^
 		+ core\core.sort.js ^
 		^
@@ -32,7 +33,6 @@ copy	^
 		+ single\single.concat.js ^
 		^
 		+ mult\mult.js ^
-		+ mult\mult.prototype.js ^
 		+ mult\mult.search.js ^
 		+ mult\mult.get.js ^
 		+ mult\mult.set.js ^

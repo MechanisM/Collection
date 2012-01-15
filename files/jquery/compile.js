@@ -46,7 +46,7 @@
 		this.find("[type='text/ctpl']").each(function () {
 			var
 				$this = $(this),
-				data = $this.data(),
+				data = $this.data("ctpl"),
 				
 				prefix = data.prefix ? data.prefix + "_" : "";
 			//
