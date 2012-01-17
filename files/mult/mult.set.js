@@ -25,26 +25,8 @@
 				return this._setOne(filter, replaceObj, id || "");
 			}
 		//
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
-		id = $.isExist(id) ? id : this.ACTIVE;
-	
-		// if id is Boolean
-		if ($.isBoolean(id)) {
-			indexOf = from;
-			from = count;
-			count = mult;
-			mult = id;
-			id = this.ACTIVE;
-		}
-	
-		// values by default
-		mult = mult === false ? false : true;
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
-	
 		var
-			replaceCheck = $.isFunction(replaceObj),
+			arg, replaceCheck = $.isFunction(replaceObj),
 			action = function (el, i, data, aLength, self, id) {
 				if (replaceCheck) {
 					data[i] = replaceObj.call(replaceObj, el, i, data, aLength, self, id);
@@ -52,10 +34,10 @@
 	
 				return true;
 			};
-	
-		this.forEach(action, filter, id, mult, count, from, indexOf);
-	
-		return this;
+		//
+		arg = $.unshiftArguments(arguments, action);
+		arg.splice(2, 1);
+		return this.forEach.apply(this, arg);
 	};
 	/**
 	 * replace element (in context)

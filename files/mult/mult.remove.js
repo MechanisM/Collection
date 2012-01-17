@@ -23,27 +23,9 @@
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
-		//
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
-		id = $.isExist(id) ? id : this.ACTIVE;
-		
-		// if id is Boolean
-		if ($.isBoolean(id)) {
-			indexOf = from;
-			from = count;
-			count = mult;
-			mult = id;
-			id = this.ACTIVE;
-		}
-	
-		// values by default
-		mult = mult === false ? false : true;
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
-		
-		var elements = this.search(filter, id, mult, count, from, indexOf), i;
-		if (mult === false) {
+
+		var elements = this.search.apply(this, arguments), i;
+		if (!$.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else { for (i = elements.length; (i -= 1) > -1;) { this._removeOne(elements[i], id); } }
 	
