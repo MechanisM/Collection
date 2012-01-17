@@ -54,7 +54,7 @@ var nimble = (function () {
 				ws = /\s/,
 				i = str.length;
 			//
-			while (ws.test(str.charAt((i -= 1))));
+			while (ws.test(str.charAt((i -= 1)))){};
 			return str.substring(0, i + 1);
 		},
 		/**
