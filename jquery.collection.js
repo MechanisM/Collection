@@ -2386,9 +2386,13 @@ var nimble = (function () {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		local = local === false ? local : true;
-		var i = localStorage.length, id;
+		var
+			storage = local === false ? sessionStorage : localStorage,
+			i = storage.length,
+			id;
+		//
 		while ((i -= 1) > -1) {
-			if ((id = localStorage[i].split(":"))[0] === "__" + this.name) { this.load(id[1], i); }
+			if ((id = storage[i].split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
 		}
 		
 		return this;
