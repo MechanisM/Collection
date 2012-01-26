@@ -2309,7 +2309,6 @@ var nimble = (function () {
 	$.Collection.prototype.save = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
-		local = local === false ? local : true;
 		id = id || this.ACTIVE;
 		var
 			active = id === this.ACTIVE ? this._exist("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
@@ -2333,7 +2332,6 @@ var nimble = (function () {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		local = local === false ? local : true;
-		//
 		var key, tmp = this.dObj.sys.tmpCollection;
 		for (key in tmp) {
 			if (tmp.hasOwnProperty(key)) { this.save(key, local); }
@@ -2355,7 +2353,6 @@ var nimble = (function () {
 	$.Collection.prototype.load = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
-		local = local === false ? local : true;
 		id = id || this.ACTIVE;
 		var active, storage = local === false ? sessionStorage : localStorage;
 		//
@@ -2388,11 +2385,12 @@ var nimble = (function () {
 		local = local === false ? local : true;
 		var
 			storage = local === false ? sessionStorage : localStorage,
-			i = storage.length,
-			id;
+			key, id;
 		//
-		while ((i -= 1) > -1) {
-			if ((id = storage[i].split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+		for (key in storage) {
+			if (storage.hasOwnProperty(key)) {
+				if ((id = key.split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+			}
 		}
 		
 		return this;
@@ -2409,9 +2407,7 @@ var nimble = (function () {
 	$.Collection.prototype.loadDate = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
-		local = local === false ? local : true;
 		id = id || this.ACTIVE;
-		//
 		var storage = local === false ? sessionStorage : localStorage;
 		//
 		return new Date(storage.getItem("__" + this.name + "__date:" + id));
@@ -2429,9 +2425,7 @@ var nimble = (function () {
 	$.Collection.prototype.drop = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
-		local = local === false ? local : true;
 		id = id || this.ACTIVE;
-		//
 		var storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.removeItem("__" + this.name + ":" + id);

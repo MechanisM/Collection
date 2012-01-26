@@ -91,11 +91,12 @@
 		local = local === false ? local : true;
 		var
 			storage = local === false ? sessionStorage : localStorage,
-			i = storage.length,
-			id;
+			key, id;
 		//
-		while ((i -= 1) > -1) {
-			if ((id = storage[i].split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+		for (key in storage) {
+			if (storage.hasOwnProperty(key)) {
+				if ((id = key.split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+			}
 		}
 		
 		return this;
