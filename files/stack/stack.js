@@ -56,7 +56,7 @@
 	 */
 	$.Collection.prototype._get = function (propName, id) {
 		if (id && id !== this.ACTIVE) {
-			if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
+			if (!this._exists(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 			//
 			return this.dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		}
@@ -131,7 +131,7 @@
 			tmpChangeControlStr = propName + "ChangeControl",
 			tmpActiveIDStr = "active" + upperCase + "ID";
 		
-		if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
+		if (!this._exists(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 		//
 		if (sys[tmpActiveIDStr] !== id) {
 			sys[tmpChangeControlStr] = true;
@@ -285,7 +285,7 @@
 	 * @param {String} [id=this.ACTIVE] - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype._exist = function (propName, id) {
+	$.Collection.prototype._exists = function (propName, id) {
 		var upperCase = $.toUpperCase(propName, 1);
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveID(propName)) { return true; }
@@ -329,7 +329,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.use = function (id) {
-		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
+		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exists(this.stack[i], id)) { this._set(this.stack[i], id); } }
 				
 		return this;
 	};

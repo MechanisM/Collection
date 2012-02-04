@@ -53,10 +53,10 @@
 					}, this);
 				} else {
 					for (key in cObj) {
-						if (cObj.hasOwnProperty(key)) {
-							if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-								cOLength += 1;
-							}
+						if (!cObj.hasOwnProperty(key)) { continue; }
+						//
+						if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+							cOLength += 1;
 						}
 					}
 				}

@@ -103,7 +103,7 @@
 					i = tmpFilter.iter;
 					//
 					if (tmpResult.search(/^:/) !== -1) {
-						if (!this._exist("filter", "__tmp:" + tmpResult)) {
+						if (!this._exists("filter", "__tmp:" + tmpResult)) {
 							this._push("filter", "__tmp:" + tmpResult, this._compileFilter(tmpResult));
 							tmpFilter.result = this._compileFilter(tmpResult);
 						}

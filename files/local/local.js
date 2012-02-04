@@ -17,7 +17,7 @@
 		//
 		id = id || this.ACTIVE;
 		var
-			active = id === this.ACTIVE ? this._exist("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
+			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.setItem("__" + this.name + ":" + id, this.toString(id));
@@ -91,11 +91,18 @@
 		local = local === false ? local : true;
 		var
 			storage = local === false ? sessionStorage : localStorage,
+			sLength = storage.length,
 			key, id;
 		//
-		for (key in storage) {
-			if (storage.hasOwnProperty(key)) {
-				if ((id = key.split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+		try {
+			for (key in storage) {
+				if (storage.hasOwnProperty(key)) {
+					if ((id = key.split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+				}
+			}
+		} catch (e) {
+			while ((sLength -= 1) > -1) {
+				if ((id = storage[sLength].split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
 			}
 		}
 		

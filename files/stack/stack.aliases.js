@@ -70,8 +70,8 @@
 				return function (id) { return this._isActive(nm, id); };
 			}(el);	
 			//
-			fn["exist" + nm] = function (nm) {
-				return function (id) { return this._exist(nm, id || ""); };
+			fn["exists" + nm] = function (nm) {
+				return function (id) { return this._exists(nm, id || ""); };
 			}(el);
 			//
 			fn["get" + nm + "ActiveID"] = function (nm) {

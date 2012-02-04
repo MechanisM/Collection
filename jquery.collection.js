@@ -932,7 +932,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype._get = function (propName, id) {
 		if (id && id !== this.ACTIVE) {
-			if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
+			if (!this._exists(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 			//
 			return this.dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		}
@@ -1007,7 +1007,7 @@ var nimble = (function () {
 			tmpChangeControlStr = propName + "ChangeControl",
 			tmpActiveIDStr = "active" + upperCase + "ID";
 		
-		if (!this._exist(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
+		if (!this._exists(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 		//
 		if (sys[tmpActiveIDStr] !== id) {
 			sys[tmpChangeControlStr] = true;
@@ -1161,7 +1161,7 @@ var nimble = (function () {
 	 * @param {String} [id=this.ACTIVE] - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype._exist = function (propName, id) {
+	$.Collection.prototype._exists = function (propName, id) {
 		var upperCase = $.toUpperCase(propName, 1);
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveID(propName)) { return true; }
@@ -1205,7 +1205,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.use = function (id) {
-		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exist(this.stack[i], id)) { this._set(this.stack[i], id); } }
+		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exists(this.stack[i], id)) { this._set(this.stack[i], id); } }
 				
 		return this;
 	};	
@@ -1308,8 +1308,8 @@ var nimble = (function () {
 				return function (id) { return this._isActive(nm, id); };
 			}(el);	
 			//
-			fn["exist" + nm] = function (nm) {
-				return function (id) { return this._exist(nm, id || ""); };
+			fn["exists" + nm] = function (nm) {
+				return function (id) { return this._exists(nm, id || ""); };
 			}(el);
 			//
 			fn["get" + nm + "ActiveID"] = function (nm) {
@@ -2311,7 +2311,7 @@ var nimble = (function () {
 		//
 		id = id || this.ACTIVE;
 		var
-			active = id === this.ACTIVE ? this._exist("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
+			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.setItem("__" + this.name + ":" + id, this.toString(id));
@@ -2385,11 +2385,18 @@ var nimble = (function () {
 		local = local === false ? local : true;
 		var
 			storage = local === false ? sessionStorage : localStorage,
+			sLength = storage.length,
 			key, id;
 		//
-		for (key in storage) {
-			if (storage.hasOwnProperty(key)) {
-				if ((id = key.split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+		try {
+			for (key in storage) {
+				if (storage.hasOwnProperty(key)) {
+					if ((id = key.split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+				}
+			}
+		} catch (e) {
+			while ((sLength -= 1) > -1) {
+				if ((id = storage[sLength].split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
 			}
 		}
 		
@@ -2538,7 +2545,7 @@ var nimble = (function () {
 					i = tmpFilter.iter;
 					//
 					if (tmpResult.search(/^:/) !== -1) {
-						if (!this._exist("filter", "__tmp:" + tmpResult)) {
+						if (!this._exists("filter", "__tmp:" + tmpResult)) {
 							this._push("filter", "__tmp:" + tmpResult, this._compileFilter(tmpResult));
 							tmpFilter.result = this._compileFilter(tmpResult);
 						}
@@ -2698,7 +2705,7 @@ var nimble = (function () {
 	 * @return {Boolean}
 	 */
 	$.Collection.prototype._filterTest = function (str) {
-		return str === this.ACTIVE || this._exist("filter", str) || str.search(/&&|\|\||:/) !== -1;
+		return str === this.ACTIVE || this._exists("filter", str) || str.search(/&&|\|\||:/) !== -1;
 	};
 		
 	/**

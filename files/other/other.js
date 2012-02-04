@@ -25,7 +25,7 @@
 	 * @return {Boolean}
 	 */
 	$.Collection.prototype._filterTest = function (str) {
-		return str === this.ACTIVE || this._exist("filter", str) || str.search(/&&|\|\||:/) !== -1;
+		return str === this.ACTIVE || this._exists("filter", str) || str.search(/&&|\|\||:/) !== -1;
 	};
 		
 	/**
