@@ -39,29 +39,30 @@
 		
 		// if cObj is String
 		if ($.isString(cObj)) { return cObj.length; }
+		
+		// throw error
+		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
 		//
-		if (typeof cObj === "object") {
-			if (filter === false && cObj.length !== undefined) {
-				cOLength = cObj.length;
+		if (filter === false && cObj.length !== undefined) {
+			cOLength = cObj.length;
+		} else {
+			cOLength = 0;
+			if (cObj.length !== undefined) {
+				cObj.forEach(function (el, i, obj) {
+					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						cOLength += 1;
+					}
+				}, this);
 			} else {
-				cOLength = 0;
-				if (cObj.length !== undefined) {
-					cObj.forEach(function (el, i, obj) {
-						if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-							cOLength += 1;
-						}
-					}, this);
-				} else {
-					for (key in cObj) {
-						if (!cObj.hasOwnProperty(key)) { continue; }
-						//
-						if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-							cOLength += 1;
-						}
+				for (key in cObj) {
+					if (!cObj.hasOwnProperty(key)) { continue; }
+					//
+					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						cOLength += 1;
 					}
 				}
 			}
-		} else { throw new Error("incorrect data type!"); }
+		}
 	
 		return cOLength;
 	};
@@ -110,9 +111,7 @@
 		
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
-		//
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
-		//
 		cOLength = this.length(cObj);
 		//
 		if ($.isArray(cObj)) {
@@ -151,18 +150,18 @@
 			}, this);
 		} else {
 			for (i in cObj) {
-				if (cObj.hasOwnProperty(i)) {
-					if (count !== false && j === count) { break; }
-					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
-					
-					if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id) === true) {
-						if (from !== false && from !== 0) {
-							from -= 1;
-						} else {	
-							if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], i, cObj, cOLength, this, id) === false; }
-							if (mult === false) { res = true; }
-							j += 1;
-						}
+				if (!cObj.hasOwnProperty(i)) { continue; }
+				//	
+				if (count !== false && j === count) { break; }
+				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
+				//
+				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id) === true) {
+					if (from !== false && from !== 0) {
+						from -= 1;
+					} else {	
+						if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], i, cObj, cOLength, this, id) === false; }
+						if (mult === false) { res = true; }
+						j += 1;
 					}
 				} else {
 					if (callback.denial && (from === false || from === 0)) {

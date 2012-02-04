@@ -387,7 +387,7 @@ var nimble = (function () {
 		 */
 		Array.prototype.forEach = function (callback, _this) {
 			var i = -1, aLength = this.length;
-			
+			//
 			while ((i += 1) < aLength) {
 				if (!_this) {
 					callback(this[i], i, this);
@@ -407,7 +407,7 @@ var nimble = (function () {
 		 */
 		Array.prototype.some = function (callback, _this) {
 			var i = -1, aLength = this.length, res;
-			
+			//
 			while ((i += 1) < aLength) {
 				if (!_this) {
 					res = callback(this[i], i, this);
@@ -434,7 +434,7 @@ var nimble = (function () {
 		 * @constant
 		 * @type String
 		 */
-		version: "3.4",
+		version: "3.5",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -454,13 +454,15 @@ var nimble = (function () {
 		 * @type Array
 		*/
 		stack: [
+		"namespace",
+		
 		"collection",
 		"filter",
 		"context",
 		"cache",
 		"variable",
 		"defer",
-		
+
 		"page",
 		"parser",
 		"appendType",
@@ -681,6 +683,14 @@ var nimble = (function () {
 				/////////////////////////////////
 				
 				/**
+				 * namespace
+				 * 
+				 * @field
+				 * @type String
+				 */
+				namespace: "nm",
+				
+				/**
 				 * active collection
 				 * 
 				 * @field
@@ -834,6 +844,7 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.sys = {
+		//
 		flags: {
 			use: {
 				/**
@@ -891,12 +902,12 @@ var nimble = (function () {
 		var
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
-
+		//
 		if (propName === "filter" && $.isString(newProp)) {
 			active[propName] = this._compileFilter(newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
-
+		//
 		return this;
 	};
 	/**
@@ -1534,7 +1545,7 @@ var nimble = (function () {
 		id = id || "";
 		//
 		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);	
-		
+		//
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
 				$.extend(true, cObj, obj)
@@ -1588,29 +1599,30 @@ var nimble = (function () {
 		
 		// if cObj is String
 		if ($.isString(cObj)) { return cObj.length; }
+		
+		// throw error
+		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
 		//
-		if (typeof cObj === "object") {
-			if (filter === false && cObj.length !== undefined) {
-				cOLength = cObj.length;
+		if (filter === false && cObj.length !== undefined) {
+			cOLength = cObj.length;
+		} else {
+			cOLength = 0;
+			if (cObj.length !== undefined) {
+				cObj.forEach(function (el, i, obj) {
+					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						cOLength += 1;
+					}
+				}, this);
 			} else {
-				cOLength = 0;
-				if (cObj.length !== undefined) {
-					cObj.forEach(function (el, i, obj) {
-						if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-							cOLength += 1;
-						}
-					}, this);
-				} else {
-					for (key in cObj) {
-						if (cObj.hasOwnProperty(key)) {
-							if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
-								cOLength += 1;
-							}
-						}
+				for (key in cObj) {
+					if (!cObj.hasOwnProperty(key)) { continue; }
+					//
+					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+						cOLength += 1;
 					}
 				}
 			}
-		} else { throw new Error("incorrect data type!"); }
+		}
 	
 		return cOLength;
 	};
@@ -1659,9 +1671,7 @@ var nimble = (function () {
 		
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
-		//
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
-		//
 		cOLength = this.length(cObj);
 		//
 		if ($.isArray(cObj)) {
@@ -1700,18 +1710,18 @@ var nimble = (function () {
 			}, this);
 		} else {
 			for (i in cObj) {
-				if (cObj.hasOwnProperty(i)) {
-					if (count !== false && j === count) { break; }
-					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
-					
-					if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id) === true) {
-						if (from !== false && from !== 0) {
-							from -= 1;
-						} else {	
-							if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], i, cObj, cOLength, this, id) === false; }
-							if (mult === false) { res = true; }
-							j += 1;
-						}
+				if (!cObj.hasOwnProperty(i)) { continue; }
+				//	
+				if (count !== false && j === count) { break; }
+				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
+				//
+				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id) === true) {
+					if (from !== false && from !== 0) {
+						from -= 1;
+					} else {	
+						if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], i, cObj, cOLength, this, id) === false; }
+						if (mult === false) { res = true; }
+						j += 1;
 					}
 				} else {
 					if (callback.denial && (from === false || from === 0)) {
@@ -1769,7 +1779,7 @@ var nimble = (function () {
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-	
+		//
 		var
 			result = mult === true ? [] : -1,
 			action = function (el, i, data, aLength, self, id) {
@@ -1884,7 +1894,7 @@ var nimble = (function () {
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-	
+		//
 		var
 			result = mult === true ? [] : -1,
 			action = function (el, i, data, aLength, self, id) {
@@ -2011,17 +2021,17 @@ var nimble = (function () {
 		moveFilter = $.isExist(moveFilter) && moveFilter !== true ? moveFilter : this._getActiveParam("filter");
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
-		
+		//
 		sourceID = sourceID || "";
 		activeID = activeID || "";
-		
+		//
 		addType = addType || "push";
-		
+		//
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-		
+		//
 		var
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
@@ -2123,7 +2133,7 @@ var nimble = (function () {
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
-
+		//
 		var elements = this.search.apply(this, arguments), i;
 		if (!$.isArray(elements)) {
 			this._removeOne(elements, id);
@@ -2302,21 +2312,28 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.save = function (id, local) {
+	$.Collection.prototype.save = function (id, namespace, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
+		namespace = namespace || "";
+		//
 		var
+			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			//
 			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
 		//
-		storage.setItem("__" + this.name + ":" + id, this.toString(id));
-		storage.setItem("__" + this.name + "__date:" + id, new Date().toString());
-		storage.setItem("__" + this.name + "__active:" + id, active);
+		storage.setItem(name + ":" + id, this.toString(id));
+		storage.setItem(name + "__date:" + id, new Date().toString());
+		storage.setItem(name + "__active:" + id, active);
+		//
+		storage.setItem(name + "__date", new Date().toString());
 		
 		return this;
 	};
@@ -2324,19 +2341,31 @@ var nimble = (function () {
 	 * save all collection in DOM storage
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.saveAll = function (local) {
+	$.Collection.prototype.saveAll = function (namespace, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
+		namespace = namespace || "";
 		local = local === false ? local : true;
-		var key, tmp = this.dObj.sys.tmpCollection;
+		//
+		var
+			key,
+			tmp = this.dObj.sys.tmpCollection,
+			active = false;
+		
+		// clear storage
+		this.dropAll(namespace, local);
+		//
 		for (key in tmp) {
-			if (tmp.hasOwnProperty(key)) { this.save(key, local); }
+			this._isActive("Collection", key) && (active = true);
+			//
+			if (tmp.hasOwnProperty(key)) { this.save(key, namespace, local); }
 		}
-		this.save("", local);
+		active === false && this.save("", namespace, local);
 		
 		return this;
 	};
@@ -2346,21 +2375,28 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local=true] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.load = function (id, local) {
+	$.Collection.prototype.load = function (id, namespace, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
-		var active, storage = local === false ? sessionStorage : localStorage;
+		namespace = namespace || "";
+		//
+		var
+			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			//
+			active,
+			storage = local === false ? sessionStorage : localStorage;
 		//
 		if (id === this.ACTIVE) {
-			this._new("collection", $.parseJSON(storage.getItem("__" + this.name + ":" + id)));
-		} else { this._push("collection", id, $.parseJSON(storage.getItem("__" + this.name + ":" + id))); }
+			this._new("collection", $.parseJSON(storage.getItem(name + ":" + id)));
+		} else { this._push("collection", id, $.parseJSON(storage.getItem(name + ":" + id))); }
 		//
-		active = storage.getItem("__" + this.name + "__active:" + id);
+		active = storage.getItem(name + "__active:" + id);
 		if (active === this.ACTIVE) {
 			this._set("collection", id);
 		} else if (active) {
@@ -2375,15 +2411,22 @@ var nimble = (function () {
 	 * load all collection from DOM storage
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
+	 * @param {String} [type="load"] - operation type
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.loadAll = function (local) {
+	$.Collection.prototype.loadAll = function (namespace, local, type) {
+		type = type ? "drop" : "load";
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		local = local === false ? local : true;
+		namespace = namespace || "";
+		//
 		var
+			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			//
 			storage = local === false ? sessionStorage : localStorage,
 			sLength = storage.length,
 			key, id;
@@ -2391,12 +2434,12 @@ var nimble = (function () {
 		try {
 			for (key in storage) {
 				if (storage.hasOwnProperty(key)) {
-					if ((id = key.split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+					if ((id = key.split(":"))[0] === name) { this[type](id[1], namespace, local); }
 				}
 			}
 		} catch (e) {
 			while ((sLength -= 1) > -1) {
-				if ((id = storage[sLength].split(":"))[0] === "__" + this.name) { this.load(id[1], local); }
+				if ((id = storage[sLength].split(":"))[0] === name) { this[type](id[1], namespace, local); }
 			}
 		}
 		
@@ -2406,18 +2449,37 @@ var nimble = (function () {
 	 * get the time of the conservation of collections
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id] - collection ID
+	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Date}
 	 */
-	$.Collection.prototype.loadDate = function (id, local) {
+	$.Collection.prototype.loadDate = function (id, namespace, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
-		id = id || this.ACTIVE;
+		id = id ? ":" + id : "";
+		namespace = namespace || "";
+		//
 		var storage = local === false ? sessionStorage : localStorage;
 		//
-		return new Date(storage.getItem("__" + this.name + "__date:" + id));
+		return new Date(storage.getItem("__" + this._get("namespace", namespace) + "__" + this.name + "__date" + id));
+	};
+	/**
+	 * checking the life of the collection
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Number} time - milliseconds
+	 * @param {String} [id] - collection ID
+	 * @param {String} [namespace=this.ACTIVE] - namespace
+	 * @param {String} [local] - if "false", used session storage
+	 * @throw {Error}
+	 * @return {Boolean}
+	 */
+	$.Collection.prototype.isExpires = function (time, id, namespace, local) {
+		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
+		//
+		return new Date(new Date() - new Date(this.loadDate(id || "", namespace || "", local || ""))) > time;
 	};
 	
 	/**
@@ -2425,21 +2487,40 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.drop = function (id, local) {
+	$.Collection.prototype.drop = function (id, namespace, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
-		var storage = local === false ? sessionStorage : localStorage;
+		namespace = namespace || "";
+		var
+			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			storage = local === false ? sessionStorage : localStorage;
 		//
-		storage.removeItem("__" + this.name + ":" + id);
-		storage.removeItem("__" + this.name + "__date:" + id);
-		storage.removeItem("__" + this.name + "__active:" + id);
+		storage.removeItem(name + ":" + id);
+		storage.removeItem(name + "__date:" + id);
+		storage.removeItem(name + "__active:" + id);
 		
 		return this;
+	};
+	/**
+	 * remove all collection from DOM storage
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} [namespace=this.ACTIVE] - namespace
+	 * @param {String} [local] - if "false", used session storage
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 */
+	$.Collection.prototype.dropAll = function (namespace, local) {
+		namespace = namespace || "";
+		(local === false ? sessionStorage : localStorage).removeItem( "__" + this._get("namespace", namespace) + "__" + this.name + "__date");
+		//
+		return this.loadAll(namespace, local || "", true);
 	};	
 	/////////////////////////////////
 	//// compile (filter)

@@ -17,7 +17,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: "3.4",
+		version: "3.5",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -37,13 +37,15 @@
 		 * @type Array
 		*/
 		stack: [
+		"namespace",
+		
 		"collection",
 		"filter",
 		"context",
 		"cache",
 		"variable",
 		"defer",
-		
+
 		"page",
 		"parser",
 		"appendType",

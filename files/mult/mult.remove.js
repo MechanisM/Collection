@@ -23,7 +23,7 @@
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
-
+		//
 		var elements = this.search.apply(this, arguments), i;
 		if (!$.isArray(elements)) {
 			this._removeOne(elements, id);

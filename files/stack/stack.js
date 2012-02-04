@@ -15,12 +15,12 @@
 		var
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
-
+		//
 		if (propName === "filter" && $.isString(newProp)) {
 			active[propName] = this._compileFilter(newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
-
+		//
 		return this;
 	};
 	/**

@@ -18,7 +18,7 @@
 		id = id || "";
 		//
 		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);	
-		
+		//
 		if (typeof cObj === "object") {
 			if ($.isPlainObject(cObj)) {
 				$.extend(true, cObj, obj)

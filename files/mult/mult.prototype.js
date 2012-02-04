@@ -14,7 +14,7 @@
 		 */
 		Array.prototype.forEach = function (callback, _this) {
 			var i = -1, aLength = this.length;
-			
+			//
 			while ((i += 1) < aLength) {
 				if (!_this) {
 					callback(this[i], i, this);
@@ -34,7 +34,7 @@
 		 */
 		Array.prototype.some = function (callback, _this) {
 			var i = -1, aLength = this.length, res;
-			
+			//
 			while ((i += 1) < aLength) {
 				if (!_this) {
 					res = callback(this[i], i, this);

@@ -23,17 +23,17 @@
 		moveFilter = $.isExist(moveFilter) && moveFilter !== true ? moveFilter : this._getActiveParam("filter");
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
-		
+		//
 		sourceID = sourceID || "";
 		activeID = activeID || "";
-		
+		//
 		addType = addType || "push";
-		
+		//
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-		
+		//
 		var
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"))),

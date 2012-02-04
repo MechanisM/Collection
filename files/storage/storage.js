@@ -13,6 +13,14 @@
 				/////////////////////////////////
 				
 				/**
+				 * namespace
+				 * 
+				 * @field
+				 * @type String
+				 */
+				namespace: "nm",
+				
+				/**
 				 * active collection
 				 * 
 				 * @field

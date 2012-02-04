@@ -41,7 +41,7 @@
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-	
+		//
 		var
 			result = mult === true ? [] : -1,
 			action = function (el, i, data, aLength, self, id) {
