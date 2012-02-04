@@ -40,7 +40,7 @@
 		], db = new $.Collection(data);
 		$(function () {
 			db.enable("cache");
-			$("script[type='text/ctpl']").ctplMake(db);
+			$(".ctpl").ctplMake(db);
 		});
 	</script>
 	<style type="text/css">
@@ -61,7 +61,14 @@
 		<div id="nav" class="ctm" data-ctm='{"nav": "pageList"}'></div>
 	</div>
 	<div id="result"></div>
-	<script type="text/ctpl" data-ctpl='{"name": "list", "set": true, "calculator": ".row", "pageBreak": 5, "numberBreak": 3}' id="template">
+	<script class="ctpl" type="text/ctpl" data-ctpl='{
+		"name": "list",
+		"set": true,
+		"calculator": ".row",
+		"pageBreak": 5,
+		"numberBreak": 3,
+		"print": true
+	}' id="template">
 		<div class="row">
 			<img src="<?js echo data[key].avatar; ?>" width="100" height="100" />
 			<?js echo data[key].name; ?>

@@ -22,6 +22,7 @@
 		
 		// extend public fields by additional properties if need
 		if (prop) { $.extend(true, active, prop); }
+		if ($.isString(active.filter)) { active.filter = this._compileFilter(active.filter); }
 		
 		// if "collection" is string
 		if ($.isString(collection)) {

@@ -16,7 +16,7 @@
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 		//
-		if (propName === "filter" && $.isString(newProp)) {
+		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
 			active[propName] = this._compileFilter(newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
@@ -38,7 +38,7 @@
 			
 			activeID = this._getActiveID(propName);
 		
-		if (propName === "filter" && $.isString(newProp)) {
+		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
 			active[propName] = this._compileFilter(newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
@@ -105,7 +105,7 @@
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
 				} else {
-					if (propName === "filter" && $.isString(newProp)) {
+					if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
 						tmp[objID] = this._compileFilter(newProp);
 					} else { tmp[objID] = newProp; }
 				}
@@ -329,7 +329,25 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.use = function (id) {
-		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exists(this.stack[i], id)) { this._set(this.stack[i], id); } }
+		this.stack.forEach(function (el) {
+			var nm, tmpNm, i;
+			//
+			if (this._exists(el, id)) {
+				this._set(el, id);
+			} else {
+				nm = id.split(this.NAMESPACE_SEPARATOR);
+				for (i = nm.length; (i -= 1) > -1;) {
+					nm.splice(i, 1);
+					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);
+					//
+					if (this._exists(el, tmpNm)) {
+						this._set(el, tmpNm);
+						break;
+					}
+				}
+				
+			}
+		}, this);
 				
 		return this;
 	};

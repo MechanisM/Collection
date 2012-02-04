@@ -29,6 +29,7 @@
 		// const
 		ACTIVE: "active",
 		SHUFFLE: "shuffle",
+		NAMESPACE_SEPARATOR: ".",
 		
 		/**
 		 * stack parameters

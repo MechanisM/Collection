@@ -23,12 +23,10 @@
 	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager
 	 * @param {String} [param.appendType=this.ACTIVE] - type additions to the DOM
 	 * @param {String} [param.resultNull=this.ACTIVE] - text displayed if no results
-	 * @param {Boolean} [page=false] - break on page
 	 * @param {Boolean} [clear=false] - clear the cache
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.print = function (param, page, clear) {
-		page = page || false;
+	$.Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
 		//
 		var
@@ -42,9 +40,7 @@
 		// easy implementation
 		if ($.isExist(param) && ($.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if ($.isBoolean(param)) {
-			page = param;
-		} else if (!$.isExist(param)) { param = {page: this._get("page")} }
+		} else if (!$.isExist(param)) { param = {page: this._get("page")}; }
 		
 		//
 		$.extend(true, opt, this.dObj.active, param);

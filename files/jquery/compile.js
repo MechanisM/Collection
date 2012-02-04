@@ -42,7 +42,7 @@
 	 * @return {Collection Object}
 	 */
 	$.fn.ctplMake = function (cObj) {
-		this.find("[type='text/ctpl']").each(function () {
+		this.each(function () {
 			var
 				$this = $(this),
 				data = $this.data("ctpl"), key,

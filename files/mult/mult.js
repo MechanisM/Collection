@@ -13,9 +13,11 @@
 	 * @return {Number}
 	 */
 	$.Collection.prototype.length = function (filter, id) {
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		filter = filter || "";
 		//
-		var cObj, aCheck, key, cOLength;
+		var
+			tmpObj = {},
+			cObj, aCheck, key, cOLength;
 		//
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
@@ -49,7 +51,7 @@
 			cOLength = 0;
 			if (cObj.length !== undefined) {
 				cObj.forEach(function (el, i, obj) {
-					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
 					}
 				}, this);
@@ -57,13 +59,15 @@
 				for (key in cObj) {
 					if (!cObj.hasOwnProperty(key)) { continue; }
 					//
-					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
 					}
 				}
 			}
 		}
-	
+		//
+		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
+		
 		return cOLength;
 	};
 	/**
@@ -74,7 +78,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -85,7 +89,7 @@
 	 */
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		filter = filter || "";
 		id = $.isExist(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
@@ -104,6 +108,8 @@
 		indexOf = parseInt(indexOf) || false;
 	
 		var
+			tmpObj = {},
+		
 			cObj, cOLength,
 			cloneObj,
 	
@@ -125,7 +131,7 @@
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
 					
-				if (this._customFilter(filter, el, i, cObj, cOLength, this, id) === true) {
+				if (this._customFilter(filter, el, i, cObj, cOLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
@@ -155,7 +161,7 @@
 				if (count !== false && j === count) { break; }
 				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 				//
-				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id) === true) {
+				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {	
@@ -179,6 +185,8 @@
 				tmpRes = "";
 			}
 		}
-	
+		//
+		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
+		
 		return this;
 	};

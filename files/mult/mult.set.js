@@ -43,7 +43,7 @@
 	 * replace element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
@@ -69,7 +69,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */

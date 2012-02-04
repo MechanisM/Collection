@@ -49,7 +49,7 @@
 					if (a > b) { return r; }
 					
 					return 0;
-				} else { return Math.round(Math.random() * 2  - 1); }
+				} else { return Math.floor(Math.random() * 2  - 1); }
 			},
 			
 			// sort object by key

@@ -365,6 +365,7 @@ var nimble = (function () {
 		
 		// extend public fields by additional properties if need
 		if (prop) { $.extend(true, active, prop); }
+		if ($.isString(active.filter)) { active.filter = this._compileFilter(active.filter); }
 		
 		// if "collection" is string
 		if ($.isString(collection)) {
@@ -446,6 +447,7 @@ var nimble = (function () {
 		// const
 		ACTIVE: "active",
 		SHUFFLE: "shuffle",
+		NAMESPACE_SEPARATOR: ".",
 		
 		/**
 		 * stack parameters
@@ -589,7 +591,7 @@ var nimble = (function () {
 	 * @return {Collection Object}
 	 */
 	$.fn.ctplMake = function (cObj) {
-		this.find("[type='text/ctpl']").each(function () {
+		this.each(function () {
 			var
 				$this = $(this),
 				data = $this.data("ctpl"), key,
@@ -682,7 +684,19 @@ var nimble = (function () {
 		max = $.isExist(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
-	};	
+	};
+	
+	/**
+	 * get random integer number
+	 * 
+	 * @param {Number} min - min number
+	 * @param {Number} max - max number
+	 * @return {Number}
+	 */
+	$.getRandomInt = function (min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	};
+	
 	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
@@ -925,7 +939,7 @@ var nimble = (function () {
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 		//
-		if (propName === "filter" && $.isString(newProp)) {
+		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
 			active[propName] = this._compileFilter(newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
@@ -947,7 +961,7 @@ var nimble = (function () {
 			
 			activeID = this._getActiveID(propName);
 		
-		if (propName === "filter" && $.isString(newProp)) {
+		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
 			active[propName] = this._compileFilter(newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
@@ -1014,7 +1028,7 @@ var nimble = (function () {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
 				} else {
-					if (propName === "filter" && $.isString(newProp)) {
+					if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
 						tmp[objID] = this._compileFilter(newProp);
 					} else { tmp[objID] = newProp; }
 				}
@@ -1238,7 +1252,25 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.use = function (id) {
-		for (var i = this.stack.length; (i -= 1) > -1;) { if (this._exists(this.stack[i], id)) { this._set(this.stack[i], id); } }
+		this.stack.forEach(function (el) {
+			var nm, tmpNm, i;
+			//
+			if (this._exists(el, id)) {
+				this._set(el, id);
+			} else {
+				nm = id.split(this.NAMESPACE_SEPARATOR);
+				for (i = nm.length; (i -= 1) > -1;) {
+					nm.splice(i, 1);
+					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);
+					//
+					if (this._exists(el, tmpNm)) {
+						this._set(el, tmpNm);
+						break;
+					}
+				}
+				
+			}
+		}, this);
 				
 		return this;
 	};	
@@ -1595,9 +1627,11 @@ var nimble = (function () {
 	 * @return {Number}
 	 */
 	$.Collection.prototype.length = function (filter, id) {
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		filter = filter || "";
 		//
-		var cObj, aCheck, key, cOLength;
+		var
+			tmpObj = {},
+			cObj, aCheck, key, cOLength;
 		//
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
@@ -1631,7 +1665,7 @@ var nimble = (function () {
 			cOLength = 0;
 			if (cObj.length !== undefined) {
 				cObj.forEach(function (el, i, obj) {
-					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
 					}
 				}, this);
@@ -1639,13 +1673,15 @@ var nimble = (function () {
 				for (key in cObj) {
 					if (!cObj.hasOwnProperty(key)) { continue; }
 					//
-					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE) === true) {
+					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
 					}
 				}
 			}
 		}
-	
+		//
+		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
+		
 		return cOLength;
 	};
 	/**
@@ -1656,7 +1692,7 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -1667,7 +1703,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		filter = filter || "";
 		id = $.isExist(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
@@ -1686,6 +1722,8 @@ var nimble = (function () {
 		indexOf = parseInt(indexOf) || false;
 	
 		var
+			tmpObj = {},
+		
 			cObj, cOLength,
 			cloneObj,
 	
@@ -1707,7 +1745,7 @@ var nimble = (function () {
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
 					
-				if (this._customFilter(filter, el, i, cObj, cOLength, this, id) === true) {
+				if (this._customFilter(filter, el, i, cObj, cOLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
@@ -1737,7 +1775,7 @@ var nimble = (function () {
 				if (count !== false && j === count) { break; }
 				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 				//
-				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id) === true) {
+				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {	
@@ -1761,7 +1799,9 @@ var nimble = (function () {
 				tmpRes = "";
 			}
 		}
-	
+		//
+		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
+		
 		return this;
 	};	
 	/////////////////////////////////
@@ -1775,7 +1815,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -1784,7 +1824,7 @@ var nimble = (function () {
 	 * @return {Number|Array}
 	 */
 	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		filter = filter || "";
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1820,7 +1860,7 @@ var nimble = (function () {
 	 * search element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
@@ -1899,7 +1939,7 @@ var nimble = (function () {
 				return this._getOne(filter, id || "");
 			}
 		//
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		filter = filter = filter || "";
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
@@ -1986,7 +2026,7 @@ var nimble = (function () {
 	 * replace element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
@@ -2012,7 +2052,7 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
@@ -2040,7 +2080,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = $.isExist(moveFilter) && moveFilter !== true ? moveFilter : this._getActiveParam("filter");
+		moveFilter = moveFilter || "";
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		//
@@ -2224,7 +2264,7 @@ var nimble = (function () {
 					if (a > b) { return r; }
 					
 					return 0;
-				} else { return Math.round(Math.random() * 2  - 1); }
+				} else { return Math.floor(Math.random() * 2  - 1); }
 			},
 			
 			// sort object by key
@@ -2553,16 +2593,16 @@ var nimble = (function () {
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function, string expressions or "false"
-	 * @param {Collection} data - link to collection
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {mixed} el - current element
 	 * @param {Number|String} i - iteration (key)
+	 * @param {Collection} data - link to collection
 	 * @param {Number} cOLength - collection length
 	 * @param {Collection Object} self - link to collection object
 	 * @param {String} id - collection ID
-	 * @throw {Error}
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id) {
+	$.Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
 		var
 			fLength,
 			calFilter, tmpFilter,
@@ -2572,122 +2612,150 @@ var nimble = (function () {
 			
 			i;
 		
-		// if filter is disabled
-		if (filter === false) { return true; }
-		// if filter is function
-		if ($.isFunction(filter)) { return filter.call(filter, el, i, data, cOLength, self, id); }
-		
-		// if filter is not defined or filter is a string constant
-		if (!filter || ($.isString(filter) && $.trim(filter) === this.ACTIVE)) {
+		//
+		if (!filter || ($.isString(filter) && (filter = $.trim(filter)) === this.ACTIVE)) {
+			if (!this._getActiveParam("filter") && filter !== this.ACTIVE) { return true; }
+			//
 			if (this._get("filter")) {
 				if ($.isFunction(this._get("filter"))) {
 					return this._get("filter").call(this._get("filter"), el, i, data, cOLength, self, id);
 				}
 				//
-				return this._customFilter(this._get("filter"), el, i, data, cOLength, self, id);
+				return this._customFilter(this._get("filter"), el, i, data, cOLength, self, id, _tmpFilter);
 			}
 			
 			return true;
-		} else {
-			// if filter is string
-			if (!$.isArray(filter)) {
-				// if simple filter
-				if (filter.search(/\|\||&&|!/) === -1) {
-					filter = $.trim(filter);
-					if (filter.search(/^(?:\(|)*:/) !== -1) {
-						tmpFilter = this._compileFilter(filter);
-						return tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
-					}
-					//
-					return this._customFilter(this._get("filter", filter), el, i, data, cOLength, self, id);
-				}
-				filter = $.trim(
-							filter
-								.toString()
-								.replace(/\s*(\(|\))\s*/g, " $1 ")
-								.replace(/\s*(\|\||&&)\s*/g, " $1 ")
-								.replace(/(!)\s*/g, "$1")
-						).split(" ");
-				
-				// remove "dead" elements		
-				for (i = filter.length; (i -= 1) > -1;) {
-					if (filter[i] === "") { filter.splice(i, 1); }
-				}
-			}
-			// calculate deep filter
-			calFilter = function (array, iter) {
-				var
-					i = -1,
-					aLength = array.length,
-					pos = 0,
-					result = [];
-				
-				while ((i += 1) < aLength) {
-					iter += 1;
-					if (array[i] === "(") { pos += 1; }
-					if (array[i] === ")") {
-						if (pos === 0) {
-							return {result: result, iter: iter};
-						} else { pos -= 1; }
-					}
-					result.push(array[i]);
-				}
-			};
-			
-			// calculate filter
-			fLength = filter.length;
-			for (i = -1; (i += 1) < fLength;) {
-				// calculate atoms
-				if (filter[i] === "(" || filter[i] === "!(") {
-					if (filter[i].substring(0, 1) === "!") {
-						inverse = true;
-						filter[i] = filter[i].substring(1);
-					} else { inverse = false; }
-					//
-					tmpFilter = calFilter(filter.slice((i + 1)), i);
-					tmpResult = tmpFilter.result.join(" ");
-					i = tmpFilter.iter;
-					//
-					if (tmpResult.search(/^:/) !== -1) {
-						if (!this._exists("filter", "__tmp:" + tmpResult)) {
-							this._push("filter", "__tmp:" + tmpResult, this._compileFilter(tmpResult));
-							tmpFilter.result = this._compileFilter(tmpResult);
-						}
-						tmpFilter.result = this._get("filter", "__tmp:" + tmpResult);
-					}
-					//
-					tmpResult = this._customFilter(tmpFilter.result, el, i, data, cOLength, self, id);
-					
-					if (!and && !or) {
-						result = inverse === true ? !tmpResult : tmpResult;
-					} else if (and) {
-						result = inverse === true ? !tmpResult : tmpResult && result;
-					} else { result = inverse === true ? !tmpResult : tmpResult || result; }
-				// calculate outer filter
-				} else if (filter[i] !== ")" && filter[i] !== "||" && filter[i] !== "&&") {
-					if (filter[i].substring(0, 1) === "!") {
-						inverse = true;
-						filter[i] = filter[i].substring(1);
-					} else { inverse = false; }
-					//
-					tmpResult = this._get("filter", filter[i]).call(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
-					if (!and && !or) {
-						result = inverse === true ? !tmpResult : tmpResult;
-					} else if (and) {
-						result = inverse === true ? !tmpResult : tmpResult && result;
-					} else { result = inverse === true ? !tmpResult : tmpResult || result; }
-				// "and" or "or"
-				} else if (filter[i] === "||") {
-					and = false;
-					or = true;
-				} else if (filter[i] === "&&") {
-					or = false;
-					and = true;
-				}
-			}
-			
-			return result;
 		}
+
+		// if filter is function
+		if ($.isFunction(filter)) {
+			if (!this._getActiveParam("filter") || !_tmpFilter) {
+				return filter.call(filter, el, i, data, cOLength, self, id);
+			} else {
+				if (!_tmpFilter.name) {
+					while (this._exists("filter", "__tmp:" + (_tmpFilter.name = $.getRandomInt(0, 10000)))) {
+						_tmpFilter.name = $.getRandomInt(0, 10000);
+					}
+					this._push("filter", "__tmp:" + _tmpFilter.name, filter);
+				}
+				//
+				return this._customFilter(this.ACTIVE + " && " + "__tmp:" + _tmpFilter.name, el, i, data, cOLength, self, id, _tmpFilter);
+			}
+		}
+		
+		// if filter is string
+		if (!$.isArray(filter)) {
+			//
+			if (!this._getActiveParam("filter") === false && _tmpFilter) {
+				filter = this.ACTIVE + " && (" + filter + ")";
+			}
+			// if simple filter
+			if (filter.search(/\|\||&&|!/) === -1) {
+				if ((filter = $.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
+					tmpFilter = this._compileFilter(filter);
+					return tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
+				}
+				//
+				return this._customFilter(this._get("filter", filter), el, i, data, cOLength, self, id, _tmpFilter);
+			}
+			
+			//
+			filter = $.trim(
+						filter
+							.toString()
+							.replace(/\s*(\(|\))\s*/g, " $1 ")
+							.replace(/\s*(\|\||&&)\s*/g, " $1 ")
+							.replace(/(!)\s*/g, "$1")
+					).split(" ");
+			// remove "dead" elements		
+			for (i = filter.length; (i -= 1) > -1;) {
+				if (filter[i] === "") { filter.splice(i, 1); }
+			}
+		}
+		
+		// calculate deep filter
+		calFilter = function (array, iter) {
+			var
+				i = -1,
+				aLength = array.length,
+				pos = 0,
+				result = [];
+			//
+			while ((i += 1) < aLength) {
+				iter += 1;
+				if (array[i] === "(" || array[i] === "!(") { pos += 1; }
+				if (array[i] === ")") {
+					if (pos === 0) {
+						return {result: result, iter: iter};
+					} else { pos -= 1; }
+				}
+				result.push(array[i]);
+			}
+		};
+		
+		// calculate filter
+		fLength = filter.length;
+		for (i = -1; (i += 1) < fLength;) {
+			// calculate atoms
+			if (filter[i] === "(" || filter[i] === "!(") {
+				if (filter[i].substring(0, 1) === "!") {
+					inverse = true;
+					filter[i] = filter[i].substring(1);
+				} else { inverse = false; }
+				
+				//
+				tmpFilter = calFilter(filter.slice((i + 1)), i);
+				tmpResult = tmpFilter.result.join(" ");
+				i = tmpFilter.iter;
+				//
+				
+				if (tmpResult.search(/^:/) !== -1) {
+					if (!this._exists("filter", "__tmp:" + tmpResult)) {
+						this._push("filter", "__tmp:" + tmpResult, this._compileFilter(tmpResult));
+						tmpFilter.result = this._compileFilter(tmpResult);
+					}
+					tmpFilter.result = this._get("filter", "__tmp:" + tmpResult);
+				}
+				//
+				tmpResult = this._customFilter(tmpFilter.result, el, i, data, cOLength, self, id);
+				
+				if (!and && !or) {
+					result = inverse === true ? !tmpResult : tmpResult;
+				} else if (and) {
+					result = inverse === true ? !tmpResult : tmpResult && result;
+				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
+			
+			// calculate outer filter
+			} else if (filter[i] !== ")" && filter[i] !== "||" && filter[i] !== "&&") {
+				if (filter[i].substring(0, 1) === "!") {
+					inverse = true;
+					filter[i] = filter[i].substring(1);
+				} else { inverse = false; }
+				
+				//
+				if ($.isString(this._get("filter", filter[i]))) {
+					tmpResult = this._customFilter(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
+				} else {
+					tmpResult = this._get("filter", filter[i]).call(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
+				}
+				//
+				if (!and && !or) {
+					result = inverse === true ? !tmpResult : tmpResult;
+				} else if (and) {
+					result = inverse === true ? !tmpResult : tmpResult && result;
+				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
+			
+			// "and" or "or"
+			} else if (filter[i] === "||") {
+				and = false;
+				or = true;
+			} else if (filter[i] === "&&") {
+				or = false;
+				and = true;
+			}
+		}
+		
+		return result;
 	};
 	/**
 	 * compile filter
@@ -2927,12 +2995,10 @@ var nimble = (function () {
 	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager
 	 * @param {String} [param.appendType=this.ACTIVE] - type additions to the DOM
 	 * @param {String} [param.resultNull=this.ACTIVE] - text displayed if no results
-	 * @param {Boolean} [page=false] - break on page
 	 * @param {Boolean} [clear=false] - clear the cache
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.print = function (param, page, clear) {
-		page = page || false;
+	$.Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
 		//
 		var
@@ -2946,9 +3012,7 @@ var nimble = (function () {
 		// easy implementation
 		if ($.isExist(param) && ($.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if ($.isBoolean(param)) {
-			page = param;
-		} else if (!$.isExist(param)) { param = {page: this._get("page")} }
+		} else if (!$.isExist(param)) { param = {page: this._get("page")}; }
 		
 		//
 		$.extend(true, opt, this.dObj.active, param);

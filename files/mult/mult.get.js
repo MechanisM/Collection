@@ -24,7 +24,7 @@
 				return this._getOne(filter, id || "");
 			}
 		//
-		filter = $.isExist(filter) && filter !== true ? filter : this._getActiveParam("filter");
+		filter = filter = filter || "";
 		id = $.isExist(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean

@@ -67,3 +67,14 @@
 		
 		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
 	};
+	
+	/**
+	 * get random integer number
+	 * 
+	 * @param {Number} min - min number
+	 * @param {Number} max - max number
+	 * @return {Number}
+	 */
+	$.getRandomInt = function (min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	};

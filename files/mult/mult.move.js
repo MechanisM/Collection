@@ -20,7 +20,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = $.isExist(moveFilter) && moveFilter !== true ? moveFilter : this._getActiveParam("filter");
+		moveFilter = moveFilter || "";
 		deleteType = deleteType === false ? false : true;
 		context = $.isExist(context) ? context.toString() : "";
 		//
