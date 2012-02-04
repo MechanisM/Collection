@@ -54,14 +54,14 @@
 					 * @field
 					 * @type Boolean
 					 */
-					autoIteration: false,
+					autoIteration: true,
 					/**
 					 * use cache
 					 * 
 					 * @field
 					 * @type Boolean
 					 */
-					iteration: false,
+					iteration: true,
 					/**
 					 * first iteration
 					 * 

@@ -20,7 +20,7 @@
 		namespace = namespace || "";
 		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			//
 			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
@@ -83,7 +83,7 @@
 		namespace = namespace || "";
 		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			//
 			active,
 			storage = local === false ? sessionStorage : localStorage;
@@ -121,7 +121,7 @@
 		namespace = namespace || "";
 		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			//
 			storage = local === false ? sessionStorage : localStorage,
 			sLength = storage.length,
@@ -159,7 +159,7 @@
 		//
 		var storage = local === false ? sessionStorage : localStorage;
 		//
-		return new Date(storage.getItem("__" + this._get("namespace", namespace) + "__" + this.name + "__date" + id));
+		return new Date(storage.getItem("__" + this.name + "__" + this._get("namespace", namespace) + "__date" + id));
 	};
 	/**
 	 * checking the life of the collection
@@ -193,8 +193,9 @@
 		//
 		id = id || this.ACTIVE;
 		namespace = namespace || "";
+		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.removeItem(name + ":" + id);
@@ -214,7 +215,7 @@
 	 */
 	$.Collection.prototype.dropAll = function (namespace, local) {
 		namespace = namespace || "";
-		(local === false ? sessionStorage : localStorage).removeItem( "__" + this._get("namespace", namespace) + "__" + this.name + "__date");
+		(local === false ? sessionStorage : localStorage).removeItem( "__" + this.name + "__" + this._get("namespace", namespace) + "__date");
 		//
 		return this.loadAll(namespace, local || "", true);
 	};

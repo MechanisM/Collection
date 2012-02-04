@@ -586,20 +586,34 @@ var nimble = (function () {
 	 * 
 	 * @this {jQuery Object}
 	 * @param {Collection Object} cObj - an instance of $.Collection
-	 * @throw {Error}
-	 * @return {Function}
+	 * @return {Collection Object}
 	 */
 	$.fn.ctplMake = function (cObj) {
 		this.find("[type='text/ctpl']").each(function () {
 			var
 				$this = $(this),
-				data = $this.data("ctpl"),
+				data = $this.data("ctpl"), key,
 				
 				prefix = data.prefix ? data.prefix + "_" : "";
 			//
-			cObj.pushTemplate(prefix + data.name, $this.ctplCompile());
-			if (data.set && data.set === true) { cObj.setTemplate(prefix + data.name); }
+			cObj._push("template", prefix + data.name, $this.ctplCompile());
+			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }
+			//
+			for (key in data) {
+				if (!data.hasOwnProperty(key)){ continue; }
+				if (key === "prefix" || key === "set" || key === "print" || key === "name") { continue; }
+				//
+				cObj._push(key, prefix + data.name, data[key]);
+				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
+			}
+			//
+			if (data.print && data.print === true) {
+				data.template = data.name;
+				cObj.print(data);
+			}
 		});
+		
+		return this;
 	};	
 	/////////////////////////////////
 	//// jQuery methods (other)
@@ -724,14 +738,14 @@ var nimble = (function () {
 					 * @field
 					 * @type Boolean
 					 */
-					autoIteration: false,
+					autoIteration: true,
 					/**
 					 * use cache
 					 * 
 					 * @field
 					 * @type Boolean
 					 */
-					iteration: false,
+					iteration: true,
 					/**
 					 * first iteration
 					 * 
@@ -867,7 +881,15 @@ var nimble = (function () {
 				 * @field
 				 * @type Boolean
 				 */
-				parser: true
+				parser: true,
+				
+				/**
+				 * use cache
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				cache: false
 			}
 		}
 	};
@@ -967,7 +989,7 @@ var nimble = (function () {
 			activeID = this._getActiveID(propName),
 
 			key;
-			
+		//	
 		if ($.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
@@ -2324,7 +2346,7 @@ var nimble = (function () {
 		namespace = namespace || "";
 		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			//
 			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
@@ -2387,7 +2409,7 @@ var nimble = (function () {
 		namespace = namespace || "";
 		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			//
 			active,
 			storage = local === false ? sessionStorage : localStorage;
@@ -2425,7 +2447,7 @@ var nimble = (function () {
 		namespace = namespace || "";
 		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			//
 			storage = local === false ? sessionStorage : localStorage,
 			sLength = storage.length,
@@ -2463,7 +2485,7 @@ var nimble = (function () {
 		//
 		var storage = local === false ? sessionStorage : localStorage;
 		//
-		return new Date(storage.getItem("__" + this._get("namespace", namespace) + "__" + this.name + "__date" + id));
+		return new Date(storage.getItem("__" + this.name + "__" + this._get("namespace", namespace) + "__date" + id));
 	};
 	/**
 	 * checking the life of the collection
@@ -2497,8 +2519,9 @@ var nimble = (function () {
 		//
 		id = id || this.ACTIVE;
 		namespace = namespace || "";
+		//
 		var
-			name = "__" + this._get("namespace", namespace) + "__" + this.name,
+			name = "__" + this.name + "__" + this._get("namespace", namespace),
 			storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.removeItem(name + ":" + id);
@@ -2518,7 +2541,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.dropAll = function (namespace, local) {
 		namespace = namespace || "";
-		(local === false ? sessionStorage : localStorage).removeItem( "__" + this._get("namespace", namespace) + "__" + this.name + "__date");
+		(local === false ? sessionStorage : localStorage).removeItem( "__" + this.name + "__" + this._get("namespace", namespace) + "__date");
 		//
 		return this.loadAll(namespace, local || "", true);
 	};	
@@ -2911,6 +2934,7 @@ var nimble = (function () {
 	$.Collection.prototype.print = function (param, page, clear) {
 		page = page || false;
 		clear = clear || false;
+		//
 		var
 			opt = {},
 			
@@ -2936,6 +2960,8 @@ var nimble = (function () {
 		//
 		opt.filter = $.isExist(param.filter) && param.filter !== true ? param.filter : this._getActiveParam("filter");
 		opt.parser = $.isExist(param.parser) ? param.parser : this._getActiveParam("parser");
+		//
+		opt.cache = $.isExist(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		if (clear === true) { opt.cache.iteration = false; }
 		//
@@ -3021,10 +3047,13 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Object} [param] - object settings (depends on the model template)
+	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.easyPage = function (param) {
 		var
+			self = this,
+			//
 			str = "",
 			//
 			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
@@ -3044,15 +3073,27 @@ var nimble = (function () {
 			//
 			i, j = 0, from, to;
 		//
-		param.pager.find("[data-ctm]").each(function () {
+		param.pager.find(".ctm").each(function () {
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
-			
+			//
 			var
 				$this = $(this),
 				data = $this.data("ctm"),
 				classes = data.classes;
-
+			//
 			if (data.nav) {
+				// attach event
+				if ((data.nav === "prev" || data.nav === "next") && !$this.data("ctm-delegated")) {
+					$this.click(function () {
+						var $this = $(this);
+						//
+						if (!$this.hasClass(data.classes && data.classes.disabled || "disabled")) {
+							data.nav === "prev" && db.print("-=1", true);
+							data.nav === "next" && db.print("+=1", true);
+						}
+					}).data("ctm-delegated", true);
+				}
+				//
 				if ((data.nav === "prev" && param.page === 1) || (data.nav === "next" && param.finNumber === param.nmbOfEntries)) {
 					$this.addClass(classes && classes.disabled || "disabled");
 				} else if (data.nav === "prev" || data.nav === "next") { $this.removeClass(classes && classes.disabled || "disabled"); }
@@ -3062,6 +3103,7 @@ var nimble = (function () {
 						j = param.pageBreak % 2 !== 0 ? 1 : 0;
 						from = (param.pageBreak - j) / 2;
 						to = from;
+						//
 						if (param.page - j < from) {
 							from = 0;
 						} else {
@@ -3070,14 +3112,26 @@ var nimble = (function () {
 								from -= param.page + to - nmbOfPages;
 							}
 						}
-						
+						//
 						for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
 							if (j === param.pageBreak && i !== param.page) { break; }
 							str += genPage(data, classes || "", i);
 						}
 					} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
+					//
 					$this.html(str);
+					// delegate event
+					if (!$this.data("ctm-delegated")) {
+						$this.on("click", data.tag || "span", function () {
+							var $this = $(this);
+							//
+							if (!$this.hasClass(data.classes && data.classes.active || "active")) {
+								self.print($this.data("page"), true);
+							}
+						}).data("ctm-delegated", true);
+					}
 				}
+			//
 			} else if (data.info) {
 				if (param.nmbOfEntriesInPage === 0) {
 					$this.addClass(classes && classes.noData || "noData");

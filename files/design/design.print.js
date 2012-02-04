@@ -30,6 +30,7 @@
 	$.Collection.prototype.print = function (param, page, clear) {
 		page = page || false;
 		clear = clear || false;
+		//
 		var
 			opt = {},
 			
@@ -55,6 +56,8 @@
 		//
 		opt.filter = $.isExist(param.filter) && param.filter !== true ? param.filter : this._getActiveParam("filter");
 		opt.parser = $.isExist(param.parser) ? param.parser : this._getActiveParam("parser");
+		//
+		opt.cache = $.isExist(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		if (clear === true) { opt.cache.iteration = false; }
 		//
@@ -140,10 +143,13 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Object} [param] - object settings (depends on the model template)
+	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.easyPage = function (param) {
 		var
+			self = this,
+			//
 			str = "",
 			//
 			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
@@ -163,15 +169,27 @@
 			//
 			i, j = 0, from, to;
 		//
-		param.pager.find("[data-ctm]").each(function () {
+		param.pager.find(".ctm").each(function () {
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
-			
+			//
 			var
 				$this = $(this),
 				data = $this.data("ctm"),
 				classes = data.classes;
-
+			//
 			if (data.nav) {
+				// attach event
+				if ((data.nav === "prev" || data.nav === "next") && !$this.data("ctm-delegated")) {
+					$this.click(function () {
+						var $this = $(this);
+						//
+						if (!$this.hasClass(data.classes && data.classes.disabled || "disabled")) {
+							data.nav === "prev" && db.print("-=1", true);
+							data.nav === "next" && db.print("+=1", true);
+						}
+					}).data("ctm-delegated", true);
+				}
+				//
 				if ((data.nav === "prev" && param.page === 1) || (data.nav === "next" && param.finNumber === param.nmbOfEntries)) {
 					$this.addClass(classes && classes.disabled || "disabled");
 				} else if (data.nav === "prev" || data.nav === "next") { $this.removeClass(classes && classes.disabled || "disabled"); }
@@ -181,6 +199,7 @@
 						j = param.pageBreak % 2 !== 0 ? 1 : 0;
 						from = (param.pageBreak - j) / 2;
 						to = from;
+						//
 						if (param.page - j < from) {
 							from = 0;
 						} else {
@@ -189,14 +208,26 @@
 								from -= param.page + to - nmbOfPages;
 							}
 						}
-						
+						//
 						for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
 							if (j === param.pageBreak && i !== param.page) { break; }
 							str += genPage(data, classes || "", i);
 						}
 					} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
+					//
 					$this.html(str);
+					// delegate event
+					if (!$this.data("ctm-delegated")) {
+						$this.on("click", data.tag || "span", function () {
+							var $this = $(this);
+							//
+							if (!$this.hasClass(data.classes && data.classes.active || "active")) {
+								self.print($this.data("page"), true);
+							}
+						}).data("ctm-delegated", true);
+					}
 				}
+			//
 			} else if (data.info) {
 				if (param.nmbOfEntriesInPage === 0) {
 					$this.addClass(classes && classes.noData || "noData");

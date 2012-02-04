@@ -80,7 +80,7 @@
 			activeID = this._getActiveID(propName),
 
 			key;
-			
+		//	
 		if ($.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {

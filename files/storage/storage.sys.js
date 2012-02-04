@@ -27,7 +27,15 @@
 				 * @field
 				 * @type Boolean
 				 */
-				parser: true
+				parser: true,
+				
+				/**
+				 * use cache
+				 * 
+				 * @field
+				 * @type Boolean
+				 */
+				cache: false
 			}
 		}
 	};

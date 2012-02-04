@@ -39,18 +39,32 @@
 	 * 
 	 * @this {jQuery Object}
 	 * @param {Collection Object} cObj - an instance of $.Collection
-	 * @throw {Error}
-	 * @return {Function}
+	 * @return {Collection Object}
 	 */
 	$.fn.ctplMake = function (cObj) {
 		this.find("[type='text/ctpl']").each(function () {
 			var
 				$this = $(this),
-				data = $this.data("ctpl"),
+				data = $this.data("ctpl"), key,
 				
 				prefix = data.prefix ? data.prefix + "_" : "";
 			//
-			cObj.pushTemplate(prefix + data.name, $this.ctplCompile());
-			if (data.set && data.set === true) { cObj.setTemplate(prefix + data.name); }
+			cObj._push("template", prefix + data.name, $this.ctplCompile());
+			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }
+			//
+			for (key in data) {
+				if (!data.hasOwnProperty(key)){ continue; }
+				if (key === "prefix" || key === "set" || key === "print" || key === "name") { continue; }
+				//
+				cObj._push(key, prefix + data.name, data[key]);
+				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
+			}
+			//
+			if (data.print && data.print === true) {
+				data.template = data.name;
+				cObj.print(data);
+			}
 		});
+		
+		return this;
 	};

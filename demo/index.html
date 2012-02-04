@@ -39,23 +39,8 @@
 			{avatar: "img/6.jpg", name: "Димон10", url: "http://kobezzza.com/6"}
 		], db = new $.Collection(data);
 		$(function () {
-			db.getCache().autoIteration = true;
-			db.getCache().iteration = true;
-			//
-			db
-				.active({
-					target: $("#result"),
-					pager: $("#pager"),
-					calculator: ".row",
-					pageBreak: 5,
-					numberBreak: 3,
-					template: $("#template").ctplCompile()
-				})
-				.print(true);
-				
-			$("#nav").delegate("a", "click", function () { db.print($(this).data("page"), true); });
-			$("#prev").on("click", function () { db.print("-=1", true); });
-			$("#next").on("click", function () { db.print("+=1", true); });
+			db.enable("cache");
+			$("script[type='text/ctpl']").ctplMake(db);
 		});
 	</script>
 	<style type="text/css">
@@ -70,13 +55,13 @@
 
 <body>
 	<div id="pager">
-		<a href="javascript:;" id="prev" data-ctm='{"nav": "prev", "classes": {"disabled": "disabled2"}}'>prev</a>
-		<a href="javascript:;" id="next" data-ctm='{"nav": "next"}'> next </a>
+		<a href="javascript:;" id="prev" class="ctm" data-ctm='{"nav": "prev"}'>prev</a>
+		<a href="javascript:;" id="next" class="ctm" data-ctm='{"nav": "next"}'>next</a>
 		
-		<div id="nav" data-ctm='{"nav": "pageList", "tag": "a", "attr": {"href": "javascript:;"}}'></div>
+		<div id="nav" class="ctm" data-ctm='{"nav": "pageList"}'></div>
 	</div>
 	<div id="result"></div>
-	<script type="text/ctpl" id="template">
+	<script type="text/ctpl" data-ctpl='{"name": "list", "set": true, "calculator": ".row", "pageBreak": 5, "numberBreak": 3}' id="template">
 		<div class="row">
 			<img src="<?js echo data[key].avatar; ?>" width="100" height="100" />
 			<?js echo data[key].name; ?>
