@@ -12,7 +12,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype._removeOne = function (context, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		var activeContext = this._getActiveParam("context");
 		
 		if (!context && !activeContext) {

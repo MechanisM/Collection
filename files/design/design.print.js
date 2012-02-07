@@ -28,6 +28,7 @@
 	 */
 	$.Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
+		
 		//
 		var
 			opt = {},
@@ -38,9 +39,9 @@
 			result = "", action;
 			
 		// easy implementation
-		if ($.isExist(param) && ($.isString(param) || $.isNumeric(param))) {
+		if ($.isExists(param) && ($.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if (!$.isExist(param)) { param = {page: this._get("page")}; }
+		} else if (!$.isExists(param)) { param = {page: this._get("page")}; }
 		
 		//
 		$.extend(true, opt, this.dObj.active, param);
@@ -50,16 +51,14 @@
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		//
-		opt.filter = $.isExist(param.filter) && param.filter !== true ? param.filter : this._getActiveParam("filter");
-		opt.parser = $.isExist(param.parser) ? param.parser : this._getActiveParam("parser");
-		//
-		opt.cache = $.isExist(param.cache) ? param.cache : this._getActiveParam("cache");
+		opt.cache = $.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		if (clear === true) { opt.cache.iteration = false; }
 		//
 		checkPage = this._get("page") - opt.page;
-		this.updatePage(opt.page);
-		//
+		this._update("page", opt.page);
+		
+		// template function 
 		action = function (el, i, data, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
@@ -69,26 +68,28 @@
 				
 			return true;
 		};
+		
 		// get collection
 		cObj = nimble.byLink(opt.collection, this._getActiveParam("context") + nimble.CHILDREN + ((param && param.context) || ""));
 		cOLength = this.length();
-		
 		// number of records per page
-		opt.numberBreak = !page || opt.numberBreak === false ? cOLength : opt.numberBreak;
+		opt.numberBreak = !$.isExists(opt.numberBreak) || opt.numberBreak === false ? cOLength : opt.numberBreak;
+		
 		//
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
-			start = !page || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
+			start = !opt.pager || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
+		//
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
-			start = !page || opt.filter === false ?
+			start = !opt.pager || opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
 							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
 						
 			// rewind cached step back
-			if (checkPage > 0 && (page === true && opt.filter !== false)) {
+			if (checkPage > 0 && (opt.pager === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
 				for (; (start -= 1) > -1;) {
 					if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
@@ -99,10 +100,11 @@
 				}
 				opt.cache.lastIteration = (start += 1);
 				from = null;
-			} else if (checkPage < 0 && (page === true && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
+			} else if (checkPage < 0 && (opt.pager && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
+		
 		if (checkPage !== 0 && opt.cache.iteration !== false) {
 			// cache
 			this._get("cache").firstIteration = opt.cache.lastIteration;
@@ -120,17 +122,18 @@
 			return this;
 		} else { opt.target[opt.appendType](result); }
 		//
-		if (!page) { return this; }
+		
+		if (!opt.pager) { return this; }
 		//
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
 		opt.nmbOfEntriesInPage = opt.target.find(opt.calculator).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
-		
+
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			this.updatePage((opt.page -= 1)).print(opt, true, true);
 		} else { this.easyPage(opt); }
-	
+		
 		return this;
 	};
 	
@@ -180,8 +183,10 @@
 						var $this = $(this);
 						//
 						if (!$this.hasClass(data.classes && data.classes.disabled || "disabled")) {
-							data.nav === "prev" && db.print("-=1", true);
-							data.nav === "next" && db.print("+=1", true);
+							data.nav === "prev" && (param.page = "-=1");
+							data.nav === "next" && (param.page = "+=1");
+							//
+							db.print(param);
 						}
 					}).data("ctm-delegated", true);
 				}
@@ -218,7 +223,8 @@
 							var $this = $(this);
 							//
 							if (!$this.hasClass(data.classes && data.classes.active || "active")) {
-								self.print($this.data("page"), true);
+								param.page = $this.data("page");
+								self.print(param);
 							}
 						}).data("ctm-delegated", true);
 					}

@@ -78,7 +78,7 @@ var nimble = (function () {
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
-		isExist: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
+		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
 		/**
 		 * calculate math expression
@@ -252,7 +252,7 @@ var nimble = (function () {
 		 */
 		execEvent: function (query, event, param, _this) {
 			query = query.split(this.QUERY_SEPARATOR);
-			param = this.isExist(param) ? param : [];
+			param = this.isExists(param) ? param : [];
 			param = this.isArray(param) ? param : [param];
 			//
 			var 

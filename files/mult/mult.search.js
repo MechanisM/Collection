@@ -20,7 +20,7 @@
 	 */
 	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || "";
-		id = $.isExist(id) ? id : this.ACTIVE;
+		id = $.isExists(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -60,7 +60,7 @@
 	 * @return {Number|Array}
 	 */
 	$.Collection.prototype.searchOne = function (filter, id) {
-		return this.search($.isExist(filter) ? filter : "", id || "", false);
+		return this.search($.isExists(filter) ? filter : "", id || "", false);
 	};
 	
 	/**

@@ -49,7 +49,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.setOne = function (filter, replaceObj, id) {
-		return this.set($.isExist(filter) ? filter : "", replaceObj, id || "", false);
+		return this.set($.isExists(filter) ? filter : "", replaceObj, id || "", false);
 	};
 	
 	/**

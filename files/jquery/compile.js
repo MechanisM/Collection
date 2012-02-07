@@ -24,7 +24,7 @@
 			
 			eLength = elem.length,
 			resStr = "var key = i, result = ''; ";
-		
+		//
 		elem.forEach(function (el, i) {
 			if (i === 0 || i % 2 === 0) {
 				resStr += "result +='" + el + "';";
@@ -49,15 +49,22 @@
 				
 				prefix = data.prefix ? data.prefix + "_" : "";
 			//
+			if ($.isString(data)) { data = $.parseJSON(data); }
+			//
 			cObj._push("template", prefix + data.name, $this.ctplCompile());
 			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }
+			
 			//
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
 				if (key === "prefix" || key === "set" || key === "print" || key === "name") { continue; }
 				//
+				if (key === "target" || key === "pager") { data[key] = $(data[key]); }
+				
 				cObj._push(key, prefix + data.name, data[key]);
 				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
+				//
+				if (key === "filter") { data[key] = prefix + data.name; }
 			}
 			//
 			if (data.print && data.print === true) {

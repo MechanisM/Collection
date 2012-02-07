@@ -38,6 +38,7 @@
 			{avatar: "img/5.jpg", name: "Егор10", url: "http://kobezzza.com/5"},
 			{avatar: "img/6.jpg", name: "Димон10", url: "http://kobezzza.com/6"}
 		], db = new $.Collection(data);
+		
 		$(function () {
 			db.enable("cache");
 			$(".ctpl").ctplMake(db);
@@ -50,6 +51,11 @@
 			background-color: #F9F9F9
 		}
 		.active { font-size: 24px; color: #036 }
+		
+		.nav span {
+			color: #036;
+			cursor: pointer
+		}
 	</style>
 </head>
 
@@ -58,22 +64,25 @@
 		<a href="javascript:;" id="prev" class="ctm" data-ctm='{"nav": "prev"}'>prev</a>
 		<a href="javascript:;" id="next" class="ctm" data-ctm='{"nav": "next"}'>next</a>
 		
-		<div id="nav" class="ctm" data-ctm='{"nav": "pageList"}'></div>
+		<div class="nav ctm" data-ctm='{"nav": "pageList"}'></div>
 	</div>
+	
+	
 	<div id="result"></div>
+	<div id="result2"></div>
+	
+	
 	<script class="ctpl" type="text/ctpl" data-ctpl='{
 		"name": "list",
-		"set": true,
-		"calculator": ".row",
-		"pageBreak": 5,
-		"numberBreak": 3,
+		"target": "#result",
+		"filter": ":el.name.search(\"Егор\") === -1 || el.name === \"Егор2\"",
 		"print": true
 	}' id="template">
 		<div class="row">
-			<img src="<?js echo data[key].avatar; ?>" width="100" height="100" />
-			<?js echo data[key].name; ?>
+			<img src="<?js echo el.avatar; ?>" width="100" height="100" />
+			<?js echo el.name; ?>
 			<br />
-			<?js echo data[key].url; ?>
+			<?js echo el.url; ?>
 		</div>
 	</script>
 </body>

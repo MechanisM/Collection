@@ -25,7 +25,7 @@
 	 * @param {mixed} val
 	 * @return {Boolean}
 	 */
-	$.isExist = function (val) { return nimble.isExist(val); };
+	$.isExists = function (val) { return nimble.isExists(val); };
 	/**
 	 * unshift for arguments (object)
 	 * 
@@ -49,7 +49,7 @@
 	 */
 	$.toUpperCase = function (str, max, from) {
 		from = from || 0;
-		max = $.isExist(max) ? from + max : str.length;
+		max = $.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
 	};
@@ -63,7 +63,7 @@
 	 */
 	$.toLowerCase = function (str, max, from) {
 		from = from || 0;
-		max = $.isExist(max) ? from + max : str.length;
+		max = $.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
 	};

@@ -25,7 +25,7 @@
 			}
 		//
 		filter = filter = filter || "";
-		id = $.isExist(id) ? id : this.ACTIVE;
+		id = $.isExists(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -65,5 +65,5 @@
 	 * @return {mixed}
 	 */
 	$.Collection.prototype.getOne = function (filter, id) {
-		return this.get($.isExist(filter) ? filter : "", id || "", false);
+		return this.get($.isExists(filter) ? filter : "", id || "", false);
 	};

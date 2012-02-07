@@ -13,7 +13,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype._setOne = function (context, value, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
 		id = id || "";
 		//
@@ -37,7 +37,7 @@
 	 * @return {mixed}
 	 */
 	$.Collection.prototype._getOne = function (context, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		//
 		return nimble.byLink(this._get("collection", id || ""), this._getActiveParam("context") + nimble.CHILDREN + context);
 	};

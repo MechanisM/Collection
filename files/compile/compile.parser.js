@@ -9,7 +9,6 @@
 	 * @this {Colletion Object}
 	 * @param {Parser|String|Boolean} parser - parser function or string expressions or "false"
 	 * @param {String} str - source string
-	 * @throw {Error}
 	 * @return {String}
 	 */
 	$.Collection.prototype._customParser = function (parser, str) {

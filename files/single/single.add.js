@@ -39,7 +39,7 @@
 			
 			// move
 			} else {
-				cValue = $.isExist(cValue) ? cValue.toString() : "";
+				cValue = $.isExists(cValue) ? cValue.toString() : "";
 				sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
 				
 				// add type

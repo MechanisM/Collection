@@ -40,5 +40,5 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.removeOne = function (filter, id) {
-		return this.remove($.isExist(filter) ? filter : "", id || "", false);
+		return this.remove($.isExists(filter) ? filter : "", id || "", false);
 	};

@@ -84,7 +84,7 @@ var nimble = (function () {
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
-		isExist: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
+		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
 		/**
 		 * calculate math expression
@@ -258,7 +258,7 @@ var nimble = (function () {
 		 */
 		execEvent: function (query, event, param, _this) {
 			query = query.split(this.QUERY_SEPARATOR);
-			param = this.isExist(param) ? param : [];
+			param = this.isExists(param) ? param : [];
 			param = this.isArray(param) ? param : [param];
 			//
 			var 
@@ -598,15 +598,22 @@ var nimble = (function () {
 				
 				prefix = data.prefix ? data.prefix + "_" : "";
 			//
+			if ($.isString(data)) { data = $.parseJSON(data); }
+			//
 			cObj._push("template", prefix + data.name, $this.ctplCompile());
 			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }
+			
 			//
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
 				if (key === "prefix" || key === "set" || key === "print" || key === "name") { continue; }
 				//
+				if (key === "target" || key === "pager") { data[key] = $(data[key]); }
+				
 				cObj._push(key, prefix + data.name, data[key]);
 				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
+				//
+				if (key === "filter") { data[key] = prefix + data.name; }
 			}
 			//
 			if (data.print && data.print === true) {
@@ -643,7 +650,7 @@ var nimble = (function () {
 	 * @param {mixed} val
 	 * @return {Boolean}
 	 */
-	$.isExist = function (val) { return nimble.isExist(val); };
+	$.isExists = function (val) { return nimble.isExists(val); };
 	/**
 	 * unshift for arguments (object)
 	 * 
@@ -667,7 +674,7 @@ var nimble = (function () {
 	 */
 	$.toUpperCase = function (str, max, from) {
 		from = from || 0;
-		max = $.isExist(max) ? from + max : str.length;
+		max = $.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
 	};
@@ -681,7 +688,7 @@ var nimble = (function () {
 	 */
 	$.toLowerCase = function (str, max, from) {
 		from = from || 0;
-		max = $.isExist(max) ? from + max : str.length;
+		max = $.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
 	};
@@ -833,9 +840,9 @@ var nimble = (function () {
 				 * active pager
 				 * 
 				 * @field
-				 * @type Selector
+				 * @type jQuery Object
 				 */
-				pager: "#pageControl",
+				pager: null,
 				/**
 				 * active template
 				 * 
@@ -1400,7 +1407,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype._setOne = function (context, value, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
 		id = id || "";
 		//
@@ -1424,7 +1431,7 @@ var nimble = (function () {
 	 * @return {mixed}
 	 */
 	$.Collection.prototype._getOne = function (context, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		//
 		return nimble.byLink(this._get("collection", id || ""), this._getActiveParam("context") + nimble.CHILDREN + context);
 	};	
@@ -1468,7 +1475,7 @@ var nimble = (function () {
 			
 			// move
 			} else {
-				cValue = $.isExist(cValue) ? cValue.toString() : "";
+				cValue = $.isExists(cValue) ? cValue.toString() : "";
 				sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
 				
 				// add type
@@ -1526,7 +1533,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype._removeOne = function (context, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		var activeContext = this._getActiveParam("context");
 		
 		if (!context && !activeContext) {
@@ -1595,7 +1602,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.concat = function (obj, context, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		id = id || "";
 		//
 		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);	
@@ -1634,7 +1641,7 @@ var nimble = (function () {
 			cObj, aCheck, key, cOLength;
 		//
 		if (!$.isFunction(filter)) {
-			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
+			if (($.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -1704,7 +1711,7 @@ var nimble = (function () {
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = filter || "";
-		id = $.isExist(id) ? id : this.ACTIVE;
+		id = $.isExists(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1825,7 +1832,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || "";
-		id = $.isExist(id) ? id : this.ACTIVE;
+		id = $.isExists(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1865,7 +1872,7 @@ var nimble = (function () {
 	 * @return {Number|Array}
 	 */
 	$.Collection.prototype.searchOne = function (filter, id) {
-		return this.search($.isExist(filter) ? filter : "", id || "", false);
+		return this.search($.isExists(filter) ? filter : "", id || "", false);
 	};
 	
 	/**
@@ -1940,7 +1947,7 @@ var nimble = (function () {
 			}
 		//
 		filter = filter = filter || "";
-		id = $.isExist(id) ? id : this.ACTIVE;
+		id = $.isExists(id) ? id : this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1980,7 +1987,7 @@ var nimble = (function () {
 	 * @return {mixed}
 	 */
 	$.Collection.prototype.getOne = function (filter, id) {
-		return this.get($.isExist(filter) ? filter : "", id || "", false);
+		return this.get($.isExists(filter) ? filter : "", id || "", false);
 	};
 	/////////////////////////////////
 	//// mult methods (set)
@@ -2032,7 +2039,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.setOne = function (filter, replaceObj, id) {
-		return this.set($.isExist(filter) ? filter : "", replaceObj, id || "", false);
+		return this.set($.isExists(filter) ? filter : "", replaceObj, id || "", false);
 	};
 	
 	/**
@@ -2082,7 +2089,7 @@ var nimble = (function () {
 	$.Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
 		moveFilter = moveFilter || "";
 		deleteType = deleteType === false ? false : true;
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		//
 		sourceID = sourceID || "";
 		activeID = activeID || "";
@@ -2132,7 +2139,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
 	 * copy elements (in context)
@@ -2155,7 +2162,7 @@ var nimble = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
 	 * copy element (in context)
@@ -2169,7 +2176,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -2212,7 +2219,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.removeOne = function (filter, id) {
-		return this.remove($.isExist(filter) ? filter : "", id || "", false);
+		return this.remove($.isExists(filter) ? filter : "", id || "", false);
 	};	
 	/////////////////////////////////
 	//// sort method
@@ -2782,7 +2789,6 @@ var nimble = (function () {
 	 * @this {Colletion Object}
 	 * @param {Parser|String|Boolean} parser - parser function or string expressions or "false"
 	 * @param {String} str - source string
-	 * @throw {Error}
 	 * @return {String}
 	 */
 	$.Collection.prototype._customParser = function (parser, str) {
@@ -3000,6 +3006,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
+		
 		//
 		var
 			opt = {},
@@ -3010,9 +3017,9 @@ var nimble = (function () {
 			result = "", action;
 			
 		// easy implementation
-		if ($.isExist(param) && ($.isString(param) || $.isNumeric(param))) {
+		if ($.isExists(param) && ($.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if (!$.isExist(param)) { param = {page: this._get("page")}; }
+		} else if (!$.isExists(param)) { param = {page: this._get("page")}; }
 		
 		//
 		$.extend(true, opt, this.dObj.active, param);
@@ -3022,16 +3029,14 @@ var nimble = (function () {
 		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		//
-		opt.filter = $.isExist(param.filter) && param.filter !== true ? param.filter : this._getActiveParam("filter");
-		opt.parser = $.isExist(param.parser) ? param.parser : this._getActiveParam("parser");
-		//
-		opt.cache = $.isExist(param.cache) ? param.cache : this._getActiveParam("cache");
+		opt.cache = $.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		if (clear === true) { opt.cache.iteration = false; }
 		//
 		checkPage = this._get("page") - opt.page;
-		this.updatePage(opt.page);
-		//
+		this._update("page", opt.page);
+		
+		// template function 
 		action = function (el, i, data, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(this, arguments);
@@ -3041,26 +3046,28 @@ var nimble = (function () {
 				
 			return true;
 		};
+		
 		// get collection
 		cObj = nimble.byLink(opt.collection, this._getActiveParam("context") + nimble.CHILDREN + ((param && param.context) || ""));
 		cOLength = this.length();
-		
 		// number of records per page
-		opt.numberBreak = !page || opt.numberBreak === false ? cOLength : opt.numberBreak;
+		opt.numberBreak = !$.isExists(opt.numberBreak) || opt.numberBreak === false ? cOLength : opt.numberBreak;
+		
 		//
 		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
-			start = !page || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
+			start = !opt.pager || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
+		//
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
-			start = !page || opt.filter === false ?
+			start = !opt.pager || opt.filter === false ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
 							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
 						
 			// rewind cached step back
-			if (checkPage > 0 && (page === true && opt.filter !== false)) {
+			if (checkPage > 0 && (opt.pager === true && opt.filter !== false)) {
 				checkPage = opt.numberBreak * checkPage;
 				for (; (start -= 1) > -1;) {
 					if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE) === true) {
@@ -3071,10 +3078,11 @@ var nimble = (function () {
 				}
 				opt.cache.lastIteration = (start += 1);
 				from = null;
-			} else if (checkPage < 0 && (page === true && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
+			} else if (checkPage < 0 && (opt.pager && opt.filter !== false)) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
+		
 		if (checkPage !== 0 && opt.cache.iteration !== false) {
 			// cache
 			this._get("cache").firstIteration = opt.cache.lastIteration;
@@ -3092,17 +3100,18 @@ var nimble = (function () {
 			return this;
 		} else { opt.target[opt.appendType](result); }
 		//
-		if (!page) { return this; }
+		
+		if (!opt.pager) { return this; }
 		//
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
 		opt.nmbOfEntriesInPage = opt.target.find(opt.calculator).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
-		
+
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			this.updatePage((opt.page -= 1)).print(opt, true, true);
 		} else { this.easyPage(opt); }
-	
+		
 		return this;
 	};
 	
@@ -3152,8 +3161,10 @@ var nimble = (function () {
 						var $this = $(this);
 						//
 						if (!$this.hasClass(data.classes && data.classes.disabled || "disabled")) {
-							data.nav === "prev" && db.print("-=1", true);
-							data.nav === "next" && db.print("+=1", true);
+							data.nav === "prev" && (param.page = "-=1");
+							data.nav === "next" && (param.page = "+=1");
+							//
+							db.print(param);
 						}
 					}).data("ctm-delegated", true);
 				}
@@ -3190,7 +3201,8 @@ var nimble = (function () {
 							var $this = $(this);
 							//
 							if (!$this.hasClass(data.classes && data.classes.active || "active")) {
-								self.print($this.data("page"), true);
+								param.page = $this.data("page");
+								self.print(param);
 							}
 						}).data("ctm-delegated", true);
 					}

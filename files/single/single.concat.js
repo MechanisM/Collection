@@ -14,7 +14,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.concat = function (obj, context, id) {
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		id = id || "";
 		//
 		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);	

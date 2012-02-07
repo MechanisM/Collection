@@ -20,7 +20,7 @@
 			cObj, aCheck, key, cOLength;
 		//
 		if (!$.isFunction(filter)) {
-			if (($.isString(filter) && !$.isExist(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
+			if (($.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -90,7 +90,7 @@
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = filter || "";
-		id = $.isExist(id) ? id : this.ACTIVE;
+		id = $.isExists(id) ? id : this.ACTIVE;
 		
 		// if id is Boolean
 		if ($.isBoolean(id)) {

@@ -22,7 +22,7 @@
 	$.Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
 		moveFilter = moveFilter || "";
 		deleteType = deleteType === false ? false : true;
-		context = $.isExist(context) ? context.toString() : "";
+		context = $.isExists(context) ? context.toString() : "";
 		//
 		sourceID = sourceID || "";
 		activeID = activeID || "";
@@ -72,7 +72,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
 	 * copy elements (in context)
@@ -95,7 +95,7 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
 	 * copy element (in context)
@@ -109,5 +109,5 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move($.isExist(moveFilter) ? moveFilter : "", $.isExist(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};

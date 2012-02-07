@@ -135,9 +135,9 @@
 				 * active pager
 				 * 
 				 * @field
-				 * @type Selector
+				 * @type jQuery Object
 				 */
-				pager: "#pageControl",
+				pager: null,
 				/**
 				 * active template
 				 * 
