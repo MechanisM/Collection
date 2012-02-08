@@ -61,8 +61,8 @@
 
 <body>
 	<div id="pager">
-		<a href="javascript:;" id="prev" class="ctm" data-ctm='{"nav": "prev"}'>prev</a>
-		<a href="javascript:;" id="next" class="ctm" data-ctm='{"nav": "next"}'>next</a>
+		<a href="javascript:;" class="ctm" data-ctm='{"nav": "prev"}'>prev</a>
+		<a href="javascript:;" class="ctm" data-ctm='{"nav": "next"}'>next</a>
 		
 		<div class="nav ctm" data-ctm='{"nav": "pageList"}'></div>
 	</div>
@@ -76,7 +76,7 @@
 		"name": "list",
 		"target": "#result",
 		"filter": "(:el.name.search(\"Егор\") === -1) || (:el.name === \"Егор2\")",
-		"parser": "(:str.replace(\"Егор2\", \"Егорррррр22\")) && (:str.replace(\"Коба1\", \"22\"))",
+		"parser": "(:str.replace(\"Егор2\", \"Егорррррр22\"))",
 		"print": true
 	}' id="template">
 		<div class="row">
