@@ -64,7 +64,7 @@
 				cObj._push(key, prefix + data.name, data[key]);
 				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
 				//
-				if (key === "filter") { data[key] = prefix + data.name; }
+				if (key === "filter" || key === "parser" ) { data[key] = prefix + data.name; }
 			}
 			//
 			if (data.print && data.print === true) {

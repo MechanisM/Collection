@@ -12,8 +12,7 @@
 	 * @return {String}
 	 */
 	$.Collection.prototype._customParser = function (parser, str) {
-		// if parser is disabled
-		if (parser === false) { return str; }
+		
 		// if parser is function
 		if ($.isFunction(parser)) { return parser.call(parser, str, this); }
 		

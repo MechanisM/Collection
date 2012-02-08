@@ -573,7 +573,7 @@ var nimble = (function () {
 			
 			eLength = elem.length,
 			resStr = "var key = i, result = ''; ";
-		
+		//
 		elem.forEach(function (el, i) {
 			if (i === 0 || i % 2 === 0) {
 				resStr += "result +='" + el + "';";
@@ -613,7 +613,7 @@ var nimble = (function () {
 				cObj._push(key, prefix + data.name, data[key]);
 				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
 				//
-				if (key === "filter") { data[key] = prefix + data.name; }
+				if (key === "filter" || key === "parser" ) { data[key] = prefix + data.name; }
 			}
 			//
 			if (data.print && data.print === true) {
@@ -946,8 +946,8 @@ var nimble = (function () {
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 		//
-		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-			active[propName] = this._compileFilter(newProp);
+		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
 		//
@@ -968,8 +968,8 @@ var nimble = (function () {
 			
 			activeID = this._getActiveID(propName);
 		
-		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-			active[propName] = this._compileFilter(newProp);
+		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
 
@@ -1020,8 +1020,8 @@ var nimble = (function () {
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
 						} else {
-							if (propName === "filter" && $.isString(objID[key])) {
-								tmp[key] = this._compileFilter(objID[key]);
+							if ((propName === "filter" || propName === "parser") && $.isString(objID[key]) && newProp.search(/^:/) !== -1) {
+								tmp[key] = this["_compile" + $.toUpperCase(propName, 1)](objID[key]);
 							} else { tmp[key] = objID[key]; }
 						}
 						
@@ -1035,8 +1035,8 @@ var nimble = (function () {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
 				} else {
-					if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-						tmp[objID] = this._compileFilter(newProp);
+					if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+						tmp[objID] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 					} else { tmp[objID] = newProp; }
 				}
 			}
@@ -2823,6 +2823,21 @@ var nimble = (function () {
 	
 			return str;
 		}
+	};
+	/**
+	 * compile parser
+	 * 
+	 * @param {String} str - some string
+	 * @return {Function}
+	 */
+	$.Collection.prototype._compileParser = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split("<:").join('self.getVariable("').split(":>").join('")');
+		//
+		return new Function("str", "cObj", "return " + str.replace(/^\s*:/, "") + ";");
 	};	
 	/////////////////////////////////
 	// context methods

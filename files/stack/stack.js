@@ -17,7 +17,7 @@
 			upperCase = $.toUpperCase(propName, 1);
 		//
 		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-			active[propName] = this["_compile" + $.toUpperCaser(propName, 1)](newProp);
+			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
 		//
@@ -39,7 +39,7 @@
 			activeID = this._getActiveID(propName);
 		
 		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-			active[propName] = this["_compile" + $.toUpperCaser(propName, 1)](newProp);
+			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
 
@@ -91,7 +91,7 @@
 							this._update(propName, objID[key]);
 						} else {
 							if ((propName === "filter" || propName === "parser") && $.isString(objID[key]) && newProp.search(/^:/) !== -1) {
-								tmp[key] = this["_compile" + $.toUpperCaser(propName, 1)](objID[key]);
+								tmp[key] = this["_compile" + $.toUpperCase(propName, 1)](objID[key]);
 							} else { tmp[key] = objID[key]; }
 						}
 						
@@ -106,7 +106,7 @@
 					this._update(propName, newProp);
 				} else {
 					if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-						tmp[objID] = this["_compile" + $.toUpperCaser(propName, 1)](newProp);
+						tmp[objID] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 					} else { tmp[objID] = newProp; }
 				}
 			}
