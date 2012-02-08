@@ -44,3 +44,18 @@
 			return str;
 		}
 	};
+	/**
+	 * compile parser
+	 * 
+	 * @param {String} str - some string
+	 * @return {Function}
+	 */
+	$.Collection.prototype._compileParser = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split("<:").join('self.getVariable("').split(":>").join('")');
+		//
+		return new Function("str", "cObj", "return " + str.replace(/^\s*:/, "") + ";");
+	};

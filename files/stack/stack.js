@@ -16,8 +16,8 @@
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 		//
-		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-			active[propName] = this._compileFilter(newProp);
+		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+			active[propName] = this["_compile" + $.toUpperCaser(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
 		//
@@ -38,8 +38,8 @@
 			
 			activeID = this._getActiveID(propName);
 		
-		if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-			active[propName] = this._compileFilter(newProp);
+		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+			active[propName] = this["_compile" + $.toUpperCaser(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
 
@@ -90,8 +90,8 @@
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
 						} else {
-							if (propName === "filter" && $.isString(objID[key])) {
-								tmp[key] = this._compileFilter(objID[key]);
+							if ((propName === "filter" || propName === "parser") && $.isString(objID[key]) && newProp.search(/^:/) !== -1) {
+								tmp[key] = this["_compile" + $.toUpperCaser(propName, 1)](objID[key]);
 							} else { tmp[key] = objID[key]; }
 						}
 						
@@ -105,8 +105,8 @@
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
 				} else {
-					if (propName === "filter" && $.isString(newProp) && newProp.search(/^:/) !== -1) {
-						tmp[objID] = this._compileFilter(newProp);
+					if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+						tmp[objID] = this["_compile" + $.toUpperCaser(propName, 1)](newProp);
 					} else { tmp[objID] = newProp; }
 				}
 			}
