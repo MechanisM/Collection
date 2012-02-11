@@ -19,22 +19,18 @@
 	$.Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
 		var
 			fLength,
-			calFilter, tmpFilter,
+			calFilter,
 			
 			result = true, tmpResult,
 			and, or, inverse,
 			
 			i;
 		
-		//
-		if (!filter || ($.isString(filter) && (filter = $.trim(filter)) === this.ACTIVE)) {
-			if (!this._getActiveParam("filter") && filter !== this.ACTIVE) { return true; }
+		// if filter is undefined
+		if (!filter) {
+			if (!this._getActiveParam("filter")) { return true; }
 			//
 			if (this._get("filter")) {
-				if ($.isFunction(this._get("filter"))) {
-					return this._get("filter").call(this._get("filter"), el, i, data, cOLength, self, id);
-				}
-				//
 				return this._customFilter(this._get("filter"), el, i, data, cOLength, self, id, _tmpFilter);
 			}
 			
@@ -60,14 +56,18 @@
 		// if filter is string
 		if (!$.isArray(filter)) {
 			//
-			if (!this._getActiveParam("filter") === false && _tmpFilter) {
+			if (this._getActiveParam("filter") && _tmpFilter) {
 				filter = this.ACTIVE + " && (" + filter + ")";
 			}
+			
 			// if simple filter
 			if (filter.search(/\|\||&&|!/) === -1) {
 				if ((filter = $.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
-					tmpFilter = this._compileFilter(filter);
-					return tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
+					if (!this._exists("filter", "__tmp:" + filter)) {
+						this._push("filter", "__tmp:" + filter, this._compileFilter(filter));
+					}
+					//
+					return (filter = this._get("filter", "__tmp:" + filter)).call(filter, el, i, data, cOLength, self, id);
 				}
 				//
 				return this._customFilter(this._get("filter", filter), el, i, data, cOLength, self, id, _tmpFilter);
@@ -81,6 +81,7 @@
 							.replace(/\s*(\|\||&&)\s*/g, " $1 ")
 							.replace(/(!)\s*/g, "$1")
 					).split(" ");
+			
 			// remove "dead" elements		
 			for (i = filter.length; (i -= 1) > -1;) {
 				if (filter[i] === "") { filter.splice(i, 1); }
@@ -103,6 +104,7 @@
 						return {result: result, iter: iter};
 					} else { pos -= 1; }
 				}
+				//
 				result.push(array[i]);
 			}
 		};
@@ -118,20 +120,11 @@
 				} else { inverse = false; }
 				
 				//
-				tmpFilter = calFilter(filter.slice((i + 1)), i);
-				tmpResult = tmpFilter.result.join(" ");
-				i = tmpFilter.iter;
-				//
+				i = (tmpResult = calFilter(filter.slice((i + 1)), i)).iter;
+				tmpResult = tmpResult.result.join(" ");
 				
-				if (tmpResult.search(/^:/) !== -1) {
-					if (!this._exists("filter", "__tmp:" + tmpResult)) {
-						this._push("filter", "__tmp:" + tmpResult, this._compileFilter(tmpResult));
-						tmpFilter.result = this._compileFilter(tmpResult);
-					}
-					tmpFilter.result = this._get("filter", "__tmp:" + tmpResult);
-				}
 				//
-				tmpResult = this._customFilter(tmpFilter.result, el, i, data, cOLength, self, id);
+				tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);
 				
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;
@@ -147,11 +140,8 @@
 				} else { inverse = false; }
 				
 				//
-				if ($.isString(this._get("filter", filter[i]))) {
-					tmpResult = this._customFilter(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
-				} else {
-					tmpResult = this._get("filter", filter[i]).call(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
-				}
+				tmpResult = this._customFilter(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
+				
 				//
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;

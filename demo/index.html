@@ -40,8 +40,9 @@
 		], db = new $.Collection(data);
 		
 		$(function () {
-			db.enable("cache");
+			db.enable("cache").pushParser('p', '(:str.replace("Коба3", "22222")) && (:str.replace("Серый1", "22222"))').newParser("p");
 			$(".ctpl").ctplMake(db);
+			db.print({parser: ':str.replace("Коба1", "1")'});
 		});
 	</script>
 	<style type="text/css">
@@ -75,9 +76,8 @@
 	<script class="ctpl" type="text/ctpl" data-ctpl='{
 		"name": "list",
 		"target": "#result",
-		"filter": "(:el.name.search(\"Егор\") === -1) || (:el.name === \"Егор2\")",
-		"parser": "(:str.replace(\"Егор2\", \"Егорррррр22\")) && (:str.replace(\"Коба1\", \"Коба1343434343434343434\"))",
-		"print": true
+		"set": true,
+		"filter": "(:el.name.search(\"Егор\") === -1) || (:el.name === \"Егор2\")"
 	}' id="template">
 		<div class="row">
 			<img src="<?js echo el.avatar; ?>" width="100" height="100" />

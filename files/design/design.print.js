@@ -28,14 +28,14 @@
 	 */
 	$.Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
-		
 		//
 		var
+			tmpObj = {},
 			opt = {},
-			
+			//
 			cObj, cOLength,
 			start, inc = 0, checkPage, from = null,
-			
+			//
 			result = "", action;
 			
 		// easy implementation
@@ -111,8 +111,12 @@
 			this._get("cache").lastIteration = inc + 1;
 		}
 		if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
+		
+		// parser
+		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpObj);
+		tmpObj.name && this._drop("parser", "__tmp:" + tmpObj.name);
 		//
-		result = !result ? opt.resultNull : this._customParser(opt.parser, result);
+		
 		// append to DOM
 		if (opt.target === false) {
 			if (!opt.variable) {

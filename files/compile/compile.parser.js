@@ -12,14 +12,11 @@
 	 * @return {String}
 	 */
 	$.Collection.prototype._customParser = function (parser, str, _tmpParser) {
-		if (!parser || ($.isString(parser) && (parser = $.trim(parser)) === this.ACTIVE)) {
-			if (!this._getActiveParam("parser") && parser !== this.ACTIVE) { return true; }
+		// if parser id undefined
+		if (!parser) {
+			if (!this._getActiveParam("parser")) { return true; }
 			//
 			if (this._get("parser")) {
-				if ($.isFunction(this._get("parser"))) {
-					return this._get("parser").call(this._get("parser"), str, this);
-				}
-				//
 				return this._customParser(this._get("parser"), str, _tmpParser);
 			}
 			
@@ -42,27 +39,34 @@
 			}
 		}
 		
-		//
+		// if parser is string
 		if ($.isString(parser)) {
-			parser = $.trim(parser);
-			// if simple parser
-			if (parser.search("&&") === -1) {
-				return this._customParser(this._get("parser", parser), str);
-			}
-			parser = parser.split("&&");
-		}
-		//
-		if (this._getActiveParam("parser")) { str = this._get("parser").call(this._get("parser"), str, this); }
-		
-		
-		parser.forEach(function (el) {
-			el = $.trim(el);
-			if ($.isString(el)) {
-				str = this._customParser(el, str);
-			} else {
-				str = this._get("parser", el).call(this._get("parser", el), str, this);
+			//
+			if (this._getActiveParam("parser") && _tmpParser) {
+				parser = this.ACTIVE + " && " + parser;
 			}
 			
+			// if simple parser
+			if ((parser = $.trim(parser)).search("&&") === -1) {
+				// if need to compile parser
+				if (parser.search(/^(?:\(|)*:/) !== -1) {
+					if (!this._exists("parser", "__tmp:" + parser)) {
+						this._push("parser", "__tmp:" + parser, this._compileParser(parser));
+					}
+					//
+					return (parser = this._get("parser", "__tmp:" + parser)).call(parser, str, this);
+				}
+				//
+				return this._customParser(this._get("parser", parser), str);
+			}
+			
+			// split parser
+			parser = parser.split("&&");
+		}
+		
+		// calculate
+		parser.forEach(function (el) {
+			str = this._customParser((el = $.trim(el)), str);
 		}, this);
 
 		return str;
@@ -75,9 +79,7 @@
 	 */
 	$.Collection.prototype._compileParser = function (str) {
 		var res = /^\s*\(*\s*/.exec(str);
-		
-		console.log(res)
-		
+		//
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}

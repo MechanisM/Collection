@@ -2612,22 +2612,18 @@ var nimble = (function () {
 	$.Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
 		var
 			fLength,
-			calFilter, tmpFilter,
+			calFilter,
 			
 			result = true, tmpResult,
 			and, or, inverse,
 			
 			i;
 		
-		//
-		if (!filter || ($.isString(filter) && (filter = $.trim(filter)) === this.ACTIVE)) {
-			if (!this._getActiveParam("filter") && filter !== this.ACTIVE) { return true; }
+		// if filter is undefined
+		if (!filter) {
+			if (!this._getActiveParam("filter")) { return true; }
 			//
 			if (this._get("filter")) {
-				if ($.isFunction(this._get("filter"))) {
-					return this._get("filter").call(this._get("filter"), el, i, data, cOLength, self, id);
-				}
-				//
 				return this._customFilter(this._get("filter"), el, i, data, cOLength, self, id, _tmpFilter);
 			}
 			
@@ -2653,14 +2649,18 @@ var nimble = (function () {
 		// if filter is string
 		if (!$.isArray(filter)) {
 			//
-			if (!this._getActiveParam("filter") === false && _tmpFilter) {
+			if (this._getActiveParam("filter") && _tmpFilter) {
 				filter = this.ACTIVE + " && (" + filter + ")";
 			}
+			
 			// if simple filter
 			if (filter.search(/\|\||&&|!/) === -1) {
 				if ((filter = $.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
-					tmpFilter = this._compileFilter(filter);
-					return tmpFilter.call(tmpFilter, el, i, data, cOLength, self, id);
+					if (!this._exists("filter", "__tmp:" + filter)) {
+						this._push("filter", "__tmp:" + filter, this._compileFilter(filter));
+					}
+					//
+					return (filter = this._get("filter", "__tmp:" + filter)).call(filter, el, i, data, cOLength, self, id);
 				}
 				//
 				return this._customFilter(this._get("filter", filter), el, i, data, cOLength, self, id, _tmpFilter);
@@ -2674,6 +2674,7 @@ var nimble = (function () {
 							.replace(/\s*(\|\||&&)\s*/g, " $1 ")
 							.replace(/(!)\s*/g, "$1")
 					).split(" ");
+			
 			// remove "dead" elements		
 			for (i = filter.length; (i -= 1) > -1;) {
 				if (filter[i] === "") { filter.splice(i, 1); }
@@ -2696,6 +2697,7 @@ var nimble = (function () {
 						return {result: result, iter: iter};
 					} else { pos -= 1; }
 				}
+				//
 				result.push(array[i]);
 			}
 		};
@@ -2711,20 +2713,11 @@ var nimble = (function () {
 				} else { inverse = false; }
 				
 				//
-				tmpFilter = calFilter(filter.slice((i + 1)), i);
-				tmpResult = tmpFilter.result.join(" ");
-				i = tmpFilter.iter;
-				//
+				i = (tmpResult = calFilter(filter.slice((i + 1)), i)).iter;
+				tmpResult = tmpResult.result.join(" ");
 				
-				if (tmpResult.search(/^:/) !== -1) {
-					if (!this._exists("filter", "__tmp:" + tmpResult)) {
-						this._push("filter", "__tmp:" + tmpResult, this._compileFilter(tmpResult));
-						tmpFilter.result = this._compileFilter(tmpResult);
-					}
-					tmpFilter.result = this._get("filter", "__tmp:" + tmpResult);
-				}
 				//
-				tmpResult = this._customFilter(tmpFilter.result, el, i, data, cOLength, self, id);
+				tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);
 				
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;
@@ -2740,11 +2733,8 @@ var nimble = (function () {
 				} else { inverse = false; }
 				
 				//
-				if ($.isString(this._get("filter", filter[i]))) {
-					tmpResult = this._customFilter(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
-				} else {
-					tmpResult = this._get("filter", filter[i]).call(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
-				}
+				tmpResult = this._customFilter(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
+				
 				//
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;
@@ -2792,14 +2782,11 @@ var nimble = (function () {
 	 * @return {String}
 	 */
 	$.Collection.prototype._customParser = function (parser, str, _tmpParser) {
-		if (!parser || ($.isString(parser) && (parser = $.trim(parser)) === this.ACTIVE)) {
-			if (!this._getActiveParam("parser") && parser !== this.ACTIVE) { return true; }
+		// if parser id undefined
+		if (!parser) {
+			if (!this._getActiveParam("parser")) { return true; }
 			//
 			if (this._get("parser")) {
-				if ($.isFunction(this._get("parser"))) {
-					return this._get("parser").call(this._get("parser"), str, this);
-				}
-				//
 				return this._customParser(this._get("parser"), str, _tmpParser);
 			}
 			
@@ -2822,28 +2809,34 @@ var nimble = (function () {
 			}
 		}
 		
-		//
+		// if parser is string
 		if ($.isString(parser)) {
-			parser = $.trim(parser);
-			// if simple parser
-			
-			
-			console.log(parser)
-			if (parser.search("&&") === -1) { return this._customParser(this._get("parser", parser), str); }
-			parser = parser.split("&&");
-		}
-		//
-		if (this._getActiveParam("parser")) { str = this._get("parser").call(this._get("parser"), str, this); }
-		
-		
-		parser.forEach(function (el) {
-			el = $.trim(el);
-			if ($.isString(el)) {
-				str = this._customParser(el, str);
-			} else {
-				str = this._get("parser", el).call(this._get("parser", el), str, this);
+			//
+			if (this._getActiveParam("parser") && _tmpParser) {
+				parser = this.ACTIVE + " && " + parser;
 			}
 			
+			// if simple parser
+			if ((parser = $.trim(parser)).search("&&") === -1) {
+				// if need to compile parser
+				if (parser.search(/^(?:\(|)*:/) !== -1) {
+					if (!this._exists("parser", "__tmp:" + parser)) {
+						this._push("parser", "__tmp:" + parser, this._compileParser(parser));
+					}
+					//
+					return (parser = this._get("parser", "__tmp:" + parser)).call(parser, str, this);
+				}
+				//
+				return this._customParser(this._get("parser", parser), str);
+			}
+			
+			// split parser
+			parser = parser.split("&&");
+		}
+		
+		// calculate
+		parser.forEach(function (el) {
+			str = this._customParser((el = $.trim(el)), str);
 		}, this);
 
 		return str;
@@ -2856,9 +2849,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype._compileParser = function (str) {
 		var res = /^\s*\(*\s*/.exec(str);
-		
-		console.log(res)
-		
+		//
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}
@@ -3048,14 +3039,14 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
-		
 		//
 		var
+			tmpObj = {},
 			opt = {},
-			
+			//
 			cObj, cOLength,
 			start, inc = 0, checkPage, from = null,
-			
+			//
 			result = "", action;
 			
 		// easy implementation
@@ -3131,8 +3122,12 @@ var nimble = (function () {
 			this._get("cache").lastIteration = inc + 1;
 		}
 		if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
+		
+		// parser
+		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpObj);
+		tmpObj.name && this._drop("parser", "__tmp:" + tmpObj.name);
 		//
-		result = !result ? opt.resultNull : this._customParser(opt.parser, result);
+		
 		// append to DOM
 		if (opt.target === false) {
 			if (!opt.variable) {
