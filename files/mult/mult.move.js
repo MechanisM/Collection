@@ -7,7 +7,7 @@
 	 * move elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} [context] - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -64,7 +64,7 @@
 	 * move element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -78,7 +78,7 @@
 	 * copy elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -101,7 +101,7 @@
 	 * copy element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)

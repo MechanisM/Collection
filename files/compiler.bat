@@ -38,6 +38,7 @@ copy	^
 		+ mult\mult.set.js ^
 		+ mult\mult.move.js ^
 		+ mult\mult.remove.js ^
+		+ mult\mult.group.js ^
 		^
 		+ sort\sort.js ^
 		+ sort\sort.reverse.js ^

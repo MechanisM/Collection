@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -24,8 +24,8 @@
 				return this._getOne(filter, id || "");
 			}
 		//
-		filter = filter = filter || "";
-		id = $.isExists(id) ? id : this.ACTIVE;
+		filter = filter || "";
+		id = id || this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -60,7 +60,7 @@
 	 * get element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */

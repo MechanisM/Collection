@@ -7,7 +7,7 @@
 	 * sort collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [field] - field name
+	 * @param {Context} [field] - field name
 	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
 	 * @param {Function|Boolean} [fn=toUpperCase] - callback function ("false" if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID

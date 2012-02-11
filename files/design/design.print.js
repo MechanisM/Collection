@@ -16,7 +16,7 @@
 	 * @param {Number} [param.pageBreak=this.ACTIVE] - number of displayed pages (navigation, > 2)
 	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] - element to output the result ("false" - if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] - variable ID (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [param.filter=this.ACTIVE] - filter function or string expressions
 	 * @param {Parser} [param.parser=this.ACTIVE] - parser function, string expressions or "false"
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] - if "true", the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] - selector, on which is the number of records per page
@@ -64,9 +64,8 @@
 		// template function 
 		action = function (el, i, data, cOLength, self, id) {
 			// callback
-			opt.callback && opt.callback.apply(this, arguments);
-			//
-			result += opt.template.call(opt.template, el, i, data, cOLength, self, id);
+			opt.callback && opt.callback.apply(opt.callback, arguments);
+			result += opt.template.apply(opt.template, arguments);
 			inc = i;
 				
 			return true;
@@ -75,52 +74,57 @@
 		// get collection
 		cObj = nimble.byLink(opt.collection, this._getActiveParam("context") + nimble.CHILDREN + ((param && param.context) || ""));
 		cOLength = this.length();
+		
 		// number of records per page
 		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam("filter")));
-		opt.numberBreak = !$.isExists(opt.numberBreak) || opt.numberBreak === false ? cOLength : opt.numberBreak;
+		opt.numberBreak = opt.numberBreak || cOLength;
 		
-		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+		if ($.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
-			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
+			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		//
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !numberBreak ?
-						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
-							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
-			
-			// rewind cached step back
-			if (checkPage > 0 && numberBreak) {
-				checkPage = opt.numberBreak * checkPage;
-				for (; (start -= 1) > -1;) {
-					if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE, tmpFilter) === true) {
-						if (inc === checkPage) {
-							break;
-						} else { inc += 1; }
+						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;
+			//
+			if (numberBreak) {
+				// rewind cached step back
+				if (checkPage > 0) {
+					checkPage = opt.numberBreak * checkPage;
+					for (; (start -= 1) > -1;) {
+						if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE, tmpFilter) === true) {
+							if (inc === checkPage) {
+								break;
+							} else { inc += 1; }
+						}
 					}
-				}
-				opt.cache.lastIteration = (start += 1);
-				from = null;
-			} else if (checkPage < 0 && numberBreak) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
+					opt.cache.lastIteration = (start += 1);
+					from = null;
+				} else if (checkPage < 0) { from = -checkPage * opt.numberBreak - opt.numberBreak; }
+			}
 			
 			//
-			tmpFilter.name && this._drop("parser", "__tmp:" + tmpFilter.name);
+			tmpFilter.name && this._drop("filter", "__tmp:" + tmpFilter.name);
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		
-		if (checkPage !== 0 && opt.cache.iteration !== false) {
-			// cache
-			this._get("cache").firstIteration = opt.cache.lastIteration;
-			this._get("cache").lastIteration = inc + 1;
+		//
+		if (opt.cache) {
+			if (checkPage !== 0 && opt.cache.iteration !== false) {
+				// cache
+				this._get("cache").firstIteration = opt.cache.lastIteration;
+				this._get("cache").lastIteration = inc + 1;
+			}
+			if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
 		}
-		if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
 		
 		// parser
 		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);
 		tmpParser.name && this._drop("parser", "__tmp:" + tmpParser.name);
-		//
 		
 		// append to DOM
 		if (opt.target === false) {
@@ -131,8 +135,8 @@
 			return this;
 		} else { opt.target[opt.appendType](result); }
 		//
-		
 		if (!opt.pager) { return this; }
+		
 		//
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
 		opt.nmbOfEntriesInPage = opt.calculator ? opt.target.find(opt.calculator).length : opt.target.children().length;

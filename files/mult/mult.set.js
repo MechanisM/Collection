@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode

@@ -20,7 +20,7 @@
 	 */
 	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || "";
-		id = $.isExists(id) ? id : this.ACTIVE;
+		id = id || this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {

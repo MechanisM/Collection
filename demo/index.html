@@ -38,7 +38,7 @@
 			{avatar: "img/5.jpg", name: "Егор10", url: "http://kobezzza.com/5"},
 			{avatar: "img/6.jpg", name: "Димон10", url: "http://kobezzza.com/6"}
 		], db = new $.Collection(data);
-		
+		//
 		$(function () {
 			db.enable("cache").pushParser('p', '(:str.replace("Коба3", "22222")) && (:str.replace("Серый1", "22222"))').newParser("p");
 			$(".ctpl").ctplMake(db);

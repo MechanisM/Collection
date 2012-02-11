@@ -1628,7 +1628,7 @@ var nimble = (function () {
 	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
@@ -1832,7 +1832,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		filter = filter || "";
-		id = $.isExists(id) ? id : this.ACTIVE;
+		id = id || this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1932,7 +1932,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -1946,8 +1946,8 @@ var nimble = (function () {
 				return this._getOne(filter, id || "");
 			}
 		//
-		filter = filter = filter || "";
-		id = $.isExists(id) ? id : this.ACTIVE;
+		filter = filter || "";
+		id = id || this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1982,7 +1982,7 @@ var nimble = (function () {
 	 * get element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
@@ -2000,7 +2000,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
@@ -2074,7 +2074,7 @@ var nimble = (function () {
 	 * move elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} [context] - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2131,7 +2131,7 @@ var nimble = (function () {
 	 * move element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2145,7 +2145,7 @@ var nimble = (function () {
 	 * copy elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2168,7 +2168,7 @@ var nimble = (function () {
 	 * copy element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2189,7 +2189,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Null} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|Context|Array|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
@@ -2214,12 +2214,146 @@ var nimble = (function () {
 	 * delete element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or "false" or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.removeOne = function (filter, id) {
 		return this.remove($.isExists(filter) ? filter : "", id || "", false);
+	};	
+	/////////////////////////////////
+	//// mult methods (group)
+	/////////////////////////////////
+	
+	/**
+	 * group elements (in context)
+	 *  
+	 * @this {Colletion Object}
+	 * @param {Context} [field] - field name
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Boolean} [link=false] - save link
+	 * @return {Colletion}
+	 */
+	$.Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
+		field = field || "";
+		filter = filter || "";	
+		id = id || this.ACTIVE;
+		link = link || false;
+	
+		// values by default
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		//
+		var
+			result = {},
+			action = function (el, i, data, aLength, self, id) {
+				var param = nimble.byLink(el, field);
+				//
+				if (!result[param]) {
+					result[param] = [!link ? el : i];
+				} else { result[param].push(!link ? el : i); }
+	
+				return true;
+			};
+		//
+		this.forEach(action, filter, id, "", count, from, indexOf);
+	
+		return result;
+	};
+	/**
+	 * group links (in context)
+	 *  
+	 * @this {Colletion Object}
+	 * @param {Context} [field] - field name
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @return {Colletion}
+	 */
+	$.Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
+		return this.group(field || "", filter || "", id || "", count || "", from || "", indexOf || "", true);
+	};
+	
+	/**
+	 * get statistic information for group
+	 *  
+	 * @this {Colletion Object}
+	 * @param {String} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last")
+	 * @param {Context} [field] - field name
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Boolean} [link=false] - save link
+	 * @return {Colletion}
+	 */
+	$.Collection.prototype.stat = function (oper, field, filter, id, count, from, indexOf, link) {
+		oper = oper || "count";
+		field = field || "";
+		filter = filter || "";	
+		id = id || this.ACTIVE;
+		link = link || false;
+	
+		// values by default
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		//
+		var
+			result = {}, tmp = {}, key,
+			
+			//
+			deepAction = function (el, i, data, aLength, self, id) {
+				var param = nimble.byLink(el, field);
+				//
+				switch (oper) {
+					case "count" : {
+						result[this.i] += 1;
+					} break;
+					case "summ" : {
+						result[this.i] += param;
+					} break;
+					case "avg" : {
+						tmp[this.i] += 1;
+						result[this.i] += param;
+					} break;
+				}
+					
+				return true;
+			},
+			//
+			action = function (el, i, data, aLength, self, id) {
+				if (!result[i]) { result[i] = tmp[i] = 0; };
+				//
+				self
+					._update("context", "+=" + nimble.CHILDREN + (deepAction.i = i))
+					//.forEach(deepAction, filter, id, "", count, from, indexOf)
+				
+				console.log(self.getContext());
+				self._back("context");
+				console.log(self.getContext());
+					
+				return true;
+			};
+		//
+		this.forEach(action);
+		//
+		if (oper === "avg") {
+			for (key in result) {
+				if (!result.hasOwnProperty(key)) { continue; }
+				result[key] /= tmp[key];
+			}
+		}
+	
+		return result;
 	};	
 	/////////////////////////////////
 	//// sort method
@@ -2229,7 +2363,7 @@ var nimble = (function () {
 	 * sort collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [field] - field name
+	 * @param {Context} [field] - field name
 	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
 	 * @param {Function|Boolean} [fn=toUpperCase] - callback function ("false" if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -3012,7 +3146,7 @@ var nimble = (function () {
 	 * @param {Number} [param.pageBreak=this.ACTIVE] - number of displayed pages (navigation, > 2)
 	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] - element to output the result ("false" - if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] - variable ID (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter} [param.filter=this.ACTIVE] - filter function or string expressions
 	 * @param {Parser} [param.parser=this.ACTIVE] - parser function, string expressions or "false"
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] - if "true", the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] - selector, on which is the number of records per page
@@ -3060,9 +3194,8 @@ var nimble = (function () {
 		// template function 
 		action = function (el, i, data, cOLength, self, id) {
 			// callback
-			opt.callback && opt.callback.apply(this, arguments);
-			//
-			result += opt.template.call(opt.template, el, i, data, cOLength, self, id);
+			opt.callback && opt.callback.apply(opt.callback, arguments);
+			result += opt.template.apply(opt.template, arguments);
 			inc = i;
 				
 			return true;
@@ -3071,56 +3204,57 @@ var nimble = (function () {
 		// get collection
 		cObj = nimble.byLink(opt.collection, this._getActiveParam("context") + nimble.CHILDREN + ((param && param.context) || ""));
 		cOLength = this.length();
+		
 		// number of records per page
 		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam("filter")));
-		opt.numberBreak = !$.isExists(opt.numberBreak) || opt.numberBreak === false ? cOLength : opt.numberBreak;
+		opt.numberBreak = opt.numberBreak || cOLength;
 		
-		if ($.isPlainObject(cObj) || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+		if ($.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
-			if (opt.cache.iteration === false) { opt.cache.lastIteration = false; }
+			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		//
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !numberBreak ?
-						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak : opt.cache.iteration === true ?
-							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration : i;
-			console.log(start);
-			
-			// rewind cached step back
-			if (checkPage > 0 && numberBreak) {
-				checkPage = opt.numberBreak * checkPage;
-				for (; (start -= 1) > -1;) {
-					if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE, tmpFilter) === true) {
-						if (inc === checkPage) {
-							break;
-						} else { inc += 1; }
+						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;
+			//
+			if (numberBreak) {
+				// rewind cached step back
+				if (checkPage > 0) {
+					checkPage = opt.numberBreak * checkPage;
+					for (; (start -= 1) > -1;) {
+						if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE, tmpFilter) === true) {
+							if (inc === checkPage) {
+								break;
+							} else { inc += 1; }
+						}
 					}
-				}
-				opt.cache.lastIteration = (start += 1);
-				from = null;
-			} else if (checkPage < 0 && numberBreak) { from = Math.abs(checkPage) * opt.numberBreak - opt.numberBreak || null; }
-			
-						
-			console.log(start);
+					opt.cache.lastIteration = (start += 1);
+					from = null;
+				} else if (checkPage < 0) { from = -checkPage * opt.numberBreak - opt.numberBreak; }
+			}
 			
 			//
-			tmpFilter.name && this._drop("parser", "__tmp:" + tmpFilter.name);
+			tmpFilter.name && this._drop("filter", "__tmp:" + tmpFilter.name);
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		
-		if (checkPage !== 0 && opt.cache.iteration !== false) {
-			// cache
-			this._get("cache").firstIteration = opt.cache.lastIteration;
-			this._get("cache").lastIteration = inc + 1;
+		//
+		if (opt.cache) {
+			if (checkPage !== 0 && opt.cache.iteration !== false) {
+				// cache
+				this._get("cache").firstIteration = opt.cache.lastIteration;
+				this._get("cache").lastIteration = inc + 1;
+			}
+			if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
 		}
-		if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
 		
 		// parser
 		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);
 		tmpParser.name && this._drop("parser", "__tmp:" + tmpParser.name);
-		//
 		
 		// append to DOM
 		if (opt.target === false) {
@@ -3131,8 +3265,8 @@ var nimble = (function () {
 			return this;
 		} else { opt.target[opt.appendType](result); }
 		//
-		
 		if (!opt.pager) { return this; }
+		
 		//
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
 		opt.nmbOfEntriesInPage = opt.calculator ? opt.target.find(opt.calculator).length : opt.target.children().length;

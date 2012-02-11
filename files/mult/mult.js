@@ -7,7 +7,7 @@
 	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function, string expressions or "false"
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
