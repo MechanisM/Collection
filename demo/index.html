@@ -42,7 +42,6 @@
 		$(function () {
 			db.enable("cache").pushParser('p', '(:str.replace("Коба3", "22222")) && (:str.replace("Серый1", "22222"))').newParser("p");
 			$(".ctpl").ctplMake(db);
-			db.print({parser: ':str.replace("Коба1", "1")'});
 		});
 	</script>
 	<style type="text/css">
@@ -65,19 +64,16 @@
 		<a href="javascript:;" class="ctm" data-ctm='{"nav": "prev"}'>prev</a>
 		<a href="javascript:;" class="ctm" data-ctm='{"nav": "next"}'>next</a>
 		
+		<div class="ctm" data-ctm='{"info": "inPage"}'></div>
 		<div class="nav ctm" data-ctm='{"nav": "pageList"}'></div>
 	</div>
-	
-	
-	<div id="result"></div>
-	<div id="result2"></div>
-	
-	
+	<div id="result"></div>	
 	<script class="ctpl" type="text/ctpl" data-ctpl='{
 		"name": "list",
 		"target": "#result",
-		"set": true,
-		"filter": "(:el.name.search(\"Егор\") === -1) || (:el.name === \"Егор2\")"
+		"pager": "#pager",
+		"filter": "(:el.name.search(\"Егор\") === -1) || (:el.name === \"Егор2\")",
+		"print": true
 	}' id="template">
 		<div class="row">
 			<img src="<?js echo el.avatar; ?>" width="100" height="100" />

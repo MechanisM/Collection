@@ -130,7 +130,7 @@
 				 * @field
 				 * @type Selector
 				 */
-				calculator: ".line",
+				calculator: null,
 				/**
 				 * active pager
 				 * 

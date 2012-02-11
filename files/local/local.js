@@ -8,19 +8,17 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.save = function (id, namespace, local) {
+	$.Collection.prototype.save = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
-		namespace = namespace || "";
 		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace", namespace),
+			name = "__" + this.name + "__" + this._get("namespace"),
 			//
 			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
@@ -37,15 +35,13 @@
 	 * save all collection in DOM storage
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.saveAll = function (namespace, local) {
+	$.Collection.prototype.saveAll = function (local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
-		namespace = namespace || "";
 		local = local === false ? local : true;
 		//
 		var
@@ -54,14 +50,14 @@
 			active = false;
 		
 		// clear storage
-		this.dropAll(namespace, local);
+		this.dropAll(local);
 		//
 		for (key in tmp) {
 			this._isActive("Collection", key) && (active = true);
 			//
-			if (tmp.hasOwnProperty(key)) { this.save(key, namespace, local); }
+			if (tmp.hasOwnProperty(key)) { this.save(key, local); }
 		}
-		active === false && this.save("", namespace, local);
+		active === false && this.save("", local);
 		
 		return this;
 	};
@@ -71,19 +67,17 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local=true] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.load = function (id, namespace, local) {
+	$.Collection.prototype.load = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
-		namespace = namespace || "";
 		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace", namespace),
+			name = "__" + this.name + "__" + this._get("namespace"),
 			//
 			active,
 			storage = local === false ? sessionStorage : localStorage;
@@ -107,21 +101,19 @@
 	 * load all collection from DOM storage
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @param {String} [type="load"] - operation type
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.loadAll = function (namespace, local, type) {
+	$.Collection.prototype.loadAll = function (local, type) {
 		type = type ? "drop" : "load";
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		local = local === false ? local : true;
-		namespace = namespace || "";
 		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace", namespace),
+			name = "__" + this.name + "__" + this._get("namespace"),
 			//
 			storage = local === false ? sessionStorage : localStorage,
 			sLength = storage.length,
@@ -130,12 +122,12 @@
 		try {
 			for (key in storage) {
 				if (storage.hasOwnProperty(key)) {
-					if ((id = key.split(":"))[0] === name) { this[type](id[1], namespace, local); }
+					if ((id = key.split(":"))[0] === name) { this[type](id[1], local); }
 				}
 			}
 		} catch (e) {
 			while ((sLength -= 1) > -1) {
-				if ((id = storage[sLength].split(":"))[0] === name) { this[type](id[1], namespace, local); }
+				if ((id = storage[sLength].split(":"))[0] === name) { this[type](id[1], local); }
 			}
 		}
 		
@@ -146,20 +138,18 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id] - collection ID
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Date}
 	 */
-	$.Collection.prototype.loadDate = function (id, namespace, local) {
+	$.Collection.prototype.loadDate = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id ? ":" + id : "";
-		namespace = namespace || "";
 		//
 		var storage = local === false ? sessionStorage : localStorage;
 		//
-		return new Date(storage.getItem("__" + this.name + "__" + this._get("namespace", namespace) + "__date" + id));
+		return new Date(storage.getItem("__" + this.name + "__" + this._get("namespace") + "__date" + id));
 	};
 	/**
 	 * checking the life of the collection
@@ -167,15 +157,14 @@
 	 * @this {Colletion Object}
 	 * @param {Number} time - milliseconds
 	 * @param {String} [id] - collection ID
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype.isExpires = function (time, id, namespace, local) {
+	$.Collection.prototype.isExpires = function (time, id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
-		return new Date(new Date() - new Date(this.loadDate(id || "", namespace || "", local || ""))) > time;
+		return new Date(new Date() - new Date(this.loadDate(id || "", local || ""))) > time;
 	};
 	
 	/**
@@ -183,19 +172,17 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.drop = function (id, namespace, local) {
+	$.Collection.prototype.drop = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
-		namespace = namespace || "";
 		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace", namespace),
+			name = "__" + this.name + "__" + this._get("namespace"),
 			storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.removeItem(name + ":" + id);
@@ -208,14 +195,12 @@
 	 * remove all collection from DOM storage
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [namespace=this.ACTIVE] - namespace
 	 * @param {String} [local] - if "false", used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.dropAll = function (namespace, local) {
-		namespace = namespace || "";
-		(local === false ? sessionStorage : localStorage).removeItem( "__" + this.name + "__" + this._get("namespace", namespace) + "__date");
+	$.Collection.prototype.dropAll = function (local) {
+		(local === false ? sessionStorage : localStorage).removeItem( "__" + this.name + "__" + this._get("namespace") + "__date");
 		//
-		return this.loadAll(namespace, local || "", true);
+		return this.loadAll(local || "", true);
 	};
