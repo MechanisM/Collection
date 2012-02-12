@@ -2239,8 +2239,7 @@ var nimble = (function () {
 	 * @return {Colletion}
 	 */
 	$.Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
-		field = field || "";
-		filter = filter || "";	
+		field = this._filterTest((field = field || "")) ? this._compileFilter(field) : field;
 		id = id || this.ACTIVE;
 		link = link || false;
 	
@@ -2250,9 +2249,10 @@ var nimble = (function () {
 		indexOf = parseInt(indexOf) || false;
 		//
 		var
+			fieldType = $.isString(field),
 			result = {},
 			action = function (el, i, data, aLength, self, id) {
-				var param = nimble.byLink(el, field);
+				var param = fieldType ? nimble.byLink(el, field) : field.apply(field, arguments);
 				//
 				if (!result[param]) {
 					result[param] = [!link ? el : i];
