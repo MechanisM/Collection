@@ -2229,7 +2229,7 @@ var nimble = (function () {
 	 * group elements (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context} [field] - field name
+	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
 	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
@@ -2269,7 +2269,7 @@ var nimble = (function () {
 	 * group links (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context} [field] - field name
+	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
 	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
@@ -2279,9 +2279,9 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
 		return this.group(field || "", filter || "", id || "", count || "", from || "", indexOf || "", true);
-	};	
+	};		
 	/////////////////////////////////
-	//// mult methods (statistic)
+	//// statistic methods
 	/////////////////////////////////
 	
 	/**
@@ -2360,7 +2360,10 @@ var nimble = (function () {
 		} else { result = this._getOne(nimble.ORDER[0] + "-1" + nimble.ORDER[1]); }
 	
 		return result;
-	};
+	};	
+	/////////////////////////////////
+	//// statistic methods (group)
+	/////////////////////////////////
 	
 	/**
 	 * get statistic information for group
@@ -2455,7 +2458,7 @@ var nimble = (function () {
 		}
 	
 		return result;
-	};	
+	};		
 	/////////////////////////////////
 	//// sort method
 	/////////////////////////////////

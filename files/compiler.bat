@@ -39,7 +39,9 @@ copy	^
 		+ mult\mult.move.js ^
 		+ mult\mult.remove.js ^
 		+ mult\mult.group.js ^
-		+ mult\mult.stat.js ^
+		^
+		+ stat\stat.js ^
+		+ stat\stat.group.js ^
 		^
 		+ sort\sort.js ^
 		+ sort\sort.reverse.js ^
