@@ -127,8 +127,20 @@ function publish(symbolSet) {
 
 /** Just the first sentence (up to a full stop). Should not break on dotted variable names. */
 function summarize(desc) {
-	if (typeof desc != "undefined")
-		return desc.match(/([\w\W]+?\.)[^a-z0-9_$]/i)? RegExp.$1 : desc;
+	var res = "", i;
+	if (typeof desc != "undefined") {
+		if (desc.search("</i>") === -1) {
+			return desc.match(/([\w\W]+?\.)[^a-z0-9_$]/i)? RegExp.$1 : desc;
+		}
+		
+		res = desc.split("</i>");
+		for (i = res.length; (i -= 1) > -1;) {
+			res[i] = res[i].match(/([\w\W]+?\.)[^a-z0-9_$]/i)? RegExp.$1 : res[i];
+		}
+		res = res.join("</i>");
+		
+		return res;
+	}
 }
 
 /** Make a symbol sorter by some attribute. */

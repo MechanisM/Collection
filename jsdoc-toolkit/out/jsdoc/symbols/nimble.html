@@ -136,10 +136,11 @@ td.attributes,
 
 		</style>
 		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="../jquery.collection.min.js"></script>
 		<script type="text/javascript">
-			var doc = {};
+			var doc = {methods: [], classes: []};
 $(function () {
-	$("i[lang='eng']").hide();
+	$("i[lang='en']").hide();
 });
 		</script>
 	</head>
@@ -183,7 +184,7 @@ $(function () {
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				<br />
-					<i lang="eng">Version</i>
+					<i lang="en">Version</i>
 					<i lang="ru">Версия</i>
 					1.0.2.<br />
 				
@@ -192,22 +193,22 @@ $(function () {
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+					<br /><i lang="en">Defined in: </i><i lang="ru">Определено в: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
 			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class nimble.">
-				<caption>Class <i lang="eng">Summary</i><i lang="ru">информация</i></caption>
+				<caption>Class <i lang="en">Summary</i><i lang="ru">информация</i></caption>
 				<thead>
 					<tr>
 						<th scope="col">
-							<i lang="eng">Constructor Attributes</i>
+							<i lang="en">Constructor Attributes</i>
 							<i lang="ru">Атрибуты конструктора</i>
 						</th>
 						<th scope="col">
-							<i lang="eng">Constructor Name and Description</i>
+							<i lang="en">Constructor Name and Description</i>
 							<i lang="ru">Имя конструктора и описание</i>
 						</th>
 					</tr>
@@ -231,15 +232,15 @@ $(function () {
 				
 				
 				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class nimble.">
-					<caption><i lang="eng">Field Summary</i><i lang="ru">Свойства (поля)</i></caption>
+					<caption><i lang="en">Field Summary</i><i lang="ru">Свойства (поля)</i></caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								<i lang="eng">Field Attributes</i>
+								<i lang="en">Field Attributes</i>
 								<i lang="ru">Атрибут свойсва</i>
 							</th>
 							<th scope="col">
-								<i lang="eng">Field Name and Description</i>
+								<i lang="en">Field Name and Description</i>
 								<i lang="ru">Имя свойства и описание</i>
 							</th>
 						</tr>
@@ -278,15 +279,15 @@ $(function () {
 				
 				
 				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class nimble.">
-					<caption><i lang="eng">Method Summary</i><i lang="ru">Методы</i></caption>
+					<caption><i lang="en">Method Summary</i><i lang="ru">Методы</i></caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								<i lang="eng">Method Attributes</i>
+								<i lang="en">Method Attributes</i>
 								<i lang="ru">Атрибуты метода</i>
 							</th>
 							<th scope="col">
-								<i lang="eng">Method Name and Description</i>
+								<i lang="en">Method Name and Description</i>
 								<i lang="ru">Имя метода и описание</i>
 							</th>
 						</tr>
@@ -294,14 +295,13 @@ $(function () {
 					<tbody>
 					
 						<script type="text/javascript">
-							doc["addElementToObject"] = {
+							doc["methods"].push({
 								name: "addElementToObject",
-								desc: "add new element to object",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -313,14 +313,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["byLink"] = {
+							doc["methods"].push({
 								name: "byLink",
-								desc: "set new value to object by link, remove element by link or get element by link",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -332,14 +331,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["execEvent"] = {
+							doc["methods"].push({
 								name: "execEvent",
-								desc: "execute event",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -351,14 +349,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["expr"] = {
+							doc["methods"].push({
 								name: "expr",
-								desc: "calculate math expression for string",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -370,14 +367,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["isArray"] = {
+							doc["methods"].push({
 								name: "isArray",
-								desc: "returns a Boolean indicating whether the object is a array (not an array-like object)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -389,14 +385,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["isExists"] = {
+							doc["methods"].push({
 								name: "isExists",
-								desc: "returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -408,14 +403,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["isNumber"] = {
+							doc["methods"].push({
 								name: "isNumber",
-								desc: "returns a Boolean indicating whether the object is a number",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -427,14 +421,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["isString"] = {
+							doc["methods"].push({
 								name: "isString",
-								desc: "returns a Boolean indicating whether the object is a string",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -446,14 +439,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["nimble"] = {
+							doc["methods"].push({
 								name: "nimble",
-								desc: "return string: framework name + framework version",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -465,14 +457,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["trim"] = {
+							doc["methods"].push({
 								name: "trim",
-								desc: "removes all leading and trailing whitespace characters",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: true
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
@@ -597,7 +588,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Plain Object}</span> <b>obj</b>
@@ -624,7 +615,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Plain Object|Boolean}</span> </dd>
 							
@@ -652,7 +643,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Object|Number|Boolean}</span> <b>obj</b>
@@ -668,13 +659,13 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>value</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- some value</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>del</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- if "true", remove source element</dd>
 							
@@ -685,7 +676,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{<a href="../symbols/nimble.html">nimble</a>|mixed}</span> </dd>
 							
@@ -713,7 +704,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>query</b>
@@ -729,13 +720,13 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>param</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- input parameters</dd>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>_this</b>
-									<i>Optional, Default: event</i>
+									(<i lang="en">optional, default: event</i><i lang="ru">необязательный параметр, по умолчанию: event</i>)
 								</dt>
 								<dd>- this object</dd>
 							
@@ -746,7 +737,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{mixed}</span> </dd>
 							
@@ -774,7 +765,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>val</b>
@@ -795,7 +786,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{mixed}</span> </dd>
 							
@@ -823,7 +814,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>obj</b>
@@ -838,7 +829,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Boolean}</span> </dd>
 							
@@ -866,7 +857,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>obj</b>
@@ -881,7 +872,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Boolean}</span> </dd>
 							
@@ -909,7 +900,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>obj</b>
@@ -924,7 +915,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Boolean}</span> </dd>
 							
@@ -952,7 +943,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>obj</b>
@@ -967,7 +958,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Boolean}</span> </dd>
 							
@@ -999,7 +990,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{String}</span> </dd>
 							
@@ -1027,7 +1018,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>str</b>
@@ -1042,7 +1033,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{String}</span> </dd>
 							
@@ -1065,8 +1056,10 @@ $(function () {
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 12:52:42 GMT+0300 (MSK)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 15:25:08 GMT+0300 (MSK)
 		</div>
-	<script type="text/javascript">console.log(doc)</script>
+		<script type="text/javascript">
+			doc = new $.Collection(doc);
+		</script>
 	</body>
 </html>

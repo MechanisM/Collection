@@ -10,6 +10,7 @@
 			{+include("static/default.css")+}
 		</style>
 		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="../jquery.collection.min.js"></script>
 		<script type="text/javascript">
 			{+include("static/default.js")+}
 		</script>
@@ -54,11 +55,11 @@
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				<if test="data.version"><br />
-					<i lang="eng">Version</i>
+					<i lang="en">Version</i>
 					<i lang="ru">Версия</i>
 					{+ data.version +}.<br />
 				</if>
-				<if test="data.augments.length"><br />Extends
+				<if test="data.augments.length"><br /><i lang="en">Extends</i><i lang="ru">Расширяет</i>
 					{+
 						data.augments
 						.sort()
@@ -72,22 +73,22 @@
 				{+resolveLinks(data.classDesc)+}
 				
 				<if test="!data.isBuiltin()">{# isn't defined in any file #}
-					<br /><i>Defined in: </i> {+new Link().toSrc(data.srcFile)+}.
+					<br /><i lang="en">Defined in: </i><i lang="ru">Определено в: </i> {+new Link().toSrc(data.srcFile)+}.
 				</if>
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			<if test="!data.isBuiltin() && (data.isNamespace || data.is('CONSTRUCTOR'))">
 			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class {+data.alias+}.">
-				<caption>{+classType+}<i lang="eng">Summary</i><i lang="ru">информация</i></caption>
+				<caption>{+classType+}<i lang="en">Summary</i><i lang="ru">информация</i></caption>
 				<thead>
 					<tr>
 						<th scope="col">
-							<i lang="eng">Constructor Attributes</i>
+							<i lang="en">Constructor Attributes</i>
 							<i lang="ru">Атрибуты конструктора</i>
 						</th>
 						<th scope="col">
-							<i lang="eng">Constructor Name and Description</i>
+							<i lang="en">Constructor Name and Description</i>
 							<i lang="ru">Имя конструктора и описание</i>
 						</th>
 					</tr>
@@ -114,15 +115,15 @@
 				{! var ownProperties = data.properties.filter(function($){return $.memberOf == data.alias && !$.isNamespace}).sort(makeSortby("name")); !}
 				<if test="ownProperties.length">
 				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class {+data.alias+}.">
-					<caption><i lang="eng">Field Summary</i><i lang="ru">Свойства (поля)</i></caption>
+					<caption><i lang="en">Field Summary</i><i lang="ru">Свойства (поля)</i></caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								<i lang="eng">Field Attributes</i>
+								<i lang="en">Field Attributes</i>
 								<i lang="ru">Атрибут свойсва</i>
 							</th>
 							<th scope="col">
-								<i lang="eng">Field Name and Description</i>
+								<i lang="en">Field Name and Description</i>
 								<i lang="ru">Имя свойства и описание</i>
 							</th>
 						</tr>
@@ -182,15 +183,15 @@
 				{! var ownMethods = data.methods.filter(function($){return $.memberOf == data.alias  && !$.isNamespace}).sort(makeSortby("name")); !}
 				<if test="ownMethods.length">
 				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class {+data.alias+}.">
-					<caption><i lang="eng">Method Summary</i><i lang="ru">Методы</i></caption>
+					<caption><i lang="en">Method Summary</i><i lang="ru">Методы</i></caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								<i lang="eng">Method Attributes</i>
+								<i lang="en">Method Attributes</i>
 								<i lang="ru">Атрибуты метода</i>
 							</th>
 							<th scope="col">
-								<i lang="eng">Method Name and Description</i>
+								<i lang="en">Method Name and Description</i>
 								<i lang="ru">Имя метода и описание</i>
 							</th>
 						</tr>
@@ -198,14 +199,13 @@
 					<tbody>
 					<for each="member" in="ownMethods">
 						<script type="text/javascript">
-							doc["{+member.name+}"] = {
+							doc["methods"].push({
 								name: "{+member.name+}",
-								desc: "{+member.desc+}",
 								
 								isPrivate: {+member.isPrivate+},
 								isInner: {+member.isInner+},
 								isStatic: {+member.isStatic+}
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">{!
@@ -340,11 +340,11 @@
 				
 					<if test="data.params.length">
 						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
+						<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 						<for each="item" in="data.params">
 							<dt>
 								{+((item.type)?""+("<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type)+"}</span> ")) : "")+} <b>{+item.name+}</b>
-								<if test="item.isOptional"><i>Optional<if test="item.defaultValue">, Default: {+item.defaultValue+}</if></i></if>
+								<if test="item.isOptional">(<i lang="en">optional<if test="item.defaultValue">, default: {+item.defaultValue+}</if></i><i lang="ru">необязательный параметр<if test="item.defaultValue">, по умолчанию: {+item.defaultValue+}</if></i>)</if>
 							</dt>
 								<dd>{+resolveLinks(item.desc)+}</dd>
 						</for>
@@ -377,7 +377,7 @@
 					</if>
 					<if test="data.returns.length">
 						<dl class="detailList">
-						<dt class="heading">Returns:</dt>
+						<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 						<for each="item" in="data.returns">
 								<dd>{+((item.type)?"<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}{+resolveLinks(item.desc)+}</dd>
 						</for>
@@ -505,11 +505,11 @@
 					
 						<if test="member.params.length">
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							<for each="item" in="member.params">
 								<dt>
 									{+((item.type)?"<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}<b>{+item.name+}</b>
-									<if test="item.isOptional"><i>Optional<if test="item.defaultValue">, Default: {+item.defaultValue+}</if></i></if>
+									<if test="item.isOptional">(<i lang="en">optional<if test="item.defaultValue">, default: {+item.defaultValue+}</if></i><i lang="ru">необязательный параметр<if test="item.defaultValue">, по умолчанию: {+item.defaultValue+}</if></i>)</if>
 								</dt>
 								<dd>{+resolveLinks(item.desc)+}</dd>
 							</for>
@@ -543,7 +543,7 @@
 						</if>
 						<if test="member.returns.length">
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							<for each="item" in="member.returns">
 								<dd>{+((item.type)?"<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}{+resolveLinks(item.desc)+}</dd>
 							</for>
@@ -604,11 +604,11 @@
 					
 						<if test="member.params.length">
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							<for each="item" in="member.params">
 								<dt>
 									{+((item.type)?"<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}<b>{+item.name+}</b>
-									<if test="item.isOptional"><i>Optional<if test="item.defaultValue">, Default: {+item.defaultValue+}</if></i></if>
+									<if test="item.isOptional">(<i lang="en">optional<if test="item.defaultValue">, default: {+item.defaultValue+}</if></i><i lang="ru">необязательный параметр<if test="item.defaultValue">, по умолчанию: {+item.defaultValue+}</if></i>)</if>
 								</dt>
 								<dd>{+ resolveLinks(item.desc) +}</dd>
 							</for>
@@ -642,7 +642,7 @@
 						</if>
 						<if test="member.returns.length">
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							<for each="item" in="member.returns">
 								<dd>{+((item.type)?"<span class=\"light fixedFont\">{"+(new Link().toSymbol(item.type))+"}</span> " : "")+}{+resolveLinks(item.desc)+}</dd>
 							</for>
@@ -678,6 +678,8 @@
 			<if test="JSDOC.opt.D.copyright">&copy;{+JSDOC.opt.D.copyright+}<br /></if>
 			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> {+JSDOC.VERSION+} on {+new Date()+}
 		</div>
-	<script type="text/javascript">console.log(doc)</script>
+		<script type="text/javascript">
+			doc = new $.Collection(doc);
+		</script>
 	</body>
 </html>

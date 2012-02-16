@@ -136,10 +136,11 @@ td.attributes,
 
 		</style>
 		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="../jquery.collection.min.js"></script>
 		<script type="text/javascript">
-			var doc = {};
+			var doc = {methods: [], classes: []};
 $(function () {
-	$("i[lang='eng']").hide();
+	$("i[lang='en']").hide();
 });
 		</script>
 	</head>
@@ -201,15 +202,15 @@ $(function () {
 				
 				
 				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class _global_.">
-					<caption><i lang="eng">Method Summary</i><i lang="ru">Методы</i></caption>
+					<caption><i lang="en">Method Summary</i><i lang="ru">Методы</i></caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								<i lang="eng">Method Attributes</i>
+								<i lang="en">Method Attributes</i>
 								<i lang="ru">Атрибуты метода</i>
 							</th>
 							<th scope="col">
-								<i lang="eng">Method Name and Description</i>
+								<i lang="en">Method Name and Description</i>
 								<i lang="ru">Имя метода и описание</i>
 							</th>
 						</tr>
@@ -217,14 +218,13 @@ $(function () {
 					<tbody>
 					
 						<script type="text/javascript">
-							doc["action"] = {
+							doc["methods"].push({
 								name: "action",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -236,14 +236,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["calFilter"] = {
+							doc["methods"].push({
 								name: "calFilter",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -255,14 +254,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["deepAction"] = {
+							doc["methods"].push({
 								name: "deepAction",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -274,14 +272,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["genPage"] = {
+							doc["methods"].push({
 								name: "genPage",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -293,14 +290,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["inObj"] = {
+							doc["methods"].push({
 								name: "inObj",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -312,14 +308,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["reverseObject"] = {
+							doc["methods"].push({
 								name: "reverseObject",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -331,14 +326,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["sort"] = {
+							doc["methods"].push({
 								name: "sort",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -350,14 +344,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["sortObject"] = {
+							doc["methods"].push({
 								name: "sortObject",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -369,14 +362,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["sortObjectByKey"] = {
+							doc["methods"].push({
 								name: "sortObjectByKey",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -388,14 +380,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["text"] = {
+							doc["methods"].push({
 								name: "text",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -447,7 +438,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>el</b>
@@ -516,7 +507,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>array</b>
@@ -561,7 +552,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>el</b>
@@ -630,7 +621,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>data</b>
@@ -681,7 +672,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>elem</b>
@@ -720,7 +711,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>obj</b>
@@ -759,7 +750,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>a</b>
@@ -804,7 +795,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>obj</b>
@@ -843,7 +834,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>obj</b>
@@ -882,7 +873,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>elem</b>
@@ -913,8 +904,10 @@ $(function () {
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 12:52:42 GMT+0300 (MSK)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 15:25:08 GMT+0300 (MSK)
 		</div>
-	<script type="text/javascript">console.log(doc)</script>
+		<script type="text/javascript">
+			doc = new $.Collection(doc);
+		</script>
 	</body>
 </html>

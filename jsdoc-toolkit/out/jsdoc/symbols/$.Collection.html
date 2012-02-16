@@ -136,10 +136,11 @@ td.attributes,
 
 		</style>
 		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="../jquery.collection.min.js"></script>
 		<script type="text/javascript">
-			var doc = {};
+			var doc = {methods: [], classes: []};
 $(function () {
-	$("i[lang='eng']").hide();
+	$("i[lang='en']").hide();
 });
 		</script>
 	</head>
@@ -183,7 +184,7 @@ $(function () {
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				<br />
-					<i lang="eng">Version</i>
+					<i lang="en">Version</i>
 					<i lang="ru">Версия</i>
 					3.5.<br />
 				
@@ -192,22 +193,22 @@ $(function () {
 				
 				
 				
-					<br /><i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+					<br /><i lang="en">Defined in: </i><i lang="ru">Определено в: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
 				
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
 			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class $.Collection.">
-				<caption>Class <i lang="eng">Summary</i><i lang="ru">информация</i></caption>
+				<caption>Class <i lang="en">Summary</i><i lang="ru">информация</i></caption>
 				<thead>
 					<tr>
 						<th scope="col">
-							<i lang="eng">Constructor Attributes</i>
+							<i lang="en">Constructor Attributes</i>
 							<i lang="ru">Атрибуты конструктора</i>
 						</th>
 						<th scope="col">
-							<i lang="eng">Constructor Name and Description</i>
+							<i lang="en">Constructor Name and Description</i>
 							<i lang="ru">Имя конструктора и описание</i>
 						</th>
 					</tr>
@@ -219,7 +220,7 @@ $(function () {
 							<div class="fixedFont">
 								<b><a href="../symbols/%24.Collection.html#constructor">$.Collection</a></b>(collection, uProp)
 							</div>
-							<div class="description"><div class="lang_eng">$.Collection - JS (JavaScript) framework for working with collections of data (using jQuery)Copyright 2012, Andrey Kobets (Kobezzza)Dual licensed under the MIT or GPL Version 2 licenses.</div>
+							<div class="description"><i lang="en"><p>$.Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</i><i lang="ru"><p>$.Collection — JS (JavaScript) фреймворк для работы с коллекциями данных (использует jQuery).</i><p>Copyright 2012, Andrey Kobets (Kobezzza)<br />Dual licensed under the MIT or GPL Version 2 licenses.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -231,15 +232,15 @@ $(function () {
 				
 				
 				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class $.Collection.">
-					<caption><i lang="eng">Field Summary</i><i lang="ru">Свойства (поля)</i></caption>
+					<caption><i lang="en">Field Summary</i><i lang="ru">Свойства (поля)</i></caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								<i lang="eng">Field Attributes</i>
+								<i lang="en">Field Attributes</i>
 								<i lang="ru">Атрибут свойсва</i>
 							</th>
 							<th scope="col">
-								<i lang="eng">Field Name and Description</i>
+								<i lang="en">Field Name and Description</i>
 								<i lang="ru">Имя свойства и описание</i>
 							</th>
 						</tr>
@@ -288,15 +289,15 @@ $(function () {
 				
 				
 				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class $.Collection.">
-					<caption><i lang="eng">Method Summary</i><i lang="ru">Методы</i></caption>
+					<caption><i lang="en">Method Summary</i><i lang="ru">Методы</i></caption>
 					<thead>
 						<tr>
 							<th scope="col">
-								<i lang="eng">Method Attributes</i>
+								<i lang="en">Method Attributes</i>
 								<i lang="ru">Атрибуты метода</i>
 							</th>
 							<th scope="col">
-								<i lang="eng">Method Name and Description</i>
+								<i lang="en">Method Name and Description</i>
 								<i lang="ru">Имя метода и описание</i>
 							</th>
 						</tr>
@@ -304,14 +305,13 @@ $(function () {
 					<tbody>
 					
 						<script type="text/javascript">
-							doc["active"] = {
+							doc["methods"].push({
 								name: "active",
-								desc: "",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -323,14 +323,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["add"] = {
+							doc["methods"].push({
 								name: "add",
-								desc: "add new element to object (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -342,14 +341,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["collection"] = {
+							doc["methods"].push({
 								name: "collection",
-								desc: "return string: framework name + framework version",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -361,14 +359,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["concat"] = {
+							doc["methods"].push({
 								name: "concat",
-								desc: "concatenation of collections (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -380,14 +377,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["copy"] = {
+							doc["methods"].push({
 								name: "copy",
-								desc: "copy elements (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -399,14 +395,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["copyOne"] = {
+							doc["methods"].push({
 								name: "copyOne",
-								desc: "copy element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -418,14 +413,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["disable"] = {
+							doc["methods"].push({
 								name: "disable",
-								desc: "disable property",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -437,14 +431,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["drop"] = {
+							doc["methods"].push({
 								name: "drop",
-								desc: "remove collection from DOM storage",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -456,14 +449,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["dropAll"] = {
+							doc["methods"].push({
 								name: "dropAll",
-								desc: "remove all collection from DOM storage",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -475,14 +467,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["easyPage"] = {
+							doc["methods"].push({
 								name: "easyPage",
-								desc: "activation of the model template",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -494,14 +485,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["enable"] = {
+							doc["methods"].push({
 								name: "enable",
-								desc: "enable property",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -513,14 +503,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["forEach"] = {
+							doc["methods"].push({
 								name: "forEach",
-								desc: "forEach method (in context)// overloads:1) if the id is a Boolean, it is considered as mult.",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -532,14 +521,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["genTable"] = {
+							doc["methods"].push({
 								name: "genTable",
-								desc: "generating the table",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -551,14 +539,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["get"] = {
+							doc["methods"].push({
 								name: "get",
-								desc: "get elements (in context)// overloads:1) if the id is a Boolean, it is considered as mult.",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -570,14 +557,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["getOne"] = {
+							doc["methods"].push({
 								name: "getOne",
-								desc: "get element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -589,14 +575,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["group"] = {
+							doc["methods"].push({
 								name: "group",
-								desc: "group elements (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -608,14 +593,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["groupLinks"] = {
+							doc["methods"].push({
 								name: "groupLinks",
-								desc: "group links (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -627,14 +611,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["groupStat"] = {
+							doc["methods"].push({
 								name: "groupStat",
-								desc: "get statistic information for group",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -646,14 +629,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["indexOf"] = {
+							doc["methods"].push({
 								name: "indexOf",
-								desc: "indexOf (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -665,14 +647,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["isExpires"] = {
+							doc["methods"].push({
 								name: "isExpires",
-								desc: "checking the life of the collection",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -684,14 +665,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["lastIndexOf"] = {
+							doc["methods"].push({
 								name: "lastIndexOf",
-								desc: "lastIndexOf (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -703,14 +683,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["length"] = {
+							doc["methods"].push({
 								name: "length",
-								desc: "collection length (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -722,14 +701,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["load"] = {
+							doc["methods"].push({
 								name: "load",
-								desc: "load collection from DOM storage",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -741,14 +719,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["loadAll"] = {
+							doc["methods"].push({
 								name: "loadAll",
-								desc: "load all collection from DOM storage",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -760,14 +737,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["loadDate"] = {
+							doc["methods"].push({
 								name: "loadDate",
-								desc: "get the time of the conservation of collections",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -779,14 +755,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["map"] = {
+							doc["methods"].push({
 								name: "map",
-								desc: "map (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -798,14 +773,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["move"] = {
+							doc["methods"].push({
 								name: "move",
-								desc: "move elements (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -817,14 +791,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["moveOne"] = {
+							doc["methods"].push({
 								name: "moveOne",
-								desc: "move element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -836,14 +809,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["parent"] = {
+							doc["methods"].push({
 								name: "parent",
-								desc: "parent",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -855,14 +827,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["parentContext"] = {
+							doc["methods"].push({
 								name: "parentContext",
-								desc: "calculate parent context",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -874,14 +845,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["pop"] = {
+							doc["methods"].push({
 								name: "pop",
-								desc: "pop element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -893,14 +863,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["print"] = {
+							doc["methods"].push({
 								name: "print",
-								desc: "templating (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -912,14 +881,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["push"] = {
+							doc["methods"].push({
 								name: "push",
-								desc: "push new element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -931,14 +899,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["remove"] = {
+							doc["methods"].push({
 								name: "remove",
-								desc: "delete elements (in context)// overloads:1) if the id is a Boolean, it is considered as mult.",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -950,14 +917,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["removeOne"] = {
+							doc["methods"].push({
 								name: "removeOne",
-								desc: "delete element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -969,14 +935,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["reverse"] = {
+							doc["methods"].push({
 								name: "reverse",
-								desc: "reverse collection (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -988,14 +953,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["save"] = {
+							doc["methods"].push({
 								name: "save",
-								desc: "save collection in DOM storage",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1007,14 +971,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["saveAll"] = {
+							doc["methods"].push({
 								name: "saveAll",
-								desc: "save all collection in DOM storage",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1026,14 +989,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["search"] = {
+							doc["methods"].push({
 								name: "search",
-								desc: "search elements (in context)// overloads:1) if the id is a Boolean, it is considered as mult.",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1045,14 +1007,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["searchOne"] = {
+							doc["methods"].push({
 								name: "searchOne",
-								desc: "search element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1064,14 +1025,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["set"] = {
+							doc["methods"].push({
 								name: "set",
-								desc: "set elements (in context)// overloads:1) if the id is a Boolean, it is considered as mult.",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1083,14 +1043,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["setOne"] = {
+							doc["methods"].push({
 								name: "setOne",
-								desc: "replace element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1102,14 +1061,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["shift"] = {
+							doc["methods"].push({
 								name: "shift",
-								desc: "shift element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1121,14 +1079,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["some"] = {
+							doc["methods"].push({
 								name: "some",
-								desc: "some (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1140,14 +1097,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["sort"] = {
+							doc["methods"].push({
 								name: "sort",
-								desc: "sort collection (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1159,14 +1115,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["stat"] = {
+							doc["methods"].push({
 								name: "stat",
-								desc: "get statistic information",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1178,14 +1133,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["then"] = {
+							doc["methods"].push({
 								name: "then",
-								desc: "jQuery "then" method",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1197,14 +1151,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["toggle"] = {
+							doc["methods"].push({
 								name: "toggle",
-								desc: "toggle property",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1216,14 +1169,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["toString"] = {
+							doc["methods"].push({
 								name: "toString",
-								desc: "return JSON string collection (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1235,14 +1187,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["unshift"] = {
+							doc["methods"].push({
 								name: "unshift",
-								desc: "unshift new element (in context)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1254,14 +1205,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["use"] = {
+							doc["methods"].push({
 								name: "use",
-								desc: "use the assembly",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1273,14 +1223,13 @@ $(function () {
 						</tr>
 					
 						<script type="text/javascript">
-							doc["valueOf"] = {
+							doc["methods"].push({
 								name: "valueOf",
-								desc: "return collection length (only active)",
 								
 								isPrivate: false,
 								isInner: false,
 								isStatic: false
-							}
+							});
 						</script>
 						<tr>
 							<td class="attributes">&nbsp;</td>
@@ -1312,7 +1261,7 @@ $(function () {
 				</div>
 				
 				<div class="description">
-					<div class="lang_eng">$.Collection - JS (JavaScript) framework for working with collections of data (using jQuery)Copyright 2012, Andrey Kobets (Kobezzza)Dual licensed under the MIT or GPL Version 2 licenses.glossary:1) Collection - data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);2) Filter - is a special function, which returns a Boolean value for each "row" of the collection;3) Parser - is a special function which makes the post-processing of the template;4) Context - a string which specifies a link to the context of the collection (for example: "Name > 1" indicates the obj.Name[1], where obj is the instance of collection);5) Template - is a special function, which converts the collection in the text, in accordance with special regulations.addition:the code is documented in accordance with the standard jsDocspecific data types:1) [Colletion Object] is a reduced form of the [Object] and means an instance of $.Collection;2) [Colletion] is a reduced form of the [Object|Array] and means an collection of data;3) [Selector] is a reduced form of the [String], and means the css selector (Sizzle syntax);4) [Context] is the reduced form of the [String], and means the context of the collection (Nimble syntax);5) [Template] is a reduced form of the [Function] and means function-template;6) [Filter] is a reduced form of the [Filter|String] and means the function-filter or string expressions;7) [Parser] is a reduced form of the [Parser|String] and means function-parser or string expressions;8) [Plain Object] is a reduced form of the [Object] and means hash table;9) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;10) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.for comfortable work it is recommended to use the latest stable version of jQueryenjoy!</div>
+					<i lang="en"><p>$.Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p><strong>Glossary:</strong><ul><li><b>Collection</b> — data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);</li><li><b>Filter</b> — is a special function, which returns a Boolean value for each "row" of the collection;</li><li><b>Parser</b> — is a special function which makes the post—processing of the template;</li><li><b>Context</b> — a string which specifies a link to the context of the collection (for example: "Name > 1" indicates the obj.Name[1], where obj is the instance of collection);</li><li><b>Template</b> — is a special function, which converts the collection in the text, in accordance with special regulations.</li></ul><strong>Addition:</strong><p>The code is documented in accordance with the standard <a href="http://en.wikipedia.org/wiki/JSDoc" target="_blank">jsDoc</a>.<br />Specific data types:</p><ul><li><b>[Colletion Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of $.Collection;</li><li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li><li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (Sizzle syntax);</li><li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li><li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li><li><b>[Filter]</b> is a reduced form of the <b>[Filter|String]</b> and means the function—filter or string expressions;</li><li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function—parser or string expressions;</li><li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li><li><b>[jQuery Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of jQuery;</li><li><b>[jQuery Deferred]</b> is the reduced form of the <b>[Object]</b> and means an instance of jQuery.Deferred.</li></ul><p>For comfortable work it is recommended to use the latest stable version of jQuery.</p><p>Enjoy!</p></i><i lang="ru"><p>$.Collection — JS (JavaScript) фреймворк для работы с коллекциями данных (использует jQuery).</p><strong>Глоссарий:</strong><ul><li><b>Коллекция</b> — объект данных JS, может быть представлен, как массив или как хеш–таблица (вы можете комбинировать сущности, например: [{...},{...},...]);</li><li><b>Фильтр</b> — специальная функция, которая возвращает логическое значение для каждой «строки» коллекции;</li><li><b>Парсер</b> — специальная функция, которая осуществляет постобработку шаблона;</li><li><b>Контекст</b> — строка, которая задает ссылку на контекст коллекции (например: "Name > 1" указывает на obj.Name[1], где obj является коллекцией);</li><li><b>Шаблон</b> — специальная функция, который преобразует коллекцию в строку, в соответствии со специальными правилами.</li></ul><strong>Дополнение:</strong><p>Код оформлен в соответствии со стандартом <a href="http://ru.wikipedia.org/wiki/JSDoc" target="_blank">jsDoc</a>.<br />Специфичные типы данных:</p><ul><li><b>[Colletion Object]</b> является сокращенной формой <b>[Object]</b> и означает экземпляр $.Collection;</li><li><b>[Colletion]</b> является сокращенной формой <b>[Object|Array]</b> и означает коллекцию данных;</li><li><b>[Selector]</b> является сокращенной формой <b>[String]</b>, и означает css селектор (Sizzle синтаксис);</li><li><b>[Context]</b> является сокращенной формой <b>[String]</b>, и означает контекст коллекции (Nimble синтаксис);</li><li><b>[Template]</b> является сокращенной формой <b>[Function]</b> и означает функцию–шаблон;</li><li><b>[Filter]</b> является сокращенной формой <b>[Filter|String]</b> и означает функцию–фильтр или строковое выражение;</li><li><b>[Parser]</b> является сокращенной формой <b>[Parser|String]</b> и означает функцию–парсер или строковое выражение;</li><li><b>[Plain Object]</b> является сокращенной формой <b>[Object]</b> и означает хеш–таблицу;</li><li><b>[jQuery Object]</b> является сокращенной формой <b>[Object]</b> и означает экземпляр jQuery;</li><li><b>[jQuery Deferred]</b> является сокращенной формой <b>[Object]</b> и означает экземпляр jQuery.Deferred.</li></ul>Для комфортной работы рекомендуется использовать последнюю стабильную версию jQuery.Наслаждайтесь!</i><p>Copyright 2012, Andrey Kobets (Kobezzza)<br />Dual licensed under the MIT or GPL Version 2 licenses.</p>
 					
 				</div>
 				
@@ -1321,19 +1270,19 @@ $(function () {
 				
 					
 						<dl class="detailList">
-						<dt class="heading">Parameters:</dt>
+						<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 						
 							<dt>
 								<span class="light fixedFont">{Collection|Selector}</span>  <b>collection</b>
-								<i>Optional, Default: null</i>
+								(<i lang="en">optional, default: null</i><i lang="ru">необязательный параметр, по умолчанию: null</i>)
 							</dt>
-								<dd>- collection or selector for field "target"</dd>
+								<dd>— <i lang="en">collection or selector for field "target"</i><i lang="ru">коллекция или селектор для поля "target"</i></dd>
 						
 							<dt>
 								<span class="light fixedFont">{Plain Object}</span>  <b>uProp</b>
-								<i>Optional, Default: $.Collection.storage.dObj.active</i>
+								(<i lang="en">optional, default: $.Collection.storage.dObj.active</i><i lang="ru">необязательный параметр, по умолчанию: $.Collection.storage.dObj.active</i>)
 							</dt>
-								<dd>- additional properties</dd>
+								<dd>— <i lang="en">additional properties</i><i lang="ru">дополнительные параметры</i></dd>
 						
 						</dl>
 					
@@ -1444,7 +1393,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>objKey</b>
@@ -1486,35 +1435,35 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed|Context}</span> <b>cValue</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- new element or context for sourceID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>propType</b>
-									<i>Optional, Default: "push"</i>
+									(<i lang="en">optional, default: "push"</i><i lang="ru">необязательный параметр, по умолчанию: "push"</i>)
 								</dt>
 								<dd>- add type (constants: "push", "unshift") or property name (can use "->unshift" - the result will be similar to work for an array "unshift")</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>activeID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>sourceID</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- source ID (if move)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>del</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- if "true", remove source element</dd>
 							
@@ -1525,7 +1474,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -1557,7 +1506,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{String}</span> </dd>
 							
@@ -1585,7 +1534,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Collection}</span> <b>obj</b>
@@ -1595,13 +1544,13 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{Context}</span> <b>context</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- additional context</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID, which is the concatenation</dd>
 							
@@ -1612,7 +1561,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -1640,11 +1589,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|String|Boolean}</span> <b>moveFilter</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
@@ -1656,43 +1605,43 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>sourceID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- source ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>activeID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID (transferred to)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>addType</b>
-									<i>Optional, Default: "push"</i>
+									(<i lang="en">optional, default: "push"</i><i lang="ru">необязательный параметр, по умолчанию: "push"</i>)
 								</dt>
 								<dd>- add type (constants: "push", "unshift")</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>mult</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- enable mult mode</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of copies (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -1703,7 +1652,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -1731,11 +1680,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|String|Boolean}</span> <b>moveFilter</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
@@ -1747,19 +1696,19 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>sourceID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- source ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>activeID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID (transferred to)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>addType</b>
-									<i>Optional, Default: "push"</i>
+									(<i lang="en">optional, default: "push"</i><i lang="ru">необязательный параметр, по умолчанию: "push"</i>)
 								</dt>
 								<dd>- add type (constants: "push", "unshift")</dd>
 							
@@ -1770,7 +1719,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -1798,7 +1747,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>name</b>
@@ -1813,7 +1762,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Collection Object}</span> </dd>
 							
@@ -1841,17 +1790,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
@@ -1862,7 +1811,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -1890,11 +1839,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
@@ -1905,7 +1854,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -1933,11 +1882,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Object}</span> <b>param</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- object settings (depends on the model template)</dd>
 							
@@ -1948,7 +1897,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -1976,7 +1925,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>name</b>
@@ -1991,7 +1940,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Collection Object}</span> </dd>
 							
@@ -2019,7 +1968,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>callback</b>
@@ -2029,37 +1978,37 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>mult</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- enable mult mode</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of results (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: 0)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: 0)</dd>
 							
@@ -2070,7 +2019,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -2098,23 +2047,23 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Number}</span> <b>count</b>
-									<i>Optional, Default: 4</i>
+									(<i lang="en">optional, default: 4</i><i lang="ru">необязательный параметр, по умолчанию: 4</i>)
 								</dt>
 								<dd>- td number to a string</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>tag</b>
-									<i>Optional, Default: "div"</i>
+									(<i lang="en">optional, default: "div"</i><i lang="ru">необязательный параметр, по умолчанию: "div"</i>)
 								</dt>
 								<dd>- tag name</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>empty</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- display empty cells</dd>
 							
@@ -2125,7 +2074,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -2153,41 +2102,41 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|Context|Null}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function, string expressions or context (overload)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>mult</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- enable mult mode</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of results (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -2198,7 +2147,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{mixed}</span> </dd>
 							
@@ -2226,17 +2175,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|String|Boolean|Context}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function, string expressions or context (overload)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -2247,7 +2196,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{mixed}</span> </dd>
 							
@@ -2275,47 +2224,47 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Context|Expression|Function}</span> <b>field</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- field name, string expression or callback function</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of substitutions (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>link</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- save link</dd>
 							
@@ -2326,7 +2275,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion}</span> </dd>
 							
@@ -2354,41 +2303,41 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Context|Expression|Function}</span> <b>field</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- field name, string expression or callback function</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of substitutions (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -2399,7 +2348,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion}</span> </dd>
 							
@@ -2427,47 +2376,47 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String|Function}</span> <b>oper</b>
-									<i>Optional, Default: "count"</i>
+									(<i lang="en">optional, default: "count"</i><i lang="ru">необязательный параметр, по умолчанию: "count"</i>)
 								</dt>
 								<dd>- operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Context}</span> <b>field</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- field name</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of substitutions (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -2478,7 +2427,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion}</span> </dd>
 							
@@ -2506,7 +2455,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>searchElement</b>
@@ -2516,13 +2465,13 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{fromIndex}</span> <b>fromIndex</b>
-									<i>Optional, Default: 0</i>
+									(<i lang="en">optional, default: 0</i><i lang="ru">необязательный параметр, по умолчанию: 0</i>)
 								</dt>
 								<dd>- the index at which to start searching backwards</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -2533,7 +2482,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Number|String}</span> </dd>
 							
@@ -2561,7 +2510,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Number}</span> <b>time</b>
@@ -2571,13 +2520,13 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
@@ -2588,7 +2537,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Boolean}</span> </dd>
 							
@@ -2616,7 +2565,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>searchElement</b>
@@ -2626,13 +2575,13 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{fromIndex}</span> <b>fromIndex</b>
-									<i>Optional, Default: 0</i>
+									(<i lang="en">optional, default: 0</i><i lang="ru">необязательный параметр, по умолчанию: 0</i>)
 								</dt>
 								<dd>- the index at which to start searching backwards</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -2643,7 +2592,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Number|String}</span> </dd>
 							
@@ -2671,17 +2620,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|String|Boolean|Collection}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String|Collection}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -2692,7 +2641,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Number}</span> </dd>
 							
@@ -2720,17 +2669,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
@@ -2741,7 +2690,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -2769,17 +2718,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>type</b>
-									<i>Optional, Default: "load"</i>
+									(<i lang="en">optional, default: "load"</i><i lang="ru">необязательный параметр, по умолчанию: "load"</i>)
 								</dt>
 								<dd>- operation type</dd>
 							
@@ -2790,7 +2739,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -2818,17 +2767,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
@@ -2839,7 +2788,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Date}</span> </dd>
 							
@@ -2867,7 +2816,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>replaceObj</b>
@@ -2877,7 +2826,7 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -2888,7 +2837,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -2916,65 +2865,65 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|String|Boolean}</span> <b>moveFilter</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Context}</span> <b>context</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- source context</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>sourceID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- source ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>activeID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID (transferred to)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>addType</b>
-									<i>Optional, Default: "push"</i>
+									(<i lang="en">optional, default: "push"</i><i lang="ru">необязательный параметр, по умолчанию: "push"</i>)
 								</dt>
 								<dd>- add type (constants: "push", "unshift")</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>mult</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- enable mult mode</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of transfers (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>deleteType</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- if "true", remove source element</dd>
 							
@@ -2985,7 +2934,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3013,11 +2962,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|String|Boolean}</span> <b>moveFilter</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
@@ -3029,19 +2978,19 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>sourceID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- source ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>activeID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID (transferred to)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>addType</b>
-									<i>Optional, Default: "push"</i>
+									(<i lang="en">optional, default: "push"</i><i lang="ru">необязательный параметр, по умолчанию: "push"</i>)
 								</dt>
 								<dd>- add type (constants: "push", "unshift")</dd>
 							
@@ -3052,7 +3001,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3080,17 +3029,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Number}</span> <b>n</b>
-									<i>Optional, Default: 1</i>
+									(<i lang="en">optional, default: 1</i><i lang="ru">необязательный параметр, по умолчанию: 1</i>)
 								</dt>
 								<dd>- level</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3101,7 +3050,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3129,17 +3078,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Number}</span> <b>n</b>
-									<i>Optional, Default: 1</i>
+									(<i lang="en">optional, default: 1</i><i lang="ru">необязательный параметр, по умолчанию: 1</i>)
 								</dt>
 								<dd>- level</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3150,7 +3099,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{String}</span> </dd>
 							
@@ -3178,11 +3127,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3193,7 +3142,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3221,7 +3170,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<b>param</b>
@@ -3231,97 +3180,97 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{Collection|String}</span> <b>param.collection</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection or collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>param.context</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- additional context</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number}</span> <b>param.page</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- page number</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Template}</span> <b>param.template</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- template</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>param.numberBreak</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- number of entries on 1 page (if "false", returns all records)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number}</span> <b>param.pageBreak</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- number of displayed pages (navigation, > 2)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{jQuery Object|Boolean}</span> <b>param.target</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- element to output the result ("false" - if you print a variable)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>param.variable</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- variable ID (if param.target === false)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>param.filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Parser}</span> <b>param.parser</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- parser function, string expressions or "false"</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>param.cacheIteration</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- if "true", the last iteration is taken from cache</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Selector}</span> <b>param.calculator</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- selector, on which is the number of records per page</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Selector}</span> <b>param.pager</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- selector to pager</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>param.appendType</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- type additions to the DOM</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>param.resultNull</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- text displayed if no results</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>clear</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- clear the cache</dd>
 							
@@ -3332,7 +3281,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3360,7 +3309,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>obj</b>
@@ -3370,7 +3319,7 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3381,7 +3330,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3409,41 +3358,41 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|Context|<a href="../symbols/Array.html">Array</a>|Null}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function, string expressions or context (overload)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>mult</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- enable mult mode</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of deletions (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -3454,7 +3403,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3482,17 +3431,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|String|Boolean|Context}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function, string expressions or context (overload)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3503,7 +3452,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3531,11 +3480,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3546,7 +3495,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3574,17 +3523,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
@@ -3595,7 +3544,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3623,11 +3572,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>local</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- if "false", used session storage</dd>
 							
@@ -3638,7 +3587,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3666,41 +3615,41 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>mult</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- enable mult mode</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of results (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -3711,7 +3660,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Number|<a href="../symbols/Array.html">Array</a>}</span> </dd>
 							
@@ -3739,17 +3688,17 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3760,7 +3709,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Number|<a href="../symbols/Array.html">Array</a>}</span> </dd>
 							
@@ -3788,11 +3737,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter|Context|Null}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function, string expressions or context (overload)</dd>
 							
@@ -3804,31 +3753,31 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>mult</b>
-									<i>Optional, Default: true</i>
+									(<i lang="en">optional, default: true</i><i lang="ru">необязательный параметр, по умолчанию: true</i>)
 								</dt>
 								<dd>- enable mult mode</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of substitutions (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -3839,7 +3788,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3867,11 +3816,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
@@ -3883,7 +3832,7 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3894,7 +3843,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3922,11 +3871,11 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3937,7 +3886,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -3965,7 +3914,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>callback</b>
@@ -3975,13 +3924,13 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -3992,7 +3941,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -4020,29 +3969,29 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Context}</span> <b>field</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- field name</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Boolean}</span> <b>rev</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- reverce (contstants: "shuffle" - random order)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function|Boolean}</span> <b>fn</b>
-									<i>Optional, Default: toUpperCase</i>
+									(<i lang="en">optional, default: toUpperCase</i><i lang="ru">необязательный параметр, по умолчанию: toUpperCase</i>)
 								</dt>
 								<dd>- callback function ("false" if disabled)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -4053,7 +4002,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -4081,47 +4030,47 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String|Function}</span> <b>oper</b>
-									<i>Optional, Default: "count"</i>
+									(<i lang="en">optional, default: "count"</i><i lang="ru">необязательный параметр, по умолчанию: "count"</i>)
 								</dt>
 								<dd>- operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Context}</span> <b>field</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- field name</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Filter}</span> <b>filter</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- filter function or string expressions</dd>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>count</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- maximum number of substitutions (by default: all object)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>from</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- skip a number of elements (by default: -1)</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|Boolean}</span> <b>indexOf</b>
-									<i>Optional, Default: false</i>
+									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
 								</dt>
 								<dd>- starting point (by default: -1)</dd>
 							
@@ -4132,7 +4081,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion}</span> </dd>
 							
@@ -4160,7 +4109,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>done</b>
@@ -4170,7 +4119,7 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{Function}</span> <b>fail</b>
-									<i>Optional, Default: done</i>
+									(<i lang="en">optional, default: done</i><i lang="ru">необязательный параметр, по умолчанию: done</i>)
 								</dt>
 								<dd>- callback function (if failed)</dd>
 							
@@ -4181,7 +4130,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -4209,7 +4158,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>name</b>
@@ -4224,7 +4173,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Collection Object}</span> </dd>
 							
@@ -4252,23 +4201,23 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String|Collection}</span> <b>objID</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID or collection</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Function|<a href="../symbols/Array.html">Array</a>}</span> <b>replacer</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- an paramional parameter that determines how object values are stringified for objects</dd>
 							
 								<dt>
 									<span class="light fixedFont">{Number|String}</span> <b>space</b>
-									<i>Optional</i>
+									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 								</dt>
 								<dd>- indentation of nested structures</dd>
 							
@@ -4279,7 +4228,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{String}</span> </dd>
 							
@@ -4307,7 +4256,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{mixed}</span> <b>obj</b>
@@ -4317,7 +4266,7 @@ $(function () {
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>id</b>
-									<i>Optional, Default: this.ACTIVE</i>
+									(<i lang="en">optional, default: this.ACTIVE</i><i lang="ru">необязательный параметр, по умолчанию: this.ACTIVE</i>)
 								</dt>
 								<dd>- collection ID</dd>
 							
@@ -4328,7 +4277,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -4356,7 +4305,7 @@ $(function () {
 					
 						
 							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
+							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
 							
 								<dt>
 									<span class="light fixedFont">{String}</span> <b>stack</b>
@@ -4371,7 +4320,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Colletion Object}</span> </dd>
 							
@@ -4403,7 +4352,7 @@ $(function () {
 						
 						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
 							
 								<dd><span class="light fixedFont">{Number}</span> </dd>
 							
@@ -4426,8 +4375,10 @@ $(function () {
 <!-- ============================== footer ================================= -->
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 12:52:42 GMT+0300 (MSK)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 15:25:08 GMT+0300 (MSK)
 		</div>
-	<script type="text/javascript">console.log(doc)</script>
+		<script type="text/javascript">
+			doc = new $.Collection(doc);
+		</script>
 	</body>
 </html>

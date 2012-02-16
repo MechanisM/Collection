@@ -1,37 +1,72 @@
 ﻿/**
- * <div class="lang_eng">
- * $.Collection - JS (JavaScript) framework for working with collections of data (using jQuery)
+ * <i lang="en">
+ * <p>$.Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
  *
- * Copyright 2012, Andrey Kobets (Kobezzza)
- * Dual licensed under the MIT or GPL Version 2 licenses.
+ * <strong>Glossary:</strong>
+ * <ul>
+ * <li><b>Collection</b> — data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);</li>
+ * <li><b>Filter</b> — is a special function, which returns a Boolean value for each "row" of the collection;</li>
+ * <li><b>Parser</b> — is a special function which makes the post—processing of the template;</li>
+ * <li><b>Context</b> — a string which specifies a link to the context of the collection (for example: "Name > 1" indicates the obj.Name[1], where obj is the instance of collection);</li>
+ * <li><b>Template</b> — is a special function, which converts the collection in the text, in accordance with special regulations.</li>
+ * </ul>
  *
- * glossary:
- * 1) Collection - data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);
- * 2) Filter - is a special function, which returns a Boolean value for each "row" of the collection;
- * 3) Parser - is a special function which makes the post-processing of the template;
- * 4) Context - a string which specifies a link to the context of the collection (for example: "Name > 1" indicates the obj.Name[1], where obj is the instance of collection);
- * 5) Template - is a special function, which converts the collection in the text, in accordance with special regulations.
+ * <strong>Addition:</strong>
+ * <p>The code is documented in accordance with the standard <a href="http://en.wikipedia.org/wiki/JSDoc" target="_blank">jsDoc</a>.<br />
+ * Specific data types:</p>
+ * <ul>
+ * <li><b>[Colletion Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of $.Collection;</li>
+ * <li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li>
+ * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (Sizzle syntax);</li>
+ * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li>
+ * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li>
+ * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String]</b> and means the function—filter or string expressions;</li>
+ * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function—parser or string expressions;</li>
+ * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li>
+ * <li><b>[jQuery Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of jQuery;</li>
+ * <li><b>[jQuery Deferred]</b> is the reduced form of the <b>[Object]</b> and means an instance of jQuery.Deferred.</li>
+ * </ul>
  *
- * addition:
- * the code is documented in accordance with the standard jsDoc
- * specific data types:
- * 1) [Colletion Object] is a reduced form of the [Object] and means an instance of $.Collection;
- * 2) [Colletion] is a reduced form of the [Object|Array] and means an collection of data;
- * 3) [Selector] is a reduced form of the [String], and means the css selector (Sizzle syntax);
- * 4) [Context] is the reduced form of the [String], and means the context of the collection (Nimble syntax);
- * 5) [Template] is a reduced form of the [Function] and means function-template;
- * 6) [Filter] is a reduced form of the [Filter|String] and means the function-filter or string expressions;
- * 7) [Parser] is a reduced form of the [Parser|String] and means function-parser or string expressions;
- * 8) [Plain Object] is a reduced form of the [Object] and means hash table;
- * 9) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
- * 10) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.
+ * <p>For comfortable work it is recommended to use the latest stable version of jQuery.</p>
  *
- * for comfortable work it is recommended to use the latest stable version of jQuery
+ * <p>Enjoy!</p>
+ * </i>
+ * <i lang="ru">
+ * <p>$.Collection — JS (JavaScript) фреймворк для работы с коллекциями данных (использует jQuery).</p>
  *
+ * <strong>Глоссарий:</strong>
+ * <ul>
+ * <li><b>Коллекция</b> — объект данных JS, может быть представлен, как массив или как хеш–таблица (вы можете комбинировать сущности, например: [{...},{...},...]);</li>
+ * <li><b>Фильтр</b> — специальная функция, которая возвращает логическое значение для каждой «строки» коллекции;</li>
+ * <li><b>Парсер</b> — специальная функция, которая осуществляет постобработку шаблона;</li>
+ * <li><b>Контекст</b> — строка, которая задает ссылку на контекст коллекции (например: "Name > 1" указывает на obj.Name[1], где obj является коллекцией);</li>
+ * <li><b>Шаблон</b> — специальная функция, который преобразует коллекцию в строку, в соответствии со специальными правилами.</li>
+ * </ul>
  *
- * enjoy!
- * </div>
- * 
+ * <strong>Дополнение:</strong>
+ * <p>Код оформлен в соответствии со стандартом <a href="http://ru.wikipedia.org/wiki/JSDoc" target="_blank">jsDoc</a>.<br />
+ * Специфичные типы данных:</p>
+ * <ul>
+ * <li><b>[Colletion Object]</b> является сокращенной формой <b>[Object]</b> и означает экземпляр $.Collection;</li>
+ * <li><b>[Colletion]</b> является сокращенной формой <b>[Object|Array]</b> и означает коллекцию данных;</li>
+ * <li><b>[Selector]</b> является сокращенной формой <b>[String]</b>, и означает css селектор (Sizzle синтаксис);</li>
+ * <li><b>[Context]</b> является сокращенной формой <b>[String]</b>, и означает контекст коллекции (Nimble синтаксис);</li>
+ * <li><b>[Template]</b> является сокращенной формой <b>[Function]</b> и означает функцию–шаблон;</li>
+ * <li><b>[Filter]</b> является сокращенной формой <b>[Filter|String]</b> и означает функцию–фильтр или строковое выражение;</li>
+ * <li><b>[Parser]</b> является сокращенной формой <b>[Parser|String]</b> и означает функцию–парсер или строковое выражение;</li>
+ * <li><b>[Plain Object]</b> является сокращенной формой <b>[Object]</b> и означает хеш–таблицу;</li>
+ * <li><b>[jQuery Object]</b> является сокращенной формой <b>[Object]</b> и означает экземпляр jQuery;</li>
+ * <li><b>[jQuery Deferred]</b> является сокращенной формой <b>[Object]</b> и означает экземпляр jQuery.Deferred.</li>
+ * </ul>
+ *
+ * Для комфортной работы рекомендуется использовать последнюю стабильную версию jQuery.
+ *
+ * Наслаждайтесь!
+ * </i>
+ *
+ * <p>Copyright 2012, Andrey Kobets (Kobezzza)<br />
+ * Dual licensed under the MIT or GPL Version 2 licenses.</p>
+ *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 15.01.2012 23:16:19
@@ -39,6 +74,6 @@
  *
  * @constructor
  * @this {Colletion Object}
- * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
- * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - additional properties
+ * @param {Collection|Selector} [collection=null] — <i lang="en">collection or selector for field "target"</i><i lang="ru">коллекция или селектор для поля "target"</i>
+ * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] — <i lang="en">additional properties</i><i lang="ru">дополнительные параметры</i>
  */

@@ -1,4 +1,4 @@
-var doc = {};
+var doc = {methods: [], classes: []};
 $(function () {
-	$("i[lang='eng']").hide();
+	$("i[lang='en']").hide();
 });
