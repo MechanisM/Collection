@@ -3,12 +3,6 @@
 	//// constructor
 	/////////////////////////////////
 	
-	/**
-	 * @constructor
-	 * @this {Colletion Object}
-	 * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
-	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - additional properties
-	 */
 	$.Collection = function (collection, prop) {
 		collection = collection || null;
 		prop = prop || null;

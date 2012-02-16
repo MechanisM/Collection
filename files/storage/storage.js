@@ -21,28 +21,28 @@
 				namespace: "nm",
 				
 				/**
-				 * active collection
+				 * collection
 				 * 
 				 * @field
 				 * @type Collection|Null
 				 */
 				collection: null,
 				/**
-				 * active filter ("false" if disabled)
+				 * filter ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				filter: false,
 				/**
-				 * active context
+				 * context
 				 * 
 				 * @field
 				 * @type Context
 				 */
 				context: "",
 				/**
-				 * active cache object
+				 * cache object
 				 * 
 				 * @field
 				 * @type Plain Object
@@ -78,14 +78,14 @@
 					lastIteration: false
 				},
 				/**
-				 * active var
+				 * temporary variables
 				 * 
 				 * @field
 				 * @type mixed
 				 */
 				variable: null,
 				/**
-				 * active deferred
+				 * deferred object
 				 * 
 				 * @field
 				 * @type jQuery Deferred
@@ -104,63 +104,63 @@
 				 */
 				page: 1,
 				/**
-				 * active parser ("false" if disabled)
+				 * parser ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				parser: false,
 				/**
-				 * active DOM insert mode (jQuery methods)
+				 * DOM insert mode (jQuery methods)
 				 * 
 				 * @field
 				 * @param String
 				 */
 				appendType: "html",
 				/**
-				 * active target (target to insert the result templating)
+				 * target (target to insert the result templating)
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				target: null,
 				/**
-				 * active selector (used to calculate the number of records per page)
+				 * selector (used to calculate the number of records per page, by default, are all the children of the element)
 				 * 
 				 * @field
 				 * @type Selector
 				 */
 				calculator: null,
 				/**
-				 * active pager
+				 * pager (an interface element to display the navigation through the pages of)
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				pager: null,
 				/**
-				 * active template
+				 * template
 				 * 
 				 * @field
 				 * @type Function
 				 */
 				template: null,
 				/**
-				 * active records in one page
+				 * the number of entries on one page
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				numberBreak: 10,
 				/**
-				 * active page count (used in "controlMode")
+				 * the number of pages in the navigation menu
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				pageBreak: 10,
 				/**
-				 * active empty result
+				 * empty result (in case if the search nothing is returned)
 				 * 
 				 * @field
 				 * @type String

@@ -4,8 +4,19 @@
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.sys = {
-		//
+		/**
+		 * the state of the system flags
+		 * 
+		 * @field
+		 * @type Plain Object
+		 */
 		flags: {
+			/**
+			 * the use of the active system flags
+			 * 
+			 * @field
+			 * @type Plain Object
+			 */
 			use: {
 				/**
 				 * use active context in methods

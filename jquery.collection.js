@@ -1,6 +1,7 @@
 ﻿/**
  * nimble - simple JavaScript framework for working with objects
  *
+ * @constructor
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 01.01.2012 21:55:59
  * @version 1.0.2
@@ -43,7 +44,7 @@ var nimble = (function () {
 		//
 		
 		/**
-		 * trim
+		 * removes all leading and trailing whitespace characters
 		 *
 		 * @param {String} str
 		 * @return {String}
@@ -58,28 +59,28 @@ var nimble = (function () {
 			return str.substring(0, i + 1);
 		},
 		/**
-		 * string test
+		 * returns a Boolean indicating whether the object is a string
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
 		isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
 		/**
-		 * number test
+		 * returns a Boolean indicating whether the object is a number
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
 		isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },
 		/**
-		 * boolean test
+		 * returns a Boolean indicating whether the object is a array (not an array-like object)
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
 		isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },
 		/**
-		 * null && undefined && empty string test
+		 * returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
@@ -87,7 +88,7 @@ var nimble = (function () {
 		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
 		/**
-		 * calculate math expression
+		 * calculate math expression for string
 		 * 
 		 * @param {mixed} val - new value
 		 * @param {mixed} old - old value
@@ -95,7 +96,8 @@ var nimble = (function () {
 		 */
 		expr: function (val, old) {
 			old = old !== undefined || old !== null ? old : "";
-			if (this.isString(val) && val.search(/^[+-\\*/]{1}=/) !== -1) {
+			if (this.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
+				//
 				val = val.split("=");
 				if (!isNaN(val[1])) { val[1] = +val[1]; }
 				// simple math
@@ -111,14 +113,14 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * set new value to object by link or get object by link
+		 * set new value to object by link, remove element by link or get element by link
 		 * 
 		 * @this {nimble}
 		 * @param {Object|Number|Boolean} obj - some object
 		 * @param {Context} context - link
 		 * @param {mixed} [value] - some value
 		 * @param {Boolean} [del=false] - if "true", remove source element
-		 * @return {nimble|Boolean|mixed}
+		 * @return {nimble|mixed}
 		 */
 		byLink: function (obj, context, value, del) {
 			context = context
@@ -304,40 +306,48 @@ var nimble = (function () {
 		}
 	};
 })();﻿/**
- * $.Collection - JavaScript framework for working with collections of data (using jQuery)
+ * <div class="lang_eng">
+ * $.Collection - JS (JavaScript) framework for working with collections of data (using jQuery)
+ *
+ * Copyright 2012, Andrey Kobets (Kobezzza)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
  *
  * glossary:
- * 1) Collection - data object the JavaScript (the JS), can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);
- * 2) Filter - the special function JS, which are selected from the collection by this or any other condition;
- * 3) Parser - the special function JS, engaged in post-processing of the resulting string selection from the collection of the;
- * 4) Context - a string that specifies a link to a certain context (region) collection, for example, the string "Name approximately 1" indicates the obj.Name[1], where obj is a collection of;
- * 5) Template - the special function JS, which converts the collection in line view, in accordance with these instructions for pasting in the DOM;
+ * 1) Collection - data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);
+ * 2) Filter - is a special function, which returns a Boolean value for each "row" of the collection;
+ * 3) Parser - is a special function which makes the post-processing of the template;
+ * 4) Context - a string which specifies a link to the context of the collection (for example: "Name > 1" indicates the obj.Name[1], where obj is the instance of collection);
+ * 5) Template - is a special function, which converts the collection in the text, in accordance with special regulations.
  *
  * addition:
  * the code is documented in accordance with the standard jsDoc
  * specific data types:
  * 1) [Colletion Object] is a reduced form of the [Object] and means an instance of $.Collection;
  * 2) [Colletion] is a reduced form of the [Object|Array] and means an collection of data;
- * 3) [Selector] is a reduced form of the [String] , and means the css selector (Sizzle syntax);
- * 4) [Context] is the reduced form of the [String] , and means the context of the collection;
+ * 3) [Selector] is a reduced form of the [String], and means the css selector (Sizzle syntax);
+ * 4) [Context] is the reduced form of the [String], and means the context of the collection (Nimble syntax);
  * 5) [Template] is a reduced form of the [Function] and means function-template;
- * 6) [Filter] is a reduced form of the [Filter|String|Boolean] and means the function-filter, string expressions or "false";
- * 7) [Parser] is a reduced form of the [Parser|String|Boolean] and means function-parser, string expressions or "false";
+ * 6) [Filter] is a reduced form of the [Filter|String] and means the function-filter or string expressions;
+ * 7) [Parser] is a reduced form of the [Parser|String] and means function-parser or string expressions;
  * 8) [Plain Object] is a reduced form of the [Object] and means hash table;
  * 9) [jQuery Object] is a reduced form of the [Object] and means an instance of jQuery;
  * 10) [jQuery Deferred] is the reduced form of the [Object] and means an instance of jQuery.Deferred.
- * --
- * the record type: [some parameter] means that this parameter is optional , and if not specified explicitly, it is not defined (has no default value)
- * all overloading methods documented in the description of the method, because the syntax of the jsDoc not allow it to do
- * --
+ *
  * for comfortable work it is recommended to use the latest stable version of jQuery
  *
+ *
  * enjoy!
+ * </div>
  * 
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 15.01.2012 23:16:19
- * @version 3.4
+ * @version 3.5
+ *
+ * @constructor
+ * @this {Colletion Object}
+ * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
+ * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - additional properties
  */
 (function ($) {
 	// try to use ECMAScript 5 "strict mode"
@@ -346,12 +356,6 @@ var nimble = (function () {
 	//// constructor
 	/////////////////////////////////
 	
-	/**
-	 * @constructor
-	 * @this {Colletion Object}
-	 * @param {Collection|Selector} [collection=null] - collection or selector for field "target"
-	 * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] - additional properties
-	 */
 	$.Collection = function (collection, prop) {
 		collection = collection || null;
 		prop = prop || null;
@@ -535,7 +539,7 @@ var nimble = (function () {
 				return array;
 			},
 			data = inObj(this);
-	
+		//
 		if (prop) { return new $.Collection(data, prop); }
 	
 		return new $.Collection(data);
@@ -726,28 +730,28 @@ var nimble = (function () {
 				namespace: "nm",
 				
 				/**
-				 * active collection
+				 * collection
 				 * 
 				 * @field
 				 * @type Collection|Null
 				 */
 				collection: null,
 				/**
-				 * active filter ("false" if disabled)
+				 * filter ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				filter: false,
 				/**
-				 * active context
+				 * context
 				 * 
 				 * @field
 				 * @type Context
 				 */
 				context: "",
 				/**
-				 * active cache object
+				 * cache object
 				 * 
 				 * @field
 				 * @type Plain Object
@@ -783,14 +787,14 @@ var nimble = (function () {
 					lastIteration: false
 				},
 				/**
-				 * active var
+				 * temporary variables
 				 * 
 				 * @field
 				 * @type mixed
 				 */
 				variable: null,
 				/**
-				 * active deferred
+				 * deferred object
 				 * 
 				 * @field
 				 * @type jQuery Deferred
@@ -809,63 +813,63 @@ var nimble = (function () {
 				 */
 				page: 1,
 				/**
-				 * active parser ("false" if disabled)
+				 * parser ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				parser: false,
 				/**
-				 * active DOM insert mode (jQuery methods)
+				 * DOM insert mode (jQuery methods)
 				 * 
 				 * @field
 				 * @param String
 				 */
 				appendType: "html",
 				/**
-				 * active target (target to insert the result templating)
+				 * target (target to insert the result templating)
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				target: null,
 				/**
-				 * active selector (used to calculate the number of records per page)
+				 * selector (used to calculate the number of records per page, by default, are all the children of the element)
 				 * 
 				 * @field
 				 * @type Selector
 				 */
 				calculator: null,
 				/**
-				 * active pager
+				 * pager (an interface element to display the navigation through the pages of)
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				pager: null,
 				/**
-				 * active template
+				 * template
 				 * 
 				 * @field
 				 * @type Function
 				 */
 				template: null,
 				/**
-				 * active records in one page
+				 * the number of entries on one page
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				numberBreak: 10,
 				/**
-				 * active page count (used in "controlMode")
+				 * the number of pages in the navigation menu
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				pageBreak: 10,
 				/**
-				 * active empty result
+				 * empty result (in case if the search nothing is returned)
 				 * 
 				 * @field
 				 * @type String
@@ -879,8 +883,19 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.sys = {
-		//
+		/**
+		 * the state of the system flags
+		 * 
+		 * @field
+		 * @type Plain Object
+		 */
 		flags: {
+			/**
+			 * the use of the active system flags
+			 * 
+			 * @field
+			 * @type Plain Object
+			 */
 			use: {
 				/**
 				 * use active context in methods

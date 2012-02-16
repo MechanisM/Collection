@@ -35,7 +35,9 @@
 			
 			if (param) {
 				for (key in param) {
-					if (param.hasOwnProperty(key)) { $this.data("cui")[name][key] = param[key]; }
+					if (!param.hasOwnProperty(key)) { continue; }
+					//
+					$this.data("cui")[name][key] = param[key];
 				}
 			}
 		});

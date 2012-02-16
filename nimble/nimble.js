@@ -37,7 +37,7 @@ var nimble = (function () {
 		//
 		
 		/**
-		 * trim
+		 * removes all leading and trailing whitespace characters
 		 *
 		 * @param {String} str
 		 * @return {String}
@@ -52,28 +52,28 @@ var nimble = (function () {
 			return str.substring(0, i + 1);
 		},
 		/**
-		 * string test
+		 * returns a Boolean indicating whether the object is a string
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
 		isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
 		/**
-		 * number test
+		 * returns a Boolean indicating whether the object is a number
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
 		isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },
 		/**
-		 * boolean test
+		 * returns a Boolean indicating whether the object is a array (not an array-like object)
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
 		 */
 		isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },
 		/**
-		 * null && undefined && empty string test
+		 * returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
 		 *
 		 * @param {mixed} obj
 		 * @return {Boolean}
@@ -81,7 +81,7 @@ var nimble = (function () {
 		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
 		/**
-		 * calculate math expression
+		 * calculate math expression for string
 		 * 
 		 * @param {mixed} val - new value
 		 * @param {mixed} old - old value
@@ -89,7 +89,8 @@ var nimble = (function () {
 		 */
 		expr: function (val, old) {
 			old = old !== undefined || old !== null ? old : "";
-			if (this.isString(val) && val.search(/^[+-\\*/]{1}=/) !== -1) {
+			if (this.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
+				//
 				val = val.split("=");
 				if (!isNaN(val[1])) { val[1] = +val[1]; }
 				// simple math
@@ -105,14 +106,14 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * set new value to object by link or get object by link
+		 * set new value to object by link, remove element by link or get element by link
 		 * 
 		 * @this {nimble}
 		 * @param {Object|Number|Boolean} obj - some object
 		 * @param {Context} context - link
 		 * @param {mixed} [value] - some value
 		 * @param {Boolean} [del=false] - if "true", remove source element
-		 * @return {nimble|Boolean|mixed}
+		 * @return {nimble|mixed}
 		 */
 		byLink: function (obj, context, value, del) {
 			context = context

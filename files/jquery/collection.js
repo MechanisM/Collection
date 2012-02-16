@@ -57,7 +57,7 @@
 				return array;
 			},
 			data = inObj(this);
-	
+		//
 		if (prop) { return new $.Collection(data, prop); }
 	
 		return new $.Collection(data);
