@@ -21,7 +21,7 @@
 		return context.join(nimble.CHILDREN);
 	};
 	/**
-	 * parent
+	 * change the context (the parent element)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] - level

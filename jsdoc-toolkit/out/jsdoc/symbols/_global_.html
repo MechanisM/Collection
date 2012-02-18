@@ -6,22 +6,24 @@
 		
 		<title>JsDoc Reference - _global_</title>
 
-		<style type="text/css">
+		<!--<style type="text/css">
 			/* default.css */
 body {
 	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
 	width: 800px;
+	
+	background-color: #222
 }
 .header {
 	clear: both;
 	background-color: #ccc;
-	padding: 8px;
+	padding: 8px
 }
 h1 {
 	font-size: 150%;
 	font-weight: bold;
 	padding: 0;
-	margin: 1em 0 0 .3em;
+	margin: 1em 0 0 .3em
 }
 hr {
 	border: none 0;
@@ -59,7 +61,11 @@ i { font-style: normal }
 	padding: 0;
 	margin: 0 0 8px 0;
 }
-.summaryTable { width: 100%; }
+.summaryTable {
+	width: 100%;
+	
+	border-radius: 5px
+}
 h1.classTitle {
 	font-size:170%;
 	line-height:130%;
@@ -67,26 +73,64 @@ h1.classTitle {
 h2 { font-size: 110%; }
 caption,
 div.sectionTitle {
-	background-color: #7F8FB1;
-	color: #fff;
-	font-size:130%;
+	color: #F2F2F2;
+	font-size: 13px;
 	text-align: left;
 	padding: 2px 6px 2px 6px;
-	border: 1px #7F8FB1 solid;
+	
+	border: 2px #333 solid;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	
+	background-color: #333;
+	
+	background-image: linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -o-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -moz-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -webkit-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -ms-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.43, rgb(122,122,122)),
+		color-stop(0.59, rgb(105,105,105)),
+		color-stop(0.88, rgb(87,91,94))
+	)
 }
 div.sectionTitle { margin-bottom: 8px; }
 .summaryTable thead { display: none; }
+.summaryTable td, .details {
+	background-image: linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -o-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -moz-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -webkit-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -ms-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(179,179,179)),
+		color-stop(0.59, rgb(189,189,189)),
+		color-stop(0.88, rgb(224,224,224))
+	)
+}
 .summaryTable td {
 	vertical-align: top;
 	padding: 4px;
-	border-bottom: 1px #7F8FB1 solid;
-	border-right: 1px #7F8FB1 solid;
+	border-bottom: 2px #333 solid;
+	border-right: 2px #333 solid
 }
 /*col#summaryAttributes {}*/
 .summaryTable td.attributes {
-	border-left: 1px #7F8FB1 solid;
+	border: 2px #333 solid;
+	border-top: none;
+	
 	width: 140px;
-	text-align: right;
+	text-align: right
 }
 td.attributes,
 .fixedFont {
@@ -134,8 +178,9 @@ td.attributes,
 	font-size: 10px;
 }
 
-		</style>
-		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		</style>-->
+		<link type="text/css" rel="stylesheet" href="../css/style.css"></script>
+		<script type="text/javascript" src="../jquery.js"></script>
 		<script type="text/javascript" src="../jquery.collection.min.js"></script>
 		<script type="text/javascript">
 			var doc = {methods: [], classes: []};
@@ -145,769 +190,808 @@ $(function () {
 		</script>
 	</head>
 
-	<body>
+	<body><div class="b-cont">
 <!-- ============================== header ================================= -->	
 		<!-- begin static/header.html -->
-		<div id="header">
-</div>
+		<div class="b-header"></div>
 		<!-- end static/header.html -->
-
 <!-- ============================== classes index ============================ -->
-		<div id="index">
+		<div class="b-index">
 			<!-- begin publish.classesIndex -->
-			<div align="center"><a href="../index.html">Class Index</a>
-| <a href="../files.html">File Index</a></div>
+			<div class="b-index__head">
+	<a href="../index.html">Class Index</a>
+	| <a href="../files.html">File Index</a>
+</div>
 <hr />
-<h2>Classes</h2>
-<ul class="classList">
+<h2>
+	<i lang="en">Classes:</i>
+	<i lang="ru">Классы:</i>
+</h2>
+<ul class="b-class-list">
 	
-	<li><a href="../symbols/%24.Collection.html">$.Collection</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="../symbols/%24.Collection.html">$.Collection</a>
+		</li>
 	
-	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<i><a href="../symbols/_global_.html">_global_</a></i>
+		</li>
 	
-	<li><a href="../symbols/Array.html">Array</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="../symbols/Array.html">Array</a>
+		</li>
 	
-	<li><a href="../symbols/nimble.html">nimble</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="../symbols/nimble.html">nimble</a>
+		</li>
 	
 </ul>
 <hr />
 			<!-- end publish.classesIndex -->
 		</div>
 		
-		<div id="content">
+		<div class="b-content">
 <!-- ============================== class title ============================ -->
-			<h1 class="classTitle">
-				
-				Built-In Namespace _global_
-			</h1>
-
+			<div class="b-head">
+				<h1 class="b-title">
+					
+					Built-In Namespace _global_
+				</h1>
 <!-- ============================== class summary ========================== -->			
-			<p class="description">
+				<p class="b-desc">
+					
+					
 				
-				
-			
-				
-				
-				
-			</p>
-
+					
+					
+					
+				</p>
+			</div>
 <!-- ============================== constructor summary ==================== -->			
 			
-
 <!-- ============================== properties summary ===================== -->
 			
-
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class _global_.">
-					<caption><i lang="en">Method Summary</i><i lang="ru">Методы</i></caption>
-					<thead>
-						<tr>
-							<th scope="col">
-								<i lang="en">Method Attributes</i>
-								<i lang="ru">Атрибуты метода</i>
-							</th>
-							<th scope="col">
-								<i lang="en">Method Name and Description</i>
-								<i lang="ru">Имя метода и описание</i>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "action",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#action">action</a></b>(el, i, data, cOLength, self, id)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "calFilter",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#calFilter">calFilter</a></b>(array, iter)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "deepAction",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#deepAction">deepAction</a></b>(el, i, data, aLength, self, id)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "genPage",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#genPage">genPage</a></b>(data, classes, i)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "inObj",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#inObj">inObj</a></b>(elem)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "reverseObject",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#reverseObject">reverseObject</a></b>(obj)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "sort",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#sort">sort</a></b>(a, b)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "sortObject",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#sortObject">sortObject</a></b>(obj)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "sortObjectByKey",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#sortObjectByKey">sortObjectByKey</a></b>(obj)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "text",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: false
-							});
-						</script>
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/_global_.html#text">text</a></b>(elem)
-								</div>
-								<div class="description"></div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
+					<table class="b-summary">
+						<caption>
+							<i lang="en">Method Summary</i>
+							<i lang="ru">Методы</i>
+						</caption>
+						
+							<tr data-obj='{"name": "action", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#action">action</a></strong>
+										(el, i, data, cOLength, self, id)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "calFilter", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#calFilter">calFilter</a></strong>
+										(array, iter)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "deepAction", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#deepAction">deepAction</a></strong>
+										(el, i, data, aLength, self, id)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "genPage", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#genPage">genPage</a></strong>
+										(data, classes, i)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "inObj", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#inObj">inObj</a></strong>
+										(elem)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "reverseObject", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#reverseObject">reverseObject</a></strong>
+										(obj)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "sort", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#sort">sort</a></strong>
+										(a, b)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "sortObject", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#sortObject">sortObject</a></strong>
+										(obj)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "sortObjectByKey", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#sortObjectByKey">sortObjectByKey</a></strong>
+										(obj)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "text", "isPrivate": false, "isInner": false, "isStatic": false}'>
+								<td class="b-summary__attr">
+									&nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										
+										<strong><a href="../symbols/_global_.html#text">text</a></strong>
+										(elem)
+									</div>
+									<div class="b-summary__desc__body"></div>
+								</td>
+							</tr>
+						
+					</table>
 				
 				
 				
 			
 <!-- ============================== events summary ======================== -->
 			
-
 <!-- ============================== constructor details ==================== -->		
 			
-
 <!-- ============================== field details ========================== -->		
 			
-
 <!-- ============================== method details ========================= -->		
 			
-				<div class="sectionTitle">
-					Method Detail
+				<div class="b-details">
+					<div class="b-section-title">
+						<i lang="en">Method Detail</i>
+						<i lang="ru">Описание методов</i>
+					</div>
+					<div class="b-details_back">
+						
+							<a name="action"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>action</strong>
+								(el, i, data, cOLength, self, id)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>el</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>i</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>data</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>cOLength</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>self</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>id</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="calFilter"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>calFilter</strong>
+								(array, iter)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>array</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>iter</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="deepAction"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>deepAction</strong>
+								(el, i, data, aLength, self, id)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>el</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>i</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>data</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>aLength</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>self</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>id</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="genPage"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>genPage</strong>
+								(data, classes, i)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>data</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>classes</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>i</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="inObj"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>inObj</strong>
+								(elem)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>elem</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="reverseObject"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>reverseObject</strong>
+								(obj)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>obj</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="sort"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>sort</strong>
+								(a, b)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>a</strong>
+											
+										</dt>
+										<dd></dd>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>b</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="sortObject"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>sortObject</strong>
+								(obj)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>obj</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="sortObjectByKey"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>sortObjectByKey</strong>
+								(obj)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>obj</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						<hr />
+					
+							<a name="text"> </a>
+							<div class="b-details__head">
+								
+									
+								
+								
+								<strong>text</strong>
+								(elem)
+							</div>
+							
+							<div class="b-details__desc">
+								
+								
+									<br />
+									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											
+											<strong>elem</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+							
+							
+
+						
+					
 				</div>
-				
-					<a name="action"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>action</b>(el, i, data, cOLength, self, id)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>el</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>i</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>data</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>cOLength</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>self</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>id</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="calFilter"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>calFilter</b>(array, iter)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>array</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>iter</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="deepAction"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>deepAction</b>(el, i, data, aLength, self, id)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>el</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>i</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>data</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>aLength</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>self</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>id</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="genPage"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>genPage</b>(data, classes, i)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>data</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>classes</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>i</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="inObj"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>inObj</b>(elem)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>elem</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="reverseObject"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>reverseObject</b>(obj)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>obj</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="sort"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>sort</b>(a, b)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>a</b>
-									
-								</dt>
-								<dd></dd>
-							
-								<dt>
-									<b>b</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="sortObject"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>sortObject</b>(obj)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>obj</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="sortObjectByKey"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>sortObjectByKey</b>(obj)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>obj</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="text"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>text</b>(elem)
-					
-					</div>
-					<div class="description">
-						
-						
-							<br />
-							<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<b>elem</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
-			
 			
 <!-- ============================== event details ========================= -->		
 			
-			
-			<hr />
 		</div>
-
-		
 <!-- ============================== footer ================================= -->
-		<div class="fineprint" style="clear:both">
+		<div class="b-footer" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 15:25:08 GMT+0300 (MSK)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Feb 18 2012 22:12:42 GMT+0300 (MSK)
 		</div>
-		<script type="text/javascript">
-			doc = new $.Collection(doc);
-		</script>
-	</body>
+	</div></body>
 </html>

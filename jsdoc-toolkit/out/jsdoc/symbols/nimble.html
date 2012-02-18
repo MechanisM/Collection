@@ -6,22 +6,24 @@
 		
 		<title>JsDoc Reference - nimble</title>
 
-		<style type="text/css">
+		<!--<style type="text/css">
 			/* default.css */
 body {
 	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
 	width: 800px;
+	
+	background-color: #222
 }
 .header {
 	clear: both;
 	background-color: #ccc;
-	padding: 8px;
+	padding: 8px
 }
 h1 {
 	font-size: 150%;
 	font-weight: bold;
 	padding: 0;
-	margin: 1em 0 0 .3em;
+	margin: 1em 0 0 .3em
 }
 hr {
 	border: none 0;
@@ -59,7 +61,11 @@ i { font-style: normal }
 	padding: 0;
 	margin: 0 0 8px 0;
 }
-.summaryTable { width: 100%; }
+.summaryTable {
+	width: 100%;
+	
+	border-radius: 5px
+}
 h1.classTitle {
 	font-size:170%;
 	line-height:130%;
@@ -67,26 +73,64 @@ h1.classTitle {
 h2 { font-size: 110%; }
 caption,
 div.sectionTitle {
-	background-color: #7F8FB1;
-	color: #fff;
-	font-size:130%;
+	color: #F2F2F2;
+	font-size: 13px;
 	text-align: left;
 	padding: 2px 6px 2px 6px;
-	border: 1px #7F8FB1 solid;
+	
+	border: 2px #333 solid;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	
+	background-color: #333;
+	
+	background-image: linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -o-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -moz-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -webkit-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -ms-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.43, rgb(122,122,122)),
+		color-stop(0.59, rgb(105,105,105)),
+		color-stop(0.88, rgb(87,91,94))
+	)
 }
 div.sectionTitle { margin-bottom: 8px; }
 .summaryTable thead { display: none; }
+.summaryTable td, .details {
+	background-image: linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -o-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -moz-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -webkit-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -ms-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(179,179,179)),
+		color-stop(0.59, rgb(189,189,189)),
+		color-stop(0.88, rgb(224,224,224))
+	)
+}
 .summaryTable td {
 	vertical-align: top;
 	padding: 4px;
-	border-bottom: 1px #7F8FB1 solid;
-	border-right: 1px #7F8FB1 solid;
+	border-bottom: 2px #333 solid;
+	border-right: 2px #333 solid
 }
 /*col#summaryAttributes {}*/
 .summaryTable td.attributes {
-	border-left: 1px #7F8FB1 solid;
+	border: 2px #333 solid;
+	border-top: none;
+	
 	width: 140px;
-	text-align: right;
+	text-align: right
 }
 td.attributes,
 .fixedFont {
@@ -134,8 +178,9 @@ td.attributes,
 	font-size: 10px;
 }
 
-		</style>
-		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		</style>-->
+		<link type="text/css" rel="stylesheet" href="../css/style.css"></script>
+		<script type="text/javascript" src="../jquery.js"></script>
 		<script type="text/javascript" src="../jquery.collection.min.js"></script>
 		<script type="text/javascript">
 			var doc = {methods: [], classes: []};
@@ -145,921 +190,1036 @@ $(function () {
 		</script>
 	</head>
 
-	<body>
+	<body><div class="b-cont">
 <!-- ============================== header ================================= -->	
 		<!-- begin static/header.html -->
-		<div id="header">
-</div>
+		<div class="b-header"></div>
 		<!-- end static/header.html -->
-
 <!-- ============================== classes index ============================ -->
-		<div id="index">
+		<div class="b-index">
 			<!-- begin publish.classesIndex -->
-			<div align="center"><a href="../index.html">Class Index</a>
-| <a href="../files.html">File Index</a></div>
+			<div class="b-index__head">
+	<a href="../index.html">Class Index</a>
+	| <a href="../files.html">File Index</a>
+</div>
 <hr />
-<h2>Classes</h2>
-<ul class="classList">
+<h2>
+	<i lang="en">Classes:</i>
+	<i lang="ru">Классы:</i>
+</h2>
+<ul class="b-class-list">
 	
-	<li><a href="../symbols/%24.Collection.html">$.Collection</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="../symbols/%24.Collection.html">$.Collection</a>
+		</li>
 	
-	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<i><a href="../symbols/_global_.html">_global_</a></i>
+		</li>
 	
-	<li><a href="../symbols/Array.html">Array</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="../symbols/Array.html">Array</a>
+		</li>
 	
-	<li><a href="../symbols/nimble.html">nimble</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="../symbols/nimble.html">nimble</a>
+		</li>
 	
 </ul>
 <hr />
 			<!-- end publish.classesIndex -->
 		</div>
 		
-		<div id="content">
+		<div class="b-content">
 <!-- ============================== class title ============================ -->
-			<h1 class="classTitle">
-				
-				Class nimble
-			</h1>
-
+			<div class="b-head">
+				<h1 class="b-title">
+					
+					Class nimble
+				</h1>
 <!-- ============================== class summary ========================== -->			
-			<p class="description">
-				<br />
-					<i lang="en">Version</i>
-					<i lang="ru">Версия</i>
-					1.0.2.<br />
+				<p class="b-desc">
+					<br />
+						<i lang="en">Version</i>
+						<i lang="ru">Версия</i>
+						1.0.2.<br />
+					
+					
 				
-				
-			
-				
-				
-				
-					<br /><i lang="en">Defined in: </i><i lang="ru">Определено в: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
-				
-			</p>
-
+					
+					
+					
+						<br />
+						<i lang="en">Defined in: </i>
+						<i lang="ru">Определено в: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+					
+				</p>
+			</div>
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class nimble.">
-				<caption>Class <i lang="en">Summary</i><i lang="ru">информация</i></caption>
-				<thead>
+				<table class="b-summary">
+					<caption>
+						Class 
+						<i lang="en">Summary</i>
+						<i lang="ru">информация</i>
+					</caption>
 					<tr>
-						<th scope="col">
-							<i lang="en">Constructor Attributes</i>
-							<i lang="ru">Атрибуты конструктора</i>
-						</th>
-						<th scope="col">
-							<i lang="en">Constructor Name and Description</i>
-							<i lang="ru">Имя конструктора и описание</i>
-						</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td class="attributes">&nbsp;</td>
-						<td class="nameDescription" >
-							<div class="fixedFont">
-								<b><a href="../symbols/nimble.html#constructor">nimble</a></b>()
+						<td class="b-summary__attr">
+							&nbsp;
+						</td>
+						<td class="b-summary__desc" >
+							<div class="b-summary__desc__head">
+								<strong><a href="../symbols/nimble.html#constructor">nimble</a></strong>
+								()
 							</div>
-							<div class="description">nimble - simple JavaScript framework for working with objects</div>
+							<div class="b-summary__desc__body">nimble - simple JavaScript framework for working with objects</div>
 						</td>
 					</tr>
-				</tbody>
-			</table>
+				</table>
 			
-
 <!-- ============================== properties summary ===================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class nimble.">
-					<caption><i lang="en">Field Summary</i><i lang="ru">Свойства (поля)</i></caption>
-					<thead>
-						<tr>
-							<th scope="col">
-								<i lang="en">Field Attributes</i>
-								<i lang="ru">Атрибут свойсва</i>
-							</th>
-							<th scope="col">
-								<i lang="en">Field Name and Description</i>
-								<i lang="ru">Имя свойства и описание</i>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &lt;constant&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								nimble.<b><a href="../symbols/nimble.html#.name">name</a></b>
-								</div>
-								<div class="description">framework name</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &lt;constant&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								nimble.<b><a href="../symbols/nimble.html#.version">version</a></b>
-								</div>
-								<div class="description">framework version</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
+					<table class="b-summary">
+						<caption>
+							<i lang="en">Field Summary</i>
+							<i lang="ru">Свойства (поля)</i>
+						</caption>
+						
+							<tr>
+								<td class="b-summary__attr">
+									&lt;static&gt; &lt;constant&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.name">name</a></strong>
+									</div>
+									<div class="b-summary__desc__body">framework name</div>
+								</td>
+							</tr>
+						
+							<tr>
+								<td class="b-summary__attr">
+									&lt;static&gt; &lt;constant&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.version">version</a></strong>
+									</div>
+									<div class="b-summary__desc__body">framework version</div>
+								</td>
+							</tr>
+						
+					</table>
 				
 				
 				
 			
-
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class nimble.">
-					<caption><i lang="en">Method Summary</i><i lang="ru">Методы</i></caption>
-					<thead>
-						<tr>
-							<th scope="col">
-								<i lang="en">Method Attributes</i>
-								<i lang="ru">Атрибуты метода</i>
-							</th>
-							<th scope="col">
-								<i lang="en">Method Name and Description</i>
-								<i lang="ru">Имя метода и описание</i>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "addElementToObject",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.addElementToObject">addElementToObject</a></b>(obj, active, value)
-								</div>
-								<div class="description">add new element to object</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "byLink",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.byLink">byLink</a></b>(obj, context, value, del)
-								</div>
-								<div class="description">set new value to object by link, remove element by link or get element by link</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "execEvent",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.execEvent">execEvent</a></b>(query, event, param, _this)
-								</div>
-								<div class="description">execute event</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "expr",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.expr">expr</a></b>(val, old)
-								</div>
-								<div class="description">calculate math expression for string</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "isArray",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.isArray">isArray</a></b>(obj)
-								</div>
-								<div class="description">returns a Boolean indicating whether the object is a array (not an array-like object)</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "isExists",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.isExists">isExists</a></b>(obj)
-								</div>
-								<div class="description">returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "isNumber",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.isNumber">isNumber</a></b>(obj)
-								</div>
-								<div class="description">returns a Boolean indicating whether the object is a number</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "isString",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.isString">isString</a></b>(obj)
-								</div>
-								<div class="description">returns a Boolean indicating whether the object is a string</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "nimble",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.nimble">nimble</a></b>()
-								</div>
-								<div class="description">return string: framework name + framework version</div>
-							</td>
-						</tr>
-					
-						<script type="text/javascript">
-							doc["methods"].push({
-								name: "trim",
-								
-								isPrivate: false,
-								isInner: false,
-								isStatic: true
-							});
-						</script>
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">nimble.<b><a href="../symbols/nimble.html#.trim">trim</a></b>(str)
-								</div>
-								<div class="description">removes all leading and trailing whitespace characters</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
+					<table class="b-summary">
+						<caption>
+							<i lang="en">Method Summary</i>
+							<i lang="ru">Методы</i>
+						</caption>
+						
+							<tr data-obj='{"name": "addElementToObject", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.addElementToObject">addElementToObject</a></strong>
+										(obj, active, value)
+									</div>
+									<div class="b-summary__desc__body">add new element to object</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "byLink", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.byLink">byLink</a></strong>
+										(obj, context, value, del)
+									</div>
+									<div class="b-summary__desc__body">set new value to object by link, remove element by link or get element by link</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "execEvent", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.execEvent">execEvent</a></strong>
+										(query, event, param, _this)
+									</div>
+									<div class="b-summary__desc__body">execute event</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "expr", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.expr">expr</a></strong>
+										(val, old)
+									</div>
+									<div class="b-summary__desc__body">calculate math expression for string</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "isArray", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.isArray">isArray</a></strong>
+										(obj)
+									</div>
+									<div class="b-summary__desc__body">returns a Boolean indicating whether the object is a array (not an array-like object)</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "isExists", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.isExists">isExists</a></strong>
+										(obj)
+									</div>
+									<div class="b-summary__desc__body">returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "isNumber", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.isNumber">isNumber</a></strong>
+										(obj)
+									</div>
+									<div class="b-summary__desc__body">returns a Boolean indicating whether the object is a number</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "isString", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.isString">isString</a></strong>
+										(obj)
+									</div>
+									<div class="b-summary__desc__body">returns a Boolean indicating whether the object is a string</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "nimble", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.nimble">nimble</a></strong>
+										()
+									</div>
+									<div class="b-summary__desc__body">return string: framework name + framework version</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "trim", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										nimble.
+										<strong><a href="../symbols/nimble.html#.trim">trim</a></strong>
+										(str)
+									</div>
+									<div class="b-summary__desc__body">removes all leading and trailing whitespace characters</div>
+								</td>
+							</tr>
+						
+					</table>
 				
 				
 				
 			
 <!-- ============================== events summary ======================== -->
 			
-
 <!-- ============================== constructor details ==================== -->		
 			
-			<div class="details"><a name="constructor"> </a>
-				<div class="sectionTitle">
-					Class Detail
+				<div class="b-details">
+					<a name="constructor"> </a>
+					<div class="b-section-title">
+						<i lang="en">Class Detail</i>
+						<i lang="ru">Описание</i>
+					</div>
+					
+					<div class="b-details_back">
+						<div class="b-details__head">
+							<span class="b-details__attr">
+								
+							</span>
+							<strong>nimble</strong>
+							()
+						</div>
+						
+						<div class="b-details__desc">
+							nimble - simple JavaScript framework for working with objects
+							
+						</div>
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+					</div>
 				</div>
-				
-				<div class="fixedFont">
-						<b>nimble</b>()
-				</div>
-				
-				<div class="description">
-					nimble - simple JavaScript framework for working with objects
-					
-				</div>
-				
-				
-				
-				
-					
-					
-					
-					
-					
-					
-					
-
-			</div>
 			
-
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
+				<div class="b-section-title">
+					<i lang="en">Field Detail</i>
+					<i lang="ru">Описание свойств</i>
 				</div>
-				
-					<a name=".name"> </a>
-					<div class="fixedFont">&lt;static&gt; &lt;constant&gt; 
+				<div class="b-details_back">
 					
-					<span class="light">{String}</span>
-					<span class="light">nimble.</span><b>name</b>
-					
-					</div>
-					<div class="description">
-						framework name
+						<a name=".name"> </a>
+						<div class="b-details__head">
+							<span class="b-details__attr">
+								&lt;static&gt; &lt;constant&gt; 
+							</span>
+							
+							<span class="b-light">{String}</span>
+							
+								<span class="b-light">nimble.</span>
+							
+							<strong>name</strong>
+						</div>
+						<div class="b-details__desc">
+							framework name
+							
+							
+						</div>
 						
 						
-					</div>
-					
-					
 
 						
 						
 						
 						
+						<hr />
+					
+						<a name=".version"> </a>
+						<div class="b-details__head">
+							<span class="b-details__attr">
+								&lt;static&gt; &lt;constant&gt; 
+							</span>
+							
+							<span class="b-light">{String}</span>
+							
+								<span class="b-light">nimble.</span>
+							
+							<strong>version</strong>
+						</div>
+						<div class="b-details__desc">
+							framework version
+							
+							
+						</div>
+						
+						
 
-					<hr />
-				
-					<a name=".version"> </a>
-					<div class="fixedFont">&lt;static&gt; &lt;constant&gt; 
+						
+						
+						
+						
+						
 					
-					<span class="light">{String}</span>
-					<span class="light">nimble.</span><b>version</b>
-					
-					</div>
-					<div class="description">
-						framework version
-						
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
+				</div>
 			
-
 <!-- ============================== method details ========================= -->		
 			
-				<div class="sectionTitle">
-					Method Detail
+				<div class="b-details">
+					<div class="b-section-title">
+						<i lang="en">Method Detail</i>
+						<i lang="ru">Описание методов</i>
+					</div>
+					<div class="b-details_back">
+						
+							<a name=".addElementToObject"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{Plain Object|Boolean}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>addElementToObject</strong>
+								(obj, active, value)
+							</div>
+							
+							<div class="b-details__desc">
+								add new element to object
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{Plain Object}</span> 
+											<strong>obj</strong>
+											
+										</dt>
+										<dd>- some object</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{String}</span> 
+											<strong>active</strong>
+											
+										</dt>
+										<dd>- property name (can use "->unshift" - the result will be similar to work for an array "unshift")</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>value</strong>
+											
+										</dt>
+										<dd>- some value</dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{Plain Object|Boolean}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".byLink"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{<a href="../symbols/nimble.html">nimble</a>|mixed}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>byLink</strong>
+								(obj, context, value, del)
+							</div>
+							
+							<div class="b-details__desc">
+								set new value to object by link, remove element by link or get element by link
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{Object|Number|Boolean}</span> 
+											<strong>obj</strong>
+											
+										</dt>
+										<dd>- some object</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{Context}</span> 
+											<strong>context</strong>
+											
+										</dt>
+										<dd>- link</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>value</strong>
+											
+												(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
+											
+										</dt>
+										<dd>- some value</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{Boolean}</span> 
+											<strong>del</strong>
+											
+												(<i lang="en">optional, default: <span class="b-detail-list__param__def">false</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">false</span></i>)
+											
+										</dt>
+										<dd>- if "true", remove source element</dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{<a href="../symbols/nimble.html">nimble</a>|mixed}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".execEvent"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{mixed}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>execEvent</strong>
+								(query, event, param, _this)
+							</div>
+							
+							<div class="b-details__desc">
+								execute event
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{String}</span> 
+											<strong>query</strong>
+											
+										</dt>
+										<dd>- query string</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{Object}</span> 
+											<strong>event</strong>
+											
+										</dt>
+										<dd>- event request</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>param</strong>
+											
+												(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
+											
+										</dt>
+										<dd>- input parameters</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>_this</strong>
+											
+												(<i lang="en">optional, default: <span class="b-detail-list__param__def">event</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">event</span></i>)
+											
+										</dt>
+										<dd>- this object</dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{mixed}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".expr"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{mixed}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>expr</strong>
+								(val, old)
+							</div>
+							
+							<div class="b-details__desc">
+								calculate math expression for string
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>val</strong>
+											
+										</dt>
+										<dd>- new value</dd>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>old</strong>
+											
+										</dt>
+										<dd>- old value</dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{mixed}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".isArray"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{Boolean}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>isArray</strong>
+								(obj)
+							</div>
+							
+							<div class="b-details__desc">
+								returns a Boolean indicating whether the object is a array (not an array-like object)
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>obj</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{Boolean}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".isExists"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{Boolean}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>isExists</strong>
+								(obj)
+							</div>
+							
+							<div class="b-details__desc">
+								returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>obj</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{Boolean}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".isNumber"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{Boolean}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>isNumber</strong>
+								(obj)
+							</div>
+							
+							<div class="b-details__desc">
+								returns a Boolean indicating whether the object is a number
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>obj</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{Boolean}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".isString"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{Boolean}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>isString</strong>
+								(obj)
+							</div>
+							
+							<div class="b-details__desc">
+								returns a Boolean indicating whether the object is a string
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{mixed}</span> 
+											<strong>obj</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{Boolean}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".nimble"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{String}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>nimble</strong>
+								()
+							</div>
+							
+							<div class="b-details__desc">
+								return string: framework name + framework version
+								
+								
+							</div>
+							
+							
+							
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{String}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".trim"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{String}</span>
+								
+								
+									<span class="b-light">nimble.</span>
+								
+								<strong>trim</strong>
+								(str)
+							</div>
+							
+							<div class="b-details__desc">
+								removes all leading and trailing whitespace characters
+								
+								
+							</div>
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Parameters</i>
+										<i lang="ru">Входные параметры</i>:
+									</dt>
+									
+										<dt class="b-detail-list__title">
+											<span class="b-detail-list__param">{String}</span> 
+											<strong>str</strong>
+											
+										</dt>
+										<dd></dd>
+									
+								</dl>
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{String}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						
+					
 				</div>
-				
-					<a name=".addElementToObject"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Plain Object|Boolean}</span>
-					<span class="light">nimble.</span><b>addElementToObject</b>(obj, active, value)
-					
-					</div>
-					<div class="description">
-						add new element to object
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Plain Object}</span> <b>obj</b>
-									
-								</dt>
-								<dd>- some object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>active</b>
-									
-								</dt>
-								<dd>- property name (can use "->unshift" - the result will be similar to work for an array "unshift")</dd>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>value</b>
-									
-								</dt>
-								<dd>- some value</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{Plain Object|Boolean}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".byLink"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{<a href="../symbols/nimble.html">nimble</a>|mixed}</span>
-					<span class="light">nimble.</span><b>byLink</b>(obj, context, value, del)
-					
-					</div>
-					<div class="description">
-						set new value to object by link, remove element by link or get element by link
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object|Number|Boolean}</span> <b>obj</b>
-									
-								</dt>
-								<dd>- some object</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Context}</span> <b>context</b>
-									
-								</dt>
-								<dd>- link</dd>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>value</b>
-									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
-								</dt>
-								<dd>- some value</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Boolean}</span> <b>del</b>
-									(<i lang="en">optional, default: false</i><i lang="ru">необязательный параметр, по умолчанию: false</i>)
-								</dt>
-								<dd>- if "true", remove source element</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/nimble.html">nimble</a>|mixed}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".execEvent"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{mixed}</span>
-					<span class="light">nimble.</span><b>execEvent</b>(query, event, param, _this)
-					
-					</div>
-					<div class="description">
-						execute event
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>query</b>
-									
-								</dt>
-								<dd>- query string</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>event</b>
-									
-								</dt>
-								<dd>- event request</dd>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>param</b>
-									(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
-								</dt>
-								<dd>- input parameters</dd>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>_this</b>
-									(<i lang="en">optional, default: event</i><i lang="ru">необязательный параметр, по умолчанию: event</i>)
-								</dt>
-								<dd>- this object</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{mixed}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".expr"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{mixed}</span>
-					<span class="light">nimble.</span><b>expr</b>(val, old)
-					
-					</div>
-					<div class="description">
-						calculate math expression for string
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>val</b>
-									
-								</dt>
-								<dd>- new value</dd>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>old</b>
-									
-								</dt>
-								<dd>- old value</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{mixed}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".isArray"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Boolean}</span>
-					<span class="light">nimble.</span><b>isArray</b>(obj)
-					
-					</div>
-					<div class="description">
-						returns a Boolean indicating whether the object is a array (not an array-like object)
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>obj</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".isExists"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Boolean}</span>
-					<span class="light">nimble.</span><b>isExists</b>(obj)
-					
-					</div>
-					<div class="description">
-						returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>obj</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".isNumber"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Boolean}</span>
-					<span class="light">nimble.</span><b>isNumber</b>(obj)
-					
-					</div>
-					<div class="description">
-						returns a Boolean indicating whether the object is a number
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>obj</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".isString"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{Boolean}</span>
-					<span class="light">nimble.</span><b>isString</b>(obj)
-					
-					</div>
-					<div class="description">
-						returns a Boolean indicating whether the object is a string
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{mixed}</span> <b>obj</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{Boolean}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".nimble"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{String}</span>
-					<span class="light">nimble.</span><b>nimble</b>()
-					
-					</div>
-					<div class="description">
-						return string: framework name + framework version
-						
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name=".trim"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					<span class="light">{String}</span>
-					<span class="light">nimble.</span><b>trim</b>(str)
-					
-					</div>
-					<div class="description">
-						removes all leading and trailing whitespace characters
-						
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Parameters</i><i lang="ru">Входные параметры</i>:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>str</b>
-									
-								</dt>
-								<dd></dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading"><i lang="en">Returns</i><i lang="ru">Возвращаемое значение</i>:</dt>
-							
-								<dd><span class="light fixedFont">{String}</span> </dd>
-							
-							</dl>
-						
-						
-						
-
-					
-				
-			
 			
 <!-- ============================== event details ========================= -->		
 			
-			
-			<hr />
 		</div>
-
-		
 <!-- ============================== footer ================================= -->
-		<div class="fineprint" style="clear:both">
+		<div class="b-footer" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 15:25:08 GMT+0300 (MSK)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sat Feb 18 2012 22:12:42 GMT+0300 (MSK)
 		</div>
-		<script type="text/javascript">
-			doc = new $.Collection(doc);
-		</script>
-	</body>
+	</div></body>
 </html>

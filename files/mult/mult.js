@@ -108,6 +108,7 @@
 		indexOf = parseInt(indexOf) || false;
 	
 		var
+			self = this,
 			tmpObj = {},
 		
 			cObj, cOLength,
@@ -118,7 +119,13 @@
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
-		cOLength = this.length(cObj);
+		
+		// length function
+		cOLength = function () {
+			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
+			
+			return cOLength.val;
+		}
 		//
 		if ($.isArray(cObj)) {
 			//
@@ -187,6 +194,8 @@
 		}
 		//
 		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
+		//
+		cOLength = null;
 		
 		return this;
 	};

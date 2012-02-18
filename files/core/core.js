@@ -4,8 +4,8 @@
 	/////////////////////////////////
 	
 	$.Collection = function (collection, prop) {
-		collection = collection || null;
-		prop = prop || null;
+		collection = collection || "";
+		prop = prop || "";
 		
 		// create "factory" function if need
 		if (this.fn && (!this.fn.name || this.fn.name !== "$.Collection")) { return new $.Collection(collection, prop); }
@@ -16,7 +16,14 @@
 		
 		// extend public fields by additional properties if need
 		if (prop) { $.extend(true, active, prop); }
-		if ($.isString(active.filter)) { active.filter = this._compileFilter(active.filter); }
+		
+		// compile (if need)
+		if ($.isString(active.filter) && active.filter.search(/^:/)) {
+			active.filter = this._compileFilter(active.filter);
+		}
+		if ($.isString(active.parser) && active.parser.search(/^:/)) {
+			active.parser = this._compileParser(active.parser);
+		}
 		
 		// if "collection" is string
 		if ($.isString(collection)) {

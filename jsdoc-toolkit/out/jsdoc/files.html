@@ -6,22 +6,24 @@
 		<title>JsDoc Reference - File Index</title>
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<style type="text/css">
+		<!--<style type="text/css">
 			/* default.css */
 body {
 	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
 	width: 800px;
+	
+	background-color: #222
 }
 .header {
 	clear: both;
 	background-color: #ccc;
-	padding: 8px;
+	padding: 8px
 }
 h1 {
 	font-size: 150%;
 	font-weight: bold;
 	padding: 0;
-	margin: 1em 0 0 .3em;
+	margin: 1em 0 0 .3em
 }
 hr {
 	border: none 0;
@@ -59,7 +61,11 @@ i { font-style: normal }
 	padding: 0;
 	margin: 0 0 8px 0;
 }
-.summaryTable { width: 100%; }
+.summaryTable {
+	width: 100%;
+	
+	border-radius: 5px
+}
 h1.classTitle {
 	font-size:170%;
 	line-height:130%;
@@ -67,26 +73,64 @@ h1.classTitle {
 h2 { font-size: 110%; }
 caption,
 div.sectionTitle {
-	background-color: #7F8FB1;
-	color: #fff;
-	font-size:130%;
+	color: #F2F2F2;
+	font-size: 13px;
 	text-align: left;
 	padding: 2px 6px 2px 6px;
-	border: 1px #7F8FB1 solid;
+	
+	border: 2px #333 solid;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	
+	background-color: #333;
+	
+	background-image: linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -o-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -moz-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -webkit-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	background-image: -ms-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
+	
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0.43, rgb(122,122,122)),
+		color-stop(0.59, rgb(105,105,105)),
+		color-stop(0.88, rgb(87,91,94))
+	)
 }
 div.sectionTitle { margin-bottom: 8px; }
 .summaryTable thead { display: none; }
+.summaryTable td, .details {
+	background-image: linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -o-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -moz-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -webkit-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	background-image: -ms-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
+	
+	background-image: -webkit-gradient(
+		linear,
+		left bottom,
+		left top,
+		color-stop(0, rgb(179,179,179)),
+		color-stop(0.59, rgb(189,189,189)),
+		color-stop(0.88, rgb(224,224,224))
+	)
+}
 .summaryTable td {
 	vertical-align: top;
 	padding: 4px;
-	border-bottom: 1px #7F8FB1 solid;
-	border-right: 1px #7F8FB1 solid;
+	border-bottom: 2px #333 solid;
+	border-right: 2px #333 solid
 }
 /*col#summaryAttributes {}*/
 .summaryTable td.attributes {
-	border-left: 1px #7F8FB1 solid;
+	border: 2px #333 solid;
+	border-top: none;
+	
 	width: 140px;
-	text-align: right;
+	text-align: right
 }
 td.attributes,
 .fixedFont {
@@ -134,8 +178,9 @@ td.attributes,
 	font-size: 10px;
 }
 
-		</style>
-		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		</style>-->
+		<link type="text/css" rel="stylesheet" href="../css/style.css"></script>
+		<script type="text/javascript" src="../jquery.js"></script>
 		<script type="text/javascript" src="../jquery.collection.min.js"></script>
 		<script type="text/javascript">
 			var doc = {methods: [], classes: []};
@@ -146,23 +191,39 @@ $(function () {
 	</head>
 	
 	<body>
-		<div id="header">
-</div>
+		<div class="b-header"></div>
 		
 		<div id="index">
-			<div align="center"><a href="index.html">Class Index</a>
-| <a href="files.html">File Index</a></div>
+			<div class="b-index__head">
+	<a href="index.html">Class Index</a>
+	| <a href="files.html">File Index</a>
+</div>
 <hr />
-<h2>Classes</h2>
-<ul class="classList">
+<h2>
+	<i lang="en">Classes:</i>
+	<i lang="ru">Классы:</i>
+</h2>
+<ul class="b-class-list">
 	
-	<li><a href="symbols/%24.Collection.html">$.Collection</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="symbols/%24.Collection.html">$.Collection</a>
+		</li>
 	
-	<li><i><a href="symbols/_global_.html">_global_</a></i></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<i><a href="symbols/_global_.html">_global_</a></i>
+		</li>
 	
-	<li><a href="symbols/Array.html">Array</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="symbols/Array.html">Array</a>
+		</li>
 	
-	<li><a href="symbols/nimble.html">nimble</a></li>
+		<li>
+			<img src="../img/arrow_left.png" height="16" width="16" alt="" />
+			<a href="symbols/nimble.html">nimble</a>
+		</li>
 	
 </ul>
 <hr />
@@ -188,7 +249,7 @@ $(function () {
 		</div>
 		<div class="fineprint" style="clear:both">
 			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.4.0 on Thu Feb 16 2012 15:25:08 GMT+0300 (MSK)
+			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.4.0 on Sat Feb 18 2012 22:12:42 GMT+0300 (MSK)
 		</div>
 	</body>
 </html>

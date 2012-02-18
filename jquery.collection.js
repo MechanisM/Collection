@@ -392,8 +392,8 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	$.Collection = function (collection, prop) {
-		collection = collection || null;
-		prop = prop || null;
+		collection = collection || "";
+		prop = prop || "";
 		
 		// create "factory" function if need
 		if (this.fn && (!this.fn.name || this.fn.name !== "$.Collection")) { return new $.Collection(collection, prop); }
@@ -404,7 +404,14 @@ var nimble = (function () {
 		
 		// extend public fields by additional properties if need
 		if (prop) { $.extend(true, active, prop); }
-		if ($.isString(active.filter)) { active.filter = this._compileFilter(active.filter); }
+		
+		// compile (if need)
+		if ($.isString(active.filter) && active.filter.search(/^:/)) {
+			active.filter = this._compileFilter(active.filter);
+		}
+		if ($.isString(active.parser) && active.parser.search(/^:/)) {
+			active.parser = this._compileParser(active.parser);
+		}
 		
 		// if "collection" is string
 		if ($.isString(collection)) {
@@ -1779,6 +1786,7 @@ var nimble = (function () {
 		indexOf = parseInt(indexOf) || false;
 	
 		var
+			self = this,
 			tmpObj = {},
 		
 			cObj, cOLength,
@@ -1789,7 +1797,11 @@ var nimble = (function () {
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
-		cOLength = this.length(cObj);
+		cOLength = function () {
+			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
+			
+			return cOLength.val;
+		}
 		//
 		if ($.isArray(cObj)) {
 			//
@@ -1858,6 +1870,8 @@ var nimble = (function () {
 		}
 		//
 		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
+		//
+		cOLength = null;
 		
 		return this;
 	};	
@@ -2525,9 +2539,9 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.sort = function (field, rev, fn, id) {
-		field = field || null;
+		field = field || "";
 		rev = rev || false;
-		fn = fn && fn !== true ? fn === false ? null : fn : function (a) {
+		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
 			if (isNaN(a)) { return a.toUpperCase(); }
 			
 			return a;
@@ -3152,7 +3166,7 @@ var nimble = (function () {
 		return context.join(nimble.CHILDREN);
 	};
 	/**
-	 * parent
+	 * change the context (the parent element)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] - level

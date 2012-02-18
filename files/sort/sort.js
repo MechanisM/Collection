@@ -15,9 +15,9 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.sort = function (field, rev, fn, id) {
-		field = field || null;
+		field = field || "";
 		rev = rev || false;
-		fn = fn && fn !== true ? fn === false ? null : fn : function (a) {
+		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
 			if (isNaN(a)) { return a.toUpperCase(); }
 			
 			return a;
