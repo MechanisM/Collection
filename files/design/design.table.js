@@ -4,12 +4,13 @@
 	/////////////////////////////////
 		
 	/**
-	 * generating the table
+	 * <i lang="en">generating the table</i>
+	 * <i lang="ru">генерировать таблицу</i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [count=4] - td number to a string
-	 * @param {String} [tag="div"] - tag name
-	 * @param {Boolean} [empty=true] - display empty cells
+	 * @param {Number} [count=4] — <i lang="en">td number to a string</i><i lang="ru">количество ячеек в строке</i>
+	 * @param {String} [tag="div"] — <i lang="en">tag name</i><i lang="ru">тег, по которому идёт генерация</i>
+	 * @param {Boolean} [empty=true] — <i lang="en">display empty cells</i><i lang="ru">отображать пустые ячейки</i>
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.genTable = function (count, tag, empty) {

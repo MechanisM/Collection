@@ -4,7 +4,8 @@
 	/////////////////////////////////
 	
 	/**
-	 * compiler templates
+	 * <i lang="en">compile the template</i>
+	 * <i lang="ru">компилировать шаблон</i>
 	 * 
 	 * @this {jQuery Object}
 	 * @throw {Error}
@@ -35,10 +36,11 @@
 	};
 	
 	/**
-	 * make templates
+	 * <i lang="en">make templates</i>
+	 * <i lang="ru">собрать шаблоны</i>
 	 * 
 	 * @this {jQuery Object}
-	 * @param {Collection Object} cObj - an instance of $.Collection
+	 * @param {Collection Object} cObj — <i lang="en">an instance of $.Collection</i><i lang="ru">экземпляр $.Collection</i>
 	 * @return {Collection Object}
 	 */
 	$.fn.ctplMake = function (cObj) {

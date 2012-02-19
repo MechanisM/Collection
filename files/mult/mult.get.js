@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -23,9 +23,6 @@
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._getOne(filter, id || "");
 			}
-		//
-		filter = filter || "";
-		id = id || this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -34,7 +31,7 @@
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		}
+		} else { id = id || ""; }
 	
 		// values by default
 		mult = mult === false ? false : true;
@@ -53,7 +50,7 @@
 				return true;
 			};
 		//
-		this.forEach(action, filter, id, mult, count, from, indexOf);
+		this.forEach(action, filter || "", id, mult, count, from, indexOf);
 	
 		return result;
 	};
@@ -61,10 +58,10 @@
 	 * get element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.prototype.getOne = function (filter, id) {
-		return this.get($.isExists(filter) ? filter : "", id || "", false);
+		return this.get(filter || "", id || "", false);
 	};

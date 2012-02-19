@@ -1,5 +1,5 @@
 ﻿/**
- * nimble - simple JavaScript framework for working with objects
+ * nimble - <i lang="en">simple JavaScript framework for working with objects</i><i lang="ru">JavaScript фреймворк для работы с объектами</i>
  *
  * @constructor
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
@@ -12,21 +12,24 @@ var nimble = (function () {
 	
 	return {
 		/**
-		 * framework name
+		 * <i lang="en">framework name</i>
+		 * <i lang="ru">название фреймворка</i>
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		name: "nimble",
 		/**
-		 * framework version
+		 * <i lang="en">framework version</i>
+		 * <i lang="ru">версия фреймворка</i>
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		version: "1.0.2",
 		/**
-		 * return string: framework name + framework version
+		 * <i lang="en">return string: framework name + framework version</i>
+		 * <i lang="ru">вернуть строку: название фреймворка + версия</i>
 		 *
 		 * @this {nimble}
 		 * @return {String}
@@ -44,9 +47,10 @@ var nimble = (function () {
 		//
 		
 		/**
-		 * removes all leading and trailing whitespace characters
+		 * <i lang="en">removes all leading and trailing whitespace characters</i>
+		 * <i lang="ru">удалить крайние пробелы у строки</i>
 		 *
-		 * @param {String} str
+		 * @param {String} str — <i lang="en">some string</i><i lang="ru">исходная строка</i>
 		 * @return {String}
 		 */
 		trim: function (str) {
@@ -59,39 +63,44 @@ var nimble = (function () {
 			return str.substring(0, i + 1);
 		},
 		/**
-		 * returns a Boolean indicating whether the object is a string
+		 * <i lang="en">returns a Boolean indicating whether the object is a string</i>
+		 * <i lang="ru">проверить, является ли объект строкой</i>
 		 *
-		 * @param {mixed} obj
+		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
 		 * @return {Boolean}
 		 */
 		isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
 		/**
-		 * returns a Boolean indicating whether the object is a number
+		 * <i lang="en">returns a Boolean indicating whether the object is a number</i>
+		 * <i lang="ru">проверить, является ли объект числом</i>
 		 *
-		 * @param {mixed} obj
+		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
 		 * @return {Boolean}
 		 */
 		isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },
 		/**
-		 * returns a Boolean indicating whether the object is a array (not an array-like object)
+		 * <i lang="en">returns a Boolean indicating whether the object is a array (not an array-like object)</i>
+		 * <i lang="ru">проверить, является ли объект хеш–таблицей</i>
 		 *
-		 * @param {mixed} obj
+		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
 		 * @return {Boolean}
 		 */
 		isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },
 		/**
-		 * returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
+		 * <i lang="en">returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)</i>
+		 * <i lang="ru">проверить, существует ли объект (проверка типов undefined, null, "")</i>
 		 *
-		 * @param {mixed} obj
+		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
 		 * @return {Boolean}
 		 */
 		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
 		/**
-		 * calculate math expression for string
+		 * <i lang="en">calculate math expression for string</i>
+		 * <i lang="ru">рассчитать выражение для строки</i>
 		 * 
-		 * @param {mixed} val - new value
-		 * @param {mixed} old - old value
+		 * @param {mixed} val — <i lang="en">new value</i><i lang="ru">новое значение</i>
+		 * @param {mixed} old — <i lang="en">old value</i><i lang="ru">старое значение</i>
 		 * @return {mixed}
 		 */
 		expr: function (val, old) {
@@ -113,13 +122,14 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * set new value to object by link, remove element by link or get element by link
+		 * <i lang="en">set new value to object by link, remove element by link or get element by link</i>
+		 * <i lang="ru">установить/получить значение объекта по ссылке или удалить элемент по ссылке</i>
 		 * 
 		 * @this {nimble}
-		 * @param {Object|Number|Boolean} obj - some object
-		 * @param {Context} context - link
-		 * @param {mixed} [value] - some value
-		 * @param {Boolean} [del=false] - if "true", remove source element
+		 * @param {Object|Number|Boolean} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
+		 * @param {Context} context — <i lang="en">link</i><i lang="ru">контекст</i>
+		 * @param {mixed} [value] — <i lang="en">some value</i><i lang="ru">новое значение</i>
+		 * @param {Boolean} [del=false] — <i lang="en">if "true", remove source element</i><i lang="ru">если "true", то удалить элемент</i>
 		 * @return {nimble|mixed}
 		 */
 		byLink: function (obj, context, value, del) {
@@ -249,13 +259,14 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * execute event
+		 * <i lang="en">execute event</i>
+		 * <i lang="ru">инициализировать событие</i>
 		 * 
 		 * @this {nimble}
-		 * @param {String} query - query string
-		 * @param {Object} event - event request
-		 * @param {mixed} [param] - input parameters
-		 * @param {mixed} [_this=event] - this object
+		 * @param {String} query — <i lang="en">query string</i><i lang="ru">строка запроса</i>
+		 * @param {Object} event — <i lang="en">event object</i><i lang="ru">объект запроса</i>
+		 * @param {mixed} [param] — <i lang="en">input parameters</i><i lang="ru">входные параметр</i>
+		 * @param {mixed} [_this=event] — <i lang="en">this object</i><i lang="ru">this для функции обратного вызова</i>
 		 * @return {mixed}
 		 */
 		execEvent: function (query, event, param, _this) {
@@ -280,12 +291,13 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * add new element to object
+		 * <i lang="en">add new element to object</i>
+		 * <i lang="ru">добавить новое значение объекту</i>
 		 *
 		 * @this {nimble}
-		 * @param {Plain Object} obj - some object
-		 * @param {String} active - property name (can use "->unshift" - the result will be similar to work for an array "unshift")
-		 * @param {mixed} value - some value
+		 * @param {Plain Object} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
+		 * @param {String} active — <i lang="en">property name (can use "->unshift" — the result will be similar to work for an array "unshift")</i><i lang="ru">имя нового свойства (можно использовать константу "->unshift" — результат будет идентичен работе метода массива "unshift")</i>
+		 * @param {mixed} value — <i lang="en">some value</i><i lang="ru">значение свойства</i>
 		 * @return {Plain Object|Boolean}
 		 */
 		addElementToObject: function (obj, active, value) {
@@ -327,8 +339,8 @@ var nimble = (function () {
  * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (Sizzle syntax);</li>
  * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li>
  * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li>
- * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String]</b> and means the function—filter or string expressions;</li>
- * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function—parser or string expressions;</li>
+ * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String]</b> and means the function—filter or string expression;</li>
+ * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function—parser or string expression;</li>
  * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li>
  * <li><b>[jQuery Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of jQuery;</li>
  * <li><b>[jQuery Deferred]</b> is the reduced form of the <b>[Object]</b> and means an instance of jQuery.Deferred.</li>
@@ -376,10 +388,11 @@ var nimble = (function () {
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 15.01.2012 23:16:19
+ * @date: 19.02.2012 13:24:31
  * @version 3.5
  *
  * @constructor
+ * @example http://jsfiddle.net/kobezzza/ZEcaB/
  * @this {Colletion Object}
  * @param {Collection|Selector} [collection=null] — <i lang="en">collection or selector for field "target"</i><i lang="ru">коллекция или селектор для поля "target"</i>
  * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] — <i lang="en">additional properties</i><i lang="ru">дополнительные параметры</i>
@@ -469,21 +482,24 @@ var nimble = (function () {
 	
 	$.Collection.prototype = {
 		/**
-		 * framework name
+		 * <i lang="en">framework name</i>
+		 * <i lang="ru">название фреймворка</i>
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		name: "$.Collection",
 		/**
-		 * framework version
+		 * <i lang="en">framework version</i>
+		 * <i lang="ru">версия фреймворка</i>
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		version: "3.5",
 		/**
-		 * return string: framework name + framework version
+		 * <i lang="en">return string: framework name + framework version</i>
+		 * <i lang="ru">вернуть строку: название фреймворка + версия</i>
 		 *
 		 * @this {Collection Prototype}
 		 * @return {String}
@@ -498,6 +514,7 @@ var nimble = (function () {
 		/**
 		 * stack parameters
 		 * 
+		 * @private
 		 * @field
 		 * @type Array
 		*/
@@ -542,10 +559,12 @@ var nimble = (function () {
 	$.fn = $.fn;
 	
 	/**
-	 * jQuery collection
+	 * <i lang="en">jQuery collection</i>
+	 * <i lang="ru">jQuery коллекция</i>
 	 * 
+	 * @example http://jsfiddle.net/kobezzza/VqVdP/
 	 * @this {jQuery Object}
-	 * @param {Object} prop - user's preferences
+	 * @param {Object} prop — <i lang="en">user's preferences</i><i lang="ru">дополнительные свойства</i>
 	 * @return {Colletion Object}
 	 */
 	$.fn.collection = function (prop) {
@@ -616,7 +635,8 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * compiler templates
+	 * <i lang="en">compile the template</i>
+	 * <i lang="ru">компилировать шаблон</i>
 	 * 
 	 * @this {jQuery Object}
 	 * @throw {Error}
@@ -647,10 +667,11 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * make templates
+	 * <i lang="en">make templates</i>
+	 * <i lang="ru">собрать шаблоны</i>
 	 * 
 	 * @this {jQuery Object}
-	 * @param {Collection Object} cObj - an instance of $.Collection
+	 * @param {Collection Object} cObj — <i lang="en">an instance of $.Collection</i><i lang="ru">экземпляр $.Collection</i>
 	 * @return {Collection Object}
 	 */
 	$.fn.ctplMake = function (cObj) {
@@ -692,33 +713,37 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * string test
-	 * 
-	 * @param {mixed} val
+	 * <i lang="en">returns a Boolean indicating whether the object is a string</i>
+	 * <i lang="ru">проверить, является ли объект строкой</i>
+	 *
+	 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
 	 * @return {Boolean}
 	 */
 	$.isString = function (val) { return nimble.isString(val); };
 	/**
-	 * boolean test
-	 * 
-	 * @param {mixed} val
+	 * <i lang="en">returns a Boolean indicating whether the object is a string</i>
+	 * <i lang="ru">проверить, является ли объект логическим значением</i>
+	 *
+	 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
 	 * @return {Boolean}
 	 */
 	$.isBoolean = function (val) {
 		return Object.prototype.toString.call(val) === "[object Boolean]";
 	};
 	/**
-	 * null && undefined && empty string test
-	 * 
-	 * @param {mixed} val
+	 * <i lang="en">returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)</i>
+	 * <i lang="ru">проверить, существует ли объект (проверка типов undefined, null, "")</i>
+	 *
+	 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
 	 * @return {Boolean}
 	 */
 	$.isExists = function (val) { return nimble.isExists(val); };
 	/**
-	 * unshift for arguments (object)
+	 * <i lang="en">unshift for arguments (object)</i>
+	 * <i lang="ru">использовать "unshift" для объекта</i>
 	 * 
-	 * @param {Object} obj - some object
-	 * @param {mixed} pushVal - new value
+	 * @param {Object} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
+	 * @param {mixed} pushVal — <i lang="en">new value</i><i lang="ru">новое значение</i>
 	 * @return {Array}
 	 */
 	$.unshiftArguments = function (obj, pushVal) {
@@ -728,11 +753,12 @@ var nimble = (function () {
 		return newObj;
 	};
 	/**
-	 * toUpperCase function
+	 * <i lang="en">toUpperCase function</i>
+	 * <i lang="ru">перевести строку в верхний регистр</i>
 	 * 
-	 * @param {String} str - some str
-	 * @param {Number} [max=str.length] - the maximum number of characters
-	 * @param {Number} [from=0] - start position
+	 * @param {String} str — <i lang="en">some str</i><i lang="ru">исходная строка</i>
+	 * @param {Number} [max=str.length] — <i lang="en">the maximum number of characters</i><i lang="ru">максимальное количество символов</i>
+	 * @param {Number} [from=0] — <i lang="en">start position</i><i lang="ru">начальная позиция</i>
 	 * @return {String}
 	 */
 	$.toUpperCase = function (str, max, from) {
@@ -742,11 +768,12 @@ var nimble = (function () {
 		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
 	};
 	/**
-	 * toLowerCase function
+	 * <i lang="en">toLowerCase function</i>
+	 * <i lang="ru">перевести строку в нижний регистр</i>
 	 * 
-	 * @param {String} str - some str
-	 * @param {Number} [max=str.length] - the maximum number of characters
-	 * @param {Number} [from=0] - start position
+	 * @param {String} str — <i lang="en">some str</i><i lang="ru">исходная строка</i>
+	 * @param {Number} [max=str.length] — <i lang="en">the maximum number of characters</i><i lang="ru">максимальное количество символов</i>
+	 * @param {Number} [from=0] — <i lang="en">start position</i><i lang="ru"><i lang="ru">начальная позиция</i>
 	 * @return {String}
 	 */
 	$.toLowerCase = function (str, max, from) {
@@ -757,22 +784,17 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * get random integer number
+	 * <i lang="en">get random integer number</i>
+	 * <i lang="ru">получить случайное число в интервале</i>
 	 * 
-	 * @param {Number} min - min number
-	 * @param {Number} max - max number
+	 * @param {Number} min — <i lang="en">min number</i><i lang="ru">левая граница</i>
+	 * @param {Number} max — <i lang="en">max number</i><i lang="ru">правая граница</i>
 	 * @return {Number}
 	 */
 	$.getRandomInt = function (min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
 	
-	/////////////////////////////////
-	//// jQuery methods (init)
-	/////////////////////////////////
-	
-	//$.extend();
-		
 	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
@@ -781,7 +803,8 @@ var nimble = (function () {
 		// root
 		dObj: {
 			/**
-			 * active properties
+			 * <i lang="en">active properties</i>
+			 * <i lang="ru">активные свойства</i>
 			 * 
 			 * @namespace
 			 */
@@ -791,7 +814,8 @@ var nimble = (function () {
 				/////////////////////////////////
 				
 				/**
-				 * namespace
+				 * <i lang="en">namespace</i>
+			 	 * <i lang="ru">пространство имён</i>
 				 * 
 				 * @field
 				 * @type String
@@ -799,28 +823,32 @@ var nimble = (function () {
 				namespace: "nm",
 				
 				/**
-				 * collection
+				 * <i lang="en">collection</i>
+			 	 * <i lang="ru">коллекция</i>
 				 * 
 				 * @field
 				 * @type Collection|Null
 				 */
 				collection: null,
 				/**
-				 * filter ("false" if disabled)
+				 * <i lang="en">filter ("false" if disabled)</i>
+			 	 * <i lang="ru">фильтр ("false" если отключён)</i>
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				filter: false,
 				/**
-				 * context
+				 * <i lang="en">context</i>
+			 	 * <i lang="ru">контекст</i>
 				 * 
 				 * @field
 				 * @type Context
 				 */
 				context: "",
 				/**
-				 * cache object
+				 * <i lang="en">cache object</i>
+			 	 * <i lang="ru">кеш</i>
 				 * 
 				 * @field
 				 * @type Plain Object
@@ -856,14 +884,16 @@ var nimble = (function () {
 					lastIteration: false
 				},
 				/**
-				 * temporary variables
+				 * <i lang="en">temporary variables</i>
+			 	 * <i lang="ru">временная переменная</i>
 				 * 
 				 * @field
 				 * @type mixed
 				 */
 				variable: null,
 				/**
-				 * deferred object
+				 * <i lang="en">deferred object</i>
+			 	 * <i lang="ru">отложенный объект</i>
 				 * 
 				 * @field
 				 * @type jQuery Deferred
@@ -875,70 +905,80 @@ var nimble = (function () {
 				/////////////////////////////////
 				
 				/**
-				 * active page
+				 * <i lang="en">active page</i>
+			 	 * <i lang="ru">активная страница</i>
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				page: 1,
 				/**
-				 * parser ("false" if disabled)
+				 * <i lang="en">parser ("false" if disabled)</i>
+			 	 * <i lang="ru">парсер ("false" если отключён)</i>
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				parser: false,
 				/**
-				 * DOM insert mode (jQuery methods)
+				 * <i lang="en">DOM insert mode (jQuery methods)</i>
+			 	 * <i lang="ru">режим добавления в DOM (методы jQuery)</i>
 				 * 
 				 * @field
 				 * @param String
 				 */
 				appendType: "html",
 				/**
-				 * target (target to insert the result templating)
+				 * <i lang="en">target (target to insert the result templating)</i>
+			 	 * <i lang="ru">цель (узел для вставки результата шаблонизации)</i>
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				target: null,
 				/**
-				 * selector (used to calculate the number of records per page, by default, are all the children of the element)
+				 * <i lang="en">selector (used to calculate the number of records per page, by default, are all the children of the element)</i>
+			 	 * <i lang="ru">селектор (используется для подсчёта количества записей на странице)</i>
 				 * 
 				 * @field
 				 * @type Selector
 				 */
 				calculator: null,
 				/**
-				 * pager (an interface element to display the navigation through the pages of)
+				 * <i lang="en">pager (an interface element to display the navigation through the pages of)</i>
+			 	 * <i lang="ru">пейджер (интерфейс навигации)</i>
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				pager: null,
 				/**
-				 * template
+				 * <i lang="en">template</i>
+			 	 * <i lang="ru">шаблон</i>
 				 * 
 				 * @field
 				 * @type Function
 				 */
 				template: null,
 				/**
-				 * the number of entries on one page
+				 * <i lang="en">the number of entries on one page</i>
+			 	 * <i lang="ru">количество записей на одной странице</i>
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				numberBreak: 10,
 				/**
-				 * the number of pages in the navigation menu
+				 * <i lang="en">the number of pages in the navigation menu</i>
+			 	 * <i lang="ru">количество ссылок на страницы в панеле навигации</i>
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				pageBreak: 10,
 				/**
-				 * empty result (in case if the search nothing is returned)
+				 * <i lang="en">empty result (in case if the search nothing is returned)</i>
+			 	 * <i lang="ru">выводится, когда запрос возвращает пустой ответ</i>
 				 * 
 				 * @field
 				 * @type String
@@ -1719,7 +1759,7 @@ var nimble = (function () {
 	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
@@ -1790,7 +1830,7 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -1802,7 +1842,6 @@ var nimble = (function () {
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = filter || "";
-		id = id || "";
 		
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1811,7 +1850,7 @@ var nimble = (function () {
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		}
+		} else { id = id || ""; }
 	
 		// values by default
 		mult = mult === false ? false : true;
@@ -1924,7 +1963,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -1967,12 +2006,12 @@ var nimble = (function () {
 	 * search element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
 	$.Collection.prototype.searchOne = function (filter, id) {
-		return this.search($.isExists(filter) ? filter : "", id || "", false);
+		return this.search(filter || "", id || "", false);
 	};
 	
 	/**
@@ -2032,7 +2071,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -2045,9 +2084,6 @@ var nimble = (function () {
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._getOne(filter, id || "");
 			}
-		//
-		filter = filter || "";
-		id = id || this.ACTIVE;
 	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -2056,7 +2092,7 @@ var nimble = (function () {
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		}
+		} else { id = id || ""; }
 	
 		// values by default
 		mult = mult === false ? false : true;
@@ -2075,7 +2111,7 @@ var nimble = (function () {
 				return true;
 			};
 		//
-		this.forEach(action, filter, id, mult, count, from, indexOf);
+		this.forEach(action, filter || "", id, mult, count, from, indexOf);
 	
 		return result;
 	};
@@ -2083,12 +2119,12 @@ var nimble = (function () {
 	 * get element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
 	$.Collection.prototype.getOne = function (filter, id) {
-		return this.get($.isExists(filter) ? filter : "", id || "", false);
+		return this.get(filter || "", id || "", false);
 	};
 	/////////////////////////////////
 	//// mult methods (set)
@@ -2101,7 +2137,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
@@ -2135,13 +2171,13 @@ var nimble = (function () {
 	 * replace element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.setOne = function (filter, replaceObj, id) {
-		return this.set($.isExists(filter) ? filter : "", replaceObj, id || "", false);
+		return this.set(filter || "", replaceObj, id || "", false);
 	};
 	
 	/**
@@ -2149,11 +2185,12 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.map = function (replaceObj, id) {
-		return this.set(true, replaceObj, id || "");
+	$.Collection.prototype.map = function (replaceObj, filter, id) {
+		return this.set(filter || "", replaceObj, id || "");
 	};
 	
 	/**
@@ -2161,7 +2198,7 @@ var nimble = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
@@ -2176,7 +2213,7 @@ var nimble = (function () {
 	 * move elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
 	 * @param {Context} [context] - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2233,7 +2270,7 @@ var nimble = (function () {
 	 * move element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2241,13 +2278,13 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
 	 * copy elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2264,13 +2301,13 @@ var nimble = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
 	 * copy element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expressions
+	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2278,7 +2315,7 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move($.isExists(moveFilter) ? moveFilter : "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -2291,7 +2328,7 @@ var nimble = (function () {
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Null} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
+	 * @param {Filter|Context|Array|Null} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
@@ -2316,12 +2353,12 @@ var nimble = (function () {
 	 * delete element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expressions or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.removeOne = function (filter, id) {
-		return this.remove($.isExists(filter) ? filter : "", id || "", false);
+		return this.remove(filter || "", id || "", false);
 	};	
 	/////////////////////////////////
 	//// mult methods (group)
@@ -2332,7 +2369,7 @@ var nimble = (function () {
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2373,7 +2410,7 @@ var nimble = (function () {
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2393,7 +2430,7 @@ var nimble = (function () {
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
 	 * @param {Context} [field] - field name
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2472,7 +2509,7 @@ var nimble = (function () {
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
 	 * @param {Context} [field] - field name
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2924,11 +2961,11 @@ var nimble = (function () {
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {mixed} el - current element
 	 * @param {Number|String} i - iteration (key)
 	 * @param {Collection} data - link to collection
-	 * @param {Number} cOLength - collection length
+	 * @param {Function} cOLength - collection length
 	 * @param {Collection Object} self - link to collection object
 	 * @param {String} id - collection ID
 	 * @return {Boolean}
@@ -3102,12 +3139,12 @@ var nimble = (function () {
 	 * calculate custom parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|String|Boolean} parser - parser function or string expressions or "false"
+	 * @param {Parser|String|Boolean} parser - parser function or string expression or "false"
 	 * @param {String} str - source string
 	 * @return {String}
 	 */
 	$.Collection.prototype._customParser = function (parser, str, _tmpParser) {
-		// if parser id undefined
+		// if parser is undefined
 		if (!parser) {
 			if (!this._getActiveParam("parser")) { return true; }
 			//
@@ -3187,11 +3224,12 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * calculate parent context
+	 * <i lang="en">calculate parent context</i>
+	 * <i lang="ru">вернуть контекст родительского элемента</i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] - level
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Number} [n=1] — <i lang="en">level</i><i lang="ru">уровень</i>
+	 * @param {String} [id=this.ACTIVE] — <i lang="en>collection ID</i><i lang="ru">ИД коллекции</i>
 	 * @return {String}
 	 */
 	$.Collection.prototype.parentContext = function (n, id) {
@@ -3204,11 +3242,12 @@ var nimble = (function () {
 		return context.join(nimble.CHILDREN);
 	};
 	/**
-	 * change the context (the parent element)
+	 * <i lang="en">change the context (the parent element)</i>
+	 * <i lang="ru">изменить контекст на родительский</i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] - level
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Number} [n=1] — <i lang="en">level</i><i lang="ru">уровень</i>
+	 * @param {String} [id=this.ACTIVE] — <i lang="en>collection ID</i><i lang="ru">ИД коллекции</i>
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.parent = function (n, id) {
@@ -3360,15 +3399,15 @@ var nimble = (function () {
 	 * @param {String} [param.context] - additional context
 	 * @param {Number} [param.page=this.ACTIVE] - page number
 	 * @param {Template} [param.template=this.ACTIVE] - template
-	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] - number of entries on 1 page (if "false", returns all records)
+	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] - number of entries on per page (if "false", returns all records)
 	 * @param {Number} [param.pageBreak=this.ACTIVE] - number of displayed pages (navigation, > 2)
 	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] - element to output the result ("false" - if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] - variable ID (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] - filter function or string expressions
-	 * @param {Parser} [param.parser=this.ACTIVE] - parser function, string expressions or "false"
+	 * @param {Filter} [param.filter=this.ACTIVE] - filter function or string expression
+	 * @param {Parser} [param.parser=this.ACTIVE] - parser function or string expression
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] - if "true", the last iteration is taken from cache
-	 * @param {Selector} [param.calculator=this.ACTIVE] - selector, on which is the number of records per page
-	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager
+	 * @param {Selector} [param.calculator=this.ACTIVE] - the selector for the calculation of the number of records
+	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager (navigation)
 	 * @param {String} [param.appendType=this.ACTIVE] - type additions to the DOM
 	 * @param {String} [param.resultNull=this.ACTIVE] - text displayed if no results
 	 * @param {Boolean} [clear=false] - clear the cache
@@ -3506,10 +3545,10 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * activation of the model template
+	 * activation of the navigation
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Object} [param] - object settings (depends on the model template)
+	 * @param {Object} [param] - object settings
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -3566,7 +3605,7 @@ var nimble = (function () {
 					$this.addClass(classes && classes.disabled || "disabled");
 				} else if (data.nav === "prev" || data.nav === "next") { $this.removeClass(classes && classes.disabled || "disabled"); }
 				
-				//
+				// page
 				if (data.nav === "pageList") {
 					if (nmbOfPages > param.pageBreak) {	
 						j = param.pageBreak % 2 !== 0 ? 1 : 0;
@@ -3603,7 +3642,8 @@ var nimble = (function () {
 						}).data("ctm-delegated", true);
 					}
 				}
-			//
+			
+			// info
 			} else if (data.info) {
 				if (param.nmbOfEntriesInPage === 0) {
 					$this.addClass(classes && classes.noData || "noData");
@@ -3627,12 +3667,13 @@ var nimble = (function () {
 	/////////////////////////////////
 		
 	/**
-	 * generating the table
+	 * <i lang="en">generating the table</i>
+	 * <i lang="ru">генерировать таблицу</i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [count=4] - td number to a string
-	 * @param {String} [tag="div"] - tag name
-	 * @param {Boolean} [empty=true] - display empty cells
+	 * @param {Number} [count=4] — <i lang="en">td number to a string</i><i lang="ru">количество ячеек в строке</i>
+	 * @param {String} [tag="div"] — <i lang="en">tag name</i><i lang="ru">тег, по которому идёт генерация</i>
+	 * @param {Boolean} [empty=true] — <i lang="en">display empty cells</i><i lang="ru">отображать пустые ячейки</i>
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.genTable = function (count, tag, empty) {

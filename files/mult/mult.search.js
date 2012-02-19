@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -53,12 +53,12 @@
 	 * search element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
 	$.Collection.prototype.searchOne = function (filter, id) {
-		return this.search($.isExists(filter) ? filter : "", id || "", false);
+		return this.search(filter || "", id || "", false);
 	};
 	
 	/**

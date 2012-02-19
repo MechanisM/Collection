@@ -19,7 +19,6 @@ copy	^
 		+ jquery\collection.js ^
 		+ jquery\compile.js ^
 		+ jquery\other.js ^
-		+ jquery\init.js ^
 		^
 		+ storage\storage.js ^
 		+ storage\storage.sys.js ^

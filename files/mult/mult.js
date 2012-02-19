@@ -7,7 +7,7 @@
 	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
 	 * @throw {Error}
 	 * @return {Number}
@@ -78,7 +78,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -90,7 +90,6 @@
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = filter || "";
-		id = id || "";
 		
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -99,7 +98,7 @@
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		}
+		} else { id = id || ""; }
 	
 		// values by default
 		mult = mult === false ? false : true;

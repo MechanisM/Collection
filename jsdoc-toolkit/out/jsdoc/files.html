@@ -6,200 +6,205 @@
 		<title>JsDoc Reference - File Index</title>
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<!--<style type="text/css">
-			/* default.css */
-body {
-	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+		<style type="text/css">
+			body {
+	font: 12px Myriad Pro, sans-serif;
+	
+	margin: 10px 0 0 0;
+	padding: 0;
+	
 	width: 800px;
 	
-	background-color: #222
-}
-.header {
-	clear: both;
-	background-color: #ccc;
-	padding: 8px
-}
-h1 {
-	font-size: 150%;
-	font-weight: bold;
-	padding: 0;
-	margin: 1em 0 0 .3em
+	background: #1C1C1C url(../img/background.png) no-repeat
 }
 hr {
-	border: none 0;
-	border-top: 1px solid #7F8FB1;
-	height: 1px;
-}
-pre.code {
 	display: block;
-	padding: 8px;
-	border: 1px dashed #ccc;
-}
-i { font-style: normal }
-#index {
-	margin-top: 24px;
-	float: left;
-	width: 160px;
-	position: absolute;
-	left: 8px;
-	background-color: #F3F3F3;
-	padding: 8px;
-}
-#content {
-	margin-left: 190px;
-	width: 600px;
-}
-.classList {
-	list-style-type: none;
-	padding: 0;
-	margin: 0 0 0 8px;
-	font-family: arial, sans-serif;
-	font-size: 1em;
-	overflow: auto;
-}
-.classList li {
-	padding: 0;
-	margin: 0 0 8px 0;
-}
-.summaryTable {
-	width: 100%;
+	height: 2px;
 	
+	background-color: #666
+}
+a, h1 { color: #ED9F15 }
+i { font-style: normal }
+ul { list-style-type: square }
+
+.b-cont {
+	width: 990px;
+	
+	margin: 0 auto
+}
+
+.b-index {
+	width: 200px;
+	
+	margin: 0 10px;
+	padding: 5px;
+	float: left;
+	
+	background-color: #D4D4D4;
+	
+	boder: 1px solid #000;
 	border-radius: 5px
 }
-h1.classTitle {
-	font-size:170%;
-	line-height:130%;
+
+.b-index a { color: #000 }
+.b-index h2 {
+	margin: 0;
+	padding: 0;
+	
+	font-size: 14px;
+	font-weight: normal
 }
-h2 { font-size: 110%; }
-caption,
-div.sectionTitle {
-	color: #F2F2F2;
-	font-size: 13px;
+.b-index a, .b-index h2 { text-shadow: 1px 1px #EFEFEF }
+
+.b-class-list {
+	display: block;
+	
+	margin: 0;
+	padding: 0
+}
+.b-class-list li { display: block }
+.b-class-list img {
+	float: left;
+	
+	margin: 3px 5px 0 5px
+}
+.b-class-list a {
+	display: block;
+	
+	padding: 3px
+}
+.b-class-list a:hover {
+	background-color: #A0A0A0;
+	
+	text-shadow: 1px 1px #CCC
+}
+
+.b-content { margin-left: 230px }
+
+.b-head {
+	color: #CCC;	
+	
+	background: transparent url(../img/b-head.png) left top repeat-x;
+	
+	border-top: 5px #FC0 solid;
+	border-left: 5px #F90 solid;
+	border-radius: 5px;
+	
+	padding: 2px 5px
+}
+.b-head h1 {
+	display: block;
+	
+	margin: 25px 0 0 0;
+	padding: 0
+}
+.b-desc {
+	margin: 0;
+	padding: 0
+}
+
+.b-summary {
+	width: 100%;
+	
+	background-color: #222;
+	
+	border: 2px #333 solid;
+	border-radius: 5px
+}
+.b-summary caption, .b-section-title {
+	text-shadow: 1px 1px #CCC;
 	text-align: left;
-	padding: 2px 6px 2px 6px;
+	
+	background-color: #A0A0A0;
+	
+	margin-top: 10px;
+	padding: 5px;
+	
+	border: 2px #A0A0A0 solid;
+	border-bottom: 0;
+	border-radius: 5px
+}
+.b-summary__attr{
+	width: 80px;
+	
+	text-align: center;
+	
+	color: #666;
+	font-style: italic
+}
+
+.b-summary__desc__head strong, .b-details__head strong { font-family: inherit }
+.b-summary__desc__head, .b-details__head {
+	margin-top: 2px;
+	
+	color: #EAEAEA;
+	font-family: "Courier New", Courier, monospace
+}
+.b-summary__desc__body { color: #999 }
+
+.b-details_back {
+	background-color: #222;
+	
+	color: #999;
 	
 	border: 2px #333 solid;
 	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
 	
-	background-color: #333;
-	
-	background-image: linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
-	background-image: -o-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
-	background-image: -moz-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
-	background-image: -webkit-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
-	background-image: -ms-linear-gradient(bottom, rgb(122,122,122) 43%, rgb(105,105,105) 59%, rgb(87,91,94) 88%);
-	
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0.43, rgb(122,122,122)),
-		color-stop(0.59, rgb(105,105,105)),
-		color-stop(0.88, rgb(87,91,94))
-	)
-}
-div.sectionTitle { margin-bottom: 8px; }
-.summaryTable thead { display: none; }
-.summaryTable td, .details {
-	background-image: linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
-	background-image: -o-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
-	background-image: -moz-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
-	background-image: -webkit-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
-	background-image: -ms-linear-gradient(bottom, rgb(179,179,179) 0%, rgb(189,189,189) 59%, rgb(224,224,224) 88%);
-	
-	background-image: -webkit-gradient(
-		linear,
-		left bottom,
-		left top,
-		color-stop(0, rgb(179,179,179)),
-		color-stop(0.59, rgb(189,189,189)),
-		color-stop(0.88, rgb(224,224,224))
-	)
-}
-.summaryTable td {
-	vertical-align: top;
-	padding: 4px;
-	border-bottom: 2px #333 solid;
-	border-right: 2px #333 solid
-}
-/*col#summaryAttributes {}*/
-.summaryTable td.attributes {
-	border: 2px #333 solid;
-	border-top: none;
-	
-	width: 140px;
-	text-align: right
-}
-td.attributes,
-.fixedFont {
-	line-height: 15px;
-	color: #002EBE;
-	font-family: "Courier New", Courier, monospace;
-	font-size: 13px;
-}
-.summaryTable td.nameDescription {
-	text-align: left;
-	font-size: 13px;
-	line-height: 15px;
-}
-.summaryTable td.nameDescription,
-.description {
-	line-height: 15px;
-	padding: 4px;
-	padding-left: 4px;
-}
-.summaryTable { margin-bottom: 8px; }
-ul.inheritsList {
-	list-style: square;
-	margin-left: 20px;
-	padding-left: 0;
-}
-.detailList {
-	margin-left: 20px;
-	line-height: 15px;
-}
-.detailList dt { margin-left: 20px; }
-.detailList .heading {
-	font-weight: bold;
-	padding-bottom: 6px;
-	margin-left: 0;
-}
-.light,
-td.attributes,
-.light a:link,
-.light a:visited {
-	color: #777;
-	font-style: italic;
-}
-.fineprint {
-	text-align: right;
-	font-size: 10px;
+	padding: 5px
 }
 
-		</style>-->
-		<link type="text/css" rel="stylesheet" href="../css/style.css"></script>
-		<script type="text/javascript" src="../jquery.js"></script>
-		<script type="text/javascript" src="../jquery.collection.min.js"></script>
+.b-details__desc {
+	border-left: 5px #333 solid;
+	
+	color: #777;
+	font-style: italic;
+	
+	margin-top: 3px;
+	padding-left: 5px
+}
+.b-details__desc i { font-style: italic }
+.b-details__desc:hover { color: #999 }
+
+.b-detail-list__head { color: #F90 }
+.b-detail-list__title { margin-top: 5px }
+.b-detail-list__param + strong { color: #EAEAEA }
+.b-detail-list__param__def { color: #F3F3F3 }
+.b-details__attr {
+	color: #666;
+	font-style: italic
+}
+
+.b-light, .b-detail-list__param {
+	font-family: "Courier New", Courier, monospace;
+	color: #FC6
+}
+
+.b-footer {
+	clear: both;
+	
+	color: #666;
+	
+	margin: 20px 0 0 0;
+	padding: 5px;
+	
+	background-color: #2E2E2E;
+	
+	border-top: 1px solid #000
+}
+		</style>
+		<script type="text/javascript" src="http://yandex.st/jquery/1.7.1/jquery.min.js"></script>
+		<script type="text/javascript" src="http://kobezzza.com/files/collection/jquery.collection.min.js"></script>
 		<script type="text/javascript">
-			var doc = {methods: [], classes: []};
-$(function () {
-	$("i[lang='en']").hide();
-});
+			$(function () { $("i[lang='ru']").hide(); });
 		</script>
 	</head>
 	
 	<body>
-		<div class="b-header"></div>
-		
-		<div id="index">
-			<div class="b-index__head">
-	<a href="index.html">Class Index</a>
-	| <a href="files.html">File Index</a>
-</div>
-<hr />
-<h2>
+		<div class="b-cont">
+			<div class="b-header"></div>
+			
+			<div class="b-index">
+				<h2>
 	<i lang="en">Classes:</i>
 	<i lang="ru">Классы:</i>
 </h2>
@@ -242,29 +247,30 @@ $(function () {
 	
 </ul>
 <hr />
-		</div>
-		
-		<div id="content">
-			<h1 class="classTitle">File Index</h1>
-			
-			
-			<div>
-				<h2><a href="symbols/src/jquery.collection.js.html">jquery.collection.js</a></h2>
-				
-				<dl>
-					
-					
-					
-					
-				</dl>
 			</div>
-			<hr />
 			
-			
-		</div>
-		<div class="fineprint" style="clear:both">
-			
-			Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.4.0 on Sun Feb 19 2012 11:42:01 GMT+0300 (MSK)
+			<div class="b-content">
+				<h1 class="b-title">File Index</h1>
+				
+				
+					<div>
+						<h2><a href="symbols/src/jquery.collection.js.html">jquery.collection.js</a></h2>
+						
+						<dl>
+							
+							
+							
+							
+						</dl>
+					</div>
+					<hr />
+				
+				
+				<div class="b-footer">
+					
+					Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blankt">JsDoc Toolkit</a> 2.4.0 on Sun Feb 19 2012 17:17:46 GMT+0300 (MSK)
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

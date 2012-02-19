@@ -12,15 +12,15 @@
 	 * @param {String} [param.context] - additional context
 	 * @param {Number} [param.page=this.ACTIVE] - page number
 	 * @param {Template} [param.template=this.ACTIVE] - template
-	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] - number of entries on 1 page (if "false", returns all records)
+	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] - number of entries on per page (if "false", returns all records)
 	 * @param {Number} [param.pageBreak=this.ACTIVE] - number of displayed pages (navigation, > 2)
 	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] - element to output the result ("false" - if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] - variable ID (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] - filter function or string expressions
-	 * @param {Parser} [param.parser=this.ACTIVE] - parser function, string expressions or "false"
+	 * @param {Filter} [param.filter=this.ACTIVE] - filter function or string expression
+	 * @param {Parser} [param.parser=this.ACTIVE] - parser function or string expression
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] - if "true", the last iteration is taken from cache
-	 * @param {Selector} [param.calculator=this.ACTIVE] - selector, on which is the number of records per page
-	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager
+	 * @param {Selector} [param.calculator=this.ACTIVE] - the selector for the calculation of the number of records
+	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager (navigation)
 	 * @param {String} [param.appendType=this.ACTIVE] - type additions to the DOM
 	 * @param {String} [param.resultNull=this.ACTIVE] - text displayed if no results
 	 * @param {Boolean} [clear=false] - clear the cache
@@ -158,10 +158,10 @@
 	};
 	
 	/**
-	 * activation of the model template
+	 * activation of the navigation
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Object} [param] - object settings (depends on the model template)
+	 * @param {Object} [param] - object settings
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
@@ -218,7 +218,7 @@
 					$this.addClass(classes && classes.disabled || "disabled");
 				} else if (data.nav === "prev" || data.nav === "next") { $this.removeClass(classes && classes.disabled || "disabled"); }
 				
-				//
+				// page
 				if (data.nav === "pageList") {
 					if (nmbOfPages > param.pageBreak) {	
 						j = param.pageBreak % 2 !== 0 ? 1 : 0;
@@ -255,7 +255,8 @@
 						}).data("ctm-delegated", true);
 					}
 				}
-			//
+			
+			// info
 			} else if (data.info) {
 				if (param.nmbOfEntriesInPage === 0) {
 					$this.addClass(classes && classes.noData || "noData");

@@ -7,12 +7,12 @@
 	 * calculate custom parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|String|Boolean} parser - parser function or string expressions or "false"
+	 * @param {Parser|String|Boolean} parser - parser function or string expression or "false"
 	 * @param {String} str - source string
 	 * @return {String}
 	 */
 	$.Collection.prototype._customParser = function (parser, str, _tmpParser) {
-		// if parser id undefined
+		// if parser is undefined
 		if (!parser) {
 			if (!this._getActiveParam("parser")) { return true; }
 			//

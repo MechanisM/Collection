@@ -9,7 +9,7 @@
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
 	 * @param {Context} [field] - field name
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)

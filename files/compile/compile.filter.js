@@ -7,11 +7,11 @@
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expressions
+	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
 	 * @param {mixed} el - current element
 	 * @param {Number|String} i - iteration (key)
 	 * @param {Collection} data - link to collection
-	 * @param {Number} cOLength - collection length
+	 * @param {Function} cOLength - collection length
 	 * @param {Collection Object} self - link to collection object
 	 * @param {String} id - collection ID
 	 * @return {Boolean}
