@@ -406,10 +406,10 @@ var nimble = (function () {
 		if (prop) { $.extend(true, active, prop); }
 		
 		// compile (if need)
-		if ($.isString(active.filter) && active.filter.search(/^:/)) {
+		if (this._exprTest(active.filter)) {
 			active.filter = this._compileFilter(active.filter);
 		}
-		if ($.isString(active.parser) && active.parser.search(/^:/)) {
+		if (this._exprTest(active.parser)) {
 			active.parser = this._compileParser(active.parser);
 		}
 		
@@ -1003,7 +1003,7 @@ var nimble = (function () {
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
 		//
-		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+		if ((propName === "filter" || propName === "parser") && this._exprTest(newProp)) {
 			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
@@ -1025,7 +1025,7 @@ var nimble = (function () {
 			
 			activeID = this._getActiveID(propName);
 		
-		if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+		if ((propName === "filter" || propName === "parser") && this._exprTest(newProp)) {
 			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
@@ -1077,7 +1077,7 @@ var nimble = (function () {
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
 						} else {
-							if ((propName === "filter" || propName === "parser") && $.isString(objID[key]) && newProp.search(/^:/) !== -1) {
+							if ((propName === "filter" || propName === "parser") && this._exprTest(objID[key])) {
 								tmp[key] = this["_compile" + $.toUpperCase(propName, 1)](objID[key]);
 							} else { tmp[key] = objID[key]; }
 						}
@@ -1092,7 +1092,7 @@ var nimble = (function () {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
 				} else {
-					if ((propName === "filter" || propName === "parser") && $.isString(newProp) && newProp.search(/^:/) !== -1) {
+					if ((propName === "filter" || propName === "parser") && this._exprTest(newProp)) {
 						tmp[objID] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
 					} else { tmp[objID] = newProp; }
 				}
@@ -1704,7 +1704,7 @@ var nimble = (function () {
 			}
 		}
 		//
-		if (!id || id === this.ACTIVE) {
+		if (!id) {
 			cObj = this._get("collection");
 		} else if ($.isString(id)) {
 			cObj = this._get("collection", id);
@@ -1768,7 +1768,7 @@ var nimble = (function () {
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = filter || "";
-		id = $.isExists(id) ? id : this.ACTIVE;
+		id = id || "";
 		
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -1797,11 +1797,14 @@ var nimble = (function () {
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
+		
+		// length function
 		cOLength = function () {
 			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
 			
 			return cOLength.val;
 		}
+		
 		//
 		if ($.isArray(cObj)) {
 			//
@@ -1895,9 +1898,6 @@ var nimble = (function () {
 	 * @return {Number|Array}
 	 */
 	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
-		filter = filter || "";
-		id = id || this.ACTIVE;
-	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
@@ -1905,7 +1905,7 @@ var nimble = (function () {
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		}
+		} else { id = id || ""; }
 	
 		// values by default
 		mult = mult === false ? false : true;
@@ -1922,8 +1922,8 @@ var nimble = (function () {
 				
 				return true;
 			};
-	
-		this.forEach(action, filter, id, mult, count, from, indexOf);
+		//
+		this.forEach(action, filter || "", id, mult, count, from, indexOf);
 	
 		return result;
 	};
@@ -2303,8 +2303,8 @@ var nimble = (function () {
 	 * @return {Colletion}
 	 */
 	$.Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
-		field = this._filterTest((field = field || "")) ? this._compileFilter(field) : field;
-		id = id || this.ACTIVE;
+		field = this._exprTest((field = field || "")) ? this._compileFilter(field) : field;
+		id = id || "";
 		link = link || false;
 	
 		// values by default
@@ -2363,9 +2363,7 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.stat = function (oper, field, filter, id, count, from, indexOf) {
 		oper = oper || "count";
-		field = field || "";
-		filter = filter || "";	
-		id = id || this.ACTIVE;
+		id = id || "";
 	
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
@@ -2378,7 +2376,7 @@ var nimble = (function () {
 			
 			//
 			action = function (el, i, data, aLength, self, id) {
-				var param = nimble.byLink(el, field);
+				var param = nimble.byLink(el, field || "");
 				//
 				switch (oper) {
 					case "count" : {
@@ -2416,7 +2414,7 @@ var nimble = (function () {
 			};
 		//
 		if (oper !== "first" && oper !== "last") {
-			this.forEach(action, filter, id, "", count, from, indexOf);
+			this.forEach(action, filter || "", id, "", count, from, indexOf);
 			//
 			if (oper === "avg") { result /= tmp; }
 		} else if (oper === "first") {
@@ -2444,14 +2442,13 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
 		oper = oper || "count";
-		field = field || "";
-		filter = filter || "";	
-		id = id || this.ACTIVE;
-	
+		id = id || "";
+
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
+		
 		//
 		var
 			operType = $.isString(oper),
@@ -2459,7 +2456,7 @@ var nimble = (function () {
 			
 			//
 			deepAction = function (el, i, data, aLength, self, id) {
-				var param = nimble.byLink(el, field);
+				var param = nimble.byLink(el, field || "");
 				//
 				switch (oper) {
 					case "count" : {
@@ -2499,11 +2496,10 @@ var nimble = (function () {
 			action = function (el, i, data, aLength, self, id) {
 				if (!result[i]) { result[i] = tmp[i] = 0; };
 				//
-				
 				if (oper !== "first" && oper !== "last") {
 					self
 						._update("context", "+=" + nimble.CHILDREN + (deepAction.i = i))
-						.forEach(deepAction, filter, id, "", count, from, indexOf)
+						.forEach(deepAction, filter || "", id, "", count, from, indexOf)
 						.parent();
 				} else if (oper === "first") {
 					result[i] = nimble.byLink(el, nimble.ORDER[0] + "0" + nimble.ORDER[1]);
@@ -2512,7 +2508,7 @@ var nimble = (function () {
 				return true;
 			};
 		//
-		this.forEach(action);
+		this.forEach(action, "", id);
 		//
 		if (oper === "avg") {
 			for (key in result) {
@@ -3205,6 +3201,17 @@ var nimble = (function () {
 	$.Collection.prototype._filterTest = function (str) {
 		return str === this.ACTIVE || this._exists("filter", str) || str.search(/&&|\|\||:/) !== -1;
 	};
+	/**
+	 * expression test
+	 * 
+	 * @this {Collection Object}
+	 * @param {mixed} str - some object
+	 * @return {Boolean}
+	 */
+	$.Collection.prototype._exprTest = function (str) {
+		return $.isString(str) && str.search(/^:/) !== -1;
+	};
+	
 		
 	/**
 	 * enable property
@@ -3333,6 +3340,7 @@ var nimble = (function () {
 			//
 			cObj, cOLength,
 			start, inc = 0, checkPage, from = null,
+			first = false,
 			//
 			numberBreak,
 			//
@@ -3365,6 +3373,9 @@ var nimble = (function () {
 			opt.callback && opt.callback.apply(opt.callback, arguments);
 			result += opt.template.apply(opt.template, arguments);
 			inc = i;
+			
+			// cache
+ 			if (first === false) { first = i; }
 				
 			return true;
 		};
@@ -3377,12 +3388,14 @@ var nimble = (function () {
 		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam("filter")));
 		opt.numberBreak = opt.numberBreak || cOLength;
 		
+		// without cache
 		if ($.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
-		//
+		
+		// with cache
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !numberBreak ?
@@ -3414,7 +3427,7 @@ var nimble = (function () {
 		if (opt.cache) {
 			if (checkPage !== 0 && opt.cache.iteration !== false) {
 				// cache
-				this._get("cache").firstIteration = opt.cache.lastIteration;
+				this._get("cache").firstIteration = first;
 				this._get("cache").lastIteration = inc + 1;
 			}
 			if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }

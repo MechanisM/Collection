@@ -19,9 +19,6 @@
 	 * @return {Number|Array}
 	 */
 	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
-		filter = filter || "";
-		id = id || this.ACTIVE;
-	
 		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
@@ -29,7 +26,7 @@
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		}
+		} else { id = id || ""; }
 	
 		// values by default
 		mult = mult === false ? false : true;
@@ -46,8 +43,8 @@
 				
 				return true;
 			};
-	
-		this.forEach(action, filter, id, mult, count, from, indexOf);
+		//
+		this.forEach(action, filter || "", id, mult, count, from, indexOf);
 	
 		return result;
 	};

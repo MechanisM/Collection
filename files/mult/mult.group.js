@@ -17,8 +17,8 @@
 	 * @return {Colletion}
 	 */
 	$.Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
-		field = this._filterTest((field = field || "")) ? this._compileFilter(field) : field;
-		id = id || this.ACTIVE;
+		field = this._exprTest((field = field || "")) ? this._compileFilter(field) : field;
+		id = id || "";
 		link = link || false;
 	
 		// values by default

@@ -18,9 +18,7 @@
 	 */
 	$.Collection.prototype.stat = function (oper, field, filter, id, count, from, indexOf) {
 		oper = oper || "count";
-		field = field || "";
-		filter = filter || "";	
-		id = id || this.ACTIVE;
+		id = id || "";
 	
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
@@ -33,7 +31,7 @@
 			
 			//
 			action = function (el, i, data, aLength, self, id) {
-				var param = nimble.byLink(el, field);
+				var param = nimble.byLink(el, field || "");
 				//
 				switch (oper) {
 					case "count" : {
@@ -71,7 +69,7 @@
 			};
 		//
 		if (oper !== "first" && oper !== "last") {
-			this.forEach(action, filter, id, "", count, from, indexOf);
+			this.forEach(action, filter || "", id, "", count, from, indexOf);
 			//
 			if (oper === "avg") { result /= tmp; }
 		} else if (oper === "first") {

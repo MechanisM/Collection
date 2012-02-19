@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>$.Collection: mult test</title>
+	<link rel="stylesheet" href="../../qunit.css" type="text/css">
+	<script src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../qunit.js"></script>
+	<script type="text/javascript" src="../../jquery.collection.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			test("stat", function () {
+				var db = new $.Collection([
+					{name: "Koba", age: 22, lvl: 78},
+					{name: "Over", age: 27, lvl: 85},
+					{name: "Drobila", age: 27, lvl: 80},
+					{name: "Skins", age: 28, lvl: 79}
+				]);
+				
+				equal(db.stat("count"), 4, "count");
+				equal(db.stat("summ", "age"), 104, "summ: age");
+				equal(db.stat("avg", "age"), 26, "avg: age");
+				equal(db.stat("min", "age"), 22, "min: age");
+				equal(db.stat("max", "age"), 28, "max: age");
+				//
+				equal(db.stat("*", "age"), 449064, "*: age");
+				equal(db.stat(function (param, result) {
+					result = result || 1;
+					return result /= param;
+				}, "age").toFixed(6), "0.000002", "stat function");
+			});
+			//
+			test("group stat", function () {
+				var db = new $.Collection([
+					{name: "Koba", age: 22, lvl: 78},
+					{name: "Over", age: 27, lvl: 85},
+					{name: "Drobila", age: 27, lvl: 80},
+					{name: "Skins", age: 28, lvl: 79}
+				]);
+				db.pushCollection({
+					group1: db.group("age"),
+					group2: db.group(":el.lvl >= 80")
+				});
+				
+				equal(db.groupStat("count", "", "", "group1")[27], 2, "count");
+				equal(db.groupStat("summ", "age", "", "group1")[27], 54, "summ: age");
+				equal(db.groupStat("avg", "age", "", "group1")[27], 27, "avg: age");
+				equal(db.groupStat("min", "age", "", "group2")[false], 22, "min: age");
+				equal(db.groupStat("max", "age", "", "group2")[false], 28, "max: age");
+				//
+				equal(db.groupStat("*", "age", "", "group2")[true], 729, "*: age");
+				equal(db.groupStat(function (param, result) {
+					result = result || 1;
+					return result /= param;
+				}, "age", "", "group2")[false].toFixed(6), "0.001623", "stat function");
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">$.Collection: mult test</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

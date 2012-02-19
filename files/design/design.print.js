@@ -35,6 +35,7 @@
 			//
 			cObj, cOLength,
 			start, inc = 0, checkPage, from = null,
+			first = false,
 			//
 			numberBreak,
 			//
@@ -67,6 +68,9 @@
 			opt.callback && opt.callback.apply(opt.callback, arguments);
 			result += opt.template.apply(opt.template, arguments);
 			inc = i;
+			
+			// cache
+ 			if (first === false) { first = i; }
 				
 			return true;
 		};
@@ -79,12 +83,14 @@
 		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam("filter")));
 		opt.numberBreak = opt.numberBreak || cOLength;
 		
+		// without cache
 		if ($.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
-		//
+		
+		// with cache
 		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !numberBreak ?
@@ -116,7 +122,7 @@
 		if (opt.cache) {
 			if (checkPage !== 0 && opt.cache.iteration !== false) {
 				// cache
-				this._get("cache").firstIteration = opt.cache.lastIteration;
+				this._get("cache").firstIteration = first;
 				this._get("cache").lastIteration = inc + 1;
 			}
 			if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }

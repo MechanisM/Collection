@@ -26,7 +26,7 @@
 			}
 		}
 		//
-		if (!id || id === this.ACTIVE) {
+		if (!id) {
 			cObj = this._get("collection");
 		} else if ($.isString(id)) {
 			cObj = this._get("collection", id);
@@ -90,7 +90,7 @@
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = filter || "";
-		id = $.isExists(id) ? id : this.ACTIVE;
+		id = id || "";
 		
 		// if id is Boolean
 		if ($.isBoolean(id)) {
@@ -126,6 +126,7 @@
 			
 			return cOLength.val;
 		}
+		
 		//
 		if ($.isArray(cObj)) {
 			//

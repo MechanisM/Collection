@@ -27,6 +27,17 @@
 	$.Collection.prototype._filterTest = function (str) {
 		return str === this.ACTIVE || this._exists("filter", str) || str.search(/&&|\|\||:/) !== -1;
 	};
+	/**
+	 * expression test
+	 * 
+	 * @this {Collection Object}
+	 * @param {mixed} str - some object
+	 * @return {Boolean}
+	 */
+	$.Collection.prototype._exprTest = function (str) {
+		return $.isString(str) && str.search(/^:/) !== -1;
+	};
+	
 		
 	/**
 	 * enable property

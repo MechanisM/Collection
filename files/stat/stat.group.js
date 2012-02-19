@@ -18,14 +18,13 @@
 	 */
 	$.Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
 		oper = oper || "count";
-		field = field || "";
-		filter = filter || "";	
-		id = id || this.ACTIVE;
-	
+		id = id || "";
+
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
+		
 		//
 		var
 			operType = $.isString(oper),
@@ -33,7 +32,7 @@
 			
 			//
 			deepAction = function (el, i, data, aLength, self, id) {
-				var param = nimble.byLink(el, field);
+				var param = nimble.byLink(el, field || "");
 				//
 				switch (oper) {
 					case "count" : {
@@ -73,11 +72,10 @@
 			action = function (el, i, data, aLength, self, id) {
 				if (!result[i]) { result[i] = tmp[i] = 0; };
 				//
-				
 				if (oper !== "first" && oper !== "last") {
 					self
 						._update("context", "+=" + nimble.CHILDREN + (deepAction.i = i))
-						.forEach(deepAction, filter, id, "", count, from, indexOf)
+						.forEach(deepAction, filter || "", id, "", count, from, indexOf)
 						.parent();
 				} else if (oper === "first") {
 					result[i] = nimble.byLink(el, nimble.ORDER[0] + "0" + nimble.ORDER[1]);
@@ -86,7 +84,7 @@
 				return true;
 			};
 		//
-		this.forEach(action);
+		this.forEach(action, "", id);
 		//
 		if (oper === "avg") {
 			for (key in result) {
