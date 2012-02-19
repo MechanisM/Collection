@@ -121,6 +121,7 @@
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
 		
 		// length function
+		/** @private */
 		cOLength = function () {
 			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
 			

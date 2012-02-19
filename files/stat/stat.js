@@ -29,7 +29,7 @@
 			operType = $.isString(oper),
 			result = 0, tmp = 0, key,
 			
-			//
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				var param = nimble.byLink(el, field || "");
 				//

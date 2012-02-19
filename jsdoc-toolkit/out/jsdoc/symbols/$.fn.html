@@ -4,7 +4,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - Array</title>
+		<title>JsDoc Reference - $.fn</title>
 
 		<!--<style type="text/css">
 			/* default.css */
@@ -254,7 +254,7 @@ $(function () {
 			<div class="b-head">
 				<h1 class="b-title">
 					
-					Built-In Namespace Array
+					Namespace $.fn
 				</h1>
 <!-- ============================== class summary ========================== -->			
 				<p class="b-desc">
@@ -264,9 +264,33 @@ $(function () {
 					
 					
 					
+						<br />
+						<i lang="en">Defined in: </i>
+						<i lang="ru">Определено в: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+					
 				</p>
 			</div>
 <!-- ============================== constructor summary ==================== -->			
+			
+				<table class="b-summary">
+					<caption>
+						Namespace 
+						<i lang="en">Summary</i>
+						<i lang="ru">информация</i>
+					</caption>
+					<tr>
+						<td class="b-summary__attr">
+							&nbsp;
+						</td>
+						<td class="b-summary__desc" >
+							<div class="b-summary__desc__head">
+								<strong><a href="../symbols/%24.fn.html#constructor">$.fn</a></strong>
+								
+							</div>
+							<div class="b-summary__desc__body">jQuery prototype</div>
+						</td>
+					</tr>
+				</table>
 			
 <!-- ============================== properties summary ===================== -->
 			
@@ -280,31 +304,45 @@ $(function () {
 							<i lang="ru">Методы</i>
 						</caption>
 						
-							<tr data-obj='{"name": "forEach", "isPrivate": false, "isInner": false, "isStatic": false}'>
+							<tr data-obj='{"name": "collection", "isPrivate": false, "isInner": false, "isStatic": true}'>
 								<td class="b-summary__attr">
-									&nbsp;
+									&lt;static&gt; &nbsp;
 								</td>
 								<td class="b-summary__desc">
 									<div class="b-summary__desc__head">
-										
-										<strong><a href="../symbols/Array.html#forEach">forEach</a></strong>
-										(callback, _this)
+										$.fn.
+										<strong><a href="../symbols/%24.fn.html#.collection">collection</a></strong>
+										(prop)
 									</div>
-									<div class="b-summary__desc__body">calls a function for each element in the array</div>
+									<div class="b-summary__desc__body">jQuery collection</div>
 								</td>
 							</tr>
 						
-							<tr data-obj='{"name": "some", "isPrivate": false, "isInner": false, "isStatic": false}'>
+							<tr data-obj='{"name": "ctplCompile", "isPrivate": false, "isInner": false, "isStatic": true}'>
 								<td class="b-summary__attr">
-									&nbsp;
+									&lt;static&gt; &nbsp;
 								</td>
 								<td class="b-summary__desc">
 									<div class="b-summary__desc__head">
-										
-										<strong><a href="../symbols/Array.html#some">some</a></strong>
-										(callback, _this)
+										$.fn.
+										<strong><a href="../symbols/%24.fn.html#.ctplCompile">ctplCompile</a></strong>
+										()
 									</div>
-									<div class="b-summary__desc__body">tests whether some element in the array passes the test implemented by the provided function</div>
+									<div class="b-summary__desc__body">compiler templates</div>
+								</td>
+							</tr>
+						
+							<tr data-obj='{"name": "ctplMake", "isPrivate": false, "isInner": false, "isStatic": true}'>
+								<td class="b-summary__attr">
+									&lt;static&gt; &nbsp;
+								</td>
+								<td class="b-summary__desc">
+									<div class="b-summary__desc__head">
+										$.fn.
+										<strong><a href="../symbols/%24.fn.html#.ctplMake">ctplMake</a></strong>
+										(cObj)
+									</div>
+									<div class="b-summary__desc__body">make templates</div>
 								</td>
 							</tr>
 						
@@ -317,6 +355,39 @@ $(function () {
 			
 <!-- ============================== constructor details ==================== -->		
 			
+				<div class="b-details">
+					<a name="constructor"> </a>
+					<div class="b-section-title">
+						<i lang="en">Namespace Detail</i>
+						<i lang="ru">Описание</i>
+					</div>
+					
+					<div class="b-details_back">
+						<div class="b-details__head">
+							<span class="b-details__attr">
+								
+							</span>
+							<strong>$.fn</strong>
+							
+						</div>
+						
+						<div class="b-details__desc">
+							jQuery prototype
+							
+						</div>
+						
+						
+						
+						
+						
+						
+						
+						
+						
+						
+					</div>
+				</div>
+			
 <!-- ============================== field details ========================== -->		
 			
 <!-- ============================== method details ========================= -->		
@@ -328,23 +399,22 @@ $(function () {
 					</div>
 					<div class="b-details_back">
 						
-							<a name="forEach"> </a>
+							<a name=".collection"> </a>
 							<div class="b-details__head">
-								
+								&lt;static&gt; 
 									
 								
-									<span class="b-light">{undefined}</span>
+									<span class="b-light">{Colletion Object}</span>
 								
 								
-								<strong>forEach</strong>
-								(callback, _this)
+									<span class="b-light">$.fn.</span>
+								
+								<strong>collection</strong>
+								(prop)
 							</div>
 							
 							<div class="b-details__desc">
-								calls a function for each element in the array
-								
-									<br />
-									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								jQuery collection
 								
 								
 							</div>
@@ -359,20 +429,11 @@ $(function () {
 									</dt>
 									
 										<dt class="b-detail-list__title">
-											<span class="b-detail-list__param">{Function}</span> 
-											<strong>callback</strong>
+											<span class="b-detail-list__param">{Object}</span> 
+											<strong>prop</strong>
 											
 										</dt>
-										<dd>- callback function</dd>
-									
-										<dt class="b-detail-list__title">
-											<span class="b-detail-list__param">{mixed}</span> 
-											<strong>_this</strong>
-											
-												(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
-											
-										</dt>
-										<dd>- object to use as this when executing callback</dd>
+										<dd>- user's preferences</dd>
 									
 								</dl>
 							
@@ -386,7 +447,7 @@ $(function () {
 										<i lang="ru">Возвращаемое значение</i>:
 									</dt>
 									
-										<dd><span class="b-detail-list__param">{undefined}</span> </dd>
+										<dd><span class="b-detail-list__param">{Colletion Object}</span> </dd>
 									
 								</dl>
 							
@@ -395,23 +456,64 @@ $(function () {
 
 						<hr />
 					
-							<a name="some"> </a>
+							<a name=".ctplCompile"> </a>
 							<div class="b-details__head">
-								
+								&lt;static&gt; 
 									
 								
-									<span class="b-light">{undefined}</span>
+									<span class="b-light">{Function}</span>
 								
 								
-								<strong>some</strong>
-								(callback, _this)
+									<span class="b-light">$.fn.</span>
+								
+								<strong>ctplCompile</strong>
+								()
 							</div>
 							
 							<div class="b-details__desc">
-								tests whether some element in the array passes the test implemented by the provided function
+								compiler templates
 								
-									<br />
-									<i>Defined in: </i> <a href="../symbols/src/jquery.collection.js.html">jquery.collection.js</a>.
+								
+							</div>
+							
+							
+							
+							
+							
+							
+							
+							
+								<dl class="b-detail-list">
+									<dt class="b-detail-list__head">
+										<i lang="en">Returns</i>
+										<i lang="ru">Возвращаемое значение</i>:
+									</dt>
+									
+										<dd><span class="b-detail-list__param">{Function}</span> </dd>
+									
+								</dl>
+							
+							
+							
+
+						<hr />
+					
+							<a name=".ctplMake"> </a>
+							<div class="b-details__head">
+								&lt;static&gt; 
+									
+								
+									<span class="b-light">{Collection Object}</span>
+								
+								
+									<span class="b-light">$.fn.</span>
+								
+								<strong>ctplMake</strong>
+								(cObj)
+							</div>
+							
+							<div class="b-details__desc">
+								make templates
 								
 								
 							</div>
@@ -426,20 +528,11 @@ $(function () {
 									</dt>
 									
 										<dt class="b-detail-list__title">
-											<span class="b-detail-list__param">{Function}</span> 
-											<strong>callback</strong>
+											<span class="b-detail-list__param">{Collection Object}</span> 
+											<strong>cObj</strong>
 											
 										</dt>
-										<dd>- callback function</dd>
-									
-										<dt class="b-detail-list__title">
-											<span class="b-detail-list__param">{mixed}</span> 
-											<strong>_this</strong>
-											
-												(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
-											
-										</dt>
-										<dd>- object to use as this when executing callback</dd>
+										<dd>- an instance of $.Collection</dd>
 									
 								</dl>
 							
@@ -453,7 +546,7 @@ $(function () {
 										<i lang="ru">Возвращаемое значение</i>:
 									</dt>
 									
-										<dd><span class="b-detail-list__param">{undefined}</span> </dd>
+										<dd><span class="b-detail-list__param">{Collection Object}</span> </dd>
 									
 								</dl>
 							

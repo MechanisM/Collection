@@ -2,7 +2,21 @@
 	/////////////////////////////////
 	//// jQuery methods (core)
 	/////////////////////////////////
-		
+	
+	/**
+	 * jQuery 
+	 * 
+	 * @namespace
+	 */
+	$ = $;
+	
+	/**
+	 * jQuery prototype
+	 * 
+	 * @namespace
+	 */
+	$.fn = $.fn;
+	
 	/**
 	 * jQuery collection
 	 * 
@@ -13,8 +27,10 @@
 	$.fn.collection = function (prop) {
 		var
 			stat = $.fn.collection.stat,
+			/** @private */
 			text = function (elem) {
 				elem = elem.childNodes;
+				//
 				var
 					eLength = elem.length,
 					i = -1,
@@ -28,6 +44,7 @@
 	
 				return false;
 			},
+			/** @private */
 			inObj = function (elem) {
 				var array = [];
 				//

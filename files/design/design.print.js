@@ -63,6 +63,7 @@
 		this._update("page", opt.page);
 		
 		// template function 
+		/** @private */
 		action = function (el, i, data, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(opt.callback, arguments);
@@ -171,6 +172,8 @@
 			str = "",
 			//
 			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
+			
+			/** @private */
 			genPage = function (data, classes, i) {
 				var key, str = "<" + (data.tag || "span") + ' data-page="' + i + '"';
 				if (data.attr) {

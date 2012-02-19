@@ -89,6 +89,7 @@
 		}
 		
 		// calculate deep filter
+		/** @private */
 		calFilter = function (array, iter) {
 			var
 				i = -1,

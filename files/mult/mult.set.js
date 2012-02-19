@@ -27,6 +27,7 @@
 		//
 		var
 			arg, replaceCheck = $.isFunction(replaceObj),
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (replaceCheck) {
 					data[i] = replaceObj.call(replaceObj, el, i, data, aLength, self, id);

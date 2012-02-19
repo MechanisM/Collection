@@ -16,6 +16,7 @@
 		//
 		var
 			cObj,
+			/** @private */
 			reverseObject = function (obj) {
 				var
 					sortedKeys = [],
@@ -33,6 +34,7 @@
 			};
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		//
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
 				cObj.reverse();

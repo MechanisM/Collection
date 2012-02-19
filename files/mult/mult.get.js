@@ -44,6 +44,7 @@
 		//
 		var
 			result = mult === true ? [] : -1,
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
 					result.push(data[i]);

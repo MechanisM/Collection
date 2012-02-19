@@ -28,7 +28,7 @@
 			self = this,
 			cObj,
 			
-			// sort function
+			/** @private */
 			sort = function (a, b) {
 				var r = rev ? -1 : 1;
 				
@@ -52,7 +52,7 @@
 				} else { return Math.floor(Math.random() * 2  - 1); }
 			},
 			
-			// sort object by key
+			/** @private */
 			sortObjectByKey = function (obj) {
 				var
 					sortedKeys = [],
@@ -68,7 +68,7 @@
 	
 				return sortedObj;
 			},
-			// sort object by value
+			/** @private */
 			sortObject = function (obj) {
 				var
 					sortedValues = [],

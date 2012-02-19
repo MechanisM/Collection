@@ -30,7 +30,7 @@
 			operType = $.isString(oper),
 			result = {}, tmp = {}, key,
 			
-			//
+			/** @private */
 			deepAction = function (el, i, data, aLength, self, id) {
 				var param = nimble.byLink(el, field || "");
 				//
@@ -68,7 +68,7 @@
 					
 				return true;
 			},
-			//
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (!result[i]) { result[i] = tmp[i] = 0; };
 				//

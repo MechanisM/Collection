@@ -4,23 +4,14 @@
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.sys = {
-		/**
-		 * the state of the system flags
-		 * 
-		 * @field
-		 * @type Plain Object
-		 */
+		// the state of the system flags
 		flags: {
-			/**
-			 * the use of the active system flags
-			 * 
-			 * @field
-			 * @type Plain Object
-			 */
+			// the use of the active system flags
 			use: {
 				/**
 				 * use active context in methods
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */
@@ -28,6 +19,7 @@
 				/**
 				 * use active filter in methods
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */
@@ -35,6 +27,7 @@
 				/**
 				 * use active parser in methods
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */
@@ -43,6 +36,7 @@
 				/**
 				 * use cache
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */

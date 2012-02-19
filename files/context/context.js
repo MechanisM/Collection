@@ -29,6 +29,7 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.parent = function (n, id) {
-		if (!id) { return this._update("context", this.parentContext.apply(this, arguments)); }
-		return this._push("context", id, this.parentContext.apply(this, arguments));
+		if (!id) { return this._update("context", this.parentContext(n)); }
+		//
+		return this._push("context", id, this.parentContext(n, id));
 	};

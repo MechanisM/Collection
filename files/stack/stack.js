@@ -6,6 +6,7 @@
 	/**
 	 * new property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {mixed} newProp - new property
@@ -26,6 +27,7 @@
 	/**
 	 * update active property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {mixed} newProp - new value
@@ -48,6 +50,7 @@
 	/**
 	 * get property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} [id=this.ACTIVE] - stack ID
@@ -67,6 +70,7 @@
 	/**
 	 * add new value to stack
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Plain Object} objID - stack ID or object (ID: value)
@@ -117,6 +121,7 @@
 	/**
 	 * set new active property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} id - stack ID
@@ -146,6 +151,7 @@
 	/**
 	 * history back
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {Number} [nmb=1] - number of steps
@@ -173,6 +179,7 @@
 	/**
 	 * history back (if history changed)
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {Number} [nmb=1] - number of steps
@@ -186,6 +193,7 @@
 	/**
 	 * remove property from stack
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
@@ -251,6 +259,7 @@
 	/**
 	 * reset property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
@@ -265,6 +274,7 @@
 	/**
 	 * reset property to another value
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array} [objID=active] - stack ID or array of IDs
@@ -280,6 +290,7 @@
 	/**
 	 * check the existence of property in the stack
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} [id=this.ACTIVE] - stack ID
@@ -296,6 +307,7 @@
 	/**
 	 * get active ID
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @return {String|Null}
@@ -306,6 +318,7 @@
 	/**
 	 * check the property on the activity
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} id - stack ID

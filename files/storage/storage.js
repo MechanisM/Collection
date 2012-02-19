@@ -6,7 +6,11 @@
 	$.Collection.storage = {
 		// root
 		dObj: {
-			// active fields
+			/**
+			 * active properties
+			 * 
+			 * @namespace
+			 */
 			active: {
 				/////////////////////////////////
 				//// data

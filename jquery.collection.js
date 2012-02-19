@@ -526,7 +526,21 @@ var nimble = (function () {
 	/////////////////////////////////
 	//// jQuery methods (core)
 	/////////////////////////////////
-		
+	
+	/**
+	 * jQuery 
+	 * 
+	 * @namespace
+	 */
+	$ = $;
+	
+	/**
+	 * jQuery prototype
+	 * 
+	 * @namespace
+	 */
+	$.fn = $.fn;
+	
 	/**
 	 * jQuery collection
 	 * 
@@ -537,8 +551,10 @@ var nimble = (function () {
 	$.fn.collection = function (prop) {
 		var
 			stat = $.fn.collection.stat,
+			/** @private */
 			text = function (elem) {
 				elem = elem.childNodes;
+				//
 				var
 					eLength = elem.length,
 					i = -1,
@@ -552,6 +568,7 @@ var nimble = (function () {
 	
 				return false;
 			},
+			/** @private */
 			inObj = function (elem) {
 				var array = [];
 				//
@@ -751,13 +768,23 @@ var nimble = (function () {
 	};
 	
 	/////////////////////////////////
+	//// jQuery methods (init)
+	/////////////////////////////////
+	
+	//$.extend();
+		
+	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
 	
 	$.Collection.storage = {
 		// root
 		dObj: {
-			// active fields
+			/**
+			 * active properties
+			 * 
+			 * @namespace
+			 */
 			active: {
 				/////////////////////////////////
 				//// data
@@ -925,23 +952,14 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	$.Collection.storage.dObj.sys = {
-		/**
-		 * the state of the system flags
-		 * 
-		 * @field
-		 * @type Plain Object
-		 */
+		// the state of the system flags
 		flags: {
-			/**
-			 * the use of the active system flags
-			 * 
-			 * @field
-			 * @type Plain Object
-			 */
+			// the use of the active system flags
 			use: {
 				/**
 				 * use active context in methods
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */
@@ -949,6 +967,7 @@ var nimble = (function () {
 				/**
 				 * use active filter in methods
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */
@@ -956,6 +975,7 @@ var nimble = (function () {
 				/**
 				 * use active parser in methods
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */
@@ -964,6 +984,7 @@ var nimble = (function () {
 				/**
 				 * use cache
 				 * 
+				 * @private
 				 * @field
 				 * @type Boolean
 				 */
@@ -993,6 +1014,7 @@ var nimble = (function () {
 	/**
 	 * new property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {mixed} newProp - new property
@@ -1013,6 +1035,7 @@ var nimble = (function () {
 	/**
 	 * update active property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {mixed} newProp - new value
@@ -1035,6 +1058,7 @@ var nimble = (function () {
 	/**
 	 * get property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} [id=this.ACTIVE] - stack ID
@@ -1054,6 +1078,7 @@ var nimble = (function () {
 	/**
 	 * add new value to stack
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Plain Object} objID - stack ID or object (ID: value)
@@ -1104,6 +1129,7 @@ var nimble = (function () {
 	/**
 	 * set new active property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} id - stack ID
@@ -1133,6 +1159,7 @@ var nimble = (function () {
 	/**
 	 * history back
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {Number} [nmb=1] - number of steps
@@ -1160,6 +1187,7 @@ var nimble = (function () {
 	/**
 	 * history back (if history changed)
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {Number} [nmb=1] - number of steps
@@ -1173,6 +1201,7 @@ var nimble = (function () {
 	/**
 	 * remove property from stack
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
@@ -1238,6 +1267,7 @@ var nimble = (function () {
 	/**
 	 * reset property
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array|Plain Object} [objID=active] - stack ID or array of IDs
@@ -1252,6 +1282,7 @@ var nimble = (function () {
 	/**
 	 * reset property to another value
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String|Array} [objID=active] - stack ID or array of IDs
@@ -1267,6 +1298,7 @@ var nimble = (function () {
 	/**
 	 * check the existence of property in the stack
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} [id=this.ACTIVE] - stack ID
@@ -1283,6 +1315,7 @@ var nimble = (function () {
 	/**
 	 * get active ID
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @return {String|Null}
@@ -1293,6 +1326,7 @@ var nimble = (function () {
 	/**
 	 * check the property on the activity
 	 * 
+	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} propName - root property
 	 * @param {String} id - stack ID
@@ -1799,6 +1833,7 @@ var nimble = (function () {
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
 		
 		// length function
+		/** @private */
 		cOLength = function () {
 			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
 			
@@ -1915,6 +1950,7 @@ var nimble = (function () {
 		//
 		var
 			result = mult === true ? [] : -1,
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
 					result.push(i);
@@ -2030,6 +2066,7 @@ var nimble = (function () {
 		//
 		var
 			result = mult === true ? [] : -1,
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
 					result.push(data[i]);
@@ -2081,6 +2118,7 @@ var nimble = (function () {
 		//
 		var
 			arg, replaceCheck = $.isFunction(replaceObj),
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (replaceCheck) {
 					data[i] = replaceObj.call(replaceObj, el, i, data, aLength, self, id);
@@ -2315,6 +2353,7 @@ var nimble = (function () {
 		var
 			fieldType = $.isString(field),
 			result = {},
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				var param = fieldType ? nimble.byLink(el, field) : field.apply(field, arguments);
 				//
@@ -2374,7 +2413,7 @@ var nimble = (function () {
 			operType = $.isString(oper),
 			result = 0, tmp = 0, key,
 			
-			//
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				var param = nimble.byLink(el, field || "");
 				//
@@ -2454,7 +2493,7 @@ var nimble = (function () {
 			operType = $.isString(oper),
 			result = {}, tmp = {}, key,
 			
-			//
+			/** @private */
 			deepAction = function (el, i, data, aLength, self, id) {
 				var param = nimble.byLink(el, field || "");
 				//
@@ -2492,7 +2531,7 @@ var nimble = (function () {
 					
 				return true;
 			},
-			//
+			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (!result[i]) { result[i] = tmp[i] = 0; };
 				//
@@ -2548,7 +2587,7 @@ var nimble = (function () {
 			self = this,
 			cObj,
 			
-			// sort function
+			/** @private */
 			sort = function (a, b) {
 				var r = rev ? -1 : 1;
 				
@@ -2572,7 +2611,7 @@ var nimble = (function () {
 				} else { return Math.floor(Math.random() * 2  - 1); }
 			},
 			
-			// sort object by key
+			/** @private */
 			sortObjectByKey = function (obj) {
 				var
 					sortedKeys = [],
@@ -2588,7 +2627,7 @@ var nimble = (function () {
 	
 				return sortedObj;
 			},
-			// sort object by value
+			/** @private */
 			sortObject = function (obj) {
 				var
 					sortedValues = [],
@@ -2645,6 +2684,7 @@ var nimble = (function () {
 		//
 		var
 			cObj,
+			/** @private */
 			reverseObject = function (obj) {
 				var
 					sortedKeys = [],
@@ -2662,6 +2702,7 @@ var nimble = (function () {
 			};
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		//
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
 				cObj.reverse();
@@ -2965,6 +3006,7 @@ var nimble = (function () {
 		}
 		
 		// calculate deep filter
+		/** @private */
 		calFilter = function (array, iter) {
 			var
 				i = -1,
@@ -3170,8 +3212,9 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.parent = function (n, id) {
-		if (!id) { return this._update("context", this.parentContext.apply(this, arguments)); }
-		return this._push("context", id, this.parentContext.apply(this, arguments));
+		if (!id) { return this._update("context", this.parentContext(n)); }
+		//
+		return this._push("context", id, this.parentContext(n, id));
 	};	
 	/////////////////////////////////
 	// additional methods
@@ -3368,6 +3411,7 @@ var nimble = (function () {
 		this._update("page", opt.page);
 		
 		// template function 
+		/** @private */
 		action = function (el, i, data, cOLength, self, id) {
 			// callback
 			opt.callback && opt.callback.apply(opt.callback, arguments);
@@ -3476,6 +3520,8 @@ var nimble = (function () {
 			str = "",
 			//
 			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
+			
+			/** @private */
 			genPage = function (data, classes, i) {
 				var key, str = "<" + (data.tag || "span") + ' data-page="' + i + '"';
 				if (data.attr) {
