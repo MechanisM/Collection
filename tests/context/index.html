@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>$.Collection: context test</title>
+	<link rel="stylesheet" href="../../qunit.css" type="text/css">
+	<script src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../qunit.js"></script>
+	<script type="text/javascript" src="../../jquery.collection.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			test("parent context", function () {
+				var db = new $.Collection({a: {b: {c: {}}}}, {context: "a > b > c"})
+					.pushContext("tt", "a > b");
+				
+				equal(db.parentContext(), "a > b ", "simple context without parameter");
+				equal(db.parentContext(2), "a ", "simple context");
+				//
+				equal(db.parentContext("", "tt"), "a ", "simple context without parameter with ID");
+				equal(db.parentContext(2, "tt"), "", "simple context with ID");
+				
+				equal(db.parent().getContext(), "a > b ", "set context without parameter");
+				equal(db.parent(2).getContext(), "", "set context");
+			});
+		});
+	</script>
+</head>
+
+<body>
+	<h1 id="qunit-header">$.Collection: context test</h1>
+	<h2 id="qunit-banner"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>
