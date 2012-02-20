@@ -66,10 +66,11 @@
 					
 						{+resolveLinks(data.classDesc)+}
 						
-						<h2>
-							<a href="http://www.kobezzza.com/files/collection/jquery.collection.min.js">download</a> /
-							<a href="https://github.com/kobezzza/Collection">git</a>
-						</h2>
+						<if test="!data.isBuiltin()">{# isn't defined in any file #}
+							<br />
+							<i lang="en">Defined in: </i>
+							<i lang="ru">Определено в: </i> {+new Link().toSrc(data.srcFile)+}.
+						</if>
 					</p>
 				</div>
 <!-- ============================== constructor summary ==================== -->			
