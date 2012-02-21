@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Null} [filter=this.ACTIVE] - filter function, string expression or context (overload)
+	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
