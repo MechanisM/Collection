@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>my document</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+	<script src="http://www.kobezzza.com/files/collection/jquery.collection.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css">
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<link type="text/css" rel="stylesheet" href="main.css">
+</head>
+
+<body>
+	<h1>Использование реляционного фреймворка $.Collection в своём проекте</h1>
+	<h2>Глава 4</h2>
+	<p>
+		В этой главе пойдёт речь о хранении данных на компьютере клиента. Путей для реализации у нас довольно много, но в $.Collection уже реализован интерфейс для хранения данных в DOM Storage. Следует отметить, что сам $.Collection не эмулирует работа хранилища для старых браузеров (ИЕ 6-7), но если такая возможность нужна, то в интернете уже сущесвует довольного много библиотек для этого. Тоже самое касается преобразования данных в строчный вид: если вам нужна поддержка старых браузеров, то можно использовать например библиотеку json2.js. Интерфейс работы с хранилищем довольно прост:  метода для сохранения (save, saveAll), 2 метода для загрузки (load, loadAll), 2 метода для удаления данных из хранилища (drop, dropAll) 
+	и 2 дополнительных метода (loadDate и isExpires). А теперь давайте по порядку:
+	</p>
+<pre class="brush: js">
+// создадим новый экземпляр $.Collection с несколькими таблицами в стеке
+var db = new $.Collection();
+db.pushCollection({
+	users: [
+		{login: &quot;Kobezzza&quot;, lvl: 80},
+		{login: &quot;Over&quot;, lvl: 85}
+	],
+	role: [&quot;manager&quot;, &quot;ceo&quot;, &quot;js ninja&quot;]
+});
+// сделаем таблицу users активной
+db.setCollection(&quot;users&quot;);
+
+// сохраним все данные в хранилище
+db.saveALl();</pre>
+<p>
+	Вот и всё! Это действительно очень просто. Давайте подробнее разберём методы сохранения. Как можно догадаться из названия метод saveAll сохраняет все коллекции (active тоже), а save одну коллекцию, по указанному ИД-у. У метода 
+saveAll
+есть один входной параметр - это тип хранилища. По умолчанию используется local storage, но в случае, если указать значение false на вход метода, то данные будут сохранены в session storage. Для метода save соответственно  существует второй параметр, т.к. первый выделен под ИД. Следует также отметить, что методы сохраняют состояние активности коллекций (при загрузки данных это будет учитываться), а также время сохранения каждой коллекции и общее время. Для загрузки времени существует метод loadDate, который имеет 2-а входных параметра: ИД коллекции (если не указан, то возвращается общее время) и второй как у save тип хранилища. Также существует дополнительный метод isExpires, который возвращает true если срок хранения данных истёк. Он имеет 3 входных параметра: второй и третий, такойже как и у loadDate, а вот первый - это время в милисекундах: в случае если разница актульного времени со временем сохранения больше указанного первым параметром, то возвращается true.
+</p>
+<p>
+	Методы drop и load идентичны save, поэтому рассматривать их не будем, следует только заметить, что методы load и loadAll загружают данных поверх тех, что уже могут быть и меняют состояние активности на ту, что была в момент сохранения.
+</p>
+<p>
+На этом можно было бы и закончить эту главу, но существует один подводный камень, о котором нужно знать: дело в том, что если существует например 2 экземпляра $.Collection в котором существует 2 одинаковых по название коллекции (например active), то возникнет конфликт и первые данные будут перезаписаны вторыми. Чтобы избежать подобного недоразумения в $.Collection существует специальный стековый параметр - namespace и по-умолчанию он одинаков для всех экземпляров и равен &quot;nm&quot;, так что нужно всего лишь создать новое значение дял него:
+</p>
+<pre class="brush: js">
+var db1 = new $.Collection(), db2 = new $.Collection([1, 2, 3]);
+// заполним первых экземпляр
+db1.pushCollection({
+	users: [
+		{login: &quot;Kobezzza&quot;, lvl: 80},
+		{login: &quot;Over&quot;, lvl: 85}
+	],
+	role: [&quot;manager&quot;, &quot;ceo&quot;, &quot;js ninja&quot;]
+});
+db1.setCollection(&quot;users&quot;);
+db1.saveALl();
+
+// заполним второй экземпляр и зададим новое пространство имён
+<span class="brush: js">db2.pushCollection({
+	role: [&quot;manager&quot;, &quot;ceo&quot;, &quot;js ninja&quot;]
+}).newNamespace(&quot;db2&quot;);
+db2.saveALl();</span>
+
+// теперь перед загрузкой данных из хранили нужно заранее установить нужно активное пространство имён
+var db3 = new $.Collection(&quot;&quot;, {namespace: &quot;db2&quot;});
+db3.loadAll(); // загрузятся данные из db2</pre>
+<p>
+	На этом глава заканчивается, успехов!
+</p>
+</body>
+</html>
