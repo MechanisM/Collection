@@ -89,7 +89,7 @@ XMLDOC.DomReader = function(root) {
     * Walk the tree starting with the current node, calling the plug-in for
     * each node visited.  Each time the plug-in is called, the DomReader
     * is passed as the only parameter.  Use the {@link XMLDOC.DomReader#getNode} method
-    * to access the current node.   <i>This method uses a depth first traversal pattern.</i>
+    * to access the current node.   <i>This method uses a depth first traversal pattern.
     *
     * @param srcFile {String} The source file being evaluated
     */

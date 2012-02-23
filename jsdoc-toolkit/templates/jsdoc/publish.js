@@ -129,15 +129,15 @@ function publish(symbolSet) {
 function summarize(desc) {
 	var res = "", i;
 	if (typeof desc != "undefined") {
-		if (desc.search("</i>") === -1) {
+		if (desc.search("") === -1) {
 			return desc.match(/([\w\W]+?\.)[^a-z0-9_$]/i)? RegExp.$1 : desc;
 		}
 		
-		res = desc.split("</i>");
+		res = desc.split("");
 		for (i = res.length; (i -= 1) > -1;) {
 			res[i] = res[i].match(/([\w\W]+?\.)[^a-z0-9_$]/i)? RegExp.$1 : res[i];
 		}
-		res = res.join("</i>");
+		res = res.join("");
 		
 		return res;
 	}

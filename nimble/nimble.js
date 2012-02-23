@@ -5,24 +5,21 @@ var nimble = (function () {
 	
 	return {
 		/**
-		 * <i lang="en">framework name</i>
-		 * <i lang="ru">название фреймворка</i>
+		 * framework name
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		name: "nimble",
 		/**
-		 * <i lang="en">framework version</i>
-		 * <i lang="ru">версия фреймворка</i>
+		 * framework version
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		version: "1.0.2",
 		/**
-		 * <i lang="en">return string: framework name + framework version</i>
-		 * <i lang="ru">вернуть строку: название фреймворка + версия</i>
+		 * return string: framework name + framework version
 		 *
 		 * @this {nimble}
 		 * @return {String}
@@ -40,10 +37,9 @@ var nimble = (function () {
 		//
 		
 		/**
-		 * <i lang="en">removes all leading and trailing whitespace characters</i>
-		 * <i lang="ru">удалить крайние пробелы у строки</i>
+		 * removes all leading and trailing whitespace characters
 		 *
-		 * @param {String} str — <i lang="en">some string</i><i lang="ru">исходная строка</i>
+		 * @param {String} str — some string
 		 * @return {String}
 		 */
 		trim: function (str) {
@@ -56,44 +52,39 @@ var nimble = (function () {
 			return str.substring(0, i + 1);
 		},
 		/**
-		 * <i lang="en">returns a Boolean indicating whether the object is a string</i>
-		 * <i lang="ru">проверить, является ли объект строкой</i>
+		 * returns a Boolean indicating whether the object is a string
 		 *
-		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
+		 * @param {mixed} obj — some object
 		 * @return {Boolean}
 		 */
 		isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
 		/**
-		 * <i lang="en">returns a Boolean indicating whether the object is a number</i>
-		 * <i lang="ru">проверить, является ли объект числом</i>
+		 * returns a Boolean indicating whether the object is a number
 		 *
-		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
+		 * @param {mixed} obj — some object
 		 * @return {Boolean}
 		 */
 		isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },
 		/**
-		 * <i lang="en">returns a Boolean indicating whether the object is a array (not an array-like object)</i>
-		 * <i lang="ru">проверить, является ли объект хеш–таблицей</i>
+		 * returns a Boolean indicating whether the object is a array (not an array-like object)
 		 *
-		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
+		 * @param {mixed} obj — some object
 		 * @return {Boolean}
 		 */
 		isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },
 		/**
-		 * <i lang="en">returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)</i>
-		 * <i lang="ru">проверить, существует ли объект (проверка типов undefined, null, "")</i>
+		 * returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
 		 *
-		 * @param {mixed} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
+		 * @param {mixed} obj — some object
 		 * @return {Boolean}
 		 */
 		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
 		/**
-		 * <i lang="en">calculate math expression for string</i>
-		 * <i lang="ru">рассчитать выражение для строки</i>
+		 * calculate math expression for string
 		 * 
-		 * @param {mixed} val — <i lang="en">new value</i><i lang="ru">новое значение</i>
-		 * @param {mixed} old — <i lang="en">old value</i><i lang="ru">старое значение</i>
+		 * @param {mixed} val — new value
+		 * @param {mixed} old — old value
 		 * @return {mixed}
 		 */
 		expr: function (val, old) {
@@ -115,14 +106,13 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * <i lang="en">set new value to object by link, remove element by link or get element by link</i>
-		 * <i lang="ru">установить/получить значение объекта по ссылке или удалить элемент по ссылке</i>
+		 * set new value to object by link, remove element by link or get element by link
 		 * 
 		 * @this {nimble}
-		 * @param {Object|Number|Boolean} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
-		 * @param {Context} context — <i lang="en">link</i><i lang="ru">контекст</i>
-		 * @param {mixed} [value] — <i lang="en">some value</i><i lang="ru">новое значение</i>
-		 * @param {Boolean} [del=false] — <i lang="en">if "true", remove source element</i><i lang="ru">если "true", то удалить элемент</i>
+		 * @param {Object|Number|Boolean} obj — some object
+		 * @param {Context} context — link
+		 * @param {mixed} [value] — some value
+		 * @param {Boolean} [del=false] — if "true", remove source element
 		 * @return {nimble|mixed}
 		 */
 		byLink: function (obj, context, value, del) {
@@ -252,14 +242,13 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * <i lang="en">execute event</i>
-		 * <i lang="ru">инициализировать событие</i>
+		 * execute event
 		 * 
 		 * @this {nimble}
-		 * @param {String} query — <i lang="en">query string</i><i lang="ru">строка запроса</i>
-		 * @param {Object} event — <i lang="en">event object</i><i lang="ru">объект запроса</i>
-		 * @param {mixed} [param] — <i lang="en">input parameters</i><i lang="ru">входные параметр</i>
-		 * @param {mixed} [_this=event] — <i lang="en">this object</i><i lang="ru">this для функции обратного вызова</i>
+		 * @param {String} query — query string
+		 * @param {Object} event — event object
+		 * @param {mixed} [param] — input parameters
+		 * @param {mixed} [_this=event] — this object
 		 * @return {mixed}
 		 */
 		execEvent: function (query, event, param, _this) {
@@ -284,13 +273,12 @@ var nimble = (function () {
 		},
 		
 		/**
-		 * <i lang="en">add new element to object</i>
-		 * <i lang="ru">добавить новое значение объекту</i>
+		 * add new element to object
 		 *
 		 * @this {nimble}
-		 * @param {Plain Object} obj — <i lang="en">some object</i><i lang="ru">исходный объект</i>
-		 * @param {String} active — <i lang="en">property name (can use "->unshift" — the result will be similar to work for an array "unshift")</i><i lang="ru">имя нового свойства (можно использовать константу "->unshift" — результат будет идентичен работе метода массива "unshift")</i>
-		 * @param {mixed} value — <i lang="en">some value</i><i lang="ru">значение свойства</i>
+		 * @param {Plain Object} obj — some object
+		 * @param {String} active — property name (can use "->unshift" — the result will be similar to work for an array "unshift")
+		 * @param {mixed} value — some value
 		 * @return {Plain Object|Boolean}
 		 */
 		addElementToObject: function (obj, active, value) {

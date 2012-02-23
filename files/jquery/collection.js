@@ -18,12 +18,10 @@
 	$.fn = $.fn;
 	
 	/**
-	 * <i lang="en">jQuery collection</i>
-	 * <i lang="ru">jQuery коллекция</i>
+	 * jQuery collection
 	 * 
-	 * @example http://jsfiddle.net/kobezzza/VqVdP/
 	 * @this {jQuery Object}
-	 * @param {Object} prop — <i lang="en">user's preferences</i><i lang="ru">дополнительные свойства</i>
+	 * @param {Object} prop — user's preferences
 	 * @return {Colletion Object}
 	 */
 	$.fn.collection = function (prop) {

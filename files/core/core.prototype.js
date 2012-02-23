@@ -5,24 +5,21 @@
 	
 	$.Collection.prototype = {
 		/**
-		 * <i lang="en">framework name</i>
-		 * <i lang="ru">название фреймворка</i>
+		 * framework name
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		name: "$.Collection",
 		/**
-		 * <i lang="en">framework version</i>
-		 * <i lang="ru">версия фреймворка</i>
+		 * framework version
 		 * 
 		 * @constant
 		 * @type String
 		 */
 		version: "3.5",
 		/**
-		 * <i lang="en">return string: framework name + framework version</i>
-		 * <i lang="ru">вернуть строку: название фреймворка + версия</i>
+		 * return string: framework name + framework version
 		 *
 		 * @this {Collection Prototype}
 		 * @return {String}

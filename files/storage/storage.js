@@ -7,8 +7,7 @@
 		// root
 		dObj: {
 			/**
-			 * <i lang="en">active properties</i>
-			 * <i lang="ru">активные свойства</i>
+			 * active properties
 			 * 
 			 * @namespace
 			 */
@@ -18,8 +17,7 @@
 				/////////////////////////////////
 				
 				/**
-				 * <i lang="en">namespace</i>
-			 	 * <i lang="ru">пространство имён</i>
+				 * namespace
 				 * 
 				 * @field
 				 * @type String
@@ -27,32 +25,28 @@
 				namespace: "nm",
 				
 				/**
-				 * <i lang="en">collection</i>
-			 	 * <i lang="ru">коллекция</i>
+				 * collection
 				 * 
 				 * @field
 				 * @type Collection|Null
 				 */
 				collection: null,
 				/**
-				 * <i lang="en">filter ("false" if disabled)</i>
-			 	 * <i lang="ru">фильтр ("false" если отключён)</i>
+				 * filter ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				filter: false,
 				/**
-				 * <i lang="en">context</i>
-			 	 * <i lang="ru">контекст</i>
+				 * context
 				 * 
 				 * @field
 				 * @type Context
 				 */
 				context: "",
 				/**
-				 * <i lang="en">cache object</i>
-			 	 * <i lang="ru">кеш</i>
+				 * cache object
 				 * 
 				 * @field
 				 * @type Plain Object
@@ -88,16 +82,14 @@
 					lastIteration: false
 				},
 				/**
-				 * <i lang="en">temporary variables</i>
-			 	 * <i lang="ru">временная переменная</i>
+				 * temporary variables
 				 * 
 				 * @field
 				 * @type mixed
 				 */
 				variable: null,
 				/**
-				 * <i lang="en">deferred object</i>
-			 	 * <i lang="ru">отложенный объект</i>
+				 * deferred object
 				 * 
 				 * @field
 				 * @type jQuery Deferred
@@ -109,80 +101,70 @@
 				/////////////////////////////////
 				
 				/**
-				 * <i lang="en">active page</i>
-			 	 * <i lang="ru">активная страница</i>
+				 * active page
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				page: 1,
 				/**
-				 * <i lang="en">parser ("false" if disabled)</i>
-			 	 * <i lang="ru">парсер ("false" если отключён)</i>
+				 * parser ("false" if disabled)
 				 * 
 				 * @field
 				 * @type Function|Boolean
 				 */
 				parser: false,
 				/**
-				 * <i lang="en">DOM insert mode (jQuery methods)</i>
-			 	 * <i lang="ru">режим добавления в DOM (методы jQuery)</i>
+				 * DOM insert mode (jQuery methods)
 				 * 
 				 * @field
 				 * @param String
 				 */
 				appendType: "html",
 				/**
-				 * <i lang="en">target (target to insert the result templating)</i>
-			 	 * <i lang="ru">цель (узел для вставки результата шаблонизации)</i>
+				 * target (target to insert the result templating)
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				target: null,
 				/**
-				 * <i lang="en">selector (used to calculate the number of records per page, by default, are all the children of the element)</i>
-			 	 * <i lang="ru">селектор (используется для подсчёта количества записей на странице)</i>
+				 * selector (used to calculate the number of records per page, by default, are all the children of the element)
 				 * 
 				 * @field
 				 * @type Selector
 				 */
 				calculator: null,
 				/**
-				 * <i lang="en">pager (an interface element to display the navigation through the pages of)</i>
-			 	 * <i lang="ru">пейджер (интерфейс навигации)</i>
+				 * pager (an interface element to display the navigation through the pages of)
 				 * 
 				 * @field
 				 * @type jQuery Object
 				 */
 				pager: null,
 				/**
-				 * <i lang="en">template</i>
-			 	 * <i lang="ru">шаблон</i>
+				 * template
 				 * 
 				 * @field
 				 * @type Function
 				 */
 				template: null,
 				/**
-				 * <i lang="en">the number of entries on one page</i>
-			 	 * <i lang="ru">количество записей на одной странице</i>
+				 * the number of entries on one page
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				numberBreak: 10,
 				/**
-				 * <i lang="en">the number of pages in the navigation menu</i>
-			 	 * <i lang="ru">количество ссылок на страницы в панеле навигации</i>
+				 * the number of pages in the navigation menu
 				 * 
 				 * @field
 				 * @type Number
 				 */
 				pageBreak: 10,
 				/**
-				 * <i lang="en">empty result (in case if the search nothing is returned)</i>
-			 	 * <i lang="ru">выводится, когда запрос возвращает пустой ответ</i>
+				 * empty result (in case if the search nothing is returned)
 				 * 
 				 * @field
 				 * @type String

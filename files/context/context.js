@@ -4,12 +4,11 @@
 	/////////////////////////////////
 	
 	/**
-	 * <i lang="en">calculate parent context</i>
-	 * <i lang="ru">вернуть контекст родительского элемента</i>
+	 * calculate parent context
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] — <i lang="en">level</i><i lang="ru">уровень</i>
-	 * @param {String} [id=this.ACTIVE] — <i lang="en>collection ID</i><i lang="ru">ИД коллекции</i>
+	 * @param {Number} [n=1] — level
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {String}
 	 */
 	$.Collection.prototype.parentContext = function (n, id) {
@@ -22,12 +21,11 @@
 		return context.join(nimble.CHILDREN);
 	};
 	/**
-	 * <i lang="en">change the context (the parent element)</i>
-	 * <i lang="ru">изменить контекст на родительский</i>
+	 * change the context (the parent element)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} [n=1] — <i lang="en">level</i><i lang="ru">уровень</i>
-	 * @param {String} [id=this.ACTIVE] — <i lang="en>collection ID</i><i lang="ru">ИД коллекции</i>
+	 * @param {Number} [n=1] — level
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.parent = function (n, id) {

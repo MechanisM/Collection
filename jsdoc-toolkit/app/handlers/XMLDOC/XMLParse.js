@@ -9,7 +9,7 @@ LOG.inform("XMLDOC.Parser loaded");
  * variable to <tt>false</tt> before calling <tt>XMLDOC.Parser.parse()</tt>.
  * <p/>
  * <i>Note: If you pass poorly formed XML, it will cause the parser to throw
- * an exception.</i>
+ * an exception.
  *
  * @author Brett Fattori (bfattori@fry.com)
  * @author $Author: micmath $

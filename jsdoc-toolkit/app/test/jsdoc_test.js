@@ -48,7 +48,7 @@ function Shape(){
 /**
  * Create a new Hexagon instance.
  * @extends Shape
- * @class Hexagon is a class that is a <i>logical</i> sublcass of 
+ * @class Hexagon is a class that is a <i>logical sublcass of 
  * {@link Shape} (thanks to the <code>&#64;extends</code> tag), but in 
  * reality it is completely unrelated to Shape.
  * @param {int} sideLength The length of one side for the new Hexagon
@@ -174,7 +174,7 @@ Rectangle.prototype = new Shape();
 
 /**
  * Value to represent the width of the Rectangle.
- * <br>Text in <b>bold</b> and <i>italic</i> and a 
+ * <br>Text in <b>bold</b> and <i>italic and a 
  * link to <a href="http://sf.net">SourceForge</a>
  * @private
  * @type int
