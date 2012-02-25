@@ -161,7 +161,7 @@
 	 * @throw {Error}
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype.isExpires = function (time, id, local) {
+	$.Collection.prototype.isExpired = function (time, id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		return new Date(new Date() - new Date(this.loadDate(id || "", local || ""))) > time;
