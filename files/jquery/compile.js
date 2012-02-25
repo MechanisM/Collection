@@ -57,8 +57,7 @@
 			//
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
-				if (key === "prefix" || key === "set" || key === "print" || key === "name") { continue; }
-				//
+				if (key === "prefix" || key === "set" || key === "print" || key === "name" || key === "collection") { continue; }
 				if (key === "target" || key === "pager") { data[key] = $(data[key]); }
 				
 				cObj._push(key, prefix + data.name, data[key]);
@@ -69,6 +68,7 @@
 			//
 			if (data.print && data.print === true) {
 				data.template = data.name;
+				if (!data.target) { data.target = $this.parent(); }
 				cObj.print(data);
 			}
 		});
