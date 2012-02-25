@@ -66,8 +66,8 @@
 				}(el);	
 			}
 			//
-			fn["isActive" + nm] = function (nm) {
-				return function (id) { return this._isActive(nm, id); };
+			fn["active" + nm] = function (nm) {
+				return function (id) { return this._active(nm, id); };
 			}(el);	
 			//
 			fn["exists" + nm] = function (nm) {

@@ -20,7 +20,7 @@
 		var
 			name = "__" + this.name + "__" + this._get("namespace"),
 			//
-			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
+			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._active("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.setItem(name + ":" + id, this.toString(id));
@@ -53,7 +53,7 @@
 		this.dropAll(local);
 		//
 		for (key in tmp) {
-			this._isActive("Collection", key) && (active = true);
+			this._active("Collection", key) && (active = true);
 			//
 			if (tmp.hasOwnProperty(key)) { this.save(key, local); }
 		}

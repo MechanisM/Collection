@@ -89,7 +89,7 @@
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
 					if (key === this.ACTIVE) {
-						throw new Error("invalid property name!");
+						this._update(propName, objID[key]);
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
@@ -104,7 +104,7 @@
 			}
 		} else {
 			if (objID === this.ACTIVE) {
-				throw new Error("invalid property name!");
+				this._update(propName, newProp);
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
@@ -324,7 +324,8 @@
 	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype._isActive = function (propName, id) {
+	$.Collection.prototype._active = function (propName, id) {
+		if (!id) { return this._getActiveID(propName); }
 		if (id === this._getActiveID(propName)) { return true; }
 
 		return false;

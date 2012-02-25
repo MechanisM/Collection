@@ -1059,7 +1059,7 @@ var nimble = (function () {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
 					if (key === this.ACTIVE) {
-						throw new Error("invalid property name!");
+						this._update(propName, objID[key]);
 					} else {
 						if (tmp[key] && activeID && activeID === key) {
 							this._update(propName, objID[key]);
@@ -1074,7 +1074,7 @@ var nimble = (function () {
 			}
 		} else {
 			if (objID === this.ACTIVE) {
-				throw new Error("invalid property name!");
+				this._update(propName, newProp);
 			} else {
 				if (tmp[objID] && activeID && activeID === objID) {
 					this._update(propName, newProp);
@@ -1294,7 +1294,8 @@ var nimble = (function () {
 	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype._isActive = function (propName, id) {
+	$.Collection.prototype._active = function (propName, id) {
+		if (!id) { return this._getActiveID(propName); }
 		if (id === this._getActiveID(propName)) { return true; }
 
 		return false;
@@ -1429,8 +1430,8 @@ var nimble = (function () {
 				}(el);	
 			}
 			//
-			fn["isActive" + nm] = function (nm) {
-				return function (id) { return this._isActive(nm, id); };
+			fn["active" + nm] = function (nm) {
+				return function (id) { return this._active(nm, id); };
 			}(el);	
 			//
 			fn["exists" + nm] = function (nm) {
@@ -1956,7 +1957,7 @@ var nimble = (function () {
 			//
 			return cObj.indexOf(searchElement);
 		} else { return this.search(function (el) { return el === searchElement; }, id, false, "", "", fromIndex); }
-	}
+	};
 	/**
 	 * lastIndexOf (in context)
 	 * 
@@ -1981,7 +1982,7 @@ var nimble = (function () {
 			//
 			return el[el.length - 1] !== undefined ? el[el.length - 1] : -1;
 		}
-	}	
+	};	
 	/////////////////////////////////
 	//// mult methods (get)
 	/////////////////////////////////
@@ -2114,8 +2115,7 @@ var nimble = (function () {
 	$.Collection.prototype.map = function (replaceObj, filter, id) {
 		return this.set(filter || "", replaceObj, id || "");
 	};
-	
-	/**
+		/**
 	 * some (in context)
 	 * 
 	 * @this {Colletion Object}
@@ -2691,7 +2691,7 @@ var nimble = (function () {
 		var
 			name = "__" + this.name + "__" + this._get("namespace"),
 			//
-			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._isActive("collection", id) ? "active" : "",
+			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._active("collection", id) ? "active" : "",
 			storage = local === false ? sessionStorage : localStorage;
 		//
 		storage.setItem(name + ":" + id, this.toString(id));
@@ -2724,7 +2724,7 @@ var nimble = (function () {
 		this.dropAll(local);
 		//
 		for (key in tmp) {
-			this._isActive("Collection", key) && (active = true);
+			this._active("Collection", key) && (active = true);
 			//
 			if (tmp.hasOwnProperty(key)) { this.save(key, local); }
 		}

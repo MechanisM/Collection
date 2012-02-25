@@ -147,12 +147,12 @@
 				equal(db._getActiveID("collection"), "table1", "simple test");
 			});
 			//
-			test("_isActive", function () {
+			test("_active", function () {
 				var db = new $.Collection()
 					._push("collection", {table1: [1, 2], table2: [1]})
 					._set("collection", "table1");
 
-				equal(db._isActive("collection", "table1"), true, "simple test");
+				equal(db._active("collection", "table1"), true, "simple test");
 			});
 		});
 	</script>

@@ -107,15 +107,3 @@
 			return el[el.length - 1] !== undefined ? el[el.length - 1] : -1;
 		}
 	};
-	/**
-	 * some (in context)
-	 * 
-	 * @this {Colletion Object}
-	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @return {Colletion Object}
-	 */
-	$.Collection.prototype.some = function (callback, filter, id) {
-		return this.forEach(callback, filter || "", id || "", false);
-	};
