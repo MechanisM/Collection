@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>my document</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+	<script src="http://www.kobezzza.com/files/collection/jquery.collection.min.js" type="text/javascript"></script>
+	<script type="text/javascript" src="scripts/shCore.js"></script>
+	<script type="text/javascript" src="scripts/shBrushJScript.js"></script>
+	<script type="text/javascript" src="scripts/shBrushXml.js"></script>
+	<link type="text/css" rel="stylesheet" href="styles/shCoreDefault.css">
+	<script type="text/javascript">SyntaxHighlighter.all();</script>
+	<link type="text/css" rel="stylesheet" href="main.css">
+</head>
+
+<body>
+	<h1>Использование реляционного фреймворка $.Collection в своём проекте</h1>
+	<h2>Глава 6. Условные методы.</h2>
+	<p>
+		В этой главе, речь снова пойдёт об условных методах $.Collection, а именно о: move и copy. Как можно догадать из названия - эти методы осущесвтялют копирование и перенос данных, а если сказать более точно, то копирование и перенос из одной коллекции в другую.
+	</p>
+	<pre class="brush: js">
+var db = new $.Collection();
+db.push({
+	table1: [
+		{name: &quot;Koba&quot;, age: 22, lvl: 80},
+		{name: &quot;Over&quot;, age: 27, lvl: 90},
+		{name: &quot;Drobila&quot;, age: 29, lvl: 85},
+		{name: &quot;Nerzum&quot;, age: 20, lvl: 75}
+	],
+	table2: [1, 2, 3]
+});
+
+// перенесём первый элемент коллекции table1 в table2
+db.move(&quot;0&quot;, &quot;&quot;, &quot;table1&quot;, &quot;table2&quot;);
+</pre>
+</body>
+</html>
