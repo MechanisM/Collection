@@ -637,8 +637,7 @@ var nimble = (function () {
 			//
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
-				if (key === "prefix" || key === "set" || key === "print" || key === "name") { continue; }
-				//
+				if (key === "prefix" || key === "set" || key === "print" || key === "name" || key === "collection") { continue; }
 				if (key === "target" || key === "pager") { data[key] = $(data[key]); }
 				
 				cObj._push(key, prefix + data.name, data[key]);
@@ -649,6 +648,7 @@ var nimble = (function () {
 			//
 			if (data.print && data.print === true) {
 				data.template = data.name;
+				if (!data.target) { data.target = $this.parent(); }
 				cObj.print(data);
 			}
 		});
@@ -2170,10 +2170,15 @@ var nimble = (function () {
 	
 		// search elements
 		this.disable("context");
-		elements = this.search(moveFilter, sourceID, mult, count, from, indexOf);
+		//
+		if ($.isNumeric(moveFilter) || ($.isString(moveFilter) && !this._filterTest(moveFilter))) {
+			elements = moveFilter;
+		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
+		//
 		this.enable("context");
+		
 		// move
-		if (mult === true) {
+		if (mult === true && $.isArray(moveFilter)) {
 			elements.forEach(function (el) {
 				this.add(context + nimble.CHILDREN + el, aCheckType === true ? addType : el + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
@@ -2536,7 +2541,7 @@ var nimble = (function () {
 		field = field || "";
 		rev = rev || false;
 		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
-			if (isNaN(a)) { return a.toUpperCase(); }
+			if ($.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};
@@ -2567,7 +2572,7 @@ var nimble = (function () {
 					if (a > b) { return r; }
 					
 					return 0;
-				} else { return Math.floor(Math.random() * 2  - 1); }
+				} else { return Math.round(Math.random() * 2  - 1); }
 			},
 			
 			/** @private */

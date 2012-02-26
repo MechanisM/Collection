@@ -42,10 +42,15 @@
 	
 		// search elements
 		this.disable("context");
-		elements = this.search(moveFilter, sourceID, mult, count, from, indexOf);
+		//
+		if ($.isNumeric(moveFilter) || ($.isString(moveFilter) && !this._filterTest(moveFilter))) {
+			elements = moveFilter;
+		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
+		//
 		this.enable("context");
+		
 		// move
-		if (mult === true) {
+		if (mult === true && $.isArray(moveFilter)) {
 			elements.forEach(function (el) {
 				this.add(context + nimble.CHILDREN + el, aCheckType === true ? addType : el + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);

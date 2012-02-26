@@ -18,7 +18,7 @@
 		field = field || "";
 		rev = rev || false;
 		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
-			if (isNaN(a)) { return a.toUpperCase(); }
+			if ($.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};
@@ -49,7 +49,7 @@
 					if (a > b) { return r; }
 					
 					return 0;
-				} else { return Math.floor(Math.random() * 2  - 1); }
+				} else { return Math.round(Math.random() * 2  - 1); }
 			},
 			
 			/** @private */
