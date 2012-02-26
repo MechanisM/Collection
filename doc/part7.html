@@ -14,7 +14,7 @@
 </head>
 
 <body>
-	<h1>Использование реляционного фреймворка $.Collection в своём проекте</h1>
+	<h1>Использование реляционного фреймворка $.Collection</h1>
 	<h2>Глава 7. Одиночные методы. Статистика.</h2>
 	<h3>Одиночные методы</h3>
 	<p>
@@ -49,7 +49,53 @@ db.concat([1, 2, 3], &quot;1&quot;);</pre>
 	Первым параметром методо принимает коллекцию, которая учавствует в конкатенации, вторым может принимать дополнительный контекст для коллекции с которой идёт конкатенация (плюсутеся с активным контекстом), а третим ИД коллекции. В случае конкатенации массива с массивом используется простой concat, для объектов extend, а для объекта с массивом либо extend либо concat (в зависимости от порядка).
 </p>
 <h3>Статистика</h3>
-<p>&nbsp;
+<p>
+	Часто бывает нужно узнать различную дополнительную информацию о наших данных, например: максимальное значение поля, среднее арифметическое и т.д. В большинстве СУБД для это существуют различные статистические функции, и $.Collection не стал исключением. Для сбора статистики в $.Collection есть 2 метода: stat и groupStat. Первый метод собирает статистику с простой коллекции, а 
+groupStat, как с результата группировки.
 </p>
+<pre class="brush: js">
+var db = new $.Collection([
+	{name: &quot;Andrey&quot;, sex: &quot;male&quot;, age: 22},
+	{name: &quot;Sergey&quot;, sex: &quot;male&quot;, age: 24},
+	{name: &quot;Ann&quot;, sex: &quot;female&quot;, age: 18},
+	{name: &quot;Andrey2&quot;, sex: &quot;male&quot;, age: 22},
+	{name: &quot;Sergey2&quot;, sex: &quot;male&quot;, age: 24},
+	{name: &quot;Ann2&quot;, sex: &quot;female&quot;, age: 18},
+	{name: &quot;Andrey3&quot;, sex: &quot;male&quot;, age: 22},
+	{name: &quot;Sergey3&quot;, sex: &quot;male&quot;, age: 24},
+	{name: &quot;Ann3&quot;, sex: &quot;female&quot;, age: 18},
+	{name: &quot;Andrey4&quot;, sex: &quot;male&quot;, age: 22},
+	{name: &quot;Sergey4&quot;, sex: &quot;male&quot;, age: 24},
+	{name: &quot;Ann4&quot;, sex: &quot;female&quot;, age: 18}
+]);
+
+// найдём количество записей в коллекции
+db.stat(&quot;count&quot;);
+// сумма по полю age (можно использовать прямые ссылки)
+db.stat(&quot;summ&quot;, &quot;age&quot;);
+// среднее арифметическое по полю age
+db.stat(&quot;avg&quot;, &quot;age&quot;);
+// минимум по полю age (максимум с помощью max)
+db.stat(&quot;min&quot;, &quot;age&quot;);
+// произвольная статистика: умножение (можно также использовать символы +,-,/)
+db.stat(&quot;*&quot;, &quot;age&quot;);
+// произвольная статистика: функция обратного вызова (суммирование элементов)
+db.stat(function (field, result) {
+	return (result += field);
+}, &quot;age&quot;);
+
+// для использование метода groupStat, сгруппируем нашу коллекцию, например, по полю sex и добавим в стек
+db.pushSetCollection(&quot;group&quot;, db.group(&quot;name&quot;));
+
+// среднеарифметический возраст у групп
+db.groupStat(&quot;avg&quot;, &quot;age&quot;);
+
+// все возможные параметры интерфейса такиеже, как и у stat
+// плюс два новых
+// первые элементы в каждой группе
+db.groupStat(&quot;first&quot;);
+// последние элементы в каждой группе
+db.groupStat(&quot;last&quot;);
+</pre>
 </body>
 </html>
