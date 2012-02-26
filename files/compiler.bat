@@ -24,7 +24,6 @@ copy	^
 		+ storage\storage.sys.js ^
 		^
 		+ stack\stack.js ^
-		+ stack\stack.prop.js ^
 		+ stack\stack.aliases.js ^
 		^
 		+ single\single.js ^
