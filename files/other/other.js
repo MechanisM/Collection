@@ -43,11 +43,14 @@
 	 * enable property
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} name - property name
+	 * @param {String} 0...n - property name
 	 * @return {Collection Object}
 	 */
-	$.Collection.prototype.enable = function (name) {
-		this.dObj.sys.flags.use[name] = true;
+	$.Collection.prototype.enable = function () {
+		for (var key in arguments) {
+			if (!arguments.hasOwnProperty(key)) { continue; }
+			this.dObj.sys.flags.use[arguments[key]] = true;
+		}
 		
 		return this;
 	};
@@ -55,11 +58,14 @@
 	 * disable property
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} name - property name
+	 * @param {String} 0...n  - property name
 	 * @return {Collection Object}
 	 */
-	$.Collection.prototype.disable = function (name) {
-		this.dObj.sys.flags.use[name] = false;
+	$.Collection.prototype.disable = function () {
+		for (var key in arguments) {
+			if (!arguments.hasOwnProperty(key)) { continue; }
+			this.dObj.sys.flags.use[arguments[key]] = false;
+		}
 		
 		return this;
 	};
@@ -67,13 +73,16 @@
 	 * toggle property
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} name - property name
+	 * @param {String} 0...n  - property name
 	 * @return {Collection Object}
 	 */
-	$.Collection.prototype.toggle = function (name) {
-		if (this.dObj.sys.flags.use[name] === true) { return this.disable(name); }
-		
-		return this.enable(name);
+	$.Collection.prototype.toggle = function () {
+		for (var key in arguments) {
+			if (!arguments.hasOwnProperty(key)) { continue; }
+			if (this.dObj.sys.flags.use[arguments[key]] === true) { return this.disable(arguments[key]); }
+			
+			return this.enable(arguments[key]);
+		}
 	};
 	
 	// native
