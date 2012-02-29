@@ -534,20 +534,6 @@ ul { list-style-type: square }
 									</td>
 								</tr>
 							
-								<tr data-obj='{"name": "active", "isPrivate": false, "isInner": false, "isStatic": false}'>
-									<td class="b-summary__attr">
-										&nbsp;
-									</td>
-									<td class="b-summary__desc">
-										<div class="b-summary__desc__head">
-											
-											<strong><a href="../symbols/%24.Collection.html#active">active</a></strong>
-											(objKey, value)
-										</div>
-										<div class="b-summary__desc__body"></div>
-									</td>
-								</tr>
-							
 								<tr data-obj='{"name": "add", "isPrivate": false, "isInner": false, "isStatic": false}'>
 									<td class="b-summary__attr">
 										&nbsp;
@@ -626,7 +612,7 @@ ul { list-style-type: square }
 										<div class="b-summary__desc__head">
 											
 											<strong><a href="../symbols/%24.Collection.html#disable">disable</a></strong>
-											(name)
+											()
 										</div>
 										<div class="b-summary__desc__body">disable property</div>
 									</td>
@@ -682,7 +668,7 @@ ul { list-style-type: square }
 										<div class="b-summary__desc__head">
 											
 											<strong><a href="../symbols/%24.Collection.html#enable">enable</a></strong>
-											(name)
+											()
 										</div>
 										<div class="b-summary__desc__body">enable property</div>
 									</td>
@@ -1200,7 +1186,7 @@ ul { list-style-type: square }
 										<div class="b-summary__desc__head">
 											
 											<strong><a href="../symbols/%24.Collection.html#toggle">toggle</a></strong>
-											(name)
+											()
 										</div>
 										<div class="b-summary__desc__body">toggle property</div>
 									</td>
@@ -2278,57 +2264,6 @@ ul { list-style-type: square }
 
 								<hr />
 							
-								<a name="active"> </a>
-								<div class="b-details__head">
-									
-											
-									
-									
-									<strong>active</strong>
-									(objKey, value)
-								</div>
-									
-								<div class="b-details__desc">
-									
-									
-									
-								</div>
-									
-								
-									
-								
-									<dl class="b-detail-list">
-										<dt class="b-detail-list__head">
-											<i lang="en">Parameters</i>
-											<i lang="ru">Входные параметры</i>:
-										</dt>
-										
-											<dt class="b-detail-list__title">
-												
-												<strong>objKey</strong>
-												
-											</dt>
-											<dd></dd>
-										
-											<dt class="b-detail-list__title">
-												
-												<strong>value</strong>
-												
-											</dt>
-											<dd></dd>
-										
-									</dl>
-								
-								
-								
-								
-								
-								
-								
-								
-
-								<hr />
-							
 								<a name="add"> </a>
 								<div class="b-details__head">
 									
@@ -2566,13 +2501,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|String|Boolean}</span> 
+												<span class="b-detail-list__param">{Filter|String}</span> 
 												<strong>moveFilter</strong>
 												
-													(<i lang="en">optional, default: <span class="b-detail-list__param__def">false</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">false</span></i>)
+													(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{Context}</span> 
@@ -2694,13 +2629,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|String|Boolean}</span> 
+												<span class="b-detail-list__param">{Filter|String}</span> 
 												<strong>moveFilter</strong>
 												
-													(<i lang="en">optional, default: <span class="b-detail-list__param__def">false</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">false</span></i>)
+													(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{Context}</span> 
@@ -2767,7 +2702,7 @@ ul { list-style-type: square }
 									
 									
 									<strong>disable</strong>
-									(name)
+									()
 								</div>
 									
 								<div class="b-details__desc">
@@ -2787,7 +2722,7 @@ ul { list-style-type: square }
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
-												<strong>name</strong>
+												<strong>0...n</strong>
 												
 											</dt>
 											<dd>- property name</dd>
@@ -3006,7 +2941,7 @@ ul { list-style-type: square }
 									
 									
 									<strong>enable</strong>
-									(name)
+									()
 								</div>
 									
 								<div class="b-details__desc">
@@ -3026,7 +2961,7 @@ ul { list-style-type: square }
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
-												<strong>name</strong>
+												<strong>0...n</strong>
 												
 											</dt>
 											<dd>- property name</dd>
@@ -3088,13 +3023,13 @@ ul { list-style-type: square }
 											<dd>- callback function</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -3267,7 +3202,7 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|Context|Null}</span> 
+												<span class="b-detail-list__param">{Filter|Context|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
@@ -3446,13 +3381,13 @@ ul { list-style-type: square }
 											<dd>- field name, string expression or callback function</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -3558,13 +3493,13 @@ ul { list-style-type: square }
 											<dd>- field name, string expression or callback function</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -3670,13 +3605,13 @@ ul { list-style-type: square }
 											<dd>- field name</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -3986,13 +3921,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|String|Boolean|Collection}</span> 
+												<span class="b-detail-list__param">{Filter|Collection|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression, collection or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String|Collection}</span> 
@@ -4001,7 +3936,7 @@ ul { list-style-type: square }
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- collection ID</dd>
+											<dd>- collection ID or collection</dd>
 										
 									</dl>
 								
@@ -4261,13 +4196,13 @@ ul { list-style-type: square }
 											<dd>- replace object (if is Function, then executed as a callback)</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Context|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression, context (overload) or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -4328,13 +4263,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|String|Boolean}</span> 
+												<span class="b-detail-list__param">{Filter|String}</span> 
 												<strong>moveFilter</strong>
 												
-													(<i lang="en">optional, default: <span class="b-detail-list__param__def">false</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">false</span></i>)
+													(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{Context}</span> 
@@ -4412,7 +4347,7 @@ ul { list-style-type: square }
 												<span class="b-detail-list__param">{Boolean}</span> 
 												<strong>deleteType</strong>
 												
-													(<i lang="en">optional, default: <span class="b-detail-list__param__def">false</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">false</span></i>)
+													(<i lang="en">optional, default: <span class="b-detail-list__param__def">true</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">true</span></i>)
 												
 											</dt>
 											<dd>- if "true", remove source element</dd>
@@ -4467,13 +4402,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|String|Boolean}</span> 
+												<span class="b-detail-list__param">{Filter|String}</span> 
 												<strong>moveFilter</strong>
 												
-													(<i lang="en">optional, default: <span class="b-detail-list__param__def">false</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">false</span></i>)
+													(<i lang="en">optional</i><i lang="ru">необязательный параметр</i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{Context}</span> 
@@ -4830,13 +4765,13 @@ ul { list-style-type: square }
 											<dd>- variable ID (if param.target === false)</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>param.filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{Parser}</span> 
@@ -5016,7 +4951,7 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|Context|Null}</span> 
+												<span class="b-detail-list__param">{Filter|Context|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
@@ -5369,13 +5304,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -5472,13 +5407,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -5539,13 +5474,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter|Context|Null}</span> 
+												<span class="b-detail-list__param">{Filter|Context|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function, string expression or context (overload)</dd>
+											<dd>- filter function, string expression, context (overload) or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{mixed}</span> 
@@ -5649,13 +5584,13 @@ ul { list-style-type: square }
 										</dt>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Context|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression, context (overload) or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{mixed}</span> 
@@ -5788,13 +5723,13 @@ ul { list-style-type: square }
 											<dd>- callback function</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -5958,13 +5893,13 @@ ul { list-style-type: square }
 											<dd>- field name</dd>
 										
 											<dt class="b-detail-list__title">
-												<span class="b-detail-list__param">{Filter}</span> 
+												<span class="b-detail-list__param">{Filter|Boolean}</span> 
 												<strong>filter</strong>
 												
 													(<i lang="en">optional, default: <span class="b-detail-list__param__def">this.ACTIVE</span></i><i lang="ru">необязательный параметр, по умолчанию: <span class="b-detail-list__param__def">this.ACTIVE</span></i>)
 												
 											</dt>
-											<dd>- filter function or string expression</dd>
+											<dd>- filter function, string expression or true (if disabled)</dd>
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
@@ -6098,7 +6033,7 @@ ul { list-style-type: square }
 									
 									
 									<strong>toggle</strong>
-									(name)
+									()
 								</div>
 									
 								<div class="b-details__desc">
@@ -6118,7 +6053,7 @@ ul { list-style-type: square }
 										
 											<dt class="b-detail-list__title">
 												<span class="b-detail-list__param">{String}</span> 
-												<strong>name</strong>
+												<strong>0...n</strong>
 												
 											</dt>
 											<dd>- property name</dd>
@@ -6391,7 +6326,7 @@ ul { list-style-type: square }
 <!-- ============================== footer ================================= -->
 				<div class="b-footer">
 					
-					Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Sun Feb 26 2012 18:47:24 GMT+0400 (MSK)
+					Documentation generated by <a href="http://code.google.com/p/jsdoc-toolkit/" target="_blank">JsDoc Toolkit</a> 2.4.0 on Wed Feb 29 2012 22:08:31 GMT+0400 (MSK)
 				</div>
 			</div>
 		</div>

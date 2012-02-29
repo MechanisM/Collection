@@ -13,7 +13,7 @@
 	 */
 	$.Collection.prototype._customParser = function (parser, str, _tmpParser) {
 		// if parser is undefined
-		if (!parser) {
+		if (!parser || parser === true) {
 			if (!this._getActiveParam("parser")) { return str; }
 			//
 			if (this._get("parser")) {

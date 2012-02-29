@@ -14,7 +14,7 @@
 	$.Collection.prototype._removeOne = function (context, id) {
 		context = $.isExists(context) ? context.toString() : "";
 		var activeContext = this._getActiveParam("context");
-		
+
 		if (!context && !activeContext) {
 			this._setOne("", null);
 		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }

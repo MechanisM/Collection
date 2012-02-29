@@ -16,7 +16,7 @@
 	 * @param {Number} [param.pageBreak=this.ACTIVE] - number of displayed pages (navigation, > 2)
 	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] - element to output the result ("false" - if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] - variable ID (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] - filter function or string expression
+	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] - filter function, string expression or true (if disabled)
 	 * @param {Parser} [param.parser=this.ACTIVE] - parser function or string expression
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] - if "true", the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] - the selector for the calculation of the number of records

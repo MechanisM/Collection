@@ -36,7 +36,6 @@
 					lCheck = true;
 					cObj[propType](cValue);
 				}
-			
 			// move
 			} else {
 				cValue = $.isExists(cValue) ? cValue.toString() : "";

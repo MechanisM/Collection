@@ -8,7 +8,7 @@
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -49,7 +49,7 @@
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)

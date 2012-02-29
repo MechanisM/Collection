@@ -7,7 +7,7 @@
 	 * move elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
+	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
 	 * @param {Context} [context] - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -16,7 +16,7 @@
 	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
-	 * @param {Boolean} [deleteType=false] - if "true", remove source element
+	 * @param {Boolean} [deleteType=true] - if "true", remove source element
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
@@ -39,7 +39,7 @@
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
 	
 			elements;
-	
+		
 		// search elements
 		this.disable("context");
 		//
@@ -50,7 +50,7 @@
 		this.enable("context");
 		
 		// move
-		if (mult === true && $.isArray(moveFilter)) {
+		if (mult === true && $.isArray(elements)) {
 			elements.forEach(function (el) {
 				this.add(context + nimble.CHILDREN + el, aCheckType === true ? addType : el + nimble.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
@@ -69,7 +69,7 @@
 	 * move element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
+	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -83,7 +83,7 @@
 	 * copy elements (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
+	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -106,7 +106,7 @@
 	 * copy element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter=false] - filter function or string expression
+	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)

@@ -7,7 +7,7 @@
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
 	 * @param {mixed} el - current element
 	 * @param {Number|String} i - iteration (key)
 	 * @param {Collection} data - link to collection
@@ -27,7 +27,7 @@
 			i;
 		
 		// if filter is undefined
-		if (!filter) {
+		if (!filter || filter === true) {
 			if (!this._getActiveParam("filter")) { return true; }
 			//
 			if (this._get("filter")) {

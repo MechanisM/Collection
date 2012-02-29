@@ -7,8 +7,8 @@
 	 * collection length (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Collection} [filter=this.ACTIVE] - filter function or string expression
-	 * @param {String|Collection} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] - filter function, string expression, collection or true (if disabled)
+	 * @param {String|Collection} [id=this.ACTIVE] - collection ID or collection
 	 * @throw {Error}
 	 * @return {Number}
 	 */
@@ -78,7 +78,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
@@ -88,7 +88,6 @@
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
-		callback = $.isFunction(callback) ? {filter: callback} : callback;
 		filter = filter || "";
 		
 		// if id is Boolean
@@ -113,7 +112,7 @@
 			cObj, cOLength,
 			cloneObj,
 	
-			i, j = 0, res = false, tmpRes;
+			i, j = 0, res = false;
 		
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
@@ -143,24 +142,13 @@
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
-						if (callback.filter) { res = callback.filter.call(callback.filter, el, i, cObj, cOLength, this, id) === false; }
+						res = callback.call(callback, el, i, cObj, cOLength, this, id) === false;
 						if (mult === false) { res = true; }
 						j += 1;
 					}
-				} else {
-					if (callback.denial && (from === false || from === 0)) {
-						tmpRes = callback.denial.call(callback.denial, el, i, cObj, cOLength, this, id);
-						if (res === false && tmpRes === false) { res = true; }
-					}
-				}
-				//
-				if (callback.full && (from === false || from === 0)) {
-					tmpRes = callback.full.call(callback.full, el, i, cObj, cOLength, this, id);
-					if (res === false && tmpRes === false) { res = true; }
 				}
 				//
 				if (res === true) { return true; }
-				tmpRes = "";
 			}, this);
 		} else {
 			for (i in cObj) {
@@ -173,24 +161,13 @@
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {	
-						if (callback.filter) { res = callback.filter.call(callback.filter, cObj[i], i, cObj, cOLength, this, id) === false; }
+						res = callback.call(callback, cObj[i], i, cObj, cOLength, this, id) === false;
 						if (mult === false) { res = true; }
 						j += 1;
 					}
-				} else {
-					if (callback.denial && (from === false || from === 0)) {
-						tmpRes = callback.denial.call(callback.denial, cObj[i], i, cObj, cOLength, this, id);
-						if (res === false && tmpRes === false) { res = true; }
-					}
-				}
-				//
-				if (callback.full && (from === false || from === 0)) {
-					tmpRes = callback.full.call(callback.full, cObj[i], i, cObj, cOLength, this, id);
-					if (res === false && tmpRes === false) { res = true; }
 				}
 				//
 				if (res === true) { break; }
-				tmpRes = "";
 			}
 		}
 		//
@@ -199,4 +176,16 @@
 		cOLength = null;
 		
 		return this;
+	};
+	/**
+	 * some (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Function} callback - callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @return {Colletion Object}
+	 */
+	$.Collection.prototype.some = function (callback, filter, id) {
+		return this.forEach(callback, filter || "", id || "", false);
 	};

@@ -65,17 +65,6 @@
 					data[i] += 1;
 				}, "(:el > 2) && (:el < 4)").get()[3], 4, "forEach with expression filter: (:el > 2) && (:el < 4)");
 				//
-				equal(db.forEach({denial: function (el, i, data) {
-					data[i] -= 1;
-				}}, function (el, i, data) {
-					return el > 2;
-				}).get()[0], 1, "forEach with filter: denial > 2");
-				equal(db.forEach({full: function (el, i, data) {
-					data[i] -= 1;
-				}}, function (el, i, data) {
-					return el > 2;
-				}).get()[0], 0, "forEach with filter: full > 2");
-				//
 				equal(db2.forEach(function (el, i, data) {
 					data[i] += 1;
 				}, "", "", "", 2, 2, 5).get("eq(-1)"), 10, "with indexOf");
@@ -109,8 +98,7 @@
 			});
 			test("move", function () {
 				var db = new $.Collection([1, 2, 3, 4]).pushCollection("table1", [1, 2, []]);
-				
-				equal(db.newContext("eq(-1)").move(false, "", "active", "table1").getCollection().length, 0, "simple move");
+				equal(db.newContext("eq(-1)").move(true, "", "active", "table1").getCollection().length, 0, "simple move");
 			});
 			test("group", function () {
 				var db = new $.Collection([

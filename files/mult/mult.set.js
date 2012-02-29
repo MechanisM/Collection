@@ -10,7 +10,7 @@
 	 * 1) if the id is a Boolean, it is considered as mult.
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Null} [filter=this.ACTIVE] - filter function, string expression or context (overload)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @param {Boolean} [mult=true] - enable mult mode
@@ -44,7 +44,7 @@
 	 * replace element (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
@@ -58,22 +58,10 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.map = function (replaceObj, filter, id) {
 		return this.set(filter || "", replaceObj, id || "");
-	};
-		/**
-	 * some (in context)
-	 * 
-	 * @this {Colletion Object}
-	 * @param {Function} callback - callback function
-	 * @param {Filter} [filter=this.ACTIVE] - filter function or string expression
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @return {Colletion Object}
-	 */
-	$.Collection.prototype.some = function (callback, filter, id) {
-		return this.forEach(callback, filter || "", id || "", false);
 	};
