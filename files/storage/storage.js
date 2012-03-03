@@ -155,7 +155,7 @@
 				 * @field
 				 * @type Number
 				 */
-				numberBreak: 10,
+				numberBreak: null,
 				/**
 				 * the number of pages in the navigation menu
 				 * 

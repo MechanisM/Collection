@@ -86,7 +86,7 @@
 		
 		// without cache
 		if ($.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
-			start = !numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
+			start = !opt.numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
@@ -174,8 +174,10 @@
 			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
 			
 			/** @private */
-			genPage = function (data, classes, i) {
-				var key, str = "<" + (data.tag || "span") + ' data-page="' + i + '"';
+			genPage = function (data, classes, i, nSwitch) {
+				nSwitch = nSwitch || false;
+				var key, str = "<" + (data.tag || "span") + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
+				//
 				if (data.attr) {
 					for (key in data.attr) {
 						if (data.attr.hasOwnProperty(key)) {
@@ -184,17 +186,32 @@
 					}
 				}
 				//
-				if (i === param.page) { str += ' class="' + (classes && classes.active || "active") + '"'; }
+				if ((!nSwitch && i === param.page) || (!nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || "active") + '"'; }
 				return str += ">" + i + "</" + (data.tag || "span") + ">";
 			},
+			
+			/** @private */
+			wrap = function (val, tag) {
+				if (tag === "select") {
+					return '<option value="' + val + '">' + val + '</option>';
+				}
+				
+				return val;
+			},
+			
 			//
 			i, j = 0, from, to;
 		//
 		param.pager.find(".ctm").each(function () {
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
+			str = "";
+			
 			//
 			var
 				$this = $(this),
+				tag = this.tagName.toLowerCase(),
+				type = tag === "input" ? "val" : "html",
+				
 				data = $this.data("ctm"),
 				classes = data.classes;
 			//
@@ -218,41 +235,90 @@
 					$this.addClass(classes && classes.disabled || "disabled");
 				} else if (data.nav === "prev" || data.nav === "next") { $this.removeClass(classes && classes.disabled || "disabled"); }
 				
+				// numberBreak switch
+				if (data.nav === "numberSwitch") {
+					data.val.forEach(function (el) {
+						if (tag === "select") {
+							str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
+						} else {
+							str += genPage(data, classes || "", el, true);
+						}
+					});
+				}
+				
 				// page
 				if (data.nav === "pageList") {
-					if (nmbOfPages > param.pageBreak) {	
-						j = param.pageBreak % 2 !== 0 ? 1 : 0;
-						from = (param.pageBreak - j) / 2;
-						to = from;
+					if (tag === "select") {
+						for (i = 0; (i += 1) <= nmbOfPages;) {
+							str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
+						} 
+					} else {
 						//
-						if (param.page - j < from) {
-							from = 0;
-						} else {
-							from = param.page - from - j;
-							if (param.page + to > nmbOfPages) {
-								from -= param.page + to - nmbOfPages;
+						if (nmbOfPages > param.pageBreak) {	
+							j = param.pageBreak % 2 !== 0 ? 1 : 0;
+							from = (param.pageBreak - j) / 2;
+							to = from;
+							//
+							if (param.page - j < from) {
+								from = 0;
+							} else {
+								from = param.page - from - j;
+								if (param.page + to > nmbOfPages) {
+									from -= param.page + to - nmbOfPages;
+								}
 							}
-						}
-						//
-						for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
-							if (j === param.pageBreak && i !== param.page) { break; }
-							str += genPage(data, classes || "", i);
-						}
-					} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
-					
-					//
+							//
+							for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
+								if (j === param.pageBreak && i !== param.page) { break; }
+								str += genPage(data, classes || "", i);
+							}
+						} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
+					}
+				}
+				
+				//
+				if (data.nav === "numberSwitch" || data.nav === "pageList") {	
+					// to html
 					$this.html(str);
 					
 					// delegate event
 					if (!$this.data("ctm-delegated")) {
-						$this.on("click", data.tag || "span", function () {
-							var $this = $(this);
-							//
-							if (!$this.hasClass(data.classes && data.classes.active || "active")) {
-								param.page = $this.data("page");
-								self.print(param);
-							}
-						}).data("ctm-delegated", true);
+						if (tag !== "select") {
+							$this.on("click", data.tag || "span", function () {
+								var $this = $(this);
+								//
+								if (param.page !== $this.data("page")) {
+									if (data.nav === "pageList") {
+										param.page = +$this.data("page");
+									} else {
+										param.numberBreak = +$this.data("number-break");
+									}
+									
+									//
+									self.print(param);
+								}
+							});
+						
+						// if select
+						} else {
+							$this.on("change", function () {
+								var $this = $(this).children(":selected");
+								//
+								if (param.page !== $this.val()) {
+									if (data.nav === "pageList") {
+										param.page = +$this.val();
+									} else {
+										param.numberBreak = +$this.val();
+									}
+									
+									//
+									self.print(param);
+								}
+							});
+						}
+						
+						//
+						$this.data("ctm-delegated", true);
 					}
 				}
 			
@@ -261,14 +327,15 @@
 				if (param.nmbOfEntriesInPage === 0) {
 					$this.addClass(classes && classes.noData || "noData");
 				} else { $this.removeClass(classes && classes.noData || "noData"); }
+				
 				//
 				switch (data.info) {
-					case "page" : { $this.html(param.page); } break;
-					case "total" : { $this.html(param.nmbOfEntries); } break;
-					case "from" : { $this.html((param.page - 1) * param.numberBreak + 1); } break;
-					case "to" : { $this.html(param.finNumber); } break;
-					case "inPage" : { $this.html(param.nmbOfEntriesInPage); } break;
-					case "nmbOfPages" : { $this.html(param.nmbOfPages); } break;
+					case "page" : { $this[type](wrap(param.page, tag)); } break;
+					case "total" : { $this[type](wrap(param.nmbOfEntries, tag)); } break;
+					case "from" : { $this[type](wrap((param.page - 1) * param.numberBreak + 1, tag)); } break;
+					case "to" : { $this[type](wrap(param.finNumber, tag)); } break;
+					case "inPage" : { $this[type](wrap(param.nmbOfEntriesInPage, tag)); } break;
+					case "nmbOfPages" : { $this[type](wrap(param.nmbOfPages, tag)); } break;
 				}
 			}
 		});

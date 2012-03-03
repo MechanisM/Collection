@@ -43,6 +43,7 @@
 	 */
 	$.fn.ctplMake = function (cObj) {
 		this.each(function () {
+			
 			var
 				$this = $(this),
 				data = $this.data("ctpl"), key,

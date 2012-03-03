@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>Collection grid</title>
+	<link href="style.css" type="text/css" rel="stylesheet">
+	<script type="text/javascript" src="../../jquery.js"></script>
+	<script type="text/javascript" src="../../jquery.collection.js"></script>
+	<script type="text/javascript" src="data.js"></script>
+	<script type="text/javascript">
+		$(function () {
+			var grid = new $.Collection(data);
+			$(".ctpl").ctplMake(grid);
+		});
+	</script>
+</head>
+
+<body>
+	<table class="grid">
+		<thead>
+			<tr>
+				<th scope="col">Inv No</th>
+				<th scope="col">Date</th>
+				<th scope="col">Client</th>
+				<th scope="col">Amount</th>
+				<th scope="col">Tax</th>
+				<th scope="col">Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			<script type="text/ctpl" class="ctpl" data-ctpl='{"name": "grid", "pager": "#pager", "numberBreak": 2, "print": true}'>
+				<tr>
+					<td><?js echo el.invNo; ?></td>
+					<td><?js echo el.date; ?></td>
+					<td><?js echo el.client; ?></td>
+					<td><?js echo +el.amount; ?></td>
+					<td><?js echo +el.tax; ?></td>
+					<td><?js echo +el.amount + +el.tax; ?></td>
+				</tr>
+			</script>
+		</tbody>
+		<tfoot id="pager">
+			<tr>
+				<td colspan="6">
+					<input type="text" class="ctm" data-ctm='{"info": "page"}'>
+					<select class="ctm" data-ctm='{"nav": "pageList"}'></select>
+					<div class="ctm" data-ctm='{"nav": "numberSwitch", "val": [2, 5, 10, 50]}'></div>
+				</td>
+			</tr>
+		</tfoot>
+	</table>
+</body>
+</html>
