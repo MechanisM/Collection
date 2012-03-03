@@ -80,6 +80,14 @@ var nimble = (function () {
 		 */
 		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
+		find: function (val, array) {
+			for (var i = array.length; (i -= 1) > -1;) {
+				if (val === array[i]) { return true; }
+			}
+			
+			return false;
+		},
+		
 		/**
 		 * calculate math expression for string
 		 * 

@@ -168,10 +168,10 @@
 	$.Collection.prototype.easyPage = function (param) {
 		var
 			self = this,
-			//
 			str = "",
+			
 			//
-			nmbOfPages = param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak,
+			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak),
 			
 			/** @private */
 			genPage = function (data, classes, i, nSwitch) {
@@ -186,7 +186,7 @@
 					}
 				}
 				//
-				if ((!nSwitch && i === param.page) || (!nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || "active") + '"'; }
+				if ((!nSwitch && i === param.page) || (nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || "active") + '"'; }
 				return str += ">" + i + "</" + (data.tag || "span") + ">";
 			},
 			
@@ -217,13 +217,15 @@
 			//
 			if (data.nav) {
 				// attach event
-				if ((data.nav === "prev" || data.nav === "next") && !$this.data("ctm-delegated")) {
+				if (nimble.find(data.nav, ["first", "prev", "next", "last"]) && !$this.data("ctm-delegated")) {
 					$this.click(function () {
 						var $this = $(this);
 						//
 						if (!$this.hasClass(data.classes && data.classes.disabled || "disabled")) {
+							data.nav === "first" && (param.page = 1);
 							data.nav === "prev" && (param.page = "-=1");
 							data.nav === "next" && (param.page = "+=1");
+							data.nav === "last" && (param.page = nmbOfPages);
 							//
 							self.print(param);
 						}
@@ -231,9 +233,9 @@
 				}
 				
 				//
-				if ((data.nav === "prev" && param.page === 1) || (data.nav === "next" && param.finNumber === param.nmbOfEntries)) {
+				if ((nimble.find(data.nav, ["first", "prev"]) && param.page === 1) || (nimble.find(data.nav, ["next", "last"]) && param.finNumber === param.nmbOfEntries)) {
 					$this.addClass(classes && classes.disabled || "disabled");
-				} else if (data.nav === "prev" || data.nav === "next") { $this.removeClass(classes && classes.disabled || "disabled"); }
+				} else if (nimble.find(data.nav, ["first", "prev", "next", "last"])) { $this.removeClass(classes && classes.disabled || "disabled"); }
 				
 				// numberBreak switch
 				if (data.nav === "numberSwitch") {
@@ -286,15 +288,13 @@
 						if (tag !== "select") {
 							$this.on("click", data.tag || "span", function () {
 								var $this = $(this);
+								
 								//
 								if (param.page !== $this.data("page")) {
 									if (data.nav === "pageList") {
 										param.page = +$this.data("page");
-									} else {
-										param.numberBreak = +$this.data("number-break");
-									}
-									
-									//
+									} else { param.numberBreak = +$this.data("number-break"); }
+
 									self.print(param);
 								}
 							});
@@ -303,15 +303,13 @@
 						} else {
 							$this.on("change", function () {
 								var $this = $(this).children(":selected");
+								
 								//
 								if (param.page !== $this.val()) {
 									if (data.nav === "pageList") {
 										param.page = +$this.val();
-									} else {
-										param.numberBreak = +$this.val();
-									}
+									} else { param.numberBreak = +$this.val(); }
 									
-									//
 									self.print(param);
 								}
 							});
@@ -325,8 +323,8 @@
 			// info
 			} else if (data.info) {
 				if (param.nmbOfEntriesInPage === 0) {
-					$this.addClass(classes && classes.noData || "noData");
-				} else { $this.removeClass(classes && classes.noData || "noData"); }
+					$this.addClass(classes && classes.noData || "no-data");
+				} else { $this.removeClass(classes && classes.noData || "no-data"); }
 				
 				//
 				switch (data.info) {
@@ -335,7 +333,7 @@
 					case "from" : { $this[type](wrap((param.page - 1) * param.numberBreak + 1, tag)); } break;
 					case "to" : { $this[type](wrap(param.finNumber, tag)); } break;
 					case "inPage" : { $this[type](wrap(param.nmbOfEntriesInPage, tag)); } break;
-					case "nmbOfPages" : { $this[type](wrap(param.nmbOfPages, tag)); } break;
+					case "nmbOfPages" : { $this[type](wrap(nmbOfPages, tag)); } break;
 				}
 			}
 		});

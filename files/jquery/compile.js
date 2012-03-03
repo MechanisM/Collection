@@ -43,7 +43,6 @@
 	 */
 	$.fn.ctplMake = function (cObj) {
 		this.each(function () {
-			
 			var
 				$this = $(this),
 				data = $this.data("ctpl"), key,
@@ -69,7 +68,12 @@
 			//
 			if (data.print && data.print === true) {
 				data.template = data.name;
-				if (!data.target) { data.target = $this.parent(); }
+				if (!data.target) {
+					cObj._push("target", prefix + data.name, $this.parent());
+					if (data.set && data.set === true) { cObj._set("target", prefix + data.name); }
+				}
+				
+				//
 				cObj.print(data);
 			}
 		});
