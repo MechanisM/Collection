@@ -1,8 +1,0 @@
-﻿/**
- * cTree
- * 
- * autor: kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * version: 1.6
- * date: 27.10.2011 14:39:15
- */
- 

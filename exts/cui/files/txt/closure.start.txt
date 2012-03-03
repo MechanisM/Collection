@@ -1,4 +1,0 @@
-
-(function ($) {
-	// try to use ECMAScript 5 "strict mode"
-	"use strict";
