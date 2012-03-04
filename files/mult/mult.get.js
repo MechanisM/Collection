@@ -10,7 +10,7 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
-	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)

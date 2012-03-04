@@ -14,7 +14,7 @@
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
-	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
@@ -99,7 +99,7 @@
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
-	 * @param {Boolean} [mult=true] - enable mult mode
+	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
