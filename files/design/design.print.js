@@ -300,7 +300,10 @@
 								if (param.page !== $this.data("page")) {
 									if (data.nav === "pageList") {
 										param.page = +$this.data("page");
-									} else { param.numberBreak = +$this.data("number-break"); }
+									} else {
+										self._push("numberBreak", param.name || "", +$this.data("number-break"));
+										delete param.numberBreak;
+									}
 
 									self.print(param);
 								}
@@ -315,7 +318,10 @@
 								if (param.page !== $this.val()) {
 									if (data.nav === "pageList") {
 										param.page = +$this.val();
-									} else { param.numberBreak = +$this.val(); }
+									} else {
+										self._push("numberBreak", param.name || "", +$this.val());
+										delete param.numberBreak;
+									}
 									
 									self.print(param);
 								}
