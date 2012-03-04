@@ -4,7 +4,9 @@
 	/////////////////////////////////
 	
 	/**
-	 * save collection in DOM storage
+	 * save collection in DOM storage<br/>
+	 * events: onSave
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -21,7 +23,13 @@
 			name = "__" + this.name + "__" + this._get("namespace"),
 			//
 			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._active("collection", id) ? "active" : "",
-			storage = local === false ? sessionStorage : localStorage;
+			storage = local === false ? sessionStorage : localStorage,
+			e = null;
+		
+		// events
+		this.onSave && (e = this.onSave.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		storage.setItem(name + ":" + id, this.toString(id));
 		storage.setItem(name + "__date:" + id, new Date().toString());
@@ -32,7 +40,9 @@
 		return this;
 	};
 	/**
-	 * save all collection in DOM storage
+	 * save all collection in DOM storage<br/>
+	 * events: onSave
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [local] - if "false", used session storage
@@ -63,7 +73,9 @@
 	};
 	
 	/**
-	 * load collection from DOM storage
+	 * load collection from DOM storage<br/>
+	 * events: onLoad
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -80,7 +92,13 @@
 			name = "__" + this.name + "__" + this._get("namespace"),
 			//
 			active,
-			storage = local === false ? sessionStorage : localStorage;
+			storage = local === false ? sessionStorage : localStorage,
+			e = null;
+		
+		// events
+		this.onLoad && (e = this.onLoad.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		if (id === this.ACTIVE) {
 			this._new("collection", $.parseJSON(storage.getItem(name + ":" + id)));
@@ -98,7 +116,9 @@
 		return this;
 	};
 	/**
-	 * load all collection from DOM storage
+	 * load all collection from DOM storage<br/>
+	 * events: onLoad
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [local] - if "false", used session storage
@@ -168,7 +188,9 @@
 	};
 	
 	/**
-	 * remove collection from DOM storage
+	 * remove collection from DOM storage<br/>
+	 * events: onDrop
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -183,7 +205,13 @@
 		//
 		var
 			name = "__" + this.name + "__" + this._get("namespace"),
-			storage = local === false ? sessionStorage : localStorage;
+			storage = local === false ? sessionStorage : localStorage,
+			e = null;
+		
+		// events
+		this.onDrop && (e = this.onDrop.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		storage.removeItem(name + ":" + id);
 		storage.removeItem(name + "__date:" + id);
@@ -192,7 +220,9 @@
 		return this;
 	};
 	/**
-	 * remove all collection from DOM storage
+	 * remove all collection from DOM storage<br/>
+	 * events: onDrop
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [local] - if "false", used session storage

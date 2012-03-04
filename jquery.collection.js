@@ -3,8 +3,8 @@
  *
  * @constructor
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 01.01.2012 21:55:59
- * @version 1.0.2
+ * @date: 04.03.2012 11:39:15
+ * @version 1.0.3
  */
 var nimble = (function () {
 	// try to use ECMAScript 5 "strict mode"
@@ -24,7 +24,7 @@ var nimble = (function () {
 		 * @constant
 		 * @type String
 		 */
-		version: "1.0.2",
+		version: "1.0.3",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -87,6 +87,13 @@ var nimble = (function () {
 		 */
 		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
+		/**
+		 * find the value in the array
+		 *
+		 * @param {mixed} val — some object
+		 * @param {Array} array — some array
+		 * @return {Boolean}
+		 */
 		find: function (val, array) {
 			for (var i = array.length; (i -= 1) > -1;) {
 				if (val === array[i]) { return true; }
@@ -350,8 +357,8 @@ var nimble = (function () {
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 19.02.2012 13:24:31
- * @version 3.5
+ * @date: 04.03.2012 11:34:56
+ * @version 3.5.5
  *
  * @constructor
  * @example http://jsfiddle.net/kobezzza/ZEcaB/
@@ -381,12 +388,8 @@ var nimble = (function () {
 		if (prop) { $.extend(true, active, prop); }
 		
 		// compile (if need)
-		if (this._exprTest(active.filter)) {
-			active.filter = this._compileFilter(active.filter);
-		}
-		if (this._exprTest(active.parser)) {
-			active.parser = this._compileParser(active.parser);
-		}
+		if (this._exprTest(active.filter)) { active.filter = this._compileFilter(active.filter); }
+		if (this._exprTest(active.parser)) { active.parser = this._compileParser(active.parser); }
 		
 		// if "collection" is string
 		if ($.isString(collection)) {
@@ -456,7 +459,7 @@ var nimble = (function () {
 		 * @constant
 		 * @type String
 		 */
-		version: "3.5",
+		version: "3.5.5",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -967,6 +970,7 @@ var nimble = (function () {
 			}
 		}
 	};
+	
 	// generate system fields
 	(function (data) {
 		var
@@ -988,6 +992,7 @@ var nimble = (function () {
 	
 	/**
 	 * new property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1009,6 +1014,7 @@ var nimble = (function () {
 	};
 	/**
 	 * update active property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1032,6 +1038,7 @@ var nimble = (function () {
 	};
 	/**
 	 * get property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1052,6 +1059,7 @@ var nimble = (function () {
 	
 	/**
 	 * add new value to stack
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1103,6 +1111,7 @@ var nimble = (function () {
 	};
 	/**
 	 * set new active property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1133,6 +1142,7 @@ var nimble = (function () {
 	};
 	/**
 	 * history back
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1161,6 +1171,7 @@ var nimble = (function () {
 	};
 	/**
 	 * history back (if history changed)
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1175,6 +1186,7 @@ var nimble = (function () {
 	};
 	/**
 	 * remove property from stack
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1241,6 +1253,7 @@ var nimble = (function () {
 	};
 	/**
 	 * reset property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1256,6 +1269,7 @@ var nimble = (function () {
 	};
 	/**
 	 * reset property to another value
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1272,6 +1286,7 @@ var nimble = (function () {
 
 	/**
 	 * check the existence of property in the stack
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1289,6 +1304,7 @@ var nimble = (function () {
 	};
 	/**
 	 * get active ID
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1300,6 +1316,7 @@ var nimble = (function () {
 	};
 	/**
 	 * check the property on the activity
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1320,6 +1337,7 @@ var nimble = (function () {
 			
 	/**
 	 * use the assembly
+	 * <i class="stack"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} stack ID
@@ -1479,7 +1497,9 @@ var nimble = (function () {
 	/////////////////////////////////	
 	
 	/**
-	 * add new element to object (in context)
+	 * add new element to the collection (in context)<br/>
+	 * events: onAdd
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed|Context} [cValue] - new element or context for sourceID
@@ -1496,48 +1516,57 @@ var nimble = (function () {
 		activeID = activeID || "";
 		del = del || false;
 		//
-		var cObj, sObj, lCheck;
+		var cObj, sObj, lCheck, e = null;
+		
+		// events
+		this.onAdd && (e = this.onAdd.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		cObj = nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"));
+		
 		//
-		if (typeof cObj === "object") {
-			// simple add
-			if (!sourceID) {
-				// add type
-				if ($.isPlainObject(cObj)) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
-					lCheck = nimble.addElementToObject(cObj, propType.toString(), cValue);
-				} else {
-					lCheck = true;
-					cObj[propType](cValue);
-				}
-			// move
+		if (typeof cObj !== "object")  { throw new Error("unable to set property!"); }
+		
+		// simple add
+		if (!sourceID) {
+			// add type
+			if ($.isPlainObject(cObj)) {
+				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
+				lCheck = nimble.addElementToObject(cObj, propType.toString(), cValue);
 			} else {
-				cValue = $.isExists(cValue) ? cValue.toString() : "";
-				sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
-				
-				// add type
-				if ($.isPlainObject(cObj)) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
-					lCheck = nimble.addElementToObject(cObj, propType.toString(), sObj);
-				} else {
-					lCheck = true;
-					cObj[propType](sObj);
-				}
-				
-				// delete element
-				if (del === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
+				lCheck = true;
+				cObj[propType](cValue);
+			}
+		
+		// move
+		} else {
+			cValue = $.isExists(cValue) ? cValue.toString() : "";
+			sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
+			
+			// add type
+			if ($.isPlainObject(cObj)) {
+				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
+				lCheck = nimble.addElementToObject(cObj, propType.toString(), sObj);
+			} else {
+				lCheck = true;
+				cObj[propType](sObj);
 			}
 			
-			// rewrites links (if used for an object "unshift")
-			if (lCheck !== true) { this._setOne("", lCheck, activeID); }
-		} else { throw new Error("unable to set property!"); }
+			// delete element
+			if (del === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
+		}
+		
+		// rewrites links (if used for an object "unshift")
+		if (lCheck !== true) { this._setOne("", lCheck, activeID); }
 	
 		return this;
 	};
 	
 	/**
-	 * push new element (in context)
+	 * add new element to the collection (push)(in context)<br/>
+	 * events: onAdd
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element
@@ -1548,7 +1577,9 @@ var nimble = (function () {
 		return this.add(obj, "", id || "");
 	};
 	/**
-	 * unshift new element (in context)
+	 * add new element to the collection (unshift)(in context)<br/>
+	 * events: onAdd
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element
@@ -1572,8 +1603,12 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype._removeOne = function (context, id) {
 		context = $.isExists(context) ? context.toString() : "";
-		var activeContext = this._getActiveParam("context");
-
+		var activeContext = this._getActiveParam("context"), e = null;
+		
+		// events
+		this.onRemove && (e = this.onRemove.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		if (!context && !activeContext) {
 			this._setOne("", null);
 		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }
@@ -1610,7 +1645,9 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * pop element (in context)
+	 * remove an element from the collection (pop)(in context)<br/>
+	 * events: onRemove
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -1618,7 +1655,9 @@ var nimble = (function () {
 	 */
 	$.Collection.prototype.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
 	/**
-	 * shift element (in context)
+	 * remove an element from the collection (shift)(in context)<br/>
+	 * events: onRemove
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -1630,7 +1669,9 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * concatenation of collections (in context)
+	 * concatenation of collections (in context)<br/>
+	 * events: onConcat
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Collection} obj - collection
@@ -1643,18 +1684,26 @@ var nimble = (function () {
 		context = $.isExists(context) ? context.toString() : "";
 		id = id || "";
 		//
-		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);	
+		var cObj, e = null;	
+		
+		// events
+		this.onConcat && (e = this.onConcat.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
-		if (typeof cObj === "object") {
-			if ($.isPlainObject(cObj)) {
-				$.extend(true, cObj, obj)
-			} else if ($.isArray(cObj)) {
-				if ($.isArray(obj)) {
-					cObj = Array.prototype.concat(cObj, obj);
-					this._setOne(context, cObj, id);
-				} else { this.add(obj, "push", id); }
-			}
-		} else { throw new Error("incorrect data type!"); }
+		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);
+		
+		//
+		if (typeof cObj !== "object") { throw new Error("incorrect data type!") }
+		
+		if ($.isPlainObject(cObj)) {
+			$.extend(true, cObj, obj)
+		} else if ($.isArray(cObj)) {
+			if ($.isArray(obj)) {
+				cObj = Array.prototype.concat(cObj, obj);
+				this._setOne(context, cObj, id);
+			} else { this.add(obj, "push", id); }
+		}
 	
 		return this;
 	};	
@@ -1663,7 +1712,8 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * collection length (in context)
+	 * returns the length of the collection (in context)
+	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] - filter function, string expression, collection or true (if disabled)
@@ -1677,6 +1727,7 @@ var nimble = (function () {
 		var
 			tmpObj = {},
 			cObj, aCheck, key, cOLength;
+		
 		//
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
@@ -1684,6 +1735,7 @@ var nimble = (function () {
 				filter = false;
 			}
 		}
+		
 		//
 		if (!id) {
 			cObj = this._get("collection");
@@ -1693,6 +1745,7 @@ var nimble = (function () {
 			aCheck = true;
 			cObj = id;
 		}
+		
 		// if cObj is null
 		if (cObj === null) { return 0; }
 		// if cObj is collection
@@ -1703,6 +1756,7 @@ var nimble = (function () {
 		
 		// throw error
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
+		
 		//
 		if (filter === false && cObj.length !== undefined) {
 			cOLength = cObj.length;
@@ -1731,14 +1785,12 @@ var nimble = (function () {
 	};
 	/**
 	 * forEach method (in context)
-	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
+	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String|Boolean} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: 0)
@@ -1853,14 +1905,12 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * search elements (in context)
-	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
+	 * search for elements using filter (returns a reference to elements)(in context)
+	 * <i class="mult search"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -1899,8 +1949,9 @@ var nimble = (function () {
 		return result;
 	};
 	/**
-	 * search element (in context)
-	 * 
+	 * search for element using filter (returns a reference to element)(in context)
+	 * <i class="mult search"></i>
+	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -1911,7 +1962,8 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * indexOf (in context)
+	 * indexOf (in context)<br/>
+	 * <i class="mult search"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement - element to locate in the array
@@ -1933,6 +1985,7 @@ var nimble = (function () {
 	};
 	/**
 	 * lastIndexOf (in context)
+	 * <i class="mult search"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement - element to locate in the array
@@ -1961,14 +2014,12 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * get elements (in context)
-	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
+	 * get the items using a filter or a link (in context)
+	 * <i class="mult get"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression or context (overload)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2012,7 +2063,8 @@ var nimble = (function () {
 		return result;
 	};
 	/**
-	 * get element (in context)
+	 * get the item using a filter or a link (in context)
+	 * <i class="mult get"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)
@@ -2027,15 +2079,14 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * set elements (in context)
+	 * set new value of the element (in context)<br/>
+	 * events: onSet
+	 * <i class="mult set"></i>
 	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
-	 *  
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult.
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2049,7 +2100,7 @@ var nimble = (function () {
 			}
 		//
 		var
-			arg, replaceCheck = $.isFunction(replaceObj),
+			e = null, arg, replaceCheck = $.isFunction(replaceObj),
 			/** @private */
 			action = function (el, i, data, cOLength, cObj, id) {
 				if (replaceCheck) {
@@ -2061,11 +2112,18 @@ var nimble = (function () {
 		//
 		arg = $.unshiftArguments(arguments, action);
 		arg.splice(2, 1);
+		
+		// events
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		return this.forEach.apply(this, arg);
 	};
 	/**
-	 * replace element (in context)
-	 * 
+	 * set new value of the one element (in context)<br/>
+	 * events: onSet
+	 * <i class="mult set"></i>
+	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
@@ -2077,7 +2135,9 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * map (in context)
+	 * map (in context)<br/>
+	 * events: onSet
+	 * <i class="mult set"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
@@ -2093,10 +2153,12 @@ var nimble = (function () {
 	/////////////////////////////////
 		
 	/**
-	 * move elements (in context)
+	 * move elements (in context)<br />
+	 * events: onMove
+	 * <i class="mult move"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
+	 * @param {Filter|String} [moveFilter] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {Context} [context] - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2127,7 +2189,12 @@ var nimble = (function () {
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
 	
-			elements;
+			elements, e = null;
+		
+		// events
+		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
+		!deleteType  && this.onCopy && (e = this.onCopy.apply(this, arguments));
+		if (e === false) { return this; }
 		
 		// search elements
 		this.disable("context");
@@ -2155,10 +2222,12 @@ var nimble = (function () {
 		return this;
 	},
 	/**
-	 * move element (in context)
+	 * move element (in context)<br />
+	 * events: onMove
+	 * <i class="mult move"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
+	 * @param {Filter|String} [moveFilter] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -2169,7 +2238,9 @@ var nimble = (function () {
 		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
-	 * copy elements (in context)
+	 * copy elements (in context)<br />
+	 * events: onCopy
+	 * <i class="mult copy"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
@@ -2192,7 +2263,9 @@ var nimble = (function () {
 		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
-	 * copy element (in context)
+	 * copy element (in context)<br />
+	 * events: onCopy
+	 * <i class="mult copy"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
@@ -2210,14 +2283,13 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * delete elements (in context)
+	 * delete elements (in context)<br/>
+	 * events: onRemove
+	 * <i class="mult remove"></i> 
 	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
-	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression or context (overload)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -2225,12 +2297,16 @@ var nimble = (function () {
 	 * @return {Colletion Object}
 	 */
 	$.Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
+		var elements, i, e = null;
+		
+		//
 		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
+		
 		//
-		var elements = this.search.apply(this, arguments), i;
+		elements = this.search.apply(this, arguments);
 		if (!$.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else { for (i = elements.length; (i -= 1) > -1;) { this._removeOne(elements[i], id); } }
@@ -2238,7 +2314,9 @@ var nimble = (function () {
 		return this;
 	};
 	/**
-	 * delete element (in context)
+	 * delete element (in context)<br/>
+	 * events: onRemove
+	 * <i class="mult remove"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)
@@ -2254,6 +2332,7 @@ var nimble = (function () {
 	
 	/**
 	 * group elements (in context)
+	 * <i class="mult group"></i> 
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
@@ -2295,6 +2374,7 @@ var nimble = (function () {
 	};
 	/**
 	 * group links (in context)
+	 * <i class="mult group"></i> 
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
@@ -2314,6 +2394,7 @@ var nimble = (function () {
 	
 	/**
 	 * get statistic information
+	 * <i class="stat"></i>
 	 *  
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
@@ -2393,6 +2474,7 @@ var nimble = (function () {
 	
 	/**
 	 * get statistic information for group
+	 * <i class="stat"></i>
 	 *  
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
@@ -2488,7 +2570,9 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * sort collection (in context)
+	 * sort collection (in context)<br />
+	 * events: onSort
+	 * <i class="sort"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context} [field] - field name
@@ -2575,7 +2659,12 @@ var nimble = (function () {
 				}
 	
 				return sortedObj;
-			};
+			}, e = null;
+		
+		// events
+		this.onSort && (e = this.onSort.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj === "object") {
@@ -2597,7 +2686,9 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * reverse collection (in context)
+	 * reverse collection (in context)<br />
+	 * events: onReverse
+	 * <i class="sort"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -2624,7 +2715,12 @@ var nimble = (function () {
 				}
 	
 				return sortedObj;
-			};
+			}, e = null;
+		
+		// events
+		this.onReverse && (e = this.onReverse.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
@@ -2641,7 +2737,9 @@ var nimble = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * save collection in DOM storage
+	 * save collection in DOM storage<br/>
+	 * events: onSave
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -2658,7 +2756,13 @@ var nimble = (function () {
 			name = "__" + this.name + "__" + this._get("namespace"),
 			//
 			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._active("collection", id) ? "active" : "",
-			storage = local === false ? sessionStorage : localStorage;
+			storage = local === false ? sessionStorage : localStorage,
+			e = null;
+		
+		// events
+		this.onSave && (e = this.onSave.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		storage.setItem(name + ":" + id, this.toString(id));
 		storage.setItem(name + "__date:" + id, new Date().toString());
@@ -2669,7 +2773,9 @@ var nimble = (function () {
 		return this;
 	};
 	/**
-	 * save all collection in DOM storage
+	 * save all collection in DOM storage<br/>
+	 * events: onSave
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [local] - if "false", used session storage
@@ -2700,7 +2806,9 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * load collection from DOM storage
+	 * load collection from DOM storage<br/>
+	 * events: onLoad
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -2717,7 +2825,13 @@ var nimble = (function () {
 			name = "__" + this.name + "__" + this._get("namespace"),
 			//
 			active,
-			storage = local === false ? sessionStorage : localStorage;
+			storage = local === false ? sessionStorage : localStorage,
+			e = null;
+		
+		// events
+		this.onLoad && (e = this.onLoad.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		if (id === this.ACTIVE) {
 			this._new("collection", $.parseJSON(storage.getItem(name + ":" + id)));
@@ -2735,7 +2849,9 @@ var nimble = (function () {
 		return this;
 	};
 	/**
-	 * load all collection from DOM storage
+	 * load all collection from DOM storage<br/>
+	 * events: onLoad
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [local] - if "false", used session storage
@@ -2805,7 +2921,9 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * remove collection from DOM storage
+	 * remove collection from DOM storage<br/>
+	 * events: onDrop
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -2820,7 +2938,13 @@ var nimble = (function () {
 		//
 		var
 			name = "__" + this.name + "__" + this._get("namespace"),
-			storage = local === false ? sessionStorage : localStorage;
+			storage = local === false ? sessionStorage : localStorage,
+			e = null;
+		
+		// events
+		this.onDrop && (e = this.onDrop.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		storage.removeItem(name + ":" + id);
 		storage.removeItem(name + "__date:" + id);
@@ -2829,7 +2953,9 @@ var nimble = (function () {
 		return this;
 	};
 	/**
-	 * remove all collection from DOM storage
+	 * remove all collection from DOM storage<br/>
+	 * events: onDrop
+	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [local] - if "false", used session storage
@@ -3113,6 +3239,7 @@ var nimble = (function () {
 	
 	/**
 	 * calculate parent context
+	 * <i class="context"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] — level
@@ -3130,6 +3257,7 @@ var nimble = (function () {
 	};
 	/**
 	 * change the context (the parent element)
+	 * <i class="context"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] — level
@@ -3287,6 +3415,7 @@ var nimble = (function () {
 		
 	/**
 	 * templating (in context)
+	 * <i class="design"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - object settings
@@ -3321,7 +3450,7 @@ var nimble = (function () {
 			//
 			numberBreak,
 			//
-			result = "", action;
+			result = "", action, e = null;
 			
 		// easy implementation
 		if ($.isExists(param) && ($.isString(param) || $.isNumeric(param))) {
@@ -3433,6 +3562,10 @@ var nimble = (function () {
 
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
+			// events
+			this.onIPage && (e = this.onIPage.apply(this, arguments));
+			if (e === false) { return this; }
+			
 			this._update("page", (opt.page -= 1)).print(opt, true, true);
 		} else { this.easyPage(opt); }
 		
@@ -3440,7 +3573,9 @@ var nimble = (function () {
 	};
 	
 	/**
-	 * activation of the navigation
+	 * activation of the navigation<br />
+	 * info: page, total, from, to, inPage, nmbOfPages<br />
+	 * nav: first, prev, next, last, numberSwitch, pageList
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Object} [param] - object settings
@@ -3628,6 +3763,7 @@ var nimble = (function () {
 		
 	/**
 	 * generating the table
+	 * <i class="design"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] — td number to a string

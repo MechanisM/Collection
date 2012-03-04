@@ -5,6 +5,7 @@
 	
 	/**
 	 * new property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -26,6 +27,7 @@
 	};
 	/**
 	 * update active property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -49,6 +51,7 @@
 	};
 	/**
 	 * get property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -69,6 +72,7 @@
 	
 	/**
 	 * add new value to stack
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -120,6 +124,7 @@
 	};
 	/**
 	 * set new active property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -150,6 +155,7 @@
 	};
 	/**
 	 * history back
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -178,6 +184,7 @@
 	};
 	/**
 	 * history back (if history changed)
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -192,6 +199,7 @@
 	};
 	/**
 	 * remove property from stack
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -258,6 +266,7 @@
 	};
 	/**
 	 * reset property
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -273,6 +282,7 @@
 	};
 	/**
 	 * reset property to another value
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -289,6 +299,7 @@
 
 	/**
 	 * check the existence of property in the stack
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -306,6 +317,7 @@
 	};
 	/**
 	 * get active ID
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -317,6 +329,7 @@
 	};
 	/**
 	 * check the property on the activity
+	 * <i class="stack"></i>
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -337,6 +350,7 @@
 			
 	/**
 	 * use the assembly
+	 * <i class="stack"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} stack ID

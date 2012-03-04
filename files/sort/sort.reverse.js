@@ -4,7 +4,9 @@
 	/////////////////////////////////
 	
 	/**
-	 * reverse collection (in context)
+	 * reverse collection (in context)<br />
+	 * events: onReverse
+	 * <i class="sort"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -31,7 +33,12 @@
 				}
 	
 				return sortedObj;
-			};
+			}, e = null;
+		
+		// events
+		this.onReverse && (e = this.onReverse.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//

@@ -13,8 +13,12 @@
 	 */
 	$.Collection.prototype._removeOne = function (context, id) {
 		context = $.isExists(context) ? context.toString() : "";
-		var activeContext = this._getActiveParam("context");
-
+		var activeContext = this._getActiveParam("context"), e = null;
+		
+		// events
+		this.onRemove && (e = this.onRemove.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		if (!context && !activeContext) {
 			this._setOne("", null);
 		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }
@@ -51,7 +55,9 @@
 	};
 	
 	/**
-	 * pop element (in context)
+	 * remove an element from the collection (pop)(in context)<br/>
+	 * events: onRemove
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -59,7 +65,9 @@
 	 */
 	$.Collection.prototype.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
 	/**
-	 * shift element (in context)
+	 * remove an element from the collection (shift)(in context)<br/>
+	 * events: onRemove
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] - collection ID

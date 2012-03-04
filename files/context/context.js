@@ -5,6 +5,7 @@
 	
 	/**
 	 * calculate parent context
+	 * <i class="context"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] — level
@@ -22,6 +23,7 @@
 	};
 	/**
 	 * change the context (the parent element)
+	 * <i class="context"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] — level

@@ -4,7 +4,8 @@
 	/////////////////////////////////
 	
 	/**
-	 * collection length (in context)
+	 * returns the length of the collection (in context)
+	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] - filter function, string expression, collection or true (if disabled)
@@ -18,6 +19,7 @@
 		var
 			tmpObj = {},
 			cObj, aCheck, key, cOLength;
+		
 		//
 		if (!$.isFunction(filter)) {
 			if (($.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
@@ -25,6 +27,7 @@
 				filter = false;
 			}
 		}
+		
 		//
 		if (!id) {
 			cObj = this._get("collection");
@@ -34,6 +37,7 @@
 			aCheck = true;
 			cObj = id;
 		}
+		
 		// if cObj is null
 		if (cObj === null) { return 0; }
 		// if cObj is collection
@@ -44,6 +48,7 @@
 		
 		// throw error
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
+		
 		//
 		if (filter === false && cObj.length !== undefined) {
 			cOLength = cObj.length;
@@ -72,14 +77,12 @@
 	};
 	/**
 	 * forEach method (in context)
-	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
+	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String|Boolean} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: 0)

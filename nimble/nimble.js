@@ -17,7 +17,7 @@ var nimble = (function () {
 		 * @constant
 		 * @type String
 		 */
-		version: "1.0.2",
+		version: "1.0.3",
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -80,6 +80,13 @@ var nimble = (function () {
 		 */
 		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
 		
+		/**
+		 * find the value in the array
+		 *
+		 * @param {mixed} val — some object
+		 * @param {Array} array — some array
+		 * @return {Boolean}
+		 */
 		find: function (val, array) {
 			for (var i = array.length; (i -= 1) > -1;) {
 				if (val === array[i]) { return true; }

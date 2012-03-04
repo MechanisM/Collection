@@ -5,6 +5,7 @@
 		
 	/**
 	 * generating the table
+	 * <i class="design"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] — td number to a string

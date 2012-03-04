@@ -5,6 +5,7 @@
 	
 	/**
 	 * group elements (in context)
+	 * <i class="mult group"></i> 
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
@@ -46,6 +47,7 @@
 	};
 	/**
 	 * group links (in context)
+	 * <i class="mult group"></i> 
 	 *  
 	 * @this {Colletion Object}
 	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function

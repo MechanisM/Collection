@@ -4,10 +4,12 @@
 	/////////////////////////////////
 		
 	/**
-	 * move elements (in context)
+	 * move elements (in context)<br />
+	 * events: onMove
+	 * <i class="mult move"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
+	 * @param {Filter|String} [moveFilter] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {Context} [context] - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -38,7 +40,12 @@
 			deleteList = [],
 			aCheckType = $.isArray(nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
 	
-			elements;
+			elements, e = null;
+		
+		// events
+		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
+		!deleteType  && this.onCopy && (e = this.onCopy.apply(this, arguments));
+		if (e === false) { return this; }
 		
 		// search elements
 		this.disable("context");
@@ -66,10 +73,12 @@
 		return this;
 	},
 	/**
-	 * move element (in context)
+	 * move element (in context)<br />
+	 * events: onMove
+	 * <i class="mult move"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
+	 * @param {Filter|String} [moveFilter] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {Context} context - source context
 	 * @param {String} [sourceID=this.ACTIVE] - source ID
 	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
@@ -80,7 +89,9 @@
 		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
-	 * copy elements (in context)
+	 * copy elements (in context)<br />
+	 * events: onCopy
+	 * <i class="mult copy"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
@@ -103,7 +114,9 @@
 		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
-	 * copy element (in context)
+	 * copy element (in context)<br />
+	 * events: onCopy
+	 * <i class="mult copy"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)

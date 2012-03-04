@@ -5,6 +5,7 @@
 	
 	/**
 	 * get statistic information
+	 * <i class="stat"></i>
 	 *  
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function

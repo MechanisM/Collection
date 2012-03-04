@@ -4,7 +4,9 @@
 	/////////////////////////////////	
 	
 	/**
-	 * add new element to object (in context)
+	 * add new element to the collection (in context)<br/>
+	 * events: onAdd
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed|Context} [cValue] - new element or context for sourceID
@@ -21,48 +23,57 @@
 		activeID = activeID || "";
 		del = del || false;
 		//
-		var cObj, sObj, lCheck;
+		var cObj, sObj, lCheck, e = null;
+		
+		// events
+		this.onAdd && (e = this.onAdd.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		cObj = nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"));
+		
 		//
-		if (typeof cObj === "object") {
-			// simple add
-			if (!sourceID) {
-				// add type
-				if ($.isPlainObject(cObj)) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
-					lCheck = nimble.addElementToObject(cObj, propType.toString(), cValue);
-				} else {
-					lCheck = true;
-					cObj[propType](cValue);
-				}
-			// move
+		if (typeof cObj !== "object")  { throw new Error("unable to set property!"); }
+		
+		// simple add
+		if (!sourceID) {
+			// add type
+			if ($.isPlainObject(cObj)) {
+				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
+				lCheck = nimble.addElementToObject(cObj, propType.toString(), cValue);
 			} else {
-				cValue = $.isExists(cValue) ? cValue.toString() : "";
-				sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
-				
-				// add type
-				if ($.isPlainObject(cObj)) {
-					propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
-					lCheck = nimble.addElementToObject(cObj, propType.toString(), sObj);
-				} else {
-					lCheck = true;
-					cObj[propType](sObj);
-				}
-				
-				// delete element
-				if (del === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
+				lCheck = true;
+				cObj[propType](cValue);
+			}
+		
+		// move
+		} else {
+			cValue = $.isExists(cValue) ? cValue.toString() : "";
+			sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
+			
+			// add type
+			if ($.isPlainObject(cObj)) {
+				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
+				lCheck = nimble.addElementToObject(cObj, propType.toString(), sObj);
+			} else {
+				lCheck = true;
+				cObj[propType](sObj);
 			}
 			
-			// rewrites links (if used for an object "unshift")
-			if (lCheck !== true) { this._setOne("", lCheck, activeID); }
-		} else { throw new Error("unable to set property!"); }
+			// delete element
+			if (del === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
+		}
+		
+		// rewrites links (if used for an object "unshift")
+		if (lCheck !== true) { this._setOne("", lCheck, activeID); }
 	
 		return this;
 	};
 	
 	/**
-	 * push new element (in context)
+	 * add new element to the collection (push)(in context)<br/>
+	 * events: onAdd
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element
@@ -73,7 +84,9 @@
 		return this.add(obj, "", id || "");
 	};
 	/**
-	 * unshift new element (in context)
+	 * add new element to the collection (unshift)(in context)<br/>
+	 * events: onAdd
+	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} obj - new element

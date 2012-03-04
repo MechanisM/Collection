@@ -4,7 +4,9 @@
 	/////////////////////////////////
 	
 	/**
-	 * sort collection (in context)
+	 * sort collection (in context)<br />
+	 * events: onSort
+	 * <i class="sort"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context} [field] - field name
@@ -91,7 +93,12 @@
 				}
 	
 				return sortedObj;
-			};
+			}, e = null;
+		
+		// events
+		this.onSort && (e = this.onSort.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		//
 		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj === "object") {

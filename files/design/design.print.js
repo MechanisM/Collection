@@ -5,6 +5,7 @@
 		
 	/**
 	 * templating (in context)
+	 * <i class="design"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - object settings
@@ -39,7 +40,7 @@
 			//
 			numberBreak,
 			//
-			result = "", action;
+			result = "", action, e = null;
 			
 		// easy implementation
 		if ($.isExists(param) && ($.isString(param) || $.isNumeric(param))) {
@@ -151,6 +152,10 @@
 
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
+			// events
+			this.onIPage && (e = this.onIPage.apply(this, arguments));
+			if (e === false) { return this; }
+			
 			this._update("page", (opt.page -= 1)).print(opt, true, true);
 		} else { this.easyPage(opt); }
 		
@@ -158,7 +163,9 @@
 	};
 	
 	/**
-	 * activation of the navigation
+	 * activation of the navigation<br />
+	 * info: page, total, from, to, inPage, nmbOfPages<br />
+	 * nav: first, prev, next, last, numberSwitch, pageList
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Object} [param] - object settings

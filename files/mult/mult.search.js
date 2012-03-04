@@ -4,14 +4,12 @@
 	/////////////////////////////////
 	
 	/**
-	 * search elements (in context)
-	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
+	 * search for elements using filter (returns a reference to elements)(in context)
+	 * <i class="mult search"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -50,8 +48,9 @@
 		return result;
 	};
 	/**
-	 * search element (in context)
-	 * 
+	 * search for element using filter (returns a reference to element)(in context)
+	 * <i class="mult search"></i>
+	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] - collection ID
@@ -62,7 +61,8 @@
 	};
 	
 	/**
-	 * indexOf (in context)
+	 * indexOf (in context)<br/>
+	 * <i class="mult search"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement - element to locate in the array
@@ -84,6 +84,7 @@
 	};
 	/**
 	 * lastIndexOf (in context)
+	 * <i class="mult search"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement - element to locate in the array

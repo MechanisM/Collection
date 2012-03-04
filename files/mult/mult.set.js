@@ -4,15 +4,14 @@
 	/////////////////////////////////
 	
 	/**
-	 * set elements (in context)
+	 * set new value of the element (in context)<br/>
+	 * events: onSet
+	 * <i class="mult set"></i>
 	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
-	 *  
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult.
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -26,7 +25,7 @@
 			}
 		//
 		var
-			arg, replaceCheck = $.isFunction(replaceObj),
+			e = null, arg, replaceCheck = $.isFunction(replaceObj),
 			/** @private */
 			action = function (el, i, data, cOLength, cObj, id) {
 				if (replaceCheck) {
@@ -38,11 +37,18 @@
 		//
 		arg = $.unshiftArguments(arguments, action);
 		arg.splice(2, 1);
+		
+		// events
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		return this.forEach.apply(this, arg);
 	};
 	/**
-	 * replace element (in context)
-	 * 
+	 * set new value of the one element (in context)<br/>
+	 * events: onSet
+	 * <i class="mult set"></i>
+	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
@@ -54,7 +60,9 @@
 	};
 	
 	/**
-	 * map (in context)
+	 * map (in context)<br/>
+	 * events: onSet
+	 * <i class="mult set"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 

@@ -4,14 +4,12 @@
 	/////////////////////////////////
 	
 	/**
-	 * get elements (in context)
-	 *
-	 * // overloads:
-	 * 1) if the id is a Boolean, it is considered as mult.
+	 * get the items using a filter or a link (in context)
+	 * <i class="mult get"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression or context (overload)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] - enable mult mode
 	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
 	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
@@ -55,7 +53,8 @@
 		return result;
 	};
 	/**
-	 * get element (in context)
+	 * get the item using a filter or a link (in context)
+	 * <i class="mult get"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)

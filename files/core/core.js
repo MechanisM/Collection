@@ -18,12 +18,8 @@
 		if (prop) { $.extend(true, active, prop); }
 		
 		// compile (if need)
-		if (this._exprTest(active.filter)) {
-			active.filter = this._compileFilter(active.filter);
-		}
-		if (this._exprTest(active.parser)) {
-			active.parser = this._compileParser(active.parser);
-		}
+		if (this._exprTest(active.filter)) { active.filter = this._compileFilter(active.filter); }
+		if (this._exprTest(active.parser)) { active.parser = this._compileParser(active.parser); }
 		
 		// if "collection" is string
 		if ($.isString(collection)) {
