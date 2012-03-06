@@ -5,322 +5,7 @@
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 04.03.2012 11:39:15
  * @version 1.0.3
- */
-var nimble = (function () {
-	// try to use ECMAScript 5 "strict mode"
-	"use strict";
-	
-	return {
-		/**
-		 * framework name
-		 * 
-		 * @constant
-		 * @type String
-		 */
-		name: "nimble",
-		/**
-		 * framework version
-		 * 
-		 * @constant
-		 * @type String
-		 */
-		version: "1.0.3",
-		/**
-		 * return string: framework name + framework version
-		 *
-		 * @this {nimble}
-		 * @return {String}
-		 */
-		nimble: function () { return this.name + " " + this.version; },
-		
-		// constants
-		CONTEXT_SEPARATOR: " ",
-		QUERY_SEPARATOR: "/",
-		SUBQUERY_SEPARATOR: "{",
-		METHOD_SEPARATOR: "->",
-		
-		CHILDREN: ">",
-		ORDER: ["eq(", ")"],
-		//
-		
-		/**
-		 * removes all leading and trailing whitespace characters
-		 *
-		 * @param {String} str — some string
-		 * @return {String}
-		 */
-		trim: function (str) {
-			var
-				str = str.replace(/^\s\s*/, ''),
-				ws = /\s/,
-				i = str.length;
-			//
-			while (ws.test(str.charAt((i -= 1)))){};
-			return str.substring(0, i + 1);
-		},
-		/**
-		 * returns a Boolean indicating whether the object is a string
-		 *
-		 * @param {mixed} obj — some object
-		 * @return {Boolean}
-		 */
-		isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },
-		/**
-		 * returns a Boolean indicating whether the object is a number
-		 *
-		 * @param {mixed} obj — some object
-		 * @return {Boolean}
-		 */
-		isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },
-		/**
-		 * returns a Boolean indicating whether the object is a array (not an array-like object)
-		 *
-		 * @param {mixed} obj — some object
-		 * @return {Boolean}
-		 */
-		isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },
-		/**
-		 * returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
-		 *
-		 * @param {mixed} obj — some object
-		 * @return {Boolean}
-		 */
-		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },
-		
-		/**
-		 * find the value in the array
-		 *
-		 * @param {mixed} val — some object
-		 * @param {Array} array — some array
-		 * @return {Boolean}
-		 */
-		find: function (val, array) {
-			for (var i = array.length; (i -= 1) > -1;) {
-				if (val === array[i]) { return true; }
-			}
-			
-			return false;
-		},
-		
-		/**
-		 * calculate math expression for string
-		 * 
-		 * @param {mixed} val — new value
-		 * @param {mixed} old — old value
-		 * @return {mixed}
-		 */
-		expr: function (val, old) {
-			old = old !== undefined || old !== null ? old : "";
-			if (this.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
-				//
-				val = val.split("=");
-				if (!isNaN(val[1])) { val[1] = +val[1]; }
-				// simple math
-				switch (val[0]) {
-					case "+": { val = old + val[1]; } break;
-					case "-": { val = old - val[1]; } break;
-					case "*": { val = old * val[1]; } break;
-					case "/": { val = old / val[1]; } break;
-				}
-			}
-		
-			return val;
-		},
-		
-		/**
-		 * set new value to object by link, remove element by link or get element by link
-		 * 
-		 * @this {nimble}
-		 * @param {Object|Number|Boolean} obj — some object
-		 * @param {Context} context — link
-		 * @param {mixed} [value] — some value
-		 * @param {Boolean} [del=false] — if "true", remove source element
-		 * @return {nimble|mixed}
-		 */
-		byLink: function (obj, context, value, del) {
-			context = context
-						.toString()
-						.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), " " + this.CHILDREN + " ")
-						.split(this.CONTEXT_SEPARATOR);
-			del = del || false;
-			
-			//
-			var
-				type = this.CHILDREN,
-				last = 0, total = 0,
-				
-				key, i = context.length,
-				pos, n,
-		
-				objLength, cLength;
-		
-			// remove "dead" elements
-			while ((i -= 1) > -1) {
-				context[i] = this.trim(context[i]);
-				if (context[i] === "") {
-					context.splice(i, 1);
-					last -= 1;
-				} else if (context[i] !== this.CHILDREN) {
-					if (i > last) { last = i; }
-					total += 1;
-				}
-			}
-			// recalculate length
-			cLength = context.length;
-			
-			// overload
-			if (obj === false) {
-				return context.join("");
-			} else if (this.isNumber(obj)) {
-				if ((obj = +obj) < 0) { obj += total; }
-				if (value === undefined) { 
-					for (i = -1, n = 0; (i += 1) < cLength;) {
-						if (context[i] !== this.CHILDREN) {
-							if ((n += 1) === obj) {
-								context.splice(i + 1, cLength);
-								return context.join("");
-							}
-						}
-					}
-				} else {
-					for (i = cLength, n = 0; (i -= 1) > -1;) {
-						if (context[i] !== this.CHILDREN) {
-							if ((n += 1) === obj) {
-								context.splice(0, i);
-								return context.join("");
-							}
-						}
-					}
-				}
-			}
-			//
-			for (i = -1; (i += 1) < cLength;) {
-				switch (context[i]) {
-					case this.CHILDREN : { type = context[i]; } break;
-					default : {
-						if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
-							if (i === last && value !== undefined) {
-								if (del === false) {
-									obj[context[i]] = this.expr(value, obj[context[i]]);
-								} else {
-									if (nimble.isArray(obj)) {
-										obj.splice(context[i], 1);
-									} else { delete obj[context[i]]; }
-								}
-							} else { obj = obj[context[i]]; }
-						} else {
-							pos = context[i].substring(this.ORDER[0].length);
-							pos = pos.substring(0, (pos.length - 1));
-							pos = +pos;
-							//
-							if (this.isArray(obj)) {
-								if (i === last && value !== undefined) {
-									if (pos >= 0) {
-										if (del === false) {
-											obj[pos] = this.expr(value, obj[pos]);
-										} else { obj.splice(pos, 1); }
-									} else {
-										if (del === false) {
-											obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]);
-										} else { obj.splice(obj.length + pos, 1); }
-									}
-								} else {
-									if (pos >= 0) {
-										obj = obj[pos];
-									} else { obj = obj[obj.length + pos]; }
-								}
-							} else {
-								if (pos < 0) {
-									objLength = 0;
-									for (key in obj) {
-										if (obj.hasOwnProperty(key)) { objLength += 1; }
-									}
-									//
-									pos += objLength;
-								}
-				
-								n = 0;
-								for (key in obj) {
-									if (obj.hasOwnProperty(key)) {
-										if (pos === n) {
-											if (i === last && value !== undefined) {
-												if (del === false) {
-													obj[key] = this.expr(value, obj[key]);
-												} else { delete obj[key]; }
-											} else { obj = obj[key]; }
-											break;
-										}
-										n += 1;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			
-			if (value !== undefined) { return this; }
-			return obj;
-		},
-		
-		/**
-		 * execute event
-		 * 
-		 * @this {nimble}
-		 * @param {String} query — query string
-		 * @param {Object} event — event object
-		 * @param {mixed} [param] — input parameters
-		 * @param {mixed} [_this=event] — this object
-		 * @return {mixed}
-		 */
-		execEvent: function (query, event, param, _this) {
-			query = query.split(this.QUERY_SEPARATOR);
-			param = this.isExists(param) ? param : [];
-			param = this.isArray(param) ? param : [param];
-			//
-			var 
-				i = -1,
-				qLength = query.length - 1,
-				spliter;
-		
-			while ((i += 1) < qLength) { event = event[query[i]]; }
-			//
-			if (query[i].search(this.SUBQUERY_SEPARATOR) !== -1) {
-				spliter = query[i].split(this.SUBQUERY_SEPARATOR);
-				event = event[spliter[0]];
-				spliter.splice(0, 1);
-				param = param.concat(spliter);
-				return event.apply(_this || event, param);
-			} else { return event[query[i]].apply(_this || event, param); }
-		},
-		
-		/**
-		 * add new element to object
-		 *
-		 * @this {nimble}
-		 * @param {Plain Object} obj — some object
-		 * @param {String} active — property name (can use "->unshift" — the result will be similar to work for an array "unshift")
-		 * @param {mixed} value — some value
-		 * @return {Plain Object|Boolean}
-		 */
-		addElementToObject: function (obj, active, value) {
-			active = active.split(this.METHOD_SEPARATOR);
-			var key, newObj = {};
-		
-			if (active[1] && active[1] == "unshift") {
-				newObj[!isNaN(Number(active[0])) ? 0 : active[0]] = value;
-				for (key in obj) {
-					if (obj.hasOwnProperty(key)) { newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key]; }
-				}
-				obj = newObj;
-		
-				return obj;
-			} else if (!active[1] || active[1] == "push") { obj[active[0]] = value; }
-		
-			return true;
-		}
-	};
-})();﻿/**
+ */var nimble = (function () {	// try to use ECMAScript 5 "strict mode"	"use strict";		return {		/**		 * framework name		 * 		 * @constant		 * @type String		 */		name: "nimble",		/**		 * framework version		 * 		 * @constant		 * @type String		 */		version: "1.0.3",		/**		 * return string: framework name + framework version		 *		 * @this {nimble}		 * @return {String}		 */		nimble: function () { return this.name + " " + this.version; },				// constants		CONTEXT_SEPARATOR: "__context__",		QUERY_SEPARATOR: "/",		SUBQUERY_SEPARATOR: "{",		METHOD_SEPARATOR: "->",				CHILDREN: ">",		ORDER: ["eq(", ")"],		//				/**		 * removes all leading and trailing whitespace characters		 *		 * @param {String} str — some string		 * @return {String}		 */		trim: function (str) {			var				str = str.replace(/^\s\s*/, ''),				ws = /\s/,				i = str.length;			//			while (ws.test(str.charAt((i -= 1)))){};			return str.substring(0, i + 1);		},		/**		 * returns a Boolean indicating whether the object is a string		 *		 * @param {mixed} obj — some object		 * @return {Boolean}		 */		isString: function (obj) { return Object.prototype.toString.call(obj) === "[object String]"; },		/**		 * returns a Boolean indicating whether the object is a number		 *		 * @param {mixed} obj — some object		 * @return {Boolean}		 */		isNumber: function (obj) { return Object.prototype.toString.call(obj) === "[object Number]"; },		/**		 * returns a Boolean indicating whether the object is a array (not an array-like object)		 *		 * @param {mixed} obj — some object		 * @return {Boolean}		 */		isArray: function (obj) { return Object.prototype.toString.call(obj) === "[object Array]"; },		/**		 * returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)		 *		 * @param {mixed} obj — some object		 * @return {Boolean}		 */		isExists: function (obj) { return obj !== undefined && obj !== "undefined" && obj !== null && obj !== ""; },				/**		 * find the value in the array		 *		 * @param {mixed} val — some object		 * @param {Array} array — some array		 * @return {Boolean}		 */		find: function (val, array) {			for (var i = array.length; (i -= 1) > -1;) {				if (val === array[i]) { return true; }			}						return false;		},				/**		 * calculate math expression for string		 * 		 * @param {mixed} val — new value		 * @param {mixed} old — old value		 * @return {mixed}		 */		expr: function (val, old) {			old = old !== undefined || old !== null ? old : "";			if (this.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {				//				val = val.split("=");				if (!isNaN(val[1])) { val[1] = +val[1]; }				// simple math				switch (val[0]) {					case "+": { val = old + val[1]; } break;					case "-": { val = old - val[1]; } break;					case "*": { val = old * val[1]; } break;					case "/": { val = old / val[1]; } break;				}			}					return val;		},				/**		 * set new value to object by link, remove element by link or get element by link		 * 		 * @this {nimble}		 * @param {Object|Number|Boolean} obj — some object		 * @param {Context} context — link		 * @param {mixed} [value] — some value		 * @param {Boolean} [del=false] — if "true", remove source element		 * @return {nimble|mixed}		 */		byLink: function (obj, context, value, del) {			context = context						.toString()						.replace(new RegExp("\\s*" + this.CHILDREN + "\\s*", "g"), this.CONTEXT_SEPARATOR + this.CHILDREN + this.CONTEXT_SEPARATOR)						.split(this.CONTEXT_SEPARATOR);			del = del || false;			//			var				type = this.CHILDREN,				last = 0, total = 0,								key, i = context.length,				pos, n,						objLength, cLength;					// remove "dead" elements			while ((i -= 1) > -1) {				context[i] = this.trim(context[i]);				if (context[i] === "") {					context.splice(i, 1);					last -= 1;				} else if (context[i] !== this.CHILDREN) {					if (i > last) { last = i; }					total += 1;				}			}			// recalculate length			cLength = context.length;						// overload			if (obj === false) {				return context.join("");			} else if (this.isNumber(obj)) {				if ((obj = +obj) < 0) { obj += total; }				if (value === undefined) { 					for (i = -1, n = 0; (i += 1) < cLength;) {						if (context[i] !== this.CHILDREN) {							if ((n += 1) === obj) {								context.splice(i + 1, cLength);								return context.join("");							}						}					}				} else {					for (i = cLength, n = 0; (i -= 1) > -1;) {						if (context[i] !== this.CHILDREN) {							if ((n += 1) === obj) {								context.splice(0, i);								return context.join("");							}						}					}				}			}			//			for (i = -1; (i += 1) < cLength;) {				switch (context[i]) {					case this.CHILDREN : { type = context[i]; } break;					default : {						if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {							if (i === last && value !== undefined) {								if (del === false) {									obj[context[i]] = this.expr(value, obj[context[i]]);								} else {									if (nimble.isArray(obj)) {										obj.splice(context[i], 1);									} else { delete obj[context[i]]; }								}							} else { obj = obj[context[i]]; }						} else {							pos = context[i].substring(this.ORDER[0].length);							pos = pos.substring(0, (pos.length - 1));							pos = +pos;							//							if (this.isArray(obj)) {								if (i === last && value !== undefined) {									if (pos >= 0) {										if (del === false) {											obj[pos] = this.expr(value, obj[pos]);										} else { obj.splice(pos, 1); }									} else {										if (del === false) {											obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]);										} else { obj.splice(obj.length + pos, 1); }									}								} else {									if (pos >= 0) {										obj = obj[pos];									} else { obj = obj[obj.length + pos]; }								}							} else {								if (pos < 0) {									objLength = 0;									for (key in obj) {										if (obj.hasOwnProperty(key)) { objLength += 1; }									}									//									pos += objLength;								}												n = 0;								for (key in obj) {									if (obj.hasOwnProperty(key)) {										if (pos === n) {											if (i === last && value !== undefined) {												if (del === false) {													obj[key] = this.expr(value, obj[key]);												} else { delete obj[key]; }											} else { obj = obj[key]; }											break;										}										n += 1;									}								}							}						}					}				}			}						if (value !== undefined) { return this; }			return obj;		},				/**		 * execute event		 * 		 * @this {nimble}		 * @param {String} query — query string		 * @param {Object} event — event object		 * @param {mixed} [param] — input parameters		 * @param {mixed} [_this=event] — this object		 * @return {mixed}		 */		execEvent: function (query, event, param, _this) {			query = query.split(this.QUERY_SEPARATOR);			param = this.isExists(param) ? param : [];			param = this.isArray(param) ? param : [param];			//			var 				i = -1,				qLength = query.length - 1,				spliter;					while ((i += 1) < qLength) { event = event[query[i]]; }			//			if (query[i].search(this.SUBQUERY_SEPARATOR) !== -1) {				spliter = query[i].split(this.SUBQUERY_SEPARATOR);				event = event[spliter[0]];				spliter.splice(0, 1);				param = param.concat(spliter);				return event.apply(_this || event, param);			} else { return event[query[i]].apply(_this || event, param); }		},				/**		 * add new element to object		 *		 * @this {nimble}		 * @param {Plain Object} obj — some object		 * @param {String} active — property name (can use "->unshift" — the result will be similar to work for an array "unshift")		 * @param {mixed} value — some value		 * @return {Plain Object|Boolean}		 */		addElementToObject: function (obj, active, value) {			active = active.split(this.METHOD_SEPARATOR);			var key, newObj = {};					if (active[1] && active[1] == "unshift") {				newObj[!isNaN(Number(active[0])) ? 0 : active[0]] = value;				for (key in obj) {					if (obj.hasOwnProperty(key)) { newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key]; }				}				obj = newObj;						return obj;			} else if (!active[1] || active[1] == "push") { obj[active[0]] = value; }					return true;		}	};})();﻿/**
  * <p>$.Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
  *
  * <strong>Glossary:</strong>
@@ -589,88 +274,7 @@ var nimble = (function () {
 			childNodes: "childNodes",
 			classes: "classes"
 		};
-	};
-	/////////////////////////////////
-	//// jQuery methods (compiler templates)
-	/////////////////////////////////
-	
-	/**
-	 * compile the template
-	 * 
-	 * @this {jQuery Object}
-	 * @throw {Error}
-	 * @return {Function}
-	 */
-	$.fn.ctplCompile = function () {
-		if (this.length === 0) { throw new Error("DOM element does't exist!"); }
-		
-		var
-			html = this.html(),
-			elem = html
-				.replace(/\/\*.*?\*\//g, "")
-				.split("?>")
-				.join("<?js")
-				.replace(/[\r\t\n]/g, " ")
-				.split("<?js"),
-			
-			eLength = elem.length,
-			resStr = "var key = i, result = ''; ";
-		//
-		elem.forEach(function (el, i) {
-			if (i === 0 || i % 2 === 0) {
-				resStr += "result +='" + el + "';";
-			} else { resStr += el.split("echo").join("result +="); }
-		});
-		
-		return new Function("el", "i", "data", "cOLength", "cObj", "id", resStr + " return result;");
-	};
-	
-	/**
-	 * make templates
-	 * 
-	 * @this {jQuery Object}
-	 * @param {Collection Object} cObj — an instance of $.Collection
-	 * @return {Collection Object}
-	 */
-	$.fn.ctplMake = function (cObj) {
-		this.each(function () {
-			var
-				$this = $(this),
-				data = $this.data("ctpl"), key,
-				
-				prefix = data.prefix ? data.prefix + "_" : "";
-			//
-			if ($.isString(data)) { data = $.parseJSON(data); }
-			//
-			cObj._push("template", prefix + data.name, $this.ctplCompile());
-			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }
-			
-			//
-			for (key in data) {
-				if (!data.hasOwnProperty(key)){ continue; }
-				if (key === "prefix" || key === "set" || key === "print" || key === "name" || key === "collection") { continue; }
-				if (key === "target" || key === "pager") { data[key] = $(data[key]); }
-				
-				cObj._push(key, prefix + data.name, data[key]);
-				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
-				//
-				if (key === "filter" || key === "parser" ) { data[key] = prefix + data.name; }
-			}
-			//
-			if (data.print && data.print === true) {
-				data.template = data.name;
-				if (!data.target) {
-					cObj._push("target", prefix + data.name, $this.parent());
-					if (data.set && data.set === true) { cObj._set("target", prefix + data.name); }
-				}
-				
-				//
-				cObj.print(data);
-			}
-		});
-		
-		return this;
-	};	
+	};	/////////////////////////////////	//// jQuery methods (compiler templates)	/////////////////////////////////		/**	 * compile the template	 * 	 * @this {jQuery Object}	 * @throw {Error}	 * @return {Function}	 */	$.fn.ctplCompile = function () {		if (this.length === 0) { throw new Error("DOM element does't exist!"); }				var			html = this.html(),			elem = html				.replace(/\/\*.*?\*\//g, "")				.split("?>")				.join("<?js")				.replace(/[\r\t\n]/g, " ")				.split("<?js"),						eLength = elem.length,			resStr = "var key = i, result = ''; ";		//		elem.forEach(function (el, i) {			if (i === 0 || i % 2 === 0) {				resStr += "result +='" + el + "';";			} else { resStr += el.split("echo").join("result +="); }		});				return new Function("el", "i", "data", "cOLength", "cObj", "id", resStr + " return result;");	};		/**	 * make templates	 * 	 * @this {jQuery Object}	 * @param {Collection Object} cObj — an instance of $.Collection	 * @return {Collection Object}	 */	$.fn.ctplMake = function (cObj) {		this.each(function () {			var				$this = $(this),				data = $this.data("ctpl"), key,								prefix = data.prefix ? data.prefix + "_" : "";			//			if ($.isString(data)) { data = $.parseJSON(data); }			//			cObj._push("template", prefix + data.name, $this.ctplCompile());			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }						//			for (key in data) {				if (!data.hasOwnProperty(key)){ continue; }				if (key === "prefix" || key === "set" || key === "print" || key === "name" || key === "collection") { continue; }				if (key === "target" || key === "pager") { data[key] = $(data[key]); }								cObj._push(key, prefix + data.name, data[key]);				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }				//				if (key === "filter" || key === "parser" ) { data[key] = prefix + data.name; }			}			//			if (data.print && data.print === true) {				data.template = data.name;				if (!data.target) {					cObj._push("target", prefix + data.name, $this.parent());					if (data.set && data.set === true) { cObj._set("target", prefix + data.name); }				}								//				cObj.print(data);			}		});				return this;	};	
 	/////////////////////////////////
 	//// jQuery methods (other)
 	/////////////////////////////////
@@ -2966,185 +2570,7 @@ var nimble = (function () {
 		(local === false ? sessionStorage : localStorage).removeItem( "__" + this.name + "__" + this._get("namespace") + "__date");
 		//
 		return this.loadAll(local || "", true);
-	};	
-	/////////////////////////////////
-	//// compile (filter)
-	/////////////////////////////////
-	
-	/**
-	 * calculate custom filter
-	 * 
-	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {mixed} el - current element
-	 * @param {Number|String} i - iteration (key)
-	 * @param {Collection} data - link to collection
-	 * @param {Function} cOLength - collection length
-	 * @param {Collection Object} self - link to collection object
-	 * @param {String} id - collection ID
-	 * @return {Boolean}
-	 */
-	$.Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
-		var
-			fLength,
-			calFilter,
-			
-			result = true, tmpResult,
-			and, or, inverse,
-			
-			i;
-		
-		// if filter is undefined
-		if (!filter || filter === true) {
-			if (!this._getActiveParam("filter")) { return true; }
-			//
-			if (this._get("filter")) {
-				return this._customFilter(this._get("filter"), el, i, data, cOLength, self, id, _tmpFilter);
-			}
-			
-			return true;
-		}
-
-		// if filter is function
-		if ($.isFunction(filter)) {
-			if (!this._getActiveParam("filter") || !_tmpFilter) {
-				return filter.call(filter, el, i, data, cOLength, self, id);
-			} else {
-				if (!_tmpFilter.name) {
-					while (this._exists("filter", "__tmp:" + (_tmpFilter.name = $.getRandomInt(0, 10000)))) {
-						_tmpFilter.name = $.getRandomInt(0, 10000);
-					}
-					this._push("filter", "__tmp:" + _tmpFilter.name, filter);
-				}
-				//
-				return this._customFilter(this.ACTIVE + " && " + "__tmp:" + _tmpFilter.name, el, i, data, cOLength, self, id, _tmpFilter);
-			}
-		}
-		
-		// if filter is string
-		if (!$.isArray(filter)) {
-			//
-			if (this._getActiveParam("filter") && _tmpFilter) {
-				filter = this.ACTIVE + " && (" + filter + ")";
-			}
-			
-			// if simple filter
-			if (filter.search(/\|\||&&|!/) === -1) {
-				if ((filter = $.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
-					if (!this._exists("filter", "__tmp:" + filter)) {
-						this._push("filter", "__tmp:" + filter, this._compileFilter(filter));
-					}
-					//
-					return (filter = this._get("filter", "__tmp:" + filter)).call(filter, el, i, data, cOLength, self, id);
-				}
-				//
-				return this._customFilter(this._get("filter", filter), el, i, data, cOLength, self, id, _tmpFilter);
-			}
-			
-			//
-			filter = $.trim(
-						filter
-							.toString()
-							.replace(/\s*(\(|\))\s*/g, " $1 ")
-							.replace(/\s*(\|\||&&)\s*/g, " $1 ")
-							.replace(/(!)\s*/g, "$1")
-					).split(" ");
-			
-			// remove "dead" elements		
-			for (i = filter.length; (i -= 1) > -1;) {
-				if (filter[i] === "") { filter.splice(i, 1); }
-			}
-		}
-		
-		// calculate deep filter
-		/** @private */
-		calFilter = function (array, iter) {
-			var
-				i = -1,
-				aLength = array.length,
-				pos = 0,
-				result = [];
-			//
-			while ((i += 1) < aLength) {
-				iter += 1;
-				if (array[i] === "(" || array[i] === "!(") { pos += 1; }
-				if (array[i] === ")") {
-					if (pos === 0) {
-						return {result: result, iter: iter};
-					} else { pos -= 1; }
-				}
-				//
-				result.push(array[i]);
-			}
-		};
-		
-		// calculate filter
-		fLength = filter.length;
-		for (i = -1; (i += 1) < fLength;) {
-			// calculate atoms
-			if (filter[i] === "(" || filter[i] === "!(") {
-				if (filter[i].substring(0, 1) === "!") {
-					inverse = true;
-					filter[i] = filter[i].substring(1);
-				} else { inverse = false; }
-				
-				//
-				i = (tmpResult = calFilter(filter.slice((i + 1)), i)).iter;
-				tmpResult = tmpResult.result.join(" ");
-				
-				//
-				tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);
-				
-				if (!and && !or) {
-					result = inverse === true ? !tmpResult : tmpResult;
-				} else if (and) {
-					result = inverse === true ? !tmpResult : tmpResult && result;
-				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
-			
-			// calculate outer filter
-			} else if (filter[i] !== ")" && filter[i] !== "||" && filter[i] !== "&&") {
-				if (filter[i].substring(0, 1) === "!") {
-					inverse = true;
-					filter[i] = filter[i].substring(1);
-				} else { inverse = false; }
-				
-				//
-				tmpResult = this._customFilter(this._get("filter", filter[i]), el, i, data, cOLength, self, id);
-				
-				//
-				if (!and && !or) {
-					result = inverse === true ? !tmpResult : tmpResult;
-				} else if (and) {
-					result = inverse === true ? !tmpResult : tmpResult && result;
-				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
-			
-			// "and" or "or"
-			} else if (filter[i] === "||") {
-				and = false;
-				or = true;
-			} else if (filter[i] === "&&") {
-				or = false;
-				and = true;
-			}
-		}
-		
-		return result;
-	};
-	/**
-	 * compile filter
-	 * 
-	 * @param {String} str - some string
-	 * @return {Function}
-	 */
-	$.Collection.prototype._compileFilter = function (str) {
-		var res = /^\s*\(*\s*/.exec(str);
-		if (res.length !== 0) {
-			str = str.substring(res[0].length + 1, str.length - res[0].length);
-		}
-		str = str.split("<:").join('self.getVariable("').split(":>").join('")');
-		//
-		return new Function("el", "i", "data", "cOLength", "cObj", "id", "var key = i; return " + str.replace(/^\s*:/, "") + ";");
-	}	
+	};		/////////////////////////////////	//// compile (filter)	/////////////////////////////////		/**	 * calculate custom filter	 * 	 * @this {Colletion Object}	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)	 * @param {mixed} el - current element	 * @param {Number|String} i - iteration (key)	 * @param {Collection} data - link to collection	 * @param {Function} cOLength - collection length	 * @param {Collection Object} self - link to collection object	 * @param {String} id - collection ID	 * @return {Boolean}	 */	$.Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {		var			fLength,			calFilter,						result = true, tmpResult,			and, or, inverse,						i;				// if filter is undefined		if (!filter || filter === true) {			if (!this._getActiveParam("filter")) { return true; }			//			if (this._get("filter")) {				return this._customFilter(this._get("filter"), el, i, data, cOLength, self, id, _tmpFilter);			}						return true;		}		// if filter is function		if ($.isFunction(filter)) {			if (!this._getActiveParam("filter") || !_tmpFilter) {				return filter.call(filter, el, i, data, cOLength, self, id);			} else {				if (!_tmpFilter.name) {					while (this._exists("filter", "__tmp:" + (_tmpFilter.name = $.getRandomInt(0, 10000)))) {						_tmpFilter.name = $.getRandomInt(0, 10000);					}					this._push("filter", "__tmp:" + _tmpFilter.name, filter);				}				//				return this._customFilter(this.ACTIVE + " && " + "__tmp:" + _tmpFilter.name, el, i, data, cOLength, self, id, _tmpFilter);			}		}				// if filter is string		if (!$.isArray(filter)) {			//			if (this._getActiveParam("filter") && _tmpFilter) {				filter = this.ACTIVE + " && (" + filter + ")";			}						// if simple filter			if (filter.search(/\|\||&&|!/) === -1) {				if ((filter = $.trim(filter)).search(/^(?:\(|)*:/) !== -1) {					if (!this._exists("filter", "__tmp:" + filter)) {						this._push("filter", "__tmp:" + filter, this._compileFilter(filter));					}					//					return (filter = this._get("filter", "__tmp:" + filter)).call(filter, el, i, data, cOLength, self, id);				}				//				return this._customFilter(this._get("filter", filter), el, i, data, cOLength, self, id, _tmpFilter);			}						//			filter = $.trim(						filter							.toString()							.replace(/\s*(\(|\))\s*/g, " $1 ")							.replace(/\s*(\|\||&&)\s*/g, " $1 ")							.replace(/(!)\s*/g, "$1")					).split(" ");						// remove "dead" elements					for (i = filter.length; (i -= 1) > -1;) {				if (filter[i] === "") { filter.splice(i, 1); }			}		}				// calculate deep filter		/** @private */		calFilter = function (array, iter) {			var				i = -1,				aLength = array.length,				pos = 0,				result = [];			//			while ((i += 1) < aLength) {				iter += 1;				if (array[i] === "(" || array[i] === "!(") { pos += 1; }				if (array[i] === ")") {					if (pos === 0) {						return {result: result, iter: iter};					} else { pos -= 1; }				}				//				result.push(array[i]);			}		};				// calculate filter		fLength = filter.length;		for (i = -1; (i += 1) < fLength;) {			// calculate atoms			if (filter[i] === "(" || filter[i] === "!(") {				if (filter[i].substring(0, 1) === "!") {					inverse = true;					filter[i] = filter[i].substring(1);				} else { inverse = false; }								//				i = (tmpResult = calFilter(filter.slice((i + 1)), i)).iter;				tmpResult = tmpResult.result.join(" ");								//				tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);								if (!and && !or) {					result = inverse === true ? !tmpResult : tmpResult;				} else if (and) {					result = inverse === true ? !tmpResult : tmpResult && result;				} else { result = inverse === true ? !tmpResult : tmpResult || result; }						// calculate outer filter			} else if (filter[i] !== ")" && filter[i] !== "||" && filter[i] !== "&&") {				if (filter[i].substring(0, 1) === "!") {					inverse = true;					filter[i] = filter[i].substring(1);				} else { inverse = false; }								//				tmpResult = this._customFilter(this._get("filter", filter[i]), el, i, data, cOLength, self, id);								//				if (!and && !or) {					result = inverse === true ? !tmpResult : tmpResult;				} else if (and) {					result = inverse === true ? !tmpResult : tmpResult && result;				} else { result = inverse === true ? !tmpResult : tmpResult || result; }						// "and" or "or"			} else if (filter[i] === "||") {				and = false;				or = true;			} else if (filter[i] === "&&") {				or = false;				and = true;			}		}				return result;	};	/**	 * compile filter	 * 	 * @param {String} str - some string	 * @return {Function}	 */	$.Collection.prototype._compileFilter = function (str) {		var res = /^\s*\(*\s*/.exec(str);		if (res.length !== 0) {			str = str.substring(res[0].length + 1, str.length - res[0].length);		}		str = str.split("<:").join('self.getVariable("').split(":>").join('")');		//		return new Function("el", "i", "data", "cOLength", "cObj", "id", "var key = i; return " + str.replace(/^\s*:/, "") + ";");	}	
 	/////////////////////////////////
 	//// compile (parser)
 	/////////////////////////////////
