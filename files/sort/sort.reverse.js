@@ -13,7 +13,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.reverse = function (id) {
+	C.prototype.reverse = function (id) {
 		id = id || "";
 		//
 		var

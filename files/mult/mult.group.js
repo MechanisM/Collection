@@ -17,7 +17,7 @@
 	 * @param {Boolean} [link=false] - save link
 	 * @return {Colletion}
 	 */
-	$.Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
+	C.prototype.group = function (field, filter, id, count, from, indexOf, link) {
 		field = this._exprTest((field = field || "")) ? this._compileFilter(field) : field;
 		id = id || "";
 		link = link || false;
@@ -58,6 +58,6 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion}
 	 */
-	$.Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
+	C.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
 		return this.group(field || "", filter || "", id || "", count || "", from || "", indexOf || "", true);
 	};	

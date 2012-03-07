@@ -11,7 +11,7 @@
 	 * @param {Function} [fail=done] - callback function (if failed)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.then = function (done, fail) {
+	C.prototype.then = function (done, fail) {
 		var self = this;
 		
 		if (arguments.length === 1) {

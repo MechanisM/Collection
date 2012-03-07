@@ -17,7 +17,7 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion}
 	 */
-	$.Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
+	C.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
 		oper = oper || "count";
 		id = id || "";
 

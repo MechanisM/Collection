@@ -12,7 +12,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._setOne = function (context, value, id) {
+	C.prototype._setOne = function (context, value, id) {
 		context = $.isExists(context) ? context.toString() : "";
 		value = value === undefined ? "" : value;
 		id = id || "";
@@ -36,7 +36,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
-	$.Collection.prototype._getOne = function (context, id) {
+	C.prototype._getOne = function (context, id) {
 		context = $.isExists(context) ? context.toString() : "";
 		//
 		return nimble.byLink(this._get("collection", id || ""), this._getActiveParam("context") + nimble.CHILDREN + context);

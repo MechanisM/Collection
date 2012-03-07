@@ -12,7 +12,7 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {String}
 	 */
-	$.Collection.prototype.parentContext = function (n, id) {
+	C.prototype.parentContext = function (n, id) {
 		var
 			context = this._get("context", id || "").split(nimble.CHILDREN),
 			i = n || 1;
@@ -30,7 +30,7 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.parent = function (n, id) {
+	C.prototype.parent = function (n, id) {
 		if (!id) { return this._update("context", this.parentContext(n)); }
 		//
 		return this._push("context", id, this.parentContext(n, id));

@@ -3,7 +3,7 @@
 	//// public fields (active)
 	/////////////////////////////////
 	
-	$.Collection.storage = {
+	C.fields = {
 		// root
 		dObj: {
 			/**
@@ -28,7 +28,7 @@
 				 * collection
 				 * 
 				 * @field
-				 * @type Collection|Null
+				 * @type C|Null
 				 */
 				collection: null,
 				/**

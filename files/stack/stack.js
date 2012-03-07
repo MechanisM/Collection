@@ -13,7 +13,7 @@
 	 * @param {mixed} newProp - new property
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._new = function (propName, newProp) {
+	C.prototype._new = function (propName, newProp) {
 		var
 			active = this.dObj.active,
 			upperCase = $.toUpperCase(propName, 1);
@@ -35,7 +35,7 @@
 	 * @param {mixed} newProp - new value
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._update = function (propName, newProp) {
+	C.prototype._update = function (propName, newProp) {
 		var
 			active = this.dObj.active,
 			sys = this.dObj.sys,
@@ -60,7 +60,7 @@
 	 * @throw {Error}
 	 * @return {mixed}
 	 */
-	$.Collection.prototype._get = function (propName, id) {
+	C.prototype._get = function (propName, id) {
 		if (id && id !== this.ACTIVE) {
 			if (!this._exists(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 			//
@@ -82,7 +82,7 @@
 	 * @throw {Error} 
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._push = function (propName, objID, newProp) {
+	C.prototype._push = function (propName, objID, newProp) {
 		var
 			tmp = this.dObj.sys["tmp" + $.toUpperCase(propName, 1)],
 			activeID = this._getActiveID(propName),
@@ -133,7 +133,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._set = function (propName, id) {
+	C.prototype._set = function (propName, id) {
 		var
 			sys = this.dObj.sys,
 
@@ -163,7 +163,7 @@
 	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._back = function (propName, nmb) {
+	C.prototype._back = function (propName, nmb) {
 		var
 			sys = this.dObj.sys,
 
@@ -192,7 +192,7 @@
 	 * @param {Number} [nmb=1] - number of steps
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._backIf = function (propName, nmb) {
+	C.prototype._backIf = function (propName, nmb) {
 		if (this.dObj.sys[propName + "ChangeControl"] === true) { return this._back.apply(this, arguments); }
 
 		return this;
@@ -209,7 +209,7 @@
 	 * @param {mixed} [resetVal] - reset value (overload)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._drop = function (propName, objID, deleteVal, resetVal) {
+	C.prototype._drop = function (propName, objID, deleteVal, resetVal) {
 		deleteVal = deleteVal === undefined ? false : deleteVal;
 		//
 		var
@@ -275,7 +275,7 @@
 	 * @param {mixed} [resetVal=false] - reset value
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._reset = function (propName, objID, resetVal) {
+	C.prototype._reset = function (propName, objID, resetVal) {
 		resetVal = resetVal === undefined ? false : resetVal;
 
 		return this._drop(propName, objID || "", "", resetVal);
@@ -291,7 +291,7 @@
 	 * @param {String} [id=this.ACTIVE] - source ID (for merge)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._resetTo = function (propName, objID, id) {
+	C.prototype._resetTo = function (propName, objID, id) {
 		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[propName] : this.dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
@@ -307,7 +307,7 @@
 	 * @param {String} [id=this.ACTIVE] - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype._exists = function (propName, id) {
+	C.prototype._exists = function (propName, id) {
 		var upperCase = $.toUpperCase(propName, 1);
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveID(propName)) { return true; }
@@ -324,7 +324,7 @@
 	 * @param {String} propName - root property
 	 * @return {String|Null}
 	 */
-	$.Collection.prototype._getActiveID = function (propName) {
+	C.prototype._getActiveID = function (propName) {
 		return this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"];
 	};
 	/**
@@ -337,7 +337,7 @@
 	 * @param {String} id - stack ID
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype._active = function (propName, id) {
+	C.prototype._active = function (propName, id) {
 		if (!id) { return this._getActiveID(propName); }
 		if (id === this._getActiveID(propName)) { return true; }
 
@@ -356,7 +356,7 @@
 	 * @param {String} stack ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.use = function (id) {
+	C.prototype.use = function (id) {
 		this.stack.forEach(function (el) {
 			var nm, tmpNm, i;
 			//

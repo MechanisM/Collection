@@ -11,7 +11,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._removeOne = function (context, id) {
+	C.prototype._removeOne = function (context, id) {
 		context = $.isExists(context) ? context.toString() : "";
 		var activeContext = this._getActiveParam("context"), e = null;
 		
@@ -33,7 +33,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype._remove = function (objContext, id) {
+	C.prototype._remove = function (objContext, id) {
 		id = id || "";
 		var key, i;
 		//
@@ -63,7 +63,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
+	C.prototype.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
 	/**
 	 * remove an element from the collection (shift)(in context)<br/>
 	 * events: onRemove
@@ -73,4 +73,4 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.shift = function (id) { return this._removeOne("eq(0)", id || ""); };
+	C.prototype.shift = function (id) { return this._removeOne("eq(0)", id || ""); };

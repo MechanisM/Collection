@@ -3,7 +3,7 @@
 	//// public fields (system)
 	/////////////////////////////////
 	
-	$.Collection.storage.dObj.sys = {
+	C.fields.dObj.sys = {
 		// the state of the system flags
 		flags: {
 			// the use of the active system flags
@@ -49,7 +49,7 @@
 	(function (data) {
 		var
 			upperCase,
-			sys = $.Collection.storage.dObj.sys;
+			sys = C.fields.dObj.sys;
 		//
 		data.forEach(function (el) {
 			upperCase = $.toUpperCase(el, 1);
@@ -59,4 +59,4 @@
 			sys[el + "ChangeControl"] = null;
 			sys[el + "Back"] = [];
 		});
-	})($.Collection.prototype.stack);
+	})(C.prototype.stack);

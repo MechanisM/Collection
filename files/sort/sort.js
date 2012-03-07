@@ -16,7 +16,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.sort = function (field, rev, fn, id) {
+	C.prototype.sort = function (field, rev, fn, id) {
 		field = field || "";
 		rev = rev || false;
 		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {

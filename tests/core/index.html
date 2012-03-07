@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>$.Collection: core test</title>
+	<title>C: core test</title>
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
@@ -11,13 +11,13 @@
 		$(function () {
 			module("core");
 			test("create empty object", function () {
-				equal(new $.Collection(), 0, "with new");
-				equal($.Collection(), 0, "factory");
-				equal($.Collection(null, {context: "0 > eq(-1)"}).dObj.active.context, "0 > eq(-1)", "the additional parameter in the constructor");
+				equal(new C(), 0, "with new");
+				equal(C(), 0, "factory");
+				equal(C(null, {context: "0 > eq(-1)"}).dObj.active.context, "0 > eq(-1)", "the additional parameter in the constructor");
 			});
 			test("create object", function () {
-				ok($.Collection("#result").dObj.active.target !== null, "collection is string");
-				equal($.Collection([1, 2, 3]), 3, "with collection");
+				ok(C("#result").dObj.active.target !== null, "collection is string");
+				equal(C([1, 2, 3]), 3, "with collection");
 			});
 			module("nimble");
 			test("nimble methods", function () {
@@ -81,7 +81,7 @@
 </head>
 
 <body>
-	<h1 id="qunit-header">$.Collection: core test</h1>
+	<h1 id="qunit-header">C: core test</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>

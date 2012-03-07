@@ -16,7 +16,7 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {mixed}
 	 */
-	$.Collection.prototype.get = function (filter, id, mult, count, from, indexOf) {
+	C.prototype.get = function (filter, id, mult, count, from, indexOf) {
 		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
 				return this._getOne(filter, id || "");
@@ -61,6 +61,6 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {mixed}
 	 */
-	$.Collection.prototype.getOne = function (filter, id) {
+	C.prototype.getOne = function (filter, id) {
 		return this.get(filter || "", id || "", false);
 	};

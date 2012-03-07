@@ -2,14 +2,14 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Collection grid</title>
+	<title>C grid</title>
 	<link href="style.css" type="text/css" rel="stylesheet">
 	<script type="text/javascript" src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../jquery.collection.js"></script>
 	<script type="text/javascript" src="data.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			var grid = new $.Collection(data);
+			var grid = new C(data);
 			$(".ctpl").ctplMake(grid);
 			$(".grid").on("click", "th", function () {
 				var

@@ -8,12 +8,12 @@
 	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] - filter function, string expression, collection or true (if disabled)
-	 * @param {String|Collection} [id=this.ACTIVE] - collection ID or collection
+	 * @param {Filter|C|Boolean} [filter=this.ACTIVE] - filter function, string expression, collection or true (if disabled)
+	 * @param {String|C} [id=this.ACTIVE] - collection ID or collection
 	 * @throw {Error}
 	 * @return {Number}
 	 */
-	$.Collection.prototype.length = function (filter, id) {
+	C.prototype.length = function (filter, id) {
 		filter = filter || "";
 		//
 		var
@@ -90,7 +90,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
+	C.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
 		filter = filter || "";
 		
 		// if id is Boolean
@@ -182,6 +182,7 @@
 	};
 	/**
 	 * some (in context)
+	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function} callback - callback function
@@ -189,6 +190,6 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.some = function (callback, filter, id) {
+	C.prototype.some = function (callback, filter, id) {
 		return this.forEach(callback, filter || "", id || "", false);
 	};

@@ -5,23 +5,25 @@ compile
 :start
 
 copy	^
-		..\nimble\txt\head.txt ^
-		+ ..\nimble\nimble.js ^
-		^
-		+ txt\head.txt ^
+		txt\head.txt ^
 		+ txt\closure.start.txt ^
 		^
 		+ core\core.js ^
-		+ mult\mult.prototype.js ^
+		+ core\core.static.js ^
+		+ core\core.static.const.js ^
+		+ core\core.static.type.js ^
+		+ core\core.static.string.js ^
+		+ core\core.static.expr.js ^
+		+ core\core.static.obj.js ^
+		+ mult\core.array.prototype.js ^
 		+ core\core.prototype.js ^
-		+ core\core.sort.js ^
 		^
 		+ jquery\collection.js ^
 		+ jquery\compile.js ^
 		+ jquery\other.js ^
 		^
-		+ storage\storage.js ^
-		+ storage\storage.sys.js ^
+		+ fields\fields.js ^
+		+ fields\fields.sys.js ^
 		^
 		+ stack\stack.js ^
 		+ stack\stack.aliases.js ^

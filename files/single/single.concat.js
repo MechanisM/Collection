@@ -9,13 +9,13 @@
 	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Collection} obj - collection
+	 * @param {C} obj - collection
 	 * @param {Context} [context] - additional context
 	 * @param {String} [id=this.ACTIVE] - collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.concat = function (obj, context, id) {
+	C.prototype.concat = function (obj, context, id) {
 		context = $.isExists(context) ? context.toString() : "";
 		id = id || "";
 		//

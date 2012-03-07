@@ -9,7 +9,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - object settings
-	 * @param {Collection|String} [param.collection=this.ACTIVE] - collection or collection ID
+	 * @param {C|String} [param.collection=this.ACTIVE] - collection or collection ID
 	 * @param {String} [param.context] - additional context
 	 * @param {Number} [param.page=this.ACTIVE] - page number
 	 * @param {Template} [param.template=this.ACTIVE] - template
@@ -27,7 +27,7 @@
 	 * @param {Boolean} [clear=false] - clear the cache
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.print = function (param, clear) {
+	C.prototype.print = function (param, clear) {
 		clear = clear || false;
 		//
 		var
@@ -172,7 +172,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.easyPage = function (param) {
+	C.prototype.easyPage = function (param) {
 		var
 			self = this,
 			str = "",

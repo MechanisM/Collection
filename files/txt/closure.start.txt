@@ -1,4 +1,6 @@
 
-(function ($) {
+var C = (function ($) {
 	// try to use ECMAScript 5 "strict mode"
 	"use strict";
+	
+	var C;

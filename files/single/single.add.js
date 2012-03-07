@@ -17,7 +17,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.add = function (cValue, propType, activeID, sourceID, del) {
+	C.prototype.add = function (cValue, propType, activeID, sourceID, del) {
 		cValue = cValue !== undefined ? cValue : "";
 		propType = propType || "push";
 		activeID = activeID || "";
@@ -80,7 +80,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.push = function (obj, id) {
+	C.prototype.push = function (obj, id) {
 		return this.add(obj, "", id || "");
 	};
 	/**
@@ -93,6 +93,6 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.unshift = function (obj, id) {
+	C.prototype.unshift = function (obj, id) {
 		return this.add(obj, "unshift", id || "");
 	};

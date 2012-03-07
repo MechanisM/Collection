@@ -1,5 +1,5 @@
 ﻿/**
- * <p>$.Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
+ * <p>C — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
  *
  * <strong>Glossary:</strong>
  * <ul>
@@ -14,7 +14,7 @@
  * <p>The code is documented in accordance with the standard <a href="http://en.wikipedia.org/wiki/JSDoc" target="_blank">jsDoc</a>.<br />
  * Specific data types:</p>
  * <ul>
- * <li><b>[Colletion Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of $.Collection;</li>
+ * <li><b>[Collection Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of C;</li>
  * <li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li>
  * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (Sizzle syntax);</li>
  * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li>
@@ -41,6 +41,6 @@
  * @constructor
  * @example http://jsfiddle.net/kobezzza/ZEcaB/
  * @this {Colletion Object}
- * @param {Collection|Selector} [collection=null] — collection or selector for field "target"
- * @param {Plain Object} [uProp=$.Collection.storage.dObj.active] — additional properties
+ * @param {C|Selector} [collection=null] — collection or selector for field "target"
+ * @param {Plain Object} [uProp=C.fields.dObj.active] — additional properties
  */

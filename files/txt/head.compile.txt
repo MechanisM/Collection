@@ -1,5 +1,5 @@
 ﻿/**
- * $.Collection
+ * C
  * 
  * autor: kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * version: 3.5.5

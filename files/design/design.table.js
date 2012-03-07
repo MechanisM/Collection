@@ -13,7 +13,7 @@
 	 * @param {Boolean} [empty=true] — display empty cells
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.genTable = function (count, tag, empty) {
+	C.prototype.genTable = function (count, tag, empty) {
 		count = count || 4;
 		tag = tag || "div";
 		empty = empty === false ? false : true;

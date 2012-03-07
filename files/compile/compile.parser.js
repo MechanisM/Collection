@@ -11,7 +11,7 @@
 	 * @param {String} str - source string
 	 * @return {String}
 	 */
-	$.Collection.prototype._customParser = function (parser, str, _tmpParser) {
+	C.prototype._customParser = function (parser, str, _tmpParser) {
 		// if parser is undefined
 		if (!parser || parser === true) {
 			if (!this._getActiveParam("parser")) { return str; }
@@ -77,7 +77,7 @@
 	 * @param {String} str - some string
 	 * @return {Function}
 	 */
-	$.Collection.prototype._compileParser = function (str) {
+	C.prototype._compileParser = function (str) {
 		var res = /^\s*\(*\s*/.exec(str);
 		//
 		if (res.length !== 0) {

@@ -14,7 +14,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.save = function (id, local) {
+	C.prototype.save = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
@@ -49,7 +49,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.saveAll = function (local) {
+	C.prototype.saveAll = function (local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		local = local === false ? local : true;
@@ -63,7 +63,7 @@
 		this.dropAll(local);
 		//
 		for (key in tmp) {
-			this._active("Collection", key) && (active = true);
+			this._active("C", key) && (active = true);
 			//
 			if (tmp.hasOwnProperty(key)) { this.save(key, local); }
 		}
@@ -83,7 +83,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.load = function (id, local) {
+	C.prototype.load = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
@@ -126,7 +126,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.loadAll = function (local, type) {
+	C.prototype.loadAll = function (local, type) {
 		type = type ? "drop" : "load";
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
@@ -162,7 +162,7 @@
 	 * @throw {Error}
 	 * @return {Date}
 	 */
-	$.Collection.prototype.loadDate = function (id, local) {
+	C.prototype.loadDate = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id ? ":" + id : "";
@@ -181,7 +181,7 @@
 	 * @throw {Error}
 	 * @return {Boolean}
 	 */
-	$.Collection.prototype.isExpired = function (time, id, local) {
+	C.prototype.isExpired = function (time, id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		return new Date(new Date() - new Date(this.loadDate(id || "", local || ""))) > time;
@@ -198,7 +198,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.drop = function (id, local) {
+	C.prototype.drop = function (id, local) {
 		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
 		//
 		id = id || this.ACTIVE;
@@ -229,7 +229,7 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.dropAll = function (local) {
+	C.prototype.dropAll = function (local) {
 		(local === false ? sessionStorage : localStorage).removeItem( "__" + this.name + "__" + this._get("namespace") + "__date");
 		//
 		return this.loadAll(local || "", true);

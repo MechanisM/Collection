@@ -75,9 +75,9 @@
 			},
 			data = inObj(this);
 		//
-		if (prop) { return new $.Collection(data, prop); }
+		if (prop) { return new C(data, prop); }
 	
-		return new $.Collection(data);
+		return new C(data);
 	};
 	// values by default
 	if (!$.fn.collection.stat) {

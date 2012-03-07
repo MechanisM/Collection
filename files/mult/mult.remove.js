@@ -17,7 +17,7 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
+	C.prototype.remove = function (filter, id, mult, count, from, indexOf) {
 		var elements, i, e = null;
 		
 		//
@@ -44,6 +44,6 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.removeOne = function (filter, id) {
+	C.prototype.removeOne = function (filter, id) {
 		return this.remove(filter || "", id || "", false);
 	};

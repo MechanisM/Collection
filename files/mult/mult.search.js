@@ -16,7 +16,7 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Number|Array}
 	 */
-	$.Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
+	C.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		// if id is Boolean
 		if ($.isBoolean(id)) {
 			indexOf = from;
@@ -56,7 +56,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|Array}
 	 */
-	$.Collection.prototype.searchOne = function (filter, id) {
+	C.prototype.searchOne = function (filter, id) {
 		return this.search(filter || "", id || "", false);
 	};
 	
@@ -70,7 +70,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|String}
 	 */
-	$.Collection.prototype.indexOf = function (searchElement, fromIndex, id) {
+	C.prototype.indexOf = function (searchElement, fromIndex, id) {
 		id = id || "";
 		fromIndex = fromIndex || "";
 		//
@@ -92,7 +92,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Number|String}
 	 */
-	$.Collection.prototype.lastIndexOf = function (searchElement, fromIndex, id) {
+	C.prototype.lastIndexOf = function (searchElement, fromIndex, id) {
 		id = id || "";
 		fromIndex = fromIndex || "";
 		//

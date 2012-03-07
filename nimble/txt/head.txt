@@ -1,8 +1,0 @@
-﻿/**
- * nimble - simple JavaScript framework for working with objects
- *
- * @constructor
- * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 04.03.2012 11:39:15
- * @version 1.0.3
- */

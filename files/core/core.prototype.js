@@ -3,14 +3,14 @@
 	//// prototype
 	/////////////////////////////////
 	
-	$.Collection.prototype = {
+	C.prototype = {
 		/**
 		 * framework name
 		 * 
 		 * @constant
 		 * @type String
 		 */
-		name: "$.Collection",
+		name: "C",
 		/**
 		 * framework version
 		 * 
@@ -21,7 +21,7 @@
 		/**
 		 * return string: framework name + framework version
 		 *
-		 * @this {Collection Prototype}
+		 * @this {C Prototype}
 		 * @return {String}
 		 */
 		collection: function () { return this.name + " " + this.version; },

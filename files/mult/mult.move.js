@@ -21,7 +21,7 @@
 	 * @param {Boolean} [deleteType=true] - if "true", remove source element
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
+	C.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
 		moveFilter = moveFilter || "";
 		deleteType = deleteType === false ? false : true;
 		context = $.isExists(context) ? context.toString() : "";
@@ -85,7 +85,7 @@
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
+	C.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
@@ -105,7 +105,7 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
+	C.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -126,6 +126,6 @@
 	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
+	C.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};

@@ -18,7 +18,7 @@
 	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
+	C.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		if ($.isNumeric(filter) || (arguments.length < 3 && $.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
 				return this._setOne(filter, replaceObj, id || "");
@@ -55,7 +55,7 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.setOne = function (filter, replaceObj, id) {
+	C.prototype.setOne = function (filter, replaceObj, id) {
 		return this.set(filter || "", replaceObj, id || "", false);
 	};
 	
@@ -70,6 +70,6 @@
 	 * @param {String} [id=this.ACTIVE] - collection ID
 	 * @return {Colletion Object}
 	 */
-	$.Collection.prototype.map = function (replaceObj, filter, id) {
+	C.prototype.map = function (replaceObj, filter, id) {
 		return this.set(filter || "", replaceObj, id || "");
 	};
