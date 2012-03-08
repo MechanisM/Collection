@@ -43,7 +43,7 @@
 			result = "", action, e = null;
 			
 		// easy implementation
-		if (C.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
+		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
 			param = {page: param};
 		} else if (!C.isExists(param)) { param = {page: this._get("page")}; }
 		

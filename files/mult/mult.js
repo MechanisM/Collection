@@ -21,7 +21,7 @@
 			cObj, aCheck, key, cOLength;
 		
 		//
-		if (!$.isFunction(filter)) {
+		if (!C.isFunction(filter)) {
 			if ((C.isString(filter) && !this._filterTest(filter) && !C.isExists(id)) || C.isArray(filter) || C.isPlainObject(filter)) {
 				id = filter;
 				filter = false;

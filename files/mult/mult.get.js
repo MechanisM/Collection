@@ -17,7 +17,7 @@
 	 * @return {mixed}
 	 */
 	C.prototype.get = function (filter, id, mult, count, from, indexOf) {
-		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
+		if (C.isNumber(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
 				return this._getOne(filter, id || "");
 			}

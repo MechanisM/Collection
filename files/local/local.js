@@ -101,8 +101,8 @@
 		
 		//
 		if (id === this.ACTIVE) {
-			this._new("collection", $.parseJSON(storage.getItem(name + ":" + id)));
-		} else { this._push("collection", id, $.parseJSON(storage.getItem(name + ":" + id))); }
+			this._new("collection", JSON.parse(storage.getItem(name + ":" + id)));
+		} else { this._push("collection", id, JSON.parse(storage.getItem(name + ":" + id))); }
 		//
 		active = storage.getItem(name + "__active:" + id);
 		if (active === this.ACTIVE) {

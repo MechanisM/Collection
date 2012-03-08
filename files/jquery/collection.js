@@ -37,7 +37,7 @@
 					str = "";
 				//
 				while ((i += 1) < eLength) {
-					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) { str += elem[i].textContent; }
+					if (elem[i].nodeType === 3 && C.trim(elem[i].textContent)) { str += elem[i].textContent; }
 				}
 				//
 				if (str) { return str; }

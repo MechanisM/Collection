@@ -21,7 +21,7 @@
 		var elements, i, e = null;
 		
 		//
-		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
+		if (C.isNumber(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ""); }

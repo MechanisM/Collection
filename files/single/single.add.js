@@ -38,14 +38,16 @@
 		activeID = activeID || '';
 		del = del || false;
 		
-		var cObj, sObj, lCheck, e = null;
+		var cObj, sObj, lCheck, e;
 		
 		// events
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
+		// get by link
 		cObj = C.byLink(this._get('collection', activeID), this._getActiveParam('context'));
 		
+		// throw an exception if the element is not an object
 		if (typeof cObj !== 'object')  { throw new Error('unable to set property!'); }
 		
 		// simple add
@@ -91,6 +93,11 @@
 	 * @param {mixed} obj — new element
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([]).pushCollection('test', {});
+	 * db.push(1);
+	 * db.push(1, 'test'); // the key is always equal to the length of the collection
 	 */
 	C.prototype.push = function (obj, id) {
 		return this.add(obj, '', id || '');
@@ -103,6 +110,11 @@
 	 * @param {mixed} obj — new element
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([]).pushCollection('test', {});
+	 * db.unshift(1);
+	 * db.unshift(1, 'test'); // the key is always equal to the length of the collection
 	 */
 	C.prototype.unshift = function (obj, id) {
 		return this.add(obj, 'unshift', id || '');

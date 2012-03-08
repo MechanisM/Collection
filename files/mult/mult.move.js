@@ -50,7 +50,7 @@
 		// search elements
 		this.disable("context");
 		//
-		if ($.isNumeric(moveFilter) || (C.isString(moveFilter) && !this._filterTest(moveFilter))) {
+		if (C.isNumber(moveFilter) || (C.isString(moveFilter) && !this._filterTest(moveFilter))) {
 			elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
 		//

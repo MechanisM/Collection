@@ -38,13 +38,13 @@
 		}
 
 		// if filter is function
-		if ($.isFunction(filter)) {
+		if (C.isFunction(filter)) {
 			if (!this._getActiveParam("filter") || !_tmpFilter) {
 				return filter.call(filter, el, i, data, cOLength, self, id);
 			} else {
 				if (!_tmpFilter.name) {
-					while (this._exists("filter", "__tmp:" + (_tmpFilter.name = $.getRandomInt(0, 10000)))) {
-						_tmpFilter.name = $.getRandomInt(0, 10000);
+					while (this._exists("filter", "__tmp:" + (_tmpFilter.name = C.getRandomInt(0, 10000)))) {
+						_tmpFilter.name = C.getRandomInt(0, 10000);
 					}
 					this._push("filter", "__tmp:" + _tmpFilter.name, filter);
 				}
@@ -62,7 +62,7 @@
 			
 			// if simple filter
 			if (filter.search(/\|\||&&|!/) === -1) {
-				if ((filter = $.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
+				if ((filter = C.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
 					if (!this._exists("filter", "__tmp:" + filter)) {
 						this._push("filter", "__tmp:" + filter, this._compileFilter(filter));
 					}
@@ -74,7 +74,7 @@
 			}
 			
 			//
-			filter = $.trim(
+			filter = C.trim(
 						filter
 							.toString()
 							.replace(/\s*(\(|\))\s*/g, " $1 ")

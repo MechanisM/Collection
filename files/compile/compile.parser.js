@@ -24,13 +24,13 @@
 		}
 		
 		// if parser is function
-		if ($.isFunction(parser)) {
+		if (C.isFunction(parser)) {
 			if (!this._getActiveParam("parser") || !_tmpParser) {
 				return parser.call(parser, str, this);
 			} else {
 				if (!_tmpParser.name) {
-					while (this._exists("parser", "__tmp:" + (_tmpParser.name = $.getRandomInt(0, 10000)))) {
-						_tmpParser.name = $.getRandomInt(0, 10000);
+					while (this._exists("parser", "__tmp:" + (_tmpParser.name = C.getRandomInt(0, 10000)))) {
+						_tmpParser.name = C.getRandomInt(0, 10000);
 					}
 					this._push("parser", "__tmp:" + _tmpParser.name, parser);
 				}
@@ -47,7 +47,7 @@
 			}
 			
 			// if simple parser
-			if ((parser = $.trim(parser)).search("&&") === -1) {
+			if ((parser = C.trim(parser)).search("&&") === -1) {
 				// if need to compile parser
 				if (parser.search(/^(?:\(|)*:/) !== -1) {
 					if (!this._exists("parser", "__tmp:" + parser)) {
@@ -66,7 +66,7 @@
 		
 		// calculate
 		parser.forEach(function (el) {
-			str = this._customParser((el = $.trim(el)), str);
+			str = this._customParser((el = C.trim(el)), str);
 		}, this);
 
 		return str;

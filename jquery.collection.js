@@ -757,7 +757,7 @@ var Collection = (function ($) {
 					str = "";
 				//
 				while ((i += 1) < eLength) {
-					if (elem[i].nodeType === 3 && $.trim(elem[i].textContent)) { str += elem[i].textContent; }
+					if (elem[i].nodeType === 3 && C.trim(elem[i].textContent)) { str += elem[i].textContent; }
 				}
 				//
 				if (str) { return str; }
@@ -1718,42 +1718,48 @@ var Collection = (function ($) {
 	/////////////////////////////////
 	
 	/**
-	 * set new value to element by link (in context)
+	 * set new value to element by link (in context)<br/>
+	 * events: onSet
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} [context] - additional context
-	 * @param {mixed} value - new value
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Context} [context] — additional context
+	 * @param {mixed} value — new value
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	C.prototype._setOne = function (context, value, id) {
-		context = C.isExists(context) ? context.toString() : "";
-		value = typeof value === 'undefined' ? "" : value;
-		id = id || "";
-		//
-		var activeContext = this._getActiveParam("context");
-		//
+		context = C.isExists(context) ? context.toString() : '';
+		value = typeof value === 'undefined' ? '' : value;
+		id = id || '';
+		
+		var activeContext = this._getActiveParam('context'), e;
+		
+		// events
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
+		// if no context
 		if (!context && !activeContext) {
 			if (id && id !== this.ACTIVE) {
-				return this._push("collection", id, value);
-			} else { return this._update("collection", value); }
+				return this._push('collection', id, value);
+			} else { return this._update('collection', value); }
 		}
-		C.byLink(this._get("collection", id), activeContext + C.CHILDREN + context, value);
+		C.byLink(this._get('collection', id), activeContext + C.CHILDREN + context, value);
 	
 		return this;
 	};
 	/**
-	 * get element by link (in context)
-	 * 
+	 * get element by link (in context)<br/>
+	 * events: onSet
+	 *
 	 * @this {Colletion Object}
-	 * @param {Context} [context] - additional context
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Context} [context] — additional context
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {mixed}
 	 */
 	C.prototype._getOne = function (context, id) {
-		context = C.isExists(context) ? context.toString() : "";
-		//
-		return C.byLink(this._get("collection", id || ""), this._getActiveParam("context") + C.CHILDREN + context);
+		context = C.isExists(context) ? context.toString() : '';
+		return C.byLink(this._get('collection', id || ''), this._getActiveParam('context') + C.CHILDREN + context);
 	};	
 	/////////////////////////////////
 	//// single methods (add)
@@ -1794,14 +1800,16 @@ var Collection = (function ($) {
 		activeID = activeID || '';
 		del = del || false;
 		
-		var cObj, sObj, lCheck, e = null;
+		var cObj, sObj, lCheck, e;
 		
 		// events
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
+		// get by link
 		cObj = C.byLink(this._get('collection', activeID), this._getActiveParam('context'));
 		
+		// throw an exception if the element is not an object
 		if (typeof cObj !== 'object')  { throw new Error('unable to set property!'); }
 		
 		// simple add
@@ -1847,6 +1855,11 @@ var Collection = (function ($) {
 	 * @param {mixed} obj — new element
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([]).pushCollection('test', {});
+	 * db.push(1);
+	 * db.push(1, 'test'); // the key is always equal to the length of the collection
 	 */
 	C.prototype.push = function (obj, id) {
 		return this.add(obj, '', id || '');
@@ -1859,6 +1872,11 @@ var Collection = (function ($) {
 	 * @param {mixed} obj — new element
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([]).pushCollection('test', {});
+	 * db.unshift(1);
+	 * db.unshift(1, 'test'); // the key is always equal to the length of the collection
 	 */
 	C.prototype.unshift = function (obj, id) {
 		return this.add(obj, 'unshift', id || '');
@@ -1868,39 +1886,40 @@ var Collection = (function ($) {
 	/////////////////////////////////
 		
 	/**
-	 * delete element by link (in context)
+	 * remove an element from the collection by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} [context] - link
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Context} [context] — link
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	C.prototype._removeOne = function (context, id) {
-		context = C.isExists(context) ? context.toString() : "";
-		var activeContext = this._getActiveParam("context"), e = null;
+		context = C.isExists(context) ? context.toString() : '';
+		var activeContext = this._getActiveParam('context'), e;
 		
 		// events
 		this.onRemove && (e = this.onRemove.apply(this, arguments));
 		if (e === false) { return this; }
 		
+		// if no context
 		if (!context && !activeContext) {
-			this._setOne("", null);
-		} else { C.byLink(this._get("collection", id || ""), activeContext + C.CHILDREN + context, "", true); }
+			this._setOne('', null);
+		} else { C.byLink(this._get('collection', id || ''), activeContext + C.CHILDREN + context, '', true); }
 	
 		return this;
 	};
 	/**
-	 * delete elements by link (in context)
+	 * remove an element from the collection by links (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context|Array|Plain Object} objContext - link, array of links or object (collection ID: array of links)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Context|Array|Plain Object} objContext — link, array of links or object (collection ID: array of links)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	C.prototype._remove = function (objContext, id) {
-		id = id || "";
+		id = id || '';
 		var key, i;
-		//
+		
 		if (C.isPlainObject(objContext)) {
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
@@ -1921,23 +1940,36 @@ var Collection = (function ($) {
 	/**
 	 * remove an element from the collection (pop)(in context)<br/>
 	 * events: onRemove
-	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
+	 * db.pop();
+	 * db.pop('test');
 	 */
-	C.prototype.pop = function (id) { return this._removeOne("eq(-1)", id || ""); };
+	C.prototype.pop = function (id) { return this._removeOne('eq(-1)', id || ''); };
 	/**
 	 * remove an element from the collection (shift)(in context)<br/>
 	 * events: onRemove
-	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
+	 * db.concat([4, 5, 6]); // [1, 2, 3, 4, 5, 6]
+	 * db.concat({c: 3, d: 4}, '', 'test'); // {a: b, b: 2, c: 3, d: 4}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
+	 * db.shift();
+	 * db.shift('test');
 	 */
-	C.prototype.shift = function (id) { return this._removeOne("eq(0)", id || ""); };	
+	C.prototype.shift = function (id) { return this._removeOne('eq(0)', id || ''); };	
 	/////////////////////////////////
 	//// single methods (concatenation)
 	/////////////////////////////////
@@ -1945,30 +1977,34 @@ var Collection = (function ($) {
 	/**
 	 * concatenation of collections (in context)<br/>
 	 * events: onConcat
-	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {C} obj - collection
-	 * @param {Context} [context] - additional context
-	 * @param {String} [id=this.ACTIVE] - collection ID, which is the concatenation
+	 * @param {Collection} obj — collection
+	 * @param {Context} [context] — additional context
+	 * @param {String} [id=this.ACTIVE] — collection ID, which is the concatenation
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
+	 * db.concat([4, 5, 6]); // [1, 2, 3, 4, 5, 6]
+	 * db.concat({c: 3, d: 4}, '', 'test'); // {a: b, b: 2, c: 3, d: 4}
 	 */
 	C.prototype.concat = function (obj, context, id) {
-		context = C.isExists(context) ? context.toString() : "";
-		id = id || "";
-		//
-		var cObj, e = null;	
+		context = C.isExists(context) ? context.toString() : '';
+		id = id || '';
+		
+		var cObj, e;	
 		
 		// events
 		this.onConcat && (e = this.onConcat.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
-		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context") + C.CHILDREN + context);
+		// get by link
+		cObj = C.byLink(this._get('collection', id), this._getActiveParam('context') + C.CHILDREN + context);
 		
-		//
-		if (typeof cObj !== "object") { throw new Error("incorrect data type!") }
+		// throw an exception if the element is not an object
+		if (typeof cObj !== 'object') { throw new Error('incorrect data type!') }
 		
 		if (C.isPlainObject(cObj)) {
 			C.extend(true, cObj, obj)
@@ -1976,7 +2012,7 @@ var Collection = (function ($) {
 			if (C.isArray(obj)) {
 				cObj = Array.prototype.concat(cObj, obj);
 				this._setOne(context, cObj, id);
-			} else { this.add(obj, "push", id); }
+			} else { this.add(obj, 'push', id); }
 		}
 	
 		return this;
@@ -2003,7 +2039,7 @@ var Collection = (function ($) {
 			cObj, aCheck, key, cOLength;
 		
 		//
-		if (!$.isFunction(filter)) {
+		if (!C.isFunction(filter)) {
 			if ((C.isString(filter) && !this._filterTest(filter) && !C.isExists(id)) || C.isArray(filter) || C.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
@@ -2302,7 +2338,7 @@ var Collection = (function ($) {
 	 * @return {mixed}
 	 */
 	C.prototype.get = function (filter, id, mult, count, from, indexOf) {
-		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
+		if (C.isNumber(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
 				return this._getOne(filter, id || "");
 			}
@@ -2356,26 +2392,27 @@ var Collection = (function ($) {
 	/**
 	 * set new value of the element (in context)<br/>
 	 * events: onSet
-	 * <i class="mult set"></i>
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
-	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
-	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult.
-	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback) 
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult.
+	 * @param {Boolean} [mult=true] — if 'false', then there will only be one iteration
+	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Colletion Object}
 	 */
 	C.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		if ($.isNumeric(filter) || (arguments.length < 3 && C.isString(filter)
-			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
-				return this._setOne(filter, replaceObj, id || "");
+		// overload
+		if (C.isNumber(filter) || (arguments.length < 3 && C.isString(filter)
+			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === false)) {
+				return this._setOne(filter, replaceObj, id || '');
 			}
-		//
+		
 		var
-			e = null, arg, replaceCheck = $.isFunction(replaceObj),
+			e, arg, replaceCheck = C.isFunction(replaceObj),
+			
 			/** @private */
 			action = function (el, i, data, cOLength, cObj, id) {
 				if (replaceCheck) {
@@ -2384,7 +2421,7 @@ var Collection = (function ($) {
 	
 				return true;
 			};
-		//
+		
 		arg = C.unshiftArguments(arguments, action);
 		arg.splice(2, 1);
 		
@@ -2397,31 +2434,29 @@ var Collection = (function ($) {
 	/**
 	 * set new value of the one element (in context)<br/>
 	 * events: onSet
-	 * <i class="mult set"></i>
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
-	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	C.prototype.setOne = function (filter, replaceObj, id) {
-		return this.set(filter || "", replaceObj, id || "", false);
+		return this.set(filter || '', replaceObj, id || '', false);
 	};
 	
 	/**
 	 * map (in context)<br/>
 	 * events: onSet
-	 * <i class="mult set"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} replaceObj - replace object (if is Function, then executed as a callback) 
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback) 
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	C.prototype.map = function (replaceObj, filter, id) {
-		return this.set(filter || "", replaceObj, id || "");
+		return this.set(filter || '', replaceObj, id || '');
 	};
 	/////////////////////////////////
 	//// mult methods (move && copy)
@@ -2474,7 +2509,7 @@ var Collection = (function ($) {
 		// search elements
 		this.disable("context");
 		//
-		if ($.isNumeric(moveFilter) || (C.isString(moveFilter) && !this._filterTest(moveFilter))) {
+		if (C.isNumber(moveFilter) || (C.isString(moveFilter) && !this._filterTest(moveFilter))) {
 			elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
 		//
@@ -2575,7 +2610,7 @@ var Collection = (function ($) {
 		var elements, i, e = null;
 		
 		//
-		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
+		if (C.isNumber(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ""); }
@@ -3109,8 +3144,8 @@ var Collection = (function ($) {
 		
 		//
 		if (id === this.ACTIVE) {
-			this._new("collection", $.parseJSON(storage.getItem(name + ":" + id)));
-		} else { this._push("collection", id, $.parseJSON(storage.getItem(name + ":" + id))); }
+			this._new("collection", JSON.parse(storage.getItem(name + ":" + id)));
+		} else { this._push("collection", id, JSON.parse(storage.getItem(name + ":" + id))); }
 		//
 		active = storage.getItem(name + "__active:" + id);
 		if (active === this.ACTIVE) {
@@ -3281,13 +3316,13 @@ var Collection = (function ($) {
 		}
 
 		// if filter is function
-		if ($.isFunction(filter)) {
+		if (C.isFunction(filter)) {
 			if (!this._getActiveParam("filter") || !_tmpFilter) {
 				return filter.call(filter, el, i, data, cOLength, self, id);
 			} else {
 				if (!_tmpFilter.name) {
-					while (this._exists("filter", "__tmp:" + (_tmpFilter.name = $.getRandomInt(0, 10000)))) {
-						_tmpFilter.name = $.getRandomInt(0, 10000);
+					while (this._exists("filter", "__tmp:" + (_tmpFilter.name = C.getRandomInt(0, 10000)))) {
+						_tmpFilter.name = C.getRandomInt(0, 10000);
 					}
 					this._push("filter", "__tmp:" + _tmpFilter.name, filter);
 				}
@@ -3305,7 +3340,7 @@ var Collection = (function ($) {
 			
 			// if simple filter
 			if (filter.search(/\|\||&&|!/) === -1) {
-				if ((filter = $.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
+				if ((filter = C.trim(filter)).search(/^(?:\(|)*:/) !== -1) {
 					if (!this._exists("filter", "__tmp:" + filter)) {
 						this._push("filter", "__tmp:" + filter, this._compileFilter(filter));
 					}
@@ -3317,7 +3352,7 @@ var Collection = (function ($) {
 			}
 			
 			//
-			filter = $.trim(
+			filter = C.trim(
 						filter
 							.toString()
 							.replace(/\s*(\(|\))\s*/g, " $1 ")
@@ -3445,13 +3480,13 @@ var Collection = (function ($) {
 		}
 		
 		// if parser is function
-		if ($.isFunction(parser)) {
+		if (C.isFunction(parser)) {
 			if (!this._getActiveParam("parser") || !_tmpParser) {
 				return parser.call(parser, str, this);
 			} else {
 				if (!_tmpParser.name) {
-					while (this._exists("parser", "__tmp:" + (_tmpParser.name = $.getRandomInt(0, 10000)))) {
-						_tmpParser.name = $.getRandomInt(0, 10000);
+					while (this._exists("parser", "__tmp:" + (_tmpParser.name = C.getRandomInt(0, 10000)))) {
+						_tmpParser.name = C.getRandomInt(0, 10000);
 					}
 					this._push("parser", "__tmp:" + _tmpParser.name, parser);
 				}
@@ -3468,7 +3503,7 @@ var Collection = (function ($) {
 			}
 			
 			// if simple parser
-			if ((parser = $.trim(parser)).search("&&") === -1) {
+			if ((parser = C.trim(parser)).search("&&") === -1) {
 				// if need to compile parser
 				if (parser.search(/^(?:\(|)*:/) !== -1) {
 					if (!this._exists("parser", "__tmp:" + parser)) {
@@ -3487,7 +3522,7 @@ var Collection = (function ($) {
 		
 		// calculate
 		parser.forEach(function (el) {
-			str = this._customParser((el = $.trim(el)), str);
+			str = this._customParser((el = C.trim(el)), str);
 		}, this);
 
 		return str;
@@ -3728,7 +3763,7 @@ var Collection = (function ($) {
 			result = "", action, e = null;
 			
 		// easy implementation
-		if (C.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
+		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
 			param = {page: param};
 		} else if (!C.isExists(param)) { param = {page: this._get("page")}; }
 		
