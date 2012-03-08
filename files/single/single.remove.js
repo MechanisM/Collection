@@ -79,11 +79,6 @@
 	 *
 	 * @example
 	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
-	 * db.concat([4, 5, 6]); // [1, 2, 3, 4, 5, 6]
-	 * db.concat({c: 3, d: 4}, '', 'test'); // {a: b, b: 2, c: 3, d: 4}
-	 *
-	 * @example
-	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
 	 * db.shift();
 	 * db.shift('test');
 	 */
