@@ -74,7 +74,7 @@
 		id = id || "";
 		fromIndex = fromIndex || "";
 		//
-		var cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		var cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
 		if ($.isArray(cObj) && cObj.indexOf) {
 			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
@@ -96,7 +96,7 @@
 		id = id || "";
 		fromIndex = fromIndex || "";
 		//
-		var el, cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		var el, cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
 		if ($.isArray(cObj) && cObj.lastIndexOf) {
 			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }

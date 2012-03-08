@@ -49,7 +49,7 @@
 		
 		//
 		$.extend(true, opt, this.dObj.active, param);
-		if (param) { opt.page = nimble.expr(opt.page, this._get("page")); }
+		if (param) { opt.page = C.expr(opt.page, this._get("page")); }
 		if (opt.page < 1) { opt.page = 1; }
 		
 		//
@@ -78,7 +78,7 @@
 		};
 		
 		// get collection
-		cObj = nimble.byLink(opt.collection, this._getActiveParam("context") + nimble.CHILDREN + ((param && param.context) || ""));
+		cObj = C.byLink(opt.collection, this._getActiveParam("context") + C.CHILDREN + ((param && param.context) || ""));
 		cOLength = this.length();
 		
 		// number of records per page
@@ -224,7 +224,7 @@
 			//
 			if (data.nav) {
 				// attach event
-				if (nimble.find(data.nav, ["first", "prev", "next", "last"]) && !$this.data("ctm-delegated")) {
+				if (C.find(data.nav, ["first", "prev", "next", "last"]) && !$this.data("ctm-delegated")) {
 					$this.click(function () {
 						var $this = $(this);
 						//
@@ -240,9 +240,9 @@
 				}
 				
 				//
-				if ((nimble.find(data.nav, ["first", "prev"]) && param.page === 1) || (nimble.find(data.nav, ["next", "last"]) && param.finNumber === param.nmbOfEntries)) {
+				if ((C.find(data.nav, ["first", "prev"]) && param.page === 1) || (C.find(data.nav, ["next", "last"]) && param.finNumber === param.nmbOfEntries)) {
 					$this.addClass(classes && classes.disabled || "disabled");
-				} else if (nimble.find(data.nav, ["first", "prev", "next", "last"])) { $this.removeClass(classes && classes.disabled || "disabled"); }
+				} else if (C.find(data.nav, ["first", "prev", "next", "last"])) { $this.removeClass(classes && classes.disabled || "disabled"); }
 				
 				// numberBreak switch
 				if (data.nav === "numberSwitch") {

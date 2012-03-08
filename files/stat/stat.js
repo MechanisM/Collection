@@ -32,7 +32,7 @@
 			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
-				var param = nimble.byLink(el, field || "");
+				var param = C.byLink(el, field || "");
 				//
 				switch (oper) {
 					case "count" : {
@@ -61,7 +61,7 @@
 							if (tmp === 0) {
 								result = param;
 								tmp = 1;
-							} else { result = nimble.expr(oper + "=" + param, result); }
+							} else { result = C.expr(oper + "=" + param, result); }
 						}
 					}
 				}
@@ -74,8 +74,8 @@
 			//
 			if (oper === "avg") { result /= tmp; }
 		} else if (oper === "first") {
-			result = this._getOne(nimble.ORDER[0] + "0" + nimble.ORDER[1]);
-		} else { result = this._getOne(nimble.ORDER[0] + "-1" + nimble.ORDER[1]); }
+			result = this._getOne(C.ORDER[0] + "0" + C.ORDER[1]);
+		} else { result = this._getOne(C.ORDER[0] + "-1" + C.ORDER[1]); }
 	
 		return result;
 	};

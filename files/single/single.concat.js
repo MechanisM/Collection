@@ -26,7 +26,7 @@
 		if (e === false) { return this; }
 		
 		//
-		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context") + nimble.CHILDREN + context);
+		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context") + C.CHILDREN + context);
 		
 		//
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!") }

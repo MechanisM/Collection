@@ -41,7 +41,7 @@
 		// if cObj is null
 		if (cObj === null) { return 0; }
 		// if cObj is collection
-		if (aCheck !== true) { cObj = nimble.byLink(cObj, this._getActiveParam("context")); }
+		if (aCheck !== true) { cObj = C.byLink(cObj, this._getActiveParam("context")); }
 		
 		// if cObj is String
 		if (C.isString(cObj)) { return cObj.length; }
@@ -118,7 +118,7 @@
 			i, j = 0, res = false;
 		
 		//
-		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
 		
 		// length function

@@ -32,7 +32,7 @@
 			result = {},
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
-				var param = fieldType ? nimble.byLink(el, field) : field.apply(field, arguments);
+				var param = fieldType ? C.byLink(el, field) : field.apply(field, arguments);
 				//
 				if (!result[param]) {
 					result[param] = [!link ? el : i];

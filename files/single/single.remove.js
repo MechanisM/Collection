@@ -21,7 +21,7 @@
 		
 		if (!context && !activeContext) {
 			this._setOne("", null);
-		} else { nimble.byLink(this._get("collection", id || ""), activeContext + nimble.CHILDREN + context, "", true); }
+		} else { C.byLink(this._get("collection", id || ""), activeContext + C.CHILDREN + context, "", true); }
 	
 		return this;
 	};

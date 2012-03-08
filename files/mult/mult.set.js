@@ -30,7 +30,7 @@
 			action = function (el, i, data, cOLength, cObj, id) {
 				if (replaceCheck) {
 					data[i] = replaceObj.call(replaceObj, el, i, data, cOLength, cObj, id);
-				} else { data[i] = nimble.expr(replaceObj, data[i]); }
+				} else { data[i] = C.expr(replaceObj, data[i]); }
 	
 				return true;
 			};

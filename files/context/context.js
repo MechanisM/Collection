@@ -14,12 +14,12 @@
 	 */
 	C.prototype.parentContext = function (n, id) {
 		var
-			context = this._get("context", id || "").split(nimble.CHILDREN),
+			context = this._get("context", id || "").split(C.CHILDREN),
 			i = n || 1;
 		//
 		while ((i -= 1) > -1) { context.splice(-1, 1); }
 		//
-		return context.join(nimble.CHILDREN);
+		return context.join(C.CHILDREN);
 	};
 	/**
 	 * change the context (the parent element)

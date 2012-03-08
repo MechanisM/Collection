@@ -40,7 +40,7 @@
 		if (e === false) { return this; }
 		
 		//
-		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {

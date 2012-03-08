@@ -79,6 +79,18 @@
 	C.isPlainObject = function (obj) { return toString(obj) === '[object Object]'; };
 	
 	/**
+	 * returns a Boolean indicating whether the object is a collection
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a collection
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns true
+	 * $C.isCollection([1, 2, 3]); // returns true
+	 */
+	C.isCollection = function (obj) { return C.isArray(obj) || C.isPlainObject(obj); };
+	
+	/**
 	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)
 	 *
 	 * @param {mixed} obj — the object, to test its existence

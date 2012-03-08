@@ -36,8 +36,8 @@
 				
 				// sort by field
 				if (field) {
-					a = nimble.byLink(a, field);
-					b = nimble.byLink(b, field);
+					a = C.byLink(a, field);
+					b = C.byLink(b, field);
 				}
 				// callback function
 				if (fn) {
@@ -85,7 +85,7 @@
 						});
 					}
 				}
-				field = field === true ? "value" : "value" + nimble.CHILDREN + field;
+				field = field === true ? "value" : "value" + C.CHILDREN + field;
 				sortedValues.sort(sort);
 				//
 				for (key in sortedValues) {
@@ -100,7 +100,7 @@
 		if (e === false) { return this; }
 		
 		//
-		cObj = nimble.byLink(this._get("collection", id), this._getActiveParam("context"));
+		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj === "object") {
 			if ($.isArray(cObj)) {
 				cObj.sort(sort);

@@ -90,7 +90,7 @@
 							
 							// remove from object
 							} else {
-								if (nimble.isArray(obj)) {
+								if (C.isArray(obj)) {
 									obj.splice(context[i], 1);
 								} else { delete obj[context[i]]; }
 							}

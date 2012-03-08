@@ -24,7 +24,7 @@
 				return this._push("collection", id, value);
 			} else { return this._update("collection", value); }
 		}
-		nimble.byLink(this._get("collection", id), activeContext + nimble.CHILDREN + context, value);
+		C.byLink(this._get("collection", id), activeContext + C.CHILDREN + context, value);
 	
 		return this;
 	};
@@ -39,5 +39,5 @@
 	C.prototype._getOne = function (context, id) {
 		context = $.isExists(context) ? context.toString() : "";
 		//
-		return nimble.byLink(this._get("collection", id || ""), this._getActiveParam("context") + nimble.CHILDREN + context);
+		return C.byLink(this._get("collection", id || ""), this._getActiveParam("context") + C.CHILDREN + context);
 	};

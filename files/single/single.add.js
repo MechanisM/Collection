@@ -30,7 +30,7 @@
 		if (e === false) { return this; }
 		
 		//
-		cObj = nimble.byLink(this._get("collection", activeID), this._getActiveParam("context"));
+		cObj = C.byLink(this._get("collection", activeID), this._getActiveParam("context"));
 		
 		//
 		if (typeof cObj !== "object")  { throw new Error("unable to set property!"); }
@@ -39,8 +39,8 @@
 		if (!sourceID) {
 			// add type
 			if ($.isPlainObject(cObj)) {
-				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
-				lCheck = nimble.addElementToObject(cObj, propType.toString(), cValue);
+				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + C.METHOD_SEPARATOR + "unshift" : propType;
+				lCheck = C.addElementToObject(cObj, propType.toString(), cValue);
 			} else {
 				lCheck = true;
 				cObj[propType](cValue);
@@ -49,12 +49,12 @@
 		// move
 		} else {
 			cValue = $.isExists(cValue) ? cValue.toString() : "";
-			sObj = nimble.byLink(this._get("collection", sourceID || ""), cValue);
+			sObj = C.byLink(this._get("collection", sourceID || ""), cValue);
 			
 			// add type
 			if ($.isPlainObject(cObj)) {
-				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + nimble.METHOD_SEPARATOR + "unshift" : propType;
-				lCheck = nimble.addElementToObject(cObj, propType.toString(), sObj);
+				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + C.METHOD_SEPARATOR + "unshift" : propType;
+				lCheck = C.addElementToObject(cObj, propType.toString(), sObj);
 			} else {
 				lCheck = true;
 				cObj[propType](sObj);

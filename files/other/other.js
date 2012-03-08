@@ -4,16 +4,16 @@
 	/////////////////////////////////
 	
 	/**
-	 * return active property
+	 * return to active parameter stack (flags included)
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} name - property name
+	 * @param {String} name — property name
 	 * @return {mixed}
 	 */
 	C.prototype._getActiveParam = function (name) {
 		var param = this.dObj.sys.flags.use[name] === undefined || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : false;
 		
-		if (name === "context") { return param ? param.toString() : ""; }
+		if (name === 'context') { return param ? param.toString() : ''; }
 		return param;
 	};
 		
@@ -21,17 +21,17 @@
 	 * filter test
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} str - some string
+	 * @param {String} str — some string
 	 * @return {Boolean}
 	 */
 	C.prototype._filterTest = function (str) {
-		return str === this.ACTIVE || this._exists("filter", str) || str.search(/&&|\|\||:/) !== -1;
+		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:/) !== -1;
 	};
 	/**
 	 * expression test
 	 * 
 	 * @this {Collection Object}
-	 * @param {mixed} str - some object
+	 * @param {mixed} str — some object
 	 * @return {Boolean}
 	 */
 	C.prototype._exprTest = function (str) {
@@ -40,10 +40,10 @@
 	
 		
 	/**
-	 * enable property
+	 * enable flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n - property name
+	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
 	 */
 	C.prototype.enable = function () {
@@ -55,10 +55,10 @@
 		return this;
 	};
 	/**
-	 * disable property
+	 * disable flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n  - property name
+	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
 	 */
 	C.prototype.disable = function () {
@@ -70,10 +70,10 @@
 		return this;
 	};
 	/**
-	 * toggle property
+	 * toggle flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n  - property name
+	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
 	 */
 	C.prototype.toggle = function () {
@@ -91,20 +91,20 @@
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|C} [objID=this.ACTIVE] - collection ID or collection
-	 * @param {Function|Array} [replacer] - an paramional parameter that determines how object values are stringified for objects
-	 * @param {Number|String} [space] - indentation of nested structures
+	 * @param {String|C} [objID=this.ACTIVE] — collection ID or collection
+	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
+	 * @param {Number|String} [space] — indentation of nested structures
 	 * @return {String}
 	 */
 	C.prototype.toString = function (objID, replacer, space) {
-		if (!JSON || !JSON.stringify) { throw new Error("object JSON is not defined!"); }
-		//
-		replacer = replacer || "";
-		space = space || "";
-		//
-		if (objID && ($.isArray(objID) || $.isPlainObject(objID))) { return JSON.stringify(objID, replacer, space); }
-		//
-		return JSON.stringify(nimble.byLink(this._get("collection", objID || ""), this._getActiveParam("context")), replacer, space);
+		if (!JSON || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
+		
+		replacer = replacer || '';
+		space = space || '';
+		
+		if (objID && C.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }
+		
+		return JSON.stringify(C.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);
 	};
 	/**
 	 * return collection length (only active)

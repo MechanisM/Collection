@@ -33,7 +33,7 @@
 			
 			/** @private */
 			deepAction = function (el, i, data, aLength, self, id) {
-				var param = nimble.byLink(el, field || "");
+				var param = C.byLink(el, field || "");
 				//
 				switch (oper) {
 					case "count" : {
@@ -62,7 +62,7 @@
 							if (tmp[this.i] === 0) {
 								result[this.i] = param;
 								tmp[this.i] = 1;
-							} else { result[this.i] = nimble.expr(oper + "=" + param, result[this.i]); }
+							} else { result[this.i] = C.expr(oper + "=" + param, result[this.i]); }
 						}
 					}
 				}
@@ -75,12 +75,12 @@
 				//
 				if (oper !== "first" && oper !== "last") {
 					self
-						._update("context", "+=" + nimble.CHILDREN + (deepAction.i = i))
+						._update("context", "+=" + C.CHILDREN + (deepAction.i = i))
 						.forEach(deepAction, filter || "", id, "", count, from, indexOf)
 						.parent();
 				} else if (oper === "first") {
-					result[i] = nimble.byLink(el, nimble.ORDER[0] + "0" + nimble.ORDER[1]);
-				} else { result[i] = nimble.byLink(el, nimble.ORDER[0] + "-1" + nimble.ORDER[1]); }
+					result[i] = C.byLink(el, C.ORDER[0] + "0" + C.ORDER[1]);
+				} else { result[i] = C.byLink(el, C.ORDER[0] + "-1" + C.ORDER[1]); }
 					
 				return true;
 			};

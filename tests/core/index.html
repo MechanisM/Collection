@@ -19,10 +19,10 @@
 				ok(C("#result").dObj.active.target !== null, "collection is string");
 				equal(C([1, 2, 3]), 3, "with collection");
 			});
-			module("nimble");
-			test("nimble methods", function () {
+			module("C");
+			test("C methods", function () {
 				var
-					obj = nimble,
+					obj = C,
 					objTest = [{next: {next: [1, 2, 3, 4]}}, 2, 3],
 					objTest2 = {a: 1, b: 2},
 					objTest3 = {e: {re: function (param) {

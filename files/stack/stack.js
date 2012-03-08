@@ -25,7 +25,7 @@
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
-		} else { active[stackName] = nimble.expr(newVal, active[stackName] || ''); }
+		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// break the link with a stack
 		this.dObj.sys['active' + upperCase + 'ID'] = null;
@@ -56,7 +56,7 @@
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
-		} else { active[stackName] = nimble.expr(newVal, active[stackName] || ''); }
+		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// update the parameter stack
 		if (activeID) { sys['tmp' + C.toUpperCase(stackName, 1)][activeID] = active[stackName]; }
@@ -486,10 +486,11 @@
 				this._set(el, id);
 			} else {
 				nm = id.split(this.NAMESPACE_SEPARATOR);
+				
 				for (i = nm.length; (i -= 1) > -1;) {
 					nm.splice(i, 1);
 					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);
-					//
+					
 					if (this._exists(el, tmpNm)) {
 						this._set(el, tmpNm);
 						break;
