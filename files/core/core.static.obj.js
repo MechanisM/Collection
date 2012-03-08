@@ -134,3 +134,20 @@
 	
 		return true;
 	};
+	
+	/**
+	 * unshift for arguments (object)
+	 * 
+	 * @param {Object} obj — some object
+	 * @param {mixed} val — new value
+	 * @return {Array}
+	 *
+	 * @example
+	 * $C.unshiftArguments({'0': 1}, 2); // returns [2, 1]
+	 */
+	C.unshiftArguments = function (obj, val) {
+		var newObj = [val], i = -1, oLength = obj.length;
+		while ((i += 1) < oLength) { newObj.push(obj[i]); }
+		
+		return newObj;
+	};

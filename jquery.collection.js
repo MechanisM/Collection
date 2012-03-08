@@ -36,7 +36,7 @@
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
  * @date: 04.03.2012 11:34:56
- * @version 3.5.5
+ * @version 3.6
  *
  * @constructor
  * @example http://jsfiddle.net/kobezzza/ZEcaB/
@@ -44,9 +44,8 @@
  * @param {C|Selector} [collection=null] — collection or selector for field "target"
  * @param {Plain Object} [uProp=C.fields.dObj.active] — additional properties
  */
-var C = (function ($) {
-	// try to use ECMAScript 5 "strict mode"
-	"use strict";
+var Collection = (function ($) {
+	'use strict';
 	
 	var C;	
 	/////////////////////////////////
@@ -54,62 +53,67 @@ var C = (function ($) {
 	/////////////////////////////////
 	
 	C = function (collection, prop) {
-		collection = collection || '';
+		collection = collection || null;
 		prop = prop || '';
 		
 		// create factory function if need
-		if (!this || (this.fn && (!this.fn.name || this.fn.name !== 'C'))) { return new C(collection, prop); }
+		if (!this || (this.fn && (!this.fn.name || this.fn.name !== 'Collection'))) { return new C(collection, prop); }
 		
 		// mixin public fields
-		$.extend(true, this, C.fields);
+		C.extend(true, this, C.fields);
 		var active = this.dObj.active;
 		
 		// extend public fields by additional properties if need
-		if (prop) { $.extend(true, active, prop); }
+		if (prop) { C.extend(true, active, prop); }
 		
 		// compile (if need)
 		if (this._exprTest(active.filter)) { active.filter = this._compileFilter(active.filter); }
 		if (this._exprTest(active.parser)) { active.parser = this._compileParser(active.parser); }
 		
-		// if collection is string
-		if ($.isString(collection)) {
-			active.target = $(collection);
-			active.collection = null;
-		} else { active.collection = collection; }
+		active.collection = collection;
 	};	
 	/**
-	 * set new value to object by link, remove element by link or get element by link
+	 * set new value of the object by the link, get/remove an element by the link, or return a fragment of the context (overload)
 	 * 
-	 * @this {nimble}
+	 * @this {Collection}
 	 * @param {Object|Number|Boolean} obj — some object
 	 * @param {Context} context — link
 	 * @param {mixed} [value] — some value
-	 * @param {Boolean} [del=false] — if 'true', remove source element
-	 * @return {nimble|mixed}
+	 * @param {Boolean} [del=false] — if true, remove element
+	 * @return {Collection|mixed}
+	 *
+	 * @example
+	 * $C.byLink({a: {b: 1, c: 2}}, 'a > b', 2); // a.b = 2
+	 * $C.byLink({a: {b: 1, c: 2}}, 'a > eq(-1)', 1); // a.c = 1
+	 * $C.byLink({a: {b: 1, c: 2}}, 'a > eq(-1)', '', true); // delete a.c
+	 * $C.byLink(false, 'a > b > eq(5) > 1'); // returns 'a > b > eq(5) > 1'
+	 * $C.byLink(2, 'a > b > eq(5) > 1'); // returns 'a>b'
+	 * $C.byLink(-1, 'a > b > eq(5) > 1'); // returns 'a>b>eq(5)'
 	 */
 	C.byLink = function (obj, context, value, del) {
 		context = context
 					.toString()
-					.replace(new RegExp('\\s*' + this.CHILDREN + '\\s*', 'g'), this.CONTEXT_SEPARATOR + this.CHILDREN + this.CONTEXT_SEPARATOR)
-					.split(this.CONTEXT_SEPARATOR);
+					.replace(new RegExp('\\s*' + C.CHILDREN + '\\s*', 'g'), C.CONTEXT_SEPARATOR + C.CHILDREN + C.CONTEXT_SEPARATOR)
+					.split(C.CONTEXT_SEPARATOR);
+		
 		del = del || false;
-		//
+		
 		var
-			type = this.CHILDREN,
+			type = C.CHILDREN,
 			last = 0, total = 0,
 			
 			key, i = context.length,
 			pos, n,
-	
+			
 			objLength, cLength;
 	
-		// remove 'dead' elements
+		// remove dead elements
 		while ((i -= 1) > -1) {
-			context[i] = this.trim(context[i]);
+			context[i] = C.trim(context[i]);
 			if (context[i] === '') {
 				context.splice(i, 1);
 				last -= 1;
-			} else if (context[i] !== this.CHILDREN) {
+			} else if (context[i] !== C.CHILDREN) {
 				if (i > last) { last = i; }
 				total += 1;
 			}
@@ -118,13 +122,15 @@ var C = (function ($) {
 		cLength = context.length;
 		
 		// overload
+		// returns the fragment of the context
 		if (obj === false) {
 			return context.join('');
-		} else if (this.isNumber(obj)) {
+		} else if (C.isNumber(obj)) {
 			if ((obj = +obj) < 0) { obj += total; }
-			if (value === undefined) { 
+			
+			if (typeof value === 'undefined') { 
 				for (i = -1, n = 0; (i += 1) < cLength;) {
-					if (context[i] !== this.CHILDREN) {
+					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
 							context.splice(i + 1, cLength);
 							return context.join('');
@@ -133,7 +139,7 @@ var C = (function ($) {
 				}
 			} else {
 				for (i = cLength, n = 0; (i -= 1) > -1;) {
-					if (context[i] !== this.CHILDREN) {
+					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
 							context.splice(0, i);
 							return context.join('');
@@ -142,43 +148,66 @@ var C = (function ($) {
 				}
 			}
 		}
-		//
+		
 		for (i = -1; (i += 1) < cLength;) {
 			switch (context[i]) {
-				case this.CHILDREN : { type = context[i]; } break;
+				case C.CHILDREN : { type = context[i]; } break;
+				
 				default : {
-					if (type === this.CHILDREN && context[i].substring(0, this.ORDER[0].length) !== this.ORDER[0]) {
+					// children (>)
+					if (type === C.CHILDREN && context[i].substring(0, C.ORDER[0].length) !== C.ORDER[0]) {
 						if (i === last && value !== undefined) {
+							// set new value
 							if (del === false) {
-								obj[context[i]] = this.expr(value, obj[context[i]]);
+								obj[context[i]] = C.expr(value, obj[context[i]]);
+							
+							// remove from object
 							} else {
 								if (nimble.isArray(obj)) {
 									obj.splice(context[i], 1);
 								} else { delete obj[context[i]]; }
 							}
+						
+						// next
 						} else { obj = obj[context[i]]; }
+					
+					// order (eq)
 					} else {
-						pos = context[i].substring(this.ORDER[0].length);
+						pos = context[i].substring(C.ORDER[0].length);
 						pos = pos.substring(0, (pos.length - 1));
 						pos = +pos;
-						//
-						if (this.isArray(obj)) {
+						
+						// if array
+						if (C.isArray(obj)) {
 							if (i === last && value !== undefined) {
+								// if eq >= 0
 								if (pos >= 0) {
+									// set new value
 									if (del === false) {
-										obj[pos] = this.expr(value, obj[pos]);
+										obj[pos] = C.expr(value, obj[pos]);
+									
+									// remove from object
 									} else { obj.splice(pos, 1); }
+								
+								// if eq < 0
 								} else {
+									// set new value
 									if (del === false) {
-										obj[obj.length + pos] = this.expr(value, obj[obj.length + pos]);
+										obj[obj.length + pos] = C.expr(value, obj[obj.length + pos]);
+									
+									// remove from object
 									} else { obj.splice(obj.length + pos, 1); }
 								}
 							} else {
+								// next
 								if (pos >= 0) {
 									obj = obj[pos];
 								} else { obj = obj[obj.length + pos]; }
 							}
+						
+						// if object
 						} else {
+							// calculate position
 							if (pos < 0) {
 								objLength = 0;
 								for (key in obj) {
@@ -193,9 +222,14 @@ var C = (function ($) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
 										if (i === last && value !== undefined) {
+											// set new value
 											if (del === false) {
-												obj[key] = this.expr(value, obj[key]);
+												obj[key] = C.expr(value, obj[key]);
+											
+											// remove from object
 											} else { delete obj[key]; }
+										
+										// next
 										} else { obj = obj[key]; }
 										break;
 									}
@@ -208,39 +242,41 @@ var C = (function ($) {
 			}
 		}
 		
-		if (value !== undefined) { return this; }
+		if (value !== undefined) { return C; }
 		return obj;
 	};
 		
 	/**
 	 * execute event
 	 * 
-	 * @this {nimble}
+	 * @this {Collection}
 	 * @param {String} query — query string
 	 * @param {Object} event — event object
 	 * @param {mixed} [param] — input parameters
-	 * @param {mixed} [_this=event] — this object
+	 * @param {mixed} [thisObject=event] — object to use as this
 	 * @return {mixed}
 	 */
-	C.execEvent = function (query, event, param, _this) {
-		query = query.split(this.QUERY_SEPARATOR);
-		param = this.isExists(param) ? param : [];
-		param = this.isArray(param) ? param : [param];
-		//
+	C.execEvent = function (query, event, param, thisObject) {
+		query = query.split(C.QUERY_SEPARATOR);
+		param = C.isExists(param) ? param : [];
+		param = C.isArray(param) ? param : [param];
+		
 		var 
 			i = -1,
 			qLength = query.length - 1,
 			spliter;
-	
+		
 		while ((i += 1) < qLength) { event = event[query[i]]; }
-		//
-		if (query[i].search(this.SUBQUERY_SEPARATOR) !== -1) {
-			spliter = query[i].split(this.SUBQUERY_SEPARATOR);
+		thisObject = thisObject || event;
+		
+		if (query[i].search(C.SUBQUERY_SEPARATOR) !== -1) {
+			spliter = query[i].split(C.SUBQUERY_SEPARATOR);
 			event = event[spliter[0]];
 			spliter.splice(0, 1);
 			param = param.concat(spliter);
-			return event.apply(_this || event, param);
-		} else { return event[query[i]].apply(_this || event, param); }
+			
+			return event.apply(thisObject, param);
+		} else { return event[query[i]].apply(thisObject, param); }
 	};		
 	/////////////////////////////////
 	//// constants
@@ -262,58 +298,88 @@ var C = (function ($) {
 	/**
 	 * returns a Boolean indicating whether the object is a string
 	 *
-	 * @param {mixed} obj — some object
+	 * @param {mixed} obj — object to test whether or not it is a string
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isString('test'); // returns true
+	 * $C.isString(2); // returns false
 	 */
 	C.isString = function (obj) { return toString(obj) === '[object String]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a number
 	 *
-	 * @param {mixed} obj — some object
+	 * @param {mixed} obj — object to test whether or not it is a number
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isNumber('test'); // returns false
+	 * $C.isNumber(2); // returns true
 	 */
 	C.isNumber = function (obj) { return toString(obj) === '[object Number]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a boolean
 	 *
-	 * @param {mixed} obj — some object
+	 * @param {mixed} obj — object to test whether or not it is a boolean
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isNumber('test'); // returns false
+	 * $C.isNumber(false); // returns true
 	 */
 	C.isBoolean = function (obj) { return toString(obj) === '[object Boolean]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a function
 	 *
-	 * @param {mixed} obj — some object
+	 * @param {mixed} obj — object to test whether or not it is a function
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isFunction('test'); // returns false
+	 * $C.isFunction(function () {}); // returns true
 	 */
 	C.isFunction = function (obj) { return toString(obj) === '[object Function]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a array (not an array-like object)
 	 *
-	 * @param {mixed} obj — some object
+	 * @param {mixed} obj — object to test whether or not it is a array
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns false
+	 * $C.isArray([1, 2, 3]); // returns true
 	 */
 	C.isArray = function (obj) { return toString(obj) === '[object Array]'; };
 	
 	/**
-	 * returns a Boolean indicating whether the object is a simple object
+	 * returns a Boolean indicating whether the object is a plain object
 	 *
-	 * @param {mixed} obj — some object
+	 * @param {mixed} obj — object to test whether or not it is a plain object
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns true
+	 * $C.isPlainObject(new Date); // returns false
+	 * $C.isPlainObject(Date); // returns false
 	 */
-	C.isObject = function (obj) { return toString(obj) === '[object Object]'; };
+	C.isPlainObject = function (obj) { return toString(obj) === '[object Object]'; };
 	
 	/**
 	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)
 	 *
-	 * @param {mixed} obj — some object
+	 * @param {mixed} obj — the object, to test its existence
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isExists(''); // returns false
+	 * $C.isExists(null); // returns false
+	 * $C.isExists(false); // returns true
 	 */
-	C.isExists = function (obj) { return typeof obj !== "undefined" && obj !== null && obj !== ''; };		
+	C.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
 	/////////////////////////////////
 	//// string methods
 	/////////////////////////////////
@@ -321,8 +387,12 @@ var C = (function ($) {
 	/**
 	 * removes all leading and trailing whitespace characters
 	 *
-	 * @param {String} str — some string
+	 * @param {String} str — the source string
 	 * @return {String}
+	 *
+	 * @example
+	 * $C.trim(' test'); // returns 'test'
+	 * $C.trim(' test '); // returns 'test'
 	 */
 	C.trim = function (str) {
 		var
@@ -342,10 +412,16 @@ var C = (function ($) {
 	 * 
 	 * @param {mixed} val — new value
 	 * @param {mixed} old — old value
-	 * @return {mixed}
+	 * @return {Number|String}
+	 *
+	 * @example
+	 * $C.expr('+=1', 2); // returns 3
+	 * $C.expr('*=2', 2); // returns 4
+	 * $C.expr('+=2', 'test'); // returns '2test'
 	 */
 	C.expr = function (val, old) {
 		old = C.isExists(old) ? old : '';
+		
 		if (C.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
 			val = val.split('=');
 			if (!isNaN(val[1])) { val[1] = +val[1]; }
@@ -368,15 +444,32 @@ var C = (function ($) {
 	/////////////////////////////////
 	
 	/**
-	 * find the value in the array
+	 * returns the index or key that indicates whether there is an array or object element equal to a specified or false
 	 *
-	 * @param {mixed} val — some object
-	 * @param {Array} array — some array
-	 * @return {Boolean}
+	 * @param {mixed} val — some value to be searched
+	 * @param {Array} obj — an object or an array to search
+	 * @return {Number|String|Boolean}
+	 *
+	 * @example
+	 * $C.find('test', [1, 2, 'test']); // returns true
+	 * $C.find('test', {a: 1, b: 2, test: 3}); // returns false
 	 */
-	C.find = function (val, array) {
-		for (var i = array.length; (i -= 1) > -1;) {
-			if (val === array[i]) { return true; }
+	C.find = function (val, obj) {
+		var key, res;
+		
+		if (C.isArray(obj)) {
+			obj.some(function (el, i) {
+				if (val === i) {
+					res = true;
+					return true;
+				}
+			});
+			if (res) { return res; }
+		} else {
+			for (key in obj) {
+				if (!obj.hasOwnProperty(key)) { continue; }
+				if (val === obj[key]) { return key; }
+			}
 		}
 		
 		return false;
@@ -385,9 +478,14 @@ var C = (function ($) {
 	/**
 	 * merge the contents of two or more objects together into the first object
 	 *
-	 * @param {Object} obj — the object to extend
-	 * @param {Object} 2..n — additional objects containing properties to merge in
+	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend
+	 * @param {Object} [target] — the object to extend
+	 * @param {Object} [objectN] — additional objects containing properties to merge in
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.extend({a: 1}, {a: 2}, {a: 3}); // returns {a: 3}
+	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}}); // returns {a: {c: 3, b: 2}}
 	 */
 	C.extend = function () {
 		var
@@ -402,13 +500,11 @@ var C = (function ($) {
 		if (C.isBoolean(target)) {
 			deep = target;
 			target = arguments[1] || {};
-			
-			// skip the boolean and the target
 			i = 1;
 		}
 	
 		// handle case when target is a string or something (possible in deep copy)
-		if (typeof target !== "object" && !C.isFunction(target)) { target = {}; }
+		if (typeof target !== 'object' && !C.isFunction(target)) { target = {}; }
 	
 		// extend Collection itself if only one argument is passed
 		if (length === i) {
@@ -428,17 +524,17 @@ var C = (function ($) {
 					if (target === copy) { continue; }
 	
 					// recurse if we're merging plain objects or arrays
-					if (deep && copy && (C.isObject(copy) || (copyIsArray = C.isArray(copy)))) {
+					if (deep && copy && (C.isPlainObject(copy) || (copyIsArray = C.isArray(copy)))) {
 						if (copyIsArray) {
 							copyIsArray = false;
 							clone = src && C.isArray(src) ? src : [];
-						} else { clone = src && C.isObject(src) ? src : {}; }
+						} else { clone = src && C.isPlainObject(src) ? src : {}; }
 	
 						// never move original objects, clone them
 						target[name] = C.extend(deep, clone, copy);
 					
 					// don't bring in undefined values
-					} else if (typeof copy !== "undefined") { target[name] = copy; }
+					} else if (typeof copy !== 'undefined') { target[name] = copy; }
 				}
 			}
 		}
@@ -447,27 +543,34 @@ var C = (function ($) {
 	};
 		
 	/**
-	 * add new element to object
+	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)
 	 *
-	 * @this {nimble}
-	 * @param {Plain Object} obj — some object
-	 * @param {String} active — property name (can use '->unshift' — the result will be similar to work for an array unshift)
+	 * @this {Collection}
+	 * @param {Plain Object} obj — the object to extend
+	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)
 	 * @param {mixed} value — some value
 	 * @return {Plain Object|Boolean}
+	 *
+	 * @example
+	 * $C.addElementToObject({a: 1}, 'b', 2); // returns true ({a: 1, b: 2})
+	 * $C.addElementToObject({a: 1}, 'b->unshift', 2); // returns {b: 2, a: 1}
 	 */
-	C.addElementToObject = function (obj, active, value) {
-		active = active.split(this.METHOD_SEPARATOR);
+	C.addElementToObject = function (obj, keyName, value) {
+		keyName = keyName.split(C.METHOD_SEPARATOR);
 		var key, newObj = {};
 	
-		if (active[1] && active[1] === 'unshift') {
-			newObj[!isNaN(Number(active[0])) ? 0 : active[0]] = value;
+		if (keyName[1] && keyName[1] === 'unshift') {
+			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;
+			
 			for (key in obj) {
-				if (obj.hasOwnProperty(key)) { newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key]; }
+				if (obj.hasOwnProperty(key)) {
+					newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key];
+				}
 			}
 			obj = newObj;
 	
 			return obj;
-		} else if (!active[1] || active[1] === 'push') { obj[active[0]] = value; }
+		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }
 	
 		return true;
 	};	
@@ -482,26 +585,26 @@ var C = (function ($) {
 		 * @constant
 		 * @type String
 		 */
-		name: "C",
+		name: 'Collection',
 		/**
 		 * framework version
 		 * 
 		 * @constant
 		 * @type String
 		 */
-		version: "3.5.5",
+		version: '3.6',
 		/**
 		 * return string: framework name + framework version
 		 *
-		 * @this {C Prototype}
+		 * @this {Collection Object}
 		 * @return {String}
 		 */
-		collection: function () { return this.name + " " + this.version; },
+		collection: function () { return this.name + ' ' + this.version; },
 		
 		// const
-		ACTIVE: "active",
-		SHUFFLE: "shuffle",
-		NAMESPACE_SEPARATOR: ".",
+		ACTIVE: 'active',
+		SHUFFLE: 'shuffle',
+		NAMESPACE_SEPARATOR: '.',
 		
 		/**
 		 * stack parameters
@@ -511,25 +614,25 @@ var C = (function ($) {
 		 * @type Array
 		*/
 		stack: [
-		"namespace",
-		
-		"collection",
-		"filter",
-		"context",
-		"cache",
-		"variable",
-		"defer",
-
-		"page",
-		"parser",
-		"appendType",
-		"target",
-		"calculator",
-		"pager",
-		"template",
-		"numberBreak",
-		"pageBreak",
-		"resultNull"
+			'namespace',
+			
+			'collection',
+			'filter',
+			'context',
+			'cache',
+			'variable',
+			'defer',
+	
+			'page',
+			'parser',
+			'appendType',
+			'target',
+			'calculator',
+			'pager',
+			'template',
+			'numberBreak',
+			'pageBreak',
+			'resultNull'
 		]
 	};	
 	/////////////////////////////////
@@ -804,20 +907,20 @@ var C = (function ($) {
 				 * @field
 				 * @type String
 				 */
-				namespace: "nm",
+				namespace: 'nm',
 				
 				/**
 				 * collection
 				 * 
 				 * @field
-				 * @type C|Null
+				 * @type collection|Null
 				 */
 				collection: null,
 				/**
-				 * filter ("false" if disabled)
+				 * filter (false if disabled)
 				 * 
 				 * @field
-				 * @type Function|Boolean
+				 * @type Filter|Boolean
 				 */
 				filter: false,
 				/**
@@ -826,7 +929,8 @@ var C = (function ($) {
 				 * @field
 				 * @type Context
 				 */
-				context: "",
+				context: '',
+				
 				/**
 				 * cache object
 				 * 
@@ -863,6 +967,7 @@ var C = (function ($) {
 					 */
 					lastIteration: false
 				},
+				
 				/**
 				 * temporary variables
 				 * 
@@ -870,13 +975,14 @@ var C = (function ($) {
 				 * @type mixed
 				 */
 				variable: null,
+				
 				/**
 				 * deferred object
 				 * 
 				 * @field
-				 * @type jQuery Deferred
+				 * @type Deferred Object
 				 */
-				defer: "",
+				defer: '',
 				
 				/////////////////////////////////
 				//// templating
@@ -890,10 +996,10 @@ var C = (function ($) {
 				 */
 				page: 1,
 				/**
-				 * parser ("false" if disabled)
+				 * parser (false if disabled)
 				 * 
 				 * @field
-				 * @type Function|Boolean
+				 * @type Parser|Boolean
 				 */
 				parser: false,
 				/**
@@ -902,7 +1008,7 @@ var C = (function ($) {
 				 * @field
 				 * @param String
 				 */
-				appendType: "html",
+				appendType: 'html',
 				/**
 				 * target (target to insert the result templating)
 				 * 
@@ -944,14 +1050,14 @@ var C = (function ($) {
 				 * @field
 				 * @type Number
 				 */
-				pageBreak: 10,
+				pageBreak: 5,
 				/**
 				 * empty result (in case if the search nothing is returned)
 				 * 
 				 * @field
 				 * @type String
 				 */
-				resultNull: ""
+				resultNull: ''
 			}
 		}
 	};	
@@ -3856,4 +3962,5 @@ var C = (function ($) {
 	
 		return this;
 	};	return C;
-})(jQuery); //
+})(jQuery);
+if (typeof $C === 'undefined') { var $C = Collection; }//

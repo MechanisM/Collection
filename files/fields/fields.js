@@ -22,20 +22,20 @@
 				 * @field
 				 * @type String
 				 */
-				namespace: "nm",
+				namespace: 'nm',
 				
 				/**
 				 * collection
 				 * 
 				 * @field
-				 * @type C|Null
+				 * @type collection|Null
 				 */
 				collection: null,
 				/**
-				 * filter ("false" if disabled)
+				 * filter (false if disabled)
 				 * 
 				 * @field
-				 * @type Function|Boolean
+				 * @type Filter|Boolean
 				 */
 				filter: false,
 				/**
@@ -44,7 +44,8 @@
 				 * @field
 				 * @type Context
 				 */
-				context: "",
+				context: '',
+				
 				/**
 				 * cache object
 				 * 
@@ -81,6 +82,7 @@
 					 */
 					lastIteration: false
 				},
+				
 				/**
 				 * temporary variables
 				 * 
@@ -88,13 +90,14 @@
 				 * @type mixed
 				 */
 				variable: null,
+				
 				/**
 				 * deferred object
 				 * 
 				 * @field
-				 * @type jQuery Deferred
+				 * @type Deferred Object
 				 */
-				defer: "",
+				defer: '',
 				
 				/////////////////////////////////
 				//// templating
@@ -108,10 +111,10 @@
 				 */
 				page: 1,
 				/**
-				 * parser ("false" if disabled)
+				 * parser (false if disabled)
 				 * 
 				 * @field
-				 * @type Function|Boolean
+				 * @type Parser|Boolean
 				 */
 				parser: false,
 				/**
@@ -120,7 +123,7 @@
 				 * @field
 				 * @param String
 				 */
-				appendType: "html",
+				appendType: 'html',
 				/**
 				 * target (target to insert the result templating)
 				 * 
@@ -162,14 +165,14 @@
 				 * @field
 				 * @type Number
 				 */
-				pageBreak: 10,
+				pageBreak: 5,
 				/**
 				 * empty result (in case if the search nothing is returned)
 				 * 
 				 * @field
 				 * @type String
 				 */
-				resultNull: ""
+				resultNull: ''
 			}
 		}
 	};

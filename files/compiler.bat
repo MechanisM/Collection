@@ -20,7 +20,6 @@ copy	^
 		^
 		+ jquery\collection.js ^
 		+ jquery\compile.js ^
-		+ jquery\other.js ^
 		^
 		+ fields\fields.js ^
 		+ fields\fields.sys.js ^

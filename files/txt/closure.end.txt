@@ -1,2 +1,3 @@
 	return C;
-})(jQuery); //
+})(jQuery);
+if (typeof $C === 'undefined') { var $C = Collection; }//

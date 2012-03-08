@@ -34,3 +34,19 @@
 		return val;
 	};
 	
+	/**
+	 * get random integer number
+	 * 
+	 * @param {Number} [min=0] — min number
+	 * @param {Number} [max=10] — max number
+	 * @return {Number}
+	 *
+	 * @example
+	 * $C.getRandomInt(1, 15);
+	 */
+	C.getRandomInt = function (min, max) {
+		min = min || 0;
+		max = max || 10;
+		
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	};
