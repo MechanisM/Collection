@@ -8,10 +8,16 @@
 	 * 
 	 * @param {mixed} val — new value
 	 * @param {mixed} old — old value
-	 * @return {mixed}
+	 * @return {Number|String}
+	 *
+	 * @example
+	 * $C.expr('+=1', 2); // returns 3
+	 * $C.expr('*=2', 2); // returns 4
+	 * $C.expr('+=2', 'test'); // returns '2test'
 	 */
 	C.expr = function (val, old) {
 		old = C.isExists(old) ? old : '';
+		
 		if (C.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
 			val = val.split('=');
 			if (!isNaN(val[1])) { val[1] = +val[1]; }

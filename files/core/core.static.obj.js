@@ -11,8 +11,8 @@
 	 * @return {Number|String|Boolean}
 	 *
 	 * @example
-	 * $C.find("test", [1, 2, "test"]); // returns true
-	 * $C.find("test", {a: 1, b: 2, test: 3}); // returns false
+	 * $C.find('test', [1, 2, 'test']); // returns true
+	 * $C.find('test', {a: 1, b: 2, test: 3}); // returns false
 	 */
 	C.find = function (val, obj) {
 		var key, res;
@@ -107,20 +107,20 @@
 	 *
 	 * @this {Collection}
 	 * @param {Plain Object} obj — the object to extend
-	 * @param {String} active — key name (can use '->unshift' — the result will be similar to work for an array unshift)
+	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)
 	 * @param {mixed} value — some value
 	 * @return {Plain Object|Boolean}
 	 *
 	 * @example
-	 * $C.extend({a: 1}, {a: 2}, {a: 3}); // returns {a: 3}
-	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}}); // returns {a: {c: 3, b: 2}}
+	 * $C.addElementToObject({a: 1}, 'b', 2); // returns true ({a: 1, b: 2})
+	 * $C.addElementToObject({a: 1}, 'b->unshift', 2); // returns {b: 2, a: 1}
 	 */
-	C.addElementToObject = function (obj, active, value) {
-		active = active.split(C.METHOD_SEPARATOR);
+	C.addElementToObject = function (obj, keyName, value) {
+		keyName = keyName.split(C.METHOD_SEPARATOR);
 		var key, newObj = {};
 	
-		if (active[1] && active[1] === 'unshift') {
-			newObj[!isNaN(Number(active[0])) ? 0 : active[0]] = value;
+		if (keyName[1] && keyName[1] === 'unshift') {
+			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;
 			
 			for (key in obj) {
 				if (obj.hasOwnProperty(key)) {
@@ -130,7 +130,7 @@
 			obj = newObj;
 	
 			return obj;
-		} else if (!active[1] || active[1] === 'push') { obj[active[0]] = value; }
+		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }
 	
 		return true;
 	};
