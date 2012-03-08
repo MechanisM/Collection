@@ -22,7 +22,7 @@
 		
 		//
 		if (!$.isFunction(filter)) {
-			if (($.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
+			if ((C.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -31,7 +31,7 @@
 		//
 		if (!id) {
 			cObj = this._get("collection");
-		} else if ($.isString(id)) {
+		} else if (C.isString(id)) {
 			cObj = this._get("collection", id);
 		} else {
 			aCheck = true;
@@ -44,7 +44,7 @@
 		if (aCheck !== true) { cObj = nimble.byLink(cObj, this._getActiveParam("context")); }
 		
 		// if cObj is String
-		if ($.isString(cObj)) { return cObj.length; }
+		if (C.isString(cObj)) { return cObj.length; }
 		
 		// throw error
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }

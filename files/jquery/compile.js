@@ -49,7 +49,7 @@
 				
 				prefix = data.prefix ? data.prefix + "_" : "";
 			//
-			if ($.isString(data)) { data = $.parseJSON(data); }
+			if (C.isString(data)) { data = $.parseJSON(data); }
 			//
 			cObj._push("template", prefix + data.name, $this.ctplCompile());
 			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }

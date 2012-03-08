@@ -27,7 +27,7 @@
 		indexOf = parseInt(indexOf) || false;
 		//
 		var
-			operType = $.isString(oper),
+			operType = C.isString(oper),
 			result = 0, tmp = 0, key,
 			
 			/** @private */

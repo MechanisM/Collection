@@ -43,7 +43,7 @@
 			result = "", action, e = null;
 			
 		// easy implementation
-		if ($.isExists(param) && ($.isString(param) || $.isNumeric(param))) {
+		if ($.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
 		} else if (!$.isExists(param)) { param = {page: this._get("page")}; }
 		
@@ -53,8 +53,8 @@
 		if (opt.page < 1) { opt.page = 1; }
 		
 		//
-		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
-		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
+		opt.collection = C.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
+		opt.template = C.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		opt.cache = $.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		

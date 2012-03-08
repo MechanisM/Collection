@@ -28,7 +28,7 @@
 		
 		//
 		var
-			operType = $.isString(oper),
+			operType = C.isString(oper),
 			result = {}, tmp = {}, key,
 			
 			/** @private */

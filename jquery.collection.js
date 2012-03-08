@@ -402,6 +402,45 @@ var Collection = (function ($) {
 		
 		while (ws.test(str.charAt((i -= 1)))) {};
 		return str.substring(0, i + 1);
+	};
+	
+	/**
+	 * toUpperCase function
+	 * 
+	 * @param {String} str — some str
+	 * @param {Number} [max=str.length] — the maximum number of characters
+	 * @param {Number} [from=0] — start position
+	 * @return {String}
+	 *
+	 * @example
+	 * $C.toUpperCase('test'); // returns 'TEST'
+	 * $C.toUpperCase('test', 2); // returns 'TEst'
+	 * $C.toUpperCase('test', 2, 1); // returns tESt'
+	 */
+	C.toUpperCase = function (str, max, from) {
+		from = from || 0;
+		max = C.isExists(max) ? from + max : str.length;
+		
+		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
+	};
+	/**
+	 * toLowerCase function
+	 * 
+	 * @param {String} str — some str
+	 * @param {Number} [max=str.length] — the maximum number of characters
+	 * @param {Number} [from=0] — start position
+	 * @return {String}
+	 *
+	 * @example
+	 * $C.toLowerCase('TEST'); // returns 'test'
+	 * $C.toLowerCase('TEST', 2); // returns 'teST'
+	 * $C.toLowerCase('TEST', 2, 1); // returns TesT'
+	 */
+	C.toLowerCase = function (str, max, from) {
+		from = from || 0;
+		max = C.isExists(max) ? from + max : str.length;
+		
+		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
 	};		
 	/////////////////////////////////
 	//// expressions
@@ -438,6 +477,22 @@ var Collection = (function ($) {
 		return val;
 	};
 	
+	/**
+	 * get random integer number
+	 * 
+	 * @param {Number} [min=0] — min number
+	 * @param {Number} [max=10] — max number
+	 * @return {Number}
+	 *
+	 * @example
+	 * $C.getRandomInt(1, 15);
+	 */
+	C.getRandomInt = function (min, max) {
+		min = min || 0;
+		max = max || 10;
+		
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	};
 		
 	/////////////////////////////////
 	//// methods of arrays and objects
@@ -481,7 +536,7 @@ var Collection = (function ($) {
 	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend
 	 * @param {Object} [target] — the object to extend
 	 * @param {Object} [objectN] — additional objects containing properties to merge in
-	 * @return {Boolean}
+	 * @return {Object}
 	 *
 	 * @example
 	 * $C.extend({a: 1}, {a: 2}, {a: 3}); // returns {a: 3}
@@ -507,12 +562,12 @@ var Collection = (function ($) {
 		if (typeof target !== 'object' && !C.isFunction(target)) { target = {}; }
 	
 		// extend Collection itself if only one argument is passed
-		if (length === i) {
+		if (aLength === i) {
 			target = C;
 			i -= 1;
 		}
 	
-		while ((i += 1) < length) {
+		while ((i += 1) < aLength) {
 			// only deal with non-null/undefined values
 			if (C.isExists(options = arguments[i])) {
 				// extend the base object
@@ -538,7 +593,7 @@ var Collection = (function ($) {
 				}
 			}
 		}
-	
+		
 		return target;
 	};
 		
@@ -573,6 +628,23 @@ var Collection = (function ($) {
 		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }
 	
 		return true;
+	};
+	
+	/**
+	 * unshift for arguments (object)
+	 * 
+	 * @param {Object} obj — some object
+	 * @param {mixed} val — new value
+	 * @return {Array}
+	 *
+	 * @example
+	 * $C.unshiftArguments({'0': 1}, 2); // returns [2, 1]
+	 */
+	C.unshiftArguments = function (obj, val) {
+		var newObj = [val], i = -1, oLength = obj.length;
+		while ((i += 1) < oLength) { newObj.push(obj[i]); }
+		
+		return newObj;
 	};	
 	/////////////////////////////////
 	//// prototype
@@ -773,7 +845,7 @@ var Collection = (function ($) {
 				
 				prefix = data.prefix ? data.prefix + "_" : "";
 			//
-			if ($.isString(data)) { data = $.parseJSON(data); }
+			if (C.isString(data)) { data = $.parseJSON(data); }
 			//
 			cObj._push("template", prefix + data.name, $this.ctplCompile());
 			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }
@@ -804,86 +876,6 @@ var Collection = (function ($) {
 		
 		return this;
 	};	
-	/////////////////////////////////
-	//// jQuery methods (other)
-	/////////////////////////////////
-	
-	/**
-	 * returns a Boolean indicating whether the object is a string
-	 *
-	 * @param {mixed} obj — some object
-	 * @return {Boolean}
-	 */
-	$.isString = function (val) { return nimble.isString(val); };
-	/**
-	 * returns a Boolean indicating whether the object is a string
-	 *
-	 * @param {mixed} obj — some object
-	 * @return {Boolean}
-	 */
-	$.isBoolean = function (val) {
-		return Object.prototype.toString.call(val) === "[object Boolean]";
-	};
-	/**
-	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or "" (empty string)
-	 *
-	 * @param {mixed} obj — some object
-	 * @return {Boolean}
-	 */
-	$.isExists = function (val) { return nimble.isExists(val); };
-	/**
-	 * unshift for arguments (object)
-	 * 
-	 * @param {Object} obj — some object
-	 * @param {mixed} pushVal — new value
-	 * @return {Array}
-	 */
-	$.unshiftArguments = function (obj, pushVal) {
-		var newObj = [pushVal], i = -1, oLength = obj.length;
-		while ((i += 1) < oLength) { newObj.push(obj[i]); }
-		
-		return newObj;
-	};
-	/**
-	 * toUpperCase function
-	 * 
-	 * @param {String} str — some str
-	 * @param {Number} [max=str.length] — the maximum number of characters
-	 * @param {Number} [from=0] — start position
-	 * @return {String}
-	 */
-	$.toUpperCase = function (str, max, from) {
-		from = from || 0;
-		max = $.isExists(max) ? from + max : str.length;
-		
-		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
-	};
-	/**
-	 * toLowerCase function
-	 * 
-	 * @param {String} str — some str
-	 * @param {Number} [max=str.length] — the maximum number of characters
-	 * @param {Number} [from=0] — start position
-	 * @return {String}
-	 */
-	$.toLowerCase = function (str, max, from) {
-		from = from || 0;
-		max = $.isExists(max) ? from + max : str.length;
-		
-		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
-	};
-	
-	/**
-	 * get random integer number
-	 * 
-	 * @param {Number} min — min number
-	 * @param {Number} max — max number
-	 * @return {Number}
-	 */
-	$.getRandomInt = function (min, max) {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	};
-	
 	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
@@ -1114,7 +1106,7 @@ var Collection = (function ($) {
 			sys = C.fields.dObj.sys;
 		//
 		data.forEach(function (el) {
-			upperCase = $.toUpperCase(el, 1);
+			upperCase = C.toUpperCase(el, 1);
 			
 			sys["active" + upperCase + "ID"] = null;
 			sys["tmp" + upperCase] = {};
@@ -1139,10 +1131,10 @@ var Collection = (function ($) {
 	C.prototype._new = function (propName, newProp) {
 		var
 			active = this.dObj.active,
-			upperCase = $.toUpperCase(propName, 1);
+			upperCase = C.toUpperCase(propName, 1);
 		//
 		if ((propName === "filter" || propName === "parser") && this._exprTest(newProp)) {
-			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
+			active[propName] = this["_compile" + C.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
 		this.dObj.sys["active" + upperCase + "ID"] = null;
 		//
@@ -1166,9 +1158,9 @@ var Collection = (function ($) {
 			activeID = this._getActiveID(propName);
 		
 		if ((propName === "filter" || propName === "parser") && this._exprTest(newProp)) {
-			active[propName] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
+			active[propName] = this["_compile" + C.toUpperCase(propName, 1)](newProp);
 		} else { active[propName] = nimble.expr(newProp, active[propName] || ""); }
-		if (activeID) { sys["tmp" + $.toUpperCase(propName, 1)][activeID] = active[propName]; }
+		if (activeID) { sys["tmp" + C.toUpperCase(propName, 1)][activeID] = active[propName]; }
 
 		return this;
 	};
@@ -1187,7 +1179,7 @@ var Collection = (function ($) {
 		if (id && id !== this.ACTIVE) {
 			if (!this._exists(propName, id)) { throw new Error('the object "' + id + '" -> "' + propName + '" doesn\'t exist in the stack!'); }
 			//
-			return this.dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
+			return this.dObj.sys["tmp" + C.toUpperCase(propName, 1)][id];
 		}
 
 		return this.dObj.active[propName];
@@ -1207,7 +1199,7 @@ var Collection = (function ($) {
 	 */
 	C.prototype._push = function (propName, objID, newProp) {
 		var
-			tmp = this.dObj.sys["tmp" + $.toUpperCase(propName, 1)],
+			tmp = this.dObj.sys["tmp" + C.toUpperCase(propName, 1)],
 			activeID = this._getActiveID(propName),
 
 			key;
@@ -1222,7 +1214,7 @@ var Collection = (function ($) {
 							this._update(propName, objID[key]);
 						} else {
 							if ((propName === "filter" || propName === "parser") && this._exprTest(objID[key])) {
-								tmp[key] = this["_compile" + $.toUpperCase(propName, 1)](objID[key]);
+								tmp[key] = this["_compile" + C.toUpperCase(propName, 1)](objID[key]);
 							} else { tmp[key] = objID[key]; }
 						}
 						
@@ -1237,7 +1229,7 @@ var Collection = (function ($) {
 					this._update(propName, newProp);
 				} else {
 					if ((propName === "filter" || propName === "parser") && this._exprTest(newProp)) {
-						tmp[objID] = this["_compile" + $.toUpperCase(propName, 1)](newProp);
+						tmp[objID] = this["_compile" + C.toUpperCase(propName, 1)](newProp);
 					} else { tmp[objID] = newProp; }
 				}
 			}
@@ -1260,7 +1252,7 @@ var Collection = (function ($) {
 		var
 			sys = this.dObj.sys,
 
-			upperCase = $.toUpperCase(propName, 1),
+			upperCase = C.toUpperCase(propName, 1),
 			tmpChangeControlStr = propName + "ChangeControl",
 			tmpActiveIDStr = "active" + upperCase + "ID";
 		
@@ -1290,7 +1282,7 @@ var Collection = (function ($) {
 		var
 			sys = this.dObj.sys,
 
-			upperCase = $.toUpperCase(propName, 1),
+			upperCase = C.toUpperCase(propName, 1),
 			propBack = sys[propName + "Back"],
 
 			pos = propBack.length - (nmb || 1) - 1;
@@ -1339,7 +1331,7 @@ var Collection = (function ($) {
 			active = this.dObj.active,
 			sys = this.dObj.sys,
 			
-			upperCase = $.toUpperCase(propName, 1),
+			upperCase = C.toUpperCase(propName, 1),
 			tmpActiveIDStr = "active" + upperCase + "ID",
 			tmpTmpStr = "tmp" + upperCase,
 
@@ -1415,7 +1407,7 @@ var Collection = (function ($) {
 	 * @return {Colletion Object}
 	 */
 	C.prototype._resetTo = function (propName, objID, id) {
-		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[propName] : this.dObj.sys["tmp" + $.toUpperCase(propName, 1)][id];
+		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[propName] : this.dObj.sys["tmp" + C.toUpperCase(propName, 1)][id];
 		
 		return this._reset(propName, objID || "", mergeVal);
 	};
@@ -1431,7 +1423,7 @@ var Collection = (function ($) {
 	 * @return {Boolean}
 	 */
 	C.prototype._exists = function (propName, id) {
-		var upperCase = $.toUpperCase(propName, 1);
+		var upperCase = C.toUpperCase(propName, 1);
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveID(propName)) { return true; }
 		if (this.dObj.sys["tmp" + upperCase][id] !== undefined) { return true; }
@@ -1448,7 +1440,7 @@ var Collection = (function ($) {
 	 * @return {String|Null}
 	 */
 	C.prototype._getActiveID = function (propName) {
-		return this.dObj.sys["active" + $.toUpperCase(propName, 1) + "ID"];
+		return this.dObj.sys["active" + C.toUpperCase(propName, 1) + "ID"];
 	};
 	/**
 	 * check the property on the activity
@@ -1511,7 +1503,7 @@ var Collection = (function ($) {
 		var fn = C.prototype, nm;
 		
 		data.forEach(function (el) {
-			nm = $.toUpperCase(el, 1);
+			nm = C.toUpperCase(el, 1);
 			
 			fn["new" + nm] = function (nm) {
 				return function (newParam) { return this._new(nm, newParam); };
@@ -1526,7 +1518,7 @@ var Collection = (function ($) {
 			}(el);	
 			//
 			fn["push" + nm] = function (nm) {
-				return function (objID, newParam) { return this._push.apply(this, $.unshiftArguments(arguments, nm)); }
+				return function (objID, newParam) { return this._push.apply(this, C.unshiftArguments(arguments, nm)); }
 			}(el);
 			//
 			fn["set" + nm] = function (nm) {
@@ -1866,7 +1858,7 @@ var Collection = (function ($) {
 		
 		//
 		if (!$.isFunction(filter)) {
-			if (($.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
+			if ((C.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -1875,7 +1867,7 @@ var Collection = (function ($) {
 		//
 		if (!id) {
 			cObj = this._get("collection");
-		} else if ($.isString(id)) {
+		} else if (C.isString(id)) {
 			cObj = this._get("collection", id);
 		} else {
 			aCheck = true;
@@ -1888,7 +1880,7 @@ var Collection = (function ($) {
 		if (aCheck !== true) { cObj = nimble.byLink(cObj, this._getActiveParam("context")); }
 		
 		// if cObj is String
-		if ($.isString(cObj)) { return cObj.length; }
+		if (C.isString(cObj)) { return cObj.length; }
 		
 		// throw error
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
@@ -2164,7 +2156,7 @@ var Collection = (function ($) {
 	 * @return {mixed}
 	 */
 	C.prototype.get = function (filter, id, mult, count, from, indexOf) {
-		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
 				return this._getOne(filter, id || "");
 			}
@@ -2231,7 +2223,7 @@ var Collection = (function ($) {
 	 * @return {Colletion Object}
 	 */
 	C.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		if ($.isNumeric(filter) || (arguments.length < 3 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 3 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
 				return this._setOne(filter, replaceObj, id || "");
 			}
@@ -2247,7 +2239,7 @@ var Collection = (function ($) {
 				return true;
 			};
 		//
-		arg = $.unshiftArguments(arguments, action);
+		arg = C.unshiftArguments(arguments, action);
 		arg.splice(2, 1);
 		
 		// events
@@ -2336,7 +2328,7 @@ var Collection = (function ($) {
 		// search elements
 		this.disable("context");
 		//
-		if ($.isNumeric(moveFilter) || ($.isString(moveFilter) && !this._filterTest(moveFilter))) {
+		if ($.isNumeric(moveFilter) || (C.isString(moveFilter) && !this._filterTest(moveFilter))) {
 			elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
 		//
@@ -2437,7 +2429,7 @@ var Collection = (function ($) {
 		var elements, i, e = null;
 		
 		//
-		if ($.isNumeric(filter) || (arguments.length < 2 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
 			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
@@ -2492,7 +2484,7 @@ var Collection = (function ($) {
 		indexOf = parseInt(indexOf) || false;
 		//
 		var
-			fieldType = $.isString(field),
+			fieldType = C.isString(field),
 			result = {},
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
@@ -2553,7 +2545,7 @@ var Collection = (function ($) {
 		indexOf = parseInt(indexOf) || false;
 		//
 		var
-			operType = $.isString(oper),
+			operType = C.isString(oper),
 			result = 0, tmp = 0, key,
 			
 			/** @private */
@@ -2634,7 +2626,7 @@ var Collection = (function ($) {
 		
 		//
 		var
-			operType = $.isString(oper),
+			operType = C.isString(oper),
 			result = {}, tmp = {}, key,
 			
 			/** @private */
@@ -2723,7 +2715,7 @@ var Collection = (function ($) {
 		field = field || "";
 		rev = rev || false;
 		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
-			if ($.isString(a)) { return a.toUpperCase(); }
+			if (C.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};
@@ -3323,7 +3315,7 @@ var Collection = (function ($) {
 		}
 		
 		// if parser is string
-		if ($.isString(parser)) {
+		if (C.isString(parser)) {
 			//
 			if (this._getActiveParam("parser") && _tmpParser) {
 				parser = this.ACTIVE + " && " + parser;
@@ -3442,7 +3434,7 @@ var Collection = (function ($) {
 	 * @return {Boolean}
 	 */
 	C.prototype._exprTest = function (str) {
-		return $.isString(str) && str.search(/^:/) !== -1;
+		return C.isString(str) && str.search(/^:/) !== -1;
 	};
 	
 		
@@ -3590,7 +3582,7 @@ var Collection = (function ($) {
 			result = "", action, e = null;
 			
 		// easy implementation
-		if ($.isExists(param) && ($.isString(param) || $.isNumeric(param))) {
+		if ($.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
 		} else if (!$.isExists(param)) { param = {page: this._get("page")}; }
 		
@@ -3600,8 +3592,8 @@ var Collection = (function ($) {
 		if (opt.page < 1) { opt.page = 1; }
 		
 		//
-		opt.collection = $.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
-		opt.template = $.isString(opt.template) ? this._get("template", opt.template) : opt.template;
+		opt.collection = C.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
+		opt.template = C.isString(opt.template) ? this._get("template", opt.template) : opt.template;
 		opt.cache = $.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		

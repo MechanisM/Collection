@@ -41,7 +41,7 @@
 	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend
 	 * @param {Object} [target] — the object to extend
 	 * @param {Object} [objectN] — additional objects containing properties to merge in
-	 * @return {Boolean}
+	 * @return {Object}
 	 *
 	 * @example
 	 * $C.extend({a: 1}, {a: 2}, {a: 3}); // returns {a: 3}
@@ -67,12 +67,12 @@
 		if (typeof target !== 'object' && !C.isFunction(target)) { target = {}; }
 	
 		// extend Collection itself if only one argument is passed
-		if (length === i) {
+		if (aLength === i) {
 			target = C;
 			i -= 1;
 		}
 	
-		while ((i += 1) < length) {
+		while ((i += 1) < aLength) {
 			// only deal with non-null/undefined values
 			if (C.isExists(options = arguments[i])) {
 				// extend the base object
@@ -98,7 +98,7 @@
 				}
 			}
 		}
-	
+		
 		return target;
 	};
 		

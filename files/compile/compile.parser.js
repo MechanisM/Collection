@@ -40,7 +40,7 @@
 		}
 		
 		// if parser is string
-		if ($.isString(parser)) {
+		if (C.isString(parser)) {
 			//
 			if (this._getActiveParam("parser") && _tmpParser) {
 				parser = this.ACTIVE + " && " + parser;

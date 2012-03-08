@@ -19,7 +19,7 @@
 	 * @return {Colletion Object}
 	 */
 	C.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
-		if ($.isNumeric(filter) || (arguments.length < 3 && $.isString(filter)
+		if ($.isNumeric(filter) || (arguments.length < 3 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === null)) {
 				return this._setOne(filter, replaceObj, id || "");
 			}
@@ -35,7 +35,7 @@
 				return true;
 			};
 		//
-		arg = $.unshiftArguments(arguments, action);
+		arg = C.unshiftArguments(arguments, action);
 		arg.splice(2, 1);
 		
 		// events

@@ -20,7 +20,7 @@
 		field = field || "";
 		rev = rev || false;
 		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
-			if ($.isString(a)) { return a.toUpperCase(); }
+			if (C.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};

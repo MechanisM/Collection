@@ -50,9 +50,9 @@
 		var
 			upperCase,
 			sys = C.fields.dObj.sys;
-		//
+		
 		data.forEach(function (el) {
-			upperCase = $.toUpperCase(el, 1);
+			upperCase = C.toUpperCase(el, 1);
 			
 			sys["active" + upperCase + "ID"] = null;
 			sys["tmp" + upperCase] = {};

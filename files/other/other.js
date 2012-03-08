@@ -35,7 +35,7 @@
 	 * @return {Boolean}
 	 */
 	C.prototype._exprTest = function (str) {
-		return $.isString(str) && str.search(/^:/) !== -1;
+		return C.isString(str) && str.search(/^:/) !== -1;
 	};
 	
 		

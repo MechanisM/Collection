@@ -8,7 +8,7 @@
 		var fn = C.prototype, nm;
 		
 		data.forEach(function (el) {
-			nm = $.toUpperCase(el, 1);
+			nm = C.toUpperCase(el, 1);
 			
 			fn["new" + nm] = function (nm) {
 				return function (newParam) { return this._new(nm, newParam); };
@@ -23,7 +23,7 @@
 			}(el);	
 			//
 			fn["push" + nm] = function (nm) {
-				return function (objID, newParam) { return this._push.apply(this, $.unshiftArguments(arguments, nm)); }
+				return function (objID, newParam) { return this._push.apply(this, C.unshiftArguments(arguments, nm)); }
 			}(el);
 			//
 			fn["set" + nm] = function (nm) {

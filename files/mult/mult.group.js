@@ -28,7 +28,7 @@
 		indexOf = parseInt(indexOf) || false;
 		//
 		var
-			fieldType = $.isString(field),
+			fieldType = C.isString(field),
 			result = {},
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
