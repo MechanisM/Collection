@@ -10,26 +10,26 @@
 		 * @constant
 		 * @type String
 		 */
-		name: "C",
+		name: 'Collection',
 		/**
 		 * framework version
 		 * 
 		 * @constant
 		 * @type String
 		 */
-		version: "3.5.5",
+		version: '3.5.5',
 		/**
 		 * return string: framework name + framework version
 		 *
-		 * @this {C Prototype}
+		 * @this {Collection Object}
 		 * @return {String}
 		 */
-		collection: function () { return this.name + " " + this.version; },
+		collection: function () { return this.name + ' ' + this.version; },
 		
 		// const
-		ACTIVE: "active",
-		SHUFFLE: "shuffle",
-		NAMESPACE_SEPARATOR: ".",
+		ACTIVE: 'active',
+		SHUFFLE: 'shuffle',
+		NAMESPACE_SEPARATOR: '.',
 		
 		/**
 		 * stack parameters
@@ -39,24 +39,24 @@
 		 * @type Array
 		*/
 		stack: [
-		"namespace",
-		
-		"collection",
-		"filter",
-		"context",
-		"cache",
-		"variable",
-		"defer",
-
-		"page",
-		"parser",
-		"appendType",
-		"target",
-		"calculator",
-		"pager",
-		"template",
-		"numberBreak",
-		"pageBreak",
-		"resultNull"
+			'namespace',
+			
+			'collection',
+			'filter',
+			'context',
+			'cache',
+			'variable',
+			'defer',
+	
+			'page',
+			'parser',
+			'appendType',
+			'target',
+			'calculator',
+			'pager',
+			'template',
+			'numberBreak',
+			'pageBreak',
+			'resultNull'
 		]
 	};

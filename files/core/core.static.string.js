@@ -6,8 +6,12 @@
 	/**
 	 * removes all leading and trailing whitespace characters
 	 *
-	 * @param {String} str — some string
+	 * @param {String} str — the source string
 	 * @return {String}
+	 *
+	 * @example
+	 * $C.trim(' test'); // returns 'test'
+	 * $C.trim(' test '); // returns 'test'
 	 */
 	C.trim = function (str) {
 		var

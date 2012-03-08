@@ -8,8 +8,8 @@
 		 * calls a function for each element in the array
 		 *
 		 * @this {Array}
-		 * @param {Function} callback - callback function
-		 * @param {mixed} [thisObject] - object to use as this when executing callback
+		 * @param {Function} callback — function to test each element of the array
+		 * @param {mixed} [thisObject] — object to use as this when executing callback
 		 * @return {undefined}
 		 */
 		Array.prototype.forEach = function (callback, thisObject) {
@@ -28,8 +28,8 @@
 		 * tests whether some element in the array passes the test implemented by the provided function
 		 *
 		 * @this {Array}
-		 * @param {Function} callback - callback function
-		 * @param {mixed} [thisObject] - object to use as this when executing callback
+		 * @param {Function} callback — function to test each element of the array
+		 * @param {mixed} [thisObject] — object to use as this when executing callback
 		 * @return {undefined}
 		 */
 		Array.prototype.some = function (callback, thisObject) {
