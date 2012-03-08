@@ -4,7 +4,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * set new value of the parameter on the stack (no impact on the history of the stack)(has aliases, format: newStackName)
+	 * set new value of the parameter on the stack (no impact on the history of the stack)(has aliases, format: new + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -15,7 +15,6 @@
 	 * @example
 	 * var db = new $C([1, 2, 3, 4, 5]);
 	 * // new collection
-	 * db._new('collection', [1, 2, 3]);
 	 * db.newCollection([1, 2]);
 	 */
 	C.prototype._new = function (stackName, newVal) {
@@ -34,7 +33,7 @@
 		return this;
 	};
 	/**
-	 * update the active parameter (if the parameter is in the stack, it will be updated too)(has aliases, format: updateStackName)
+	 * update the active parameter (if the parameter is in the stack, it will be updated too)(has aliases, format: update + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -45,7 +44,6 @@
 	 * @example
 	 * var db = new $C([1, 2, 3, 4, 5]);
 	 * // update collection
-	 * db._update('collection', [1, 2, 3]);
 	 * db.updateCollection([1, 2]);
 	 */
 	C.prototype._update = function (stackName, newVal) {
@@ -66,7 +64,7 @@
 		return this;
 	};
 	/**
-	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter)(has aliases, format: getStackName)
+	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter)(has aliases, format: get + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -77,15 +75,17 @@
 	 *
 	 * @example
 	 * var db = new $C([1, 2, 3, 4, 5]);
+	 *
 	 * // get collection
-	 * db._get('collection');
 	 * db.getCollection();
 	 *
+	 * db.pushCollection('test', [1, 2]);
 	 * // get from stack
 	 * db.getCollection('test');
 	 */
 	C.prototype._get = function (stackName, id) {
 		if (id && id !== this.ACTIVE) {
+			// throw an exception if the requested parameter does not exist
 			if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
 			
 			return this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)][id];
@@ -95,7 +95,7 @@
 	};
 	
 	/**
-	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method)(if the parameter already exists in the stack, it will be updated)(has aliases, format: getStackName)
+	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method)(if the parameter already exists in the stack, it will be updated)(has aliases, format: push + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -106,9 +106,9 @@
 	 *
 	 * @example
 	 * var db = new $C();
+	 *
 	 * // push collection
-	 * db._push('collection', "test", [1, 2, 3]);
-	 * db.pushCollection("test", [1, 2, 3]);
+	 * db.pushCollection('test', [1, 2, 3]);
 	 * db.pushCollection({
 	 *	test1: [1, 2],
 	 *	test2: [1, 2, 3, 4]
@@ -165,7 +165,7 @@
 		return this;
 	};
 	/**
-	 * set new active property
+	 * set the parameter stack active (affect the story)(has aliases, format: set + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -173,6 +173,13 @@
 	 * @param {String} id — stack ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.pushCollection('test', [1, 2, 3]);
+	 *
+	 * // set collection
+	 * db.setCollection('test');
 	 */
 	C.prototype._set = function (stackName, id) {
 		var
@@ -182,26 +189,39 @@
 			tmpChangeControlStr = stackName + 'ChangeControl',
 			tmpActiveIDStr = 'active' + upperCase + 'ID';
 		
+		// throw an exception if the requested parameter does not exist
 		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
 		
+		// change the story, if there were changes
 		if (sys[tmpActiveIDStr] !== id) {
 			sys[tmpChangeControlStr] = true;
 			sys[tmpActiveIDStr] = id;
 		} else { sys[tmpChangeControlStr] = false; }
-
+		
 		sys[stackName + 'Back'].push(id);
 		this.dObj.active[stackName] = sys['tmp' + upperCase][id];
 
 		return this;
 	};
 	/**
-	 * history back
+	 * back on the history of the stack (has aliases, format: back + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
 	 * @param {Number} [nmb=1] — number of steps
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.setCollection('test2')
+	 *	.setCollection('test');
+	 *
+	 * db.backCollection(2); // 'test' is active
 	 */
 	C.prototype._back = function (stackName, nmb) {
 		var
@@ -223,13 +243,24 @@
 		return this;
 	};
 	/**
-	 * history back (if history changed)
+	 * back on the history of the stack, if there were changes (changes are set methods and pushSet)(has aliases, format: back + StackName + If)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
 	 * @param {Number} [nmb=1] — number of steps
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.setCollection('test2')
+	 *	.setCollection('test');
+	 *
+	 * db.backCollectionIf().backCollectionIf(); // 'test2' is active, because the method of 'back' does not affect the story
 	 */
 	C.prototype._backIf = function (stackName, nmb) {
 		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
@@ -237,7 +268,7 @@
 		return this;
 	};
 	/**
-	 * remove property from stack
+	 * remove the parameter from the stack (can use a constant 'active')(if the parameter is active, then it would still be removed)(has aliases, format: drop + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -246,6 +277,14 @@
 	 * @param {mixed} [deleteVal=false] — default value (for active properties)
 	 * @param {mixed} [resetVal] — reset value (overload)
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3]);
+	 *
+	 * db.dropCollection('test', 'active'); // removed the 'test' and' test2'
 	 */
 	C.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
 		deleteVal = deleteVal === undefined ? false : deleteVal;
@@ -262,15 +301,20 @@
 			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
 			
 			key;
-
+		
 		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
 					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
 						if (resetVal === undefined) {
+							// if the parameter is on the stack, then remove it too
 							if (activeID) { delete sys[tmpTmpStr][activeID]; }
+							
+							// active parameters are set to null
 							sys[tmpActiveIDStr] = null;
 							active[stackName] = deleteVal;
+						
+						// reset (overload)
 						} else {
 							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
 							active[stackName] = resetVal;
@@ -278,10 +322,14 @@
 					} else {
 						if (resetVal === undefined) {
 							delete sys[tmpTmpStr][tmpArray[key]];
+							
+							// if the parameter stack is active, it will still be removed
 							if (activeID && tmpArray[key] === activeID) {
 								sys[tmpActiveIDStr] = null;
 								active[stackName] = deleteVal;
 							}
+						
+						// reset (overload)
 						} else {
 							sys[tmpTmpStr][tmpArray[key]] = resetVal;
 							if (activeID && tmpArray[key] === activeID) { active[stackName] = resetVal; }
@@ -291,9 +339,14 @@
 			}
 		} else {
 			if (resetVal === undefined) {
+				// if the parameter is on the stack, then remove it too
 				if (activeID) { delete sys[tmpTmpStr][activeID]; }
+				
+				// active parameters are set to null
 				sys[tmpActiveIDStr] = null;
 				active[stackName] = deleteVal;
+			
+			// reset (overload)
 			} else {
 				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
 				active[stackName] = resetVal;
@@ -303,7 +356,7 @@
 		return this;
 	};
 	/**
-	 * reset property
+	 * reset the parameter stack (can use a constant 'active')(has aliases, format: reset + StackName, only for: filter, parser and context)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -311,6 +364,13 @@
 	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs
 	 * @param {mixed} [resetVal=false] — reset value
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.newContext('a > 2')
+	 *
+	 * // reset context
+	 * db.resetContext();
 	 */
 	C.prototype._reset = function (stackName, objID, resetVal) {
 		resetVal = resetVal === undefined ? false : resetVal;
@@ -318,14 +378,21 @@
 		return this._drop(stackName, objID || '', '', resetVal);
 	};
 	/**
-	 * reset property to another value
+	 * reset the value of the parameter stack to another (can use a constant 'active')(has aliases, format: reset + StackName + To)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
 	 * @param {String|Array} [objID=active] — stack ID or array of IDs
-	 * @param {String} [id=this.ACTIVE] — source ID (for merge)
+	 * @param {String} [id=this.ACTIVE] — source stack ID (for merge)
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.pushCollection({test: [1, 2], test2: [1, 2, 3, 4]});
+	 *
+	 * // reset collection 'test' to 'test2'
+	 * db.resetCollectionTo('test', 'test2');
 	 */
 	C.prototype._resetTo = function (stackName, objID, id) {
 		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[stackName] : this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)][id];
@@ -334,13 +401,18 @@
 	};
 
 	/**
-	 * check the existence of property in the stack
+	 * verify the existence of a parameter on the stack (has aliases, format: exists + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
 	 * @param {String} [id=this.ACTIVE] — stack ID
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * var db = new $C();
+	 *
+	 * db.existsCollection('test'); // returns false
 	 */
 	C.prototype._exists = function (stackName, id) {
 		var upperCase = C.toUpperCase(stackName, 1);
@@ -351,26 +423,37 @@
 		return false;
 	};
 	/**
-	 * get active ID
+	 * return the ID of the active parameter or false (has aliases, format: get + StackName + ActiveID)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
 	 * @return {String|Null}
+	 *
+	 * @example
+	 * var db = new $C();
+	 *
+	 * db.getCollectionActiveID(); // returns false
 	 */
 	C.prototype._getActiveID = function (stackName) {
 		return this.dObj.sys['active' + C.toUpperCase(stackName, 1) + 'ID'];
 	};
 	/**
-	 * check the property on the activity
+	 * check the parameter on the activity (has aliases, format: active + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
 	 * @param {String} id — stack ID
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * var db = new $C();
+	 *
+	 * db.activeCollection('test'); // returns false
 	 */
 	C.prototype._active = function (stackName, id) {
+		// overload, returns active ID
 		if (!id) { return this._getActiveID(stackName); }
 		if (id === this._getActiveID(stackName)) { return true; }
 
@@ -382,11 +465,18 @@
 	/////////////////////////////////
 			
 	/**
-	 * use the assembly
+	 * use the assembly (makes active the stacking options, if such exist (supports namespaces))
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} stack ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 *
+	 * db.use('test');
+	 * db.use('test.a');
+	 * db.use('testa.a.b');
 	 */
 	C.prototype.use = function (id) {
 		this.stack.forEach(function (el) {
