@@ -121,7 +121,7 @@
 
 			key;
 		
-		if ($.isPlainObject(objID)) {
+		if (C.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
 					// update, if the ID is 'active'
@@ -287,7 +287,7 @@
 	 * db.dropCollection('test', 'active'); // removed the 'test' and' test2'
 	 */
 	C.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
-		deleteVal = deleteVal === undefined ? false : deleteVal;
+		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
 		
 		var
 			active = this.dObj.active,
@@ -298,7 +298,7 @@
 			tmpTmpStr = 'tmp' + upperCase,
 
 			activeID = this._getActiveID(stackName),
-			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
+			tmpArray = !objID ? activeID ? [activeID] : [] : C.isArray(objID) || C.isPlainObject(objID) ? objID : [objID],
 			
 			key;
 		
@@ -306,7 +306,7 @@
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
 					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
-						if (resetVal === undefined) {
+						if (typeof resetVal === 'undefined') {
 							// if the parameter is on the stack, then remove it too
 							if (activeID) { delete sys[tmpTmpStr][activeID]; }
 							
@@ -320,7 +320,7 @@
 							active[stackName] = resetVal;
 						}
 					} else {
-						if (resetVal === undefined) {
+						if (typeof resetVal === 'undefined') {
 							delete sys[tmpTmpStr][tmpArray[key]];
 							
 							// if the parameter stack is active, it will still be removed
@@ -338,7 +338,7 @@
 				}
 			}
 		} else {
-			if (resetVal === undefined) {
+			if (typeof resetVal === 'undefined') {
 				// if the parameter is on the stack, then remove it too
 				if (activeID) { delete sys[tmpTmpStr][activeID]; }
 				
@@ -373,7 +373,7 @@
 	 * db.resetContext();
 	 */
 	C.prototype._reset = function (stackName, objID, resetVal) {
-		resetVal = resetVal === undefined ? false : resetVal;
+		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
 
 		return this._drop(stackName, objID || '', '', resetVal);
 	};
@@ -418,7 +418,7 @@
 		var upperCase = C.toUpperCase(stackName, 1);
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveID(stackName)) { return true; }
-		if (this.dObj.sys['tmp' + upperCase][id] !== undefined) { return true; }
+		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
 
 		return false;
 	};

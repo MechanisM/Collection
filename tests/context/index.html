@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>C: context test</title>
+	<title>Collection: context test</title>
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
@@ -10,7 +10,7 @@
 	<script type="text/javascript">
 		$(function () {
 			test("parent context", function () {
-				var db = new C({a: {b: {c: {}}}}, {context: "a > b > c"})
+				var db = new Collection({a: {b: {c: {}}}}, {context: "a > b > c"})
 					.pushContext("tt", "a > b");
 				
 				equal(db.parentContext(), "a > b ", "simple context without parameter");
@@ -27,7 +27,7 @@
 </head>
 
 <body>
-	<h1 id="qunit-header">C: context test</h1>
+	<h1 id="qunit-header">Collection: context test</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>

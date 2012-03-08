@@ -18,7 +18,7 @@
 	 */
 	C.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		// if id is Boolean
-		if ($.isBoolean(id)) {
+		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
@@ -76,7 +76,7 @@
 		//
 		var cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
-		if ($.isArray(cObj) && cObj.indexOf) {
+		if (C.isArray(cObj) && cObj.indexOf) {
 			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
 			//
 			return cObj.indexOf(searchElement);
@@ -98,13 +98,13 @@
 		//
 		var el, cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
-		if ($.isArray(cObj) && cObj.lastIndexOf) {
+		if (C.isArray(cObj) && cObj.lastIndexOf) {
 			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }
 			//
 			return cObj.lastIndexOf(searchElement);
 		} else {
 			el = this.search(function (el) { return el === searchElement; }, id, "", "", "", fromIndex);
 			//
-			return el[el.length - 1] !== undefined ? el[el.length - 1] : -1;
+			return typeof el[el.length - 1] !== 'undefined' ? el[el.length - 1] : -1;
 		}
 	};

@@ -13,8 +13,8 @@
 	 * @return {Colletion Object}
 	 */
 	C.prototype._setOne = function (context, value, id) {
-		context = $.isExists(context) ? context.toString() : "";
-		value = value === undefined ? "" : value;
+		context = C.isExists(context) ? context.toString() : "";
+		value = typeof value === 'undefined' ? "" : value;
 		id = id || "";
 		//
 		var activeContext = this._getActiveParam("context");
@@ -37,7 +37,7 @@
 	 * @return {mixed}
 	 */
 	C.prototype._getOne = function (context, id) {
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		//
 		return C.byLink(this._get("collection", id || ""), this._getActiveParam("context") + C.CHILDREN + context);
 	};

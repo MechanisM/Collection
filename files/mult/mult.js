@@ -22,7 +22,7 @@
 		
 		//
 		if (!$.isFunction(filter)) {
-			if ((C.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
+			if ((C.isString(filter) && !this._filterTest(filter) && !C.isExists(id)) || C.isArray(filter) || C.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -50,11 +50,11 @@
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
 		
 		//
-		if (filter === false && cObj.length !== undefined) {
+		if (filter === false && typeof cObj.length !== 'undefined') {
 			cOLength = cObj.length;
 		} else {
 			cOLength = 0;
-			if (cObj.length !== undefined) {
+			if (typeof cObj.length !== 'undefined') {
 				cObj.forEach(function (el, i, obj) {
 					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
@@ -94,7 +94,7 @@
 		filter = filter || "";
 		
 		// if id is Boolean
-		if ($.isBoolean(id)) {
+		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
@@ -130,7 +130,7 @@
 		}
 		
 		//
-		if ($.isArray(cObj)) {
+		if (C.isArray(cObj)) {
 			//
 			if (indexOf !== false) {
 				cloneObj = cObj.slice(indexOf);

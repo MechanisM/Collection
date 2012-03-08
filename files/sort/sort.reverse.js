@@ -43,7 +43,7 @@
 		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
 		if (typeof cObj === "object") {
-			if ($.isArray(cObj)) {
+			if (C.isArray(cObj)) {
 				cObj.reverse();
 			} else { this._setOne("", reverseObject(cObj), id); }
 		} else { throw new Error("incorrect data type!"); }

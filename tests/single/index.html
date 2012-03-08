@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>C: single test</title>
+	<title>Collection: single test</title>
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
@@ -10,7 +10,7 @@
 	<script type="text/javascript">
 		$(function () {
 			test("core", function () {
-				var db = new C({first: [[1, 2, {second: 3}], 2, 3]});
+				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				
 				equal(db.get("first > 0 > eq(-1) > eq(0)"), 3, "get");
 				equal(db
@@ -24,7 +24,7 @@
 			});
 			//
 			test("concat", function () {
-				var db = new C({first: [[1, 2, {second: 3}], 2, 3]});
+				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				equal(db
 					.concat([1, 2, 3, 4, 5], "first > 0 >")
 					.get("first > 0 >").length, 8,
@@ -34,7 +34,7 @@
 			test("remove", function () {
 				var
 					obj = {first: [[1, 2, {second: 3}], 2, 3], second: [1, 2, 3, 4]},
-					db = new C(obj);
+					db = new Collection(obj);
 				//
 				equal(db
 					.remove("first > 0 > 1")
@@ -59,7 +59,7 @@
 			});
 			//
 			test("add", function () {
-				var db = new C({first: [[1, 2, {second: 3}], 2, 3]});
+				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				
 				equal(db
 					.add([1, 2], "second")
@@ -78,7 +78,7 @@
 </head>
 
 <body>
-	<h1 id="qunit-header">C: single test</h1>
+	<h1 id="qunit-header">Collection: single test</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>

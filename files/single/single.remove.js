@@ -12,7 +12,7 @@
 	 * @return {Colletion Object}
 	 */
 	C.prototype._removeOne = function (context, id) {
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		var activeContext = this._getActiveParam("context"), e = null;
 		
 		// events
@@ -37,17 +37,17 @@
 		id = id || "";
 		var key, i;
 		//
-		if ($.isPlainObject(objContext)) {
+		if (C.isPlainObject(objContext)) {
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
-					if ($.isArray(objContext[key])) {
+					if (C.isArray(objContext[key])) {
 						for (i = objContext[key].length; (i -= 1) > -1;) {
 							this._removeOne(objContext[key][i], key);
 						}
 					} else { this._removeOne(objContext[key], key); }
 				}
 			}
-		} else if ($.isArray(objContext)) {
+		} else if (C.isArray(objContext)) {
 			for (i = objContext.length; (i -= 1) > -1;) { this._removeOne(objContext[i], id); }
 		} else { this._removeOne(objContext, id); }
 	

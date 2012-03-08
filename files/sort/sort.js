@@ -102,7 +102,7 @@
 		//
 		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj === "object") {
-			if ($.isArray(cObj)) {
+			if (C.isArray(cObj)) {
 				cObj.sort(sort);
 			} else {
 				if (field) {

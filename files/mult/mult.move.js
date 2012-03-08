@@ -24,7 +24,7 @@
 	C.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
 		moveFilter = moveFilter || "";
 		deleteType = deleteType === false ? false : true;
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		//
 		sourceID = sourceID || "";
 		activeID = activeID || "";
@@ -38,7 +38,7 @@
 		//
 		var
 			deleteList = [],
-			aCheckType = $.isArray(C.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
+			aCheckType = C.isArray(C.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
 	
 			elements, e = null;
 		
@@ -57,7 +57,7 @@
 		this.enable("context");
 		
 		// move
-		if (mult === true && $.isArray(elements)) {
+		if (mult === true && C.isArray(elements)) {
 			elements.forEach(function (el) {
 				this.add(context + C.CHILDREN + el, aCheckType === true ? addType : el + C.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
@@ -86,7 +86,7 @@
 	 * @return {Colletion Object}
 	 */
 	C.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
 	 * copy elements (in context)<br />
@@ -111,7 +111,7 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
 	 * copy element (in context)<br />
@@ -127,5 +127,5 @@
 	 * @return {Colletion Object}
 	 */
 	C.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};

@@ -83,7 +83,7 @@
 				default : {
 					// children (>)
 					if (type === C.CHILDREN && context[i].substring(0, C.ORDER[0].length) !== C.ORDER[0]) {
-						if (i === last && value !== undefined) {
+						if (i === last && typeof value !== 'undefined') {
 							// set new value
 							if (del === false) {
 								obj[context[i]] = C.expr(value, obj[context[i]]);
@@ -106,7 +106,7 @@
 						
 						// if array
 						if (C.isArray(obj)) {
-							if (i === last && value !== undefined) {
+							if (i === last && typeof value !== 'undefined') {
 								// if eq >= 0
 								if (pos >= 0) {
 									// set new value
@@ -148,7 +148,7 @@
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
-										if (i === last && value !== undefined) {
+										if (i === last && typeof value !== 'undefined') {
 											// set new value
 											if (del === false) {
 												obj[key] = C.expr(value, obj[key]);
@@ -169,7 +169,7 @@
 			}
 		}
 		
-		if (value !== undefined) { return C; }
+		if (typeof value !== 'undefined') { return C; }
 		return obj;
 	};
 		

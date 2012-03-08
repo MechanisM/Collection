@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>C: sort test</title>
+	<title>Collection: sort test</title>
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
@@ -11,9 +11,9 @@
 		$(function () {
 			test("sort", function () {
 				var
-					db = new C([1, 2, 3, 4, 5]),
-					db2 = new C({a: 1, f: 2, c: 3}),
-					db3 = new C([{name: "Koba"}, {name: "Andrey"}]);
+					db = new Collection([1, 2, 3, 4, 5]),
+					db2 = new Collection({a: 1, f: 2, c: 3}),
+					db3 = new Collection([{name: "Koba"}, {name: "Andrey"}]);
 					
 					equal(db.sort("", true).get(0), 5, "simple test: array");
 					equal(db.reverse().get(0), 1, "reverse: array");
@@ -29,7 +29,7 @@
 </head>
 
 <body>
-	<h1 id="qunit-header">C: sort test</h1>
+	<h1 id="qunit-header">Collection: sort test</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>

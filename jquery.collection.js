@@ -156,7 +156,7 @@ var Collection = (function ($) {
 				default : {
 					// children (>)
 					if (type === C.CHILDREN && context[i].substring(0, C.ORDER[0].length) !== C.ORDER[0]) {
-						if (i === last && value !== undefined) {
+						if (i === last && typeof value !== 'undefined') {
 							// set new value
 							if (del === false) {
 								obj[context[i]] = C.expr(value, obj[context[i]]);
@@ -179,7 +179,7 @@ var Collection = (function ($) {
 						
 						// if array
 						if (C.isArray(obj)) {
-							if (i === last && value !== undefined) {
+							if (i === last && typeof value !== 'undefined') {
 								// if eq >= 0
 								if (pos >= 0) {
 									// set new value
@@ -221,7 +221,7 @@ var Collection = (function ($) {
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
-										if (i === last && value !== undefined) {
+										if (i === last && typeof value !== 'undefined') {
 											// set new value
 											if (del === false) {
 												obj[key] = C.expr(value, obj[key]);
@@ -242,7 +242,7 @@ var Collection = (function ($) {
 			}
 		}
 		
-		if (value !== undefined) { return C; }
+		if (typeof value !== 'undefined') { return C; }
 		return obj;
 	};
 		
@@ -1248,7 +1248,7 @@ var Collection = (function ($) {
 
 			key;
 		
-		if ($.isPlainObject(objID)) {
+		if (C.isPlainObject(objID)) {
 			for (key in objID) {
 				if (objID.hasOwnProperty(key)) {
 					// update, if the ID is 'active'
@@ -1414,7 +1414,7 @@ var Collection = (function ($) {
 	 * db.dropCollection('test', 'active'); // removed the 'test' and' test2'
 	 */
 	C.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
-		deleteVal = deleteVal === undefined ? false : deleteVal;
+		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
 		
 		var
 			active = this.dObj.active,
@@ -1425,7 +1425,7 @@ var Collection = (function ($) {
 			tmpTmpStr = 'tmp' + upperCase,
 
 			activeID = this._getActiveID(stackName),
-			tmpArray = !objID ? activeID ? [activeID] : [] : $.isArray(objID) || $.isPlainObject(objID) ? objID : [objID],
+			tmpArray = !objID ? activeID ? [activeID] : [] : C.isArray(objID) || C.isPlainObject(objID) ? objID : [objID],
 			
 			key;
 		
@@ -1433,7 +1433,7 @@ var Collection = (function ($) {
 			for (key in tmpArray) {
 				if (tmpArray.hasOwnProperty(key)) {
 					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
-						if (resetVal === undefined) {
+						if (typeof resetVal === 'undefined') {
 							// if the parameter is on the stack, then remove it too
 							if (activeID) { delete sys[tmpTmpStr][activeID]; }
 							
@@ -1447,7 +1447,7 @@ var Collection = (function ($) {
 							active[stackName] = resetVal;
 						}
 					} else {
-						if (resetVal === undefined) {
+						if (typeof resetVal === 'undefined') {
 							delete sys[tmpTmpStr][tmpArray[key]];
 							
 							// if the parameter stack is active, it will still be removed
@@ -1465,7 +1465,7 @@ var Collection = (function ($) {
 				}
 			}
 		} else {
-			if (resetVal === undefined) {
+			if (typeof resetVal === 'undefined') {
 				// if the parameter is on the stack, then remove it too
 				if (activeID) { delete sys[tmpTmpStr][activeID]; }
 				
@@ -1500,7 +1500,7 @@ var Collection = (function ($) {
 	 * db.resetContext();
 	 */
 	C.prototype._reset = function (stackName, objID, resetVal) {
-		resetVal = resetVal === undefined ? false : resetVal;
+		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
 
 		return this._drop(stackName, objID || '', '', resetVal);
 	};
@@ -1545,7 +1545,7 @@ var Collection = (function ($) {
 		var upperCase = C.toUpperCase(stackName, 1);
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveID(stackName)) { return true; }
-		if (this.dObj.sys['tmp' + upperCase][id] !== undefined) { return true; }
+		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
 
 		return false;
 	};
@@ -1727,8 +1727,8 @@ var Collection = (function ($) {
 	 * @return {Colletion Object}
 	 */
 	C.prototype._setOne = function (context, value, id) {
-		context = $.isExists(context) ? context.toString() : "";
-		value = value === undefined ? "" : value;
+		context = C.isExists(context) ? context.toString() : "";
+		value = typeof value === 'undefined' ? "" : value;
 		id = id || "";
 		//
 		var activeContext = this._getActiveParam("context");
@@ -1751,7 +1751,7 @@ var Collection = (function ($) {
 	 * @return {mixed}
 	 */
 	C.prototype._getOne = function (context, id) {
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		//
 		return C.byLink(this._get("collection", id || ""), this._getActiveParam("context") + C.CHILDREN + context);
 	};	
@@ -1762,40 +1762,53 @@ var Collection = (function ($) {
 	/**
 	 * add new element to the collection (in context)<br/>
 	 * events: onAdd
-	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} [cValue] - new element or context for sourceID
-	 * @param {String} [propType="push"] - add type (constants: "push", "unshift") or property name (can use "->unshift" - the result will be similar to work for an array "unshift")
-	 * @param {String} [activeID=this.ACTIVE] - collection ID
-	 * @param {String} [sourceID] - source ID (if move)
-	 * @param {Boolean} [del=false] - if "true", remove source element
+	 * @param {mixed|Context} [cValue] — new element or context for sourceID
+	 * @param {String} [propType='push'] — add type (constants: 'push', 'unshift') or property name (can use '->unshift' - the result will be similar to work for an array unshift)
+	 * @param {String} [activeID=this.ACTIVE] — collection ID
+	 * @param {String} [sourceID] — source ID (if move)
+	 * @param {Boolean} [del=false] — if true, remove source element
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([]).pushCollection('test', {});
+	 *
+	 * // add a new element to the active collection
+	 * db.add(1);
+	 * // unshift
+	 * db.add(2, 'unshift');
+	 *
+	 * // add a new element to the 'test'
+	 * db.add(1, 'b', 'test');
+	 * // unshift
+	 * db.add(2, 'a->unshift', 'test');
+	 * // without specifying the key name
+	 * db.add(3, '', 'test'); // key == collection length
+	 * db.add(4, 'unshift', 'test');
 	 */
 	C.prototype.add = function (cValue, propType, activeID, sourceID, del) {
-		cValue = cValue !== undefined ? cValue : "";
-		propType = propType || "push";
-		activeID = activeID || "";
+		cValue = typeof cValue !== 'undefined' ? cValue : '';
+		propType = propType || 'push';
+		activeID = activeID || '';
 		del = del || false;
-		//
+		
 		var cObj, sObj, lCheck, e = null;
 		
 		// events
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
-		cObj = C.byLink(this._get("collection", activeID), this._getActiveParam("context"));
+		cObj = C.byLink(this._get('collection', activeID), this._getActiveParam('context'));
 		
-		//
-		if (typeof cObj !== "object")  { throw new Error("unable to set property!"); }
+		if (typeof cObj !== 'object')  { throw new Error('unable to set property!'); }
 		
 		// simple add
 		if (!sourceID) {
 			// add type
-			if ($.isPlainObject(cObj)) {
-				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + C.METHOD_SEPARATOR + "unshift" : propType;
+			if (C.isPlainObject(cObj)) {
+				propType = propType === 'push' ? this.length(cObj) : propType === 'unshift' ? this.length(cObj) + C.METHOD_SEPARATOR + 'unshift' : propType;
 				lCheck = C.addElementToObject(cObj, propType.toString(), cValue);
 			} else {
 				lCheck = true;
@@ -1804,12 +1817,12 @@ var Collection = (function ($) {
 		
 		// move
 		} else {
-			cValue = $.isExists(cValue) ? cValue.toString() : "";
-			sObj = C.byLink(this._get("collection", sourceID || ""), cValue);
+			cValue = C.isExists(cValue) ? cValue.toString() : '';
+			sObj = C.byLink(this._get('collection', sourceID || ''), cValue);
 			
 			// add type
-			if ($.isPlainObject(cObj)) {
-				propType = propType === "push" ? this.length(cObj) : propType === "unshift" ? this.length(cObj) + C.METHOD_SEPARATOR + "unshift" : propType;
+			if (C.isPlainObject(cObj)) {
+				propType = propType === 'push' ? this.length(cObj) : propType === 'unshift' ? this.length(cObj) + C.METHOD_SEPARATOR + 'unshift' : propType;
 				lCheck = C.addElementToObject(cObj, propType.toString(), sObj);
 			} else {
 				lCheck = true;
@@ -1817,11 +1830,11 @@ var Collection = (function ($) {
 			}
 			
 			// delete element
-			if (del === true) { this.disable("context")._removeOne(cValue, sourceID).enable("context"); }
+			if (del === true) { this.disable('context')._removeOne(cValue, sourceID).enable('context'); }
 		}
 		
-		// rewrites links (if used for an object "unshift")
-		if (lCheck !== true) { this._setOne("", lCheck, activeID); }
+		// rewrites links (if used for an object 'unshift')
+		if (lCheck !== true) { this._setOne('', lCheck, activeID); }
 	
 		return this;
 	};
@@ -1829,28 +1842,26 @@ var Collection = (function ($) {
 	/**
 	 * add new element to the collection (push)(in context)<br/>
 	 * events: onAdd
-	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} obj - new element
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {mixed} obj — new element
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	C.prototype.push = function (obj, id) {
-		return this.add(obj, "", id || "");
+		return this.add(obj, '', id || '');
 	};
 	/**
 	 * add new element to the collection (unshift)(in context)<br/>
 	 * events: onAdd
-	 * <i class="single"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} obj - new element
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {mixed} obj — new element
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
 	C.prototype.unshift = function (obj, id) {
-		return this.add(obj, "unshift", id || "");
+		return this.add(obj, 'unshift', id || '');
 	};	
 	/////////////////////////////////
 	//// single methods (remove)
@@ -1865,7 +1876,7 @@ var Collection = (function ($) {
 	 * @return {Colletion Object}
 	 */
 	C.prototype._removeOne = function (context, id) {
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		var activeContext = this._getActiveParam("context"), e = null;
 		
 		// events
@@ -1890,17 +1901,17 @@ var Collection = (function ($) {
 		id = id || "";
 		var key, i;
 		//
-		if ($.isPlainObject(objContext)) {
+		if (C.isPlainObject(objContext)) {
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
-					if ($.isArray(objContext[key])) {
+					if (C.isArray(objContext[key])) {
 						for (i = objContext[key].length; (i -= 1) > -1;) {
 							this._removeOne(objContext[key][i], key);
 						}
 					} else { this._removeOne(objContext[key], key); }
 				}
 			}
-		} else if ($.isArray(objContext)) {
+		} else if (C.isArray(objContext)) {
 			for (i = objContext.length; (i -= 1) > -1;) { this._removeOne(objContext[i], id); }
 		} else { this._removeOne(objContext, id); }
 	
@@ -1944,7 +1955,7 @@ var Collection = (function ($) {
 	 * @return {Colletion Object}
 	 */
 	C.prototype.concat = function (obj, context, id) {
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		id = id || "";
 		//
 		var cObj, e = null;	
@@ -1959,10 +1970,10 @@ var Collection = (function ($) {
 		//
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!") }
 		
-		if ($.isPlainObject(cObj)) {
-			$.extend(true, cObj, obj)
-		} else if ($.isArray(cObj)) {
-			if ($.isArray(obj)) {
+		if (C.isPlainObject(cObj)) {
+			C.extend(true, cObj, obj)
+		} else if (C.isArray(cObj)) {
+			if (C.isArray(obj)) {
 				cObj = Array.prototype.concat(cObj, obj);
 				this._setOne(context, cObj, id);
 			} else { this.add(obj, "push", id); }
@@ -1993,7 +2004,7 @@ var Collection = (function ($) {
 		
 		//
 		if (!$.isFunction(filter)) {
-			if ((C.isString(filter) && !this._filterTest(filter) && !$.isExists(id)) || $.isArray(filter) || $.isPlainObject(filter)) {
+			if ((C.isString(filter) && !this._filterTest(filter) && !C.isExists(id)) || C.isArray(filter) || C.isPlainObject(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -2021,11 +2032,11 @@ var Collection = (function ($) {
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
 		
 		//
-		if (filter === false && cObj.length !== undefined) {
+		if (filter === false && typeof cObj.length !== 'undefined') {
 			cOLength = cObj.length;
 		} else {
 			cOLength = 0;
-			if (cObj.length !== undefined) {
+			if (typeof cObj.length !== 'undefined') {
 				cObj.forEach(function (el, i, obj) {
 					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
@@ -2065,7 +2076,7 @@ var Collection = (function ($) {
 		filter = filter || "";
 		
 		// if id is Boolean
-		if ($.isBoolean(id)) {
+		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
@@ -2101,7 +2112,7 @@ var Collection = (function ($) {
 		}
 		
 		//
-		if ($.isArray(cObj)) {
+		if (C.isArray(cObj)) {
 			//
 			if (indexOf !== false) {
 				cloneObj = cObj.slice(indexOf);
@@ -2183,7 +2194,7 @@ var Collection = (function ($) {
 	 */
 	C.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		// if id is Boolean
-		if ($.isBoolean(id)) {
+		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
@@ -2241,7 +2252,7 @@ var Collection = (function ($) {
 		//
 		var cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
-		if ($.isArray(cObj) && cObj.indexOf) {
+		if (C.isArray(cObj) && cObj.indexOf) {
 			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
 			//
 			return cObj.indexOf(searchElement);
@@ -2263,14 +2274,14 @@ var Collection = (function ($) {
 		//
 		var el, cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
-		if ($.isArray(cObj) && cObj.lastIndexOf) {
+		if (C.isArray(cObj) && cObj.lastIndexOf) {
 			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }
 			//
 			return cObj.lastIndexOf(searchElement);
 		} else {
 			el = this.search(function (el) { return el === searchElement; }, id, "", "", "", fromIndex);
 			//
-			return el[el.length - 1] !== undefined ? el[el.length - 1] : -1;
+			return typeof el[el.length - 1] !== 'undefined' ? el[el.length - 1] : -1;
 		}
 	};	
 	/////////////////////////////////
@@ -2297,7 +2308,7 @@ var Collection = (function ($) {
 			}
 	
 		// if id is Boolean
-		if ($.isBoolean(id)) {
+		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
@@ -2437,7 +2448,7 @@ var Collection = (function ($) {
 	C.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
 		moveFilter = moveFilter || "";
 		deleteType = deleteType === false ? false : true;
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		//
 		sourceID = sourceID || "";
 		activeID = activeID || "";
@@ -2451,7 +2462,7 @@ var Collection = (function ($) {
 		//
 		var
 			deleteList = [],
-			aCheckType = $.isArray(C.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
+			aCheckType = C.isArray(C.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
 	
 			elements, e = null;
 		
@@ -2470,7 +2481,7 @@ var Collection = (function ($) {
 		this.enable("context");
 		
 		// move
-		if (mult === true && $.isArray(elements)) {
+		if (mult === true && C.isArray(elements)) {
 			elements.forEach(function (el) {
 				this.add(context + C.CHILDREN + el, aCheckType === true ? addType : el + C.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
@@ -2499,7 +2510,7 @@ var Collection = (function ($) {
 	 * @return {Colletion Object}
 	 */
 	C.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
 	};
 	/**
 	 * copy elements (in context)<br />
@@ -2524,7 +2535,7 @@ var Collection = (function ($) {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
 	};
 	/**
 	 * copy element (in context)<br />
@@ -2540,7 +2551,7 @@ var Collection = (function ($) {
 	 * @return {Colletion Object}
 	 */
 	C.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || "", $.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -2567,11 +2578,11 @@ var Collection = (function ($) {
 		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
-			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
+			} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ""); }
 		
 		//
 		elements = this.search.apply(this, arguments);
-		if (!$.isArray(elements)) {
+		if (!C.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else { for (i = elements.length; (i -= 1) > -1;) { this._removeOne(elements[i], id); } }
 	
@@ -2932,7 +2943,7 @@ var Collection = (function ($) {
 		//
 		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		if (typeof cObj === "object") {
-			if ($.isArray(cObj)) {
+			if (C.isArray(cObj)) {
 				cObj.sort(sort);
 			} else {
 				if (field) {
@@ -2989,7 +3000,7 @@ var Collection = (function ($) {
 		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
 		//
 		if (typeof cObj === "object") {
-			if ($.isArray(cObj)) {
+			if (C.isArray(cObj)) {
 				cObj.reverse();
 			} else { this._setOne("", reverseObject(cObj), id); }
 		} else { throw new Error("incorrect data type!"); }
@@ -3286,7 +3297,7 @@ var Collection = (function ($) {
 		}
 		
 		// if filter is string
-		if (!$.isArray(filter)) {
+		if (!C.isArray(filter)) {
 			//
 			if (this._getActiveParam("filter") && _tmpFilter) {
 				filter = this.ACTIVE + " && (" + filter + ")";
@@ -3545,7 +3556,7 @@ var Collection = (function ($) {
 	 * @return {mixed}
 	 */
 	C.prototype._getActiveParam = function (name) {
-		var param = this.dObj.sys.flags.use[name] === undefined || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : false;
+		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : false;
 		
 		if (name === 'context') { return param ? param.toString() : ''; }
 		return param;
@@ -3717,19 +3728,19 @@ var Collection = (function ($) {
 			result = "", action, e = null;
 			
 		// easy implementation
-		if ($.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
+		if (C.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if (!$.isExists(param)) { param = {page: this._get("page")}; }
+		} else if (!C.isExists(param)) { param = {page: this._get("page")}; }
 		
 		//
-		$.extend(true, opt, this.dObj.active, param);
+		C.extend(true, opt, this.dObj.active, param);
 		if (param) { opt.page = C.expr(opt.page, this._get("page")); }
 		if (opt.page < 1) { opt.page = 1; }
 		
 		//
 		opt.collection = C.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = C.isString(opt.template) ? this._get("template", opt.template) : opt.template;
-		opt.cache = $.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
+		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		
 		if (clear === true) { opt.cache.iteration = false; }
@@ -3760,14 +3771,14 @@ var Collection = (function ($) {
 		opt.numberBreak = opt.numberBreak || cOLength;
 		
 		// without cache
-		if ($.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+		if (C.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !opt.numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		
 		// with cache
-		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
+		} else if (C.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !numberBreak ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :

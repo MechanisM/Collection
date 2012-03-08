@@ -11,7 +11,7 @@
 	 * @return {mixed}
 	 */
 	C.prototype._getActiveParam = function (name) {
-		var param = this.dObj.sys.flags.use[name] === undefined || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : false;
+		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : false;
 		
 		if (name === 'context') { return param ? param.toString() : ''; }
 		return param;

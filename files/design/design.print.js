@@ -43,19 +43,19 @@
 			result = "", action, e = null;
 			
 		// easy implementation
-		if ($.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
+		if (C.isExists(param) && (C.isString(param) || $.isNumeric(param))) {
 			param = {page: param};
-		} else if (!$.isExists(param)) { param = {page: this._get("page")}; }
+		} else if (!C.isExists(param)) { param = {page: this._get("page")}; }
 		
 		//
-		$.extend(true, opt, this.dObj.active, param);
+		C.extend(true, opt, this.dObj.active, param);
 		if (param) { opt.page = C.expr(opt.page, this._get("page")); }
 		if (opt.page < 1) { opt.page = 1; }
 		
 		//
 		opt.collection = C.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
 		opt.template = C.isString(opt.template) ? this._get("template", opt.template) : opt.template;
-		opt.cache = $.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
+		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
 		//
 		
 		if (clear === true) { opt.cache.iteration = false; }
@@ -86,14 +86,14 @@
 		opt.numberBreak = opt.numberBreak || cOLength;
 		
 		// without cache
-		if ($.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+		if (C.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !opt.numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
 			//
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		
 		// with cache
-		} else if ($.isArray(cObj) && opt.cache.iteration === true) {
+		} else if (C.isArray(cObj) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !numberBreak ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :

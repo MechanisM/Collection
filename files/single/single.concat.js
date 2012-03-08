@@ -16,7 +16,7 @@
 	 * @return {Colletion Object}
 	 */
 	C.prototype.concat = function (obj, context, id) {
-		context = $.isExists(context) ? context.toString() : "";
+		context = C.isExists(context) ? context.toString() : "";
 		id = id || "";
 		//
 		var cObj, e = null;	
@@ -31,10 +31,10 @@
 		//
 		if (typeof cObj !== "object") { throw new Error("incorrect data type!") }
 		
-		if ($.isPlainObject(cObj)) {
-			$.extend(true, cObj, obj)
-		} else if ($.isArray(cObj)) {
-			if ($.isArray(obj)) {
+		if (C.isPlainObject(cObj)) {
+			C.extend(true, cObj, obj)
+		} else if (C.isArray(cObj)) {
+			if (C.isArray(obj)) {
 				cObj = Array.prototype.concat(cObj, obj);
 				this._setOne(context, cObj, id);
 			} else { this.add(obj, "push", id); }

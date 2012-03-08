@@ -54,7 +54,7 @@
 		}
 		
 		// if filter is string
-		if (!$.isArray(filter)) {
+		if (!C.isArray(filter)) {
 			//
 			if (this._getActiveParam("filter") && _tmpFilter) {
 				filter = this.ACTIVE + " && (" + filter + ")";

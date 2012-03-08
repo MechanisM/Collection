@@ -23,7 +23,7 @@
 			}
 	
 		// if id is Boolean
-		if ($.isBoolean(id)) {
+		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;

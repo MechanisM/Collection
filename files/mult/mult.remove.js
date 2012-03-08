@@ -24,11 +24,11 @@
 		if ($.isNumeric(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
 				return this._removeOne(filter, id || "");
-			} else if ($.isArray(filter) || $.isPlainObject(filter)) { return this._remove(filter, id || ""); }
+			} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ""); }
 		
 		//
 		elements = this.search.apply(this, arguments);
-		if (!$.isArray(elements)) {
+		if (!C.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else { for (i = elements.length; (i -= 1) > -1;) { this._removeOne(elements[i], id); } }
 	

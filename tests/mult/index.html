@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>C: mult test</title>
+	<title>Collection: mult test</title>
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
@@ -11,7 +11,7 @@
 		$(function () {
 			module("core");
 			test("length", function () {
-				var db = new C({first: [[1, 2, {second: 3}], 2, 3], last: 2});
+				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3], last: 2});
 				db.pushCollection({table1: null, table2: "GO!"});
 				
 				equal(db.length([1, 2, 3]), 3, "array");
@@ -44,9 +44,9 @@
 			module("forEach methods");
 			test("forEach", function () {
 				var
-					db = new C([1, 2, 3, 4]),
-					db2 = new C([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-					db3 = new C([1, 2, 3, 4]);
+					db = new Collection([1, 2, 3, 4]),
+					db2 = new Collection([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+					db3 = new Collection([1, 2, 3, 4]);
 				
 				equal(db.forEach(function (el, i, data) {
 					data[i] += 1;
@@ -70,38 +70,38 @@
 				}, "", "", "", 2, 2, 5).get("eq(-1)"), 10, "with indexOf");
 			});
 			test("search", function () {
-				var db = new C([1, 2, 3, 4]);
+				var db = new Collection([1, 2, 3, 4]);
 				
 				equal(db.search(function (el, i, data) {
 					return el === 1;
 				})[0], 0, "simple search");
 			});
 			test("get", function () {
-				var db = new C([1, 2, 3, 4]);
+				var db = new Collection([1, 2, 3, 4]);
 				
 				equal(db.get(function (el, i, data) {
 					return el === 1;
 				})[0], 1, "simple return");
 			});
 			test("set", function () {
-				var db = new C([1, 2, 3, 4]);
+				var db = new Collection([1, 2, 3, 4]);
 				
 				equal(db.set(false, 2).get()[0], 2, "simple replace");
 				equal(db.set(false, "+=2").get()[0], 4, "simple replace: += 2");
 			});
 			test("remove", function () {
-				var db = new C([1, 2, 3, 4]);
+				var db = new Collection([1, 2, 3, 4]);
 				
 				equal(db.remove(function (el, i, data) {
 					return el === 1;
 				}).get("0"), 2, "simple remove");
 			});
 			test("move", function () {
-				var db = new C([1, 2, 3, 4]).pushCollection("table1", [1, 2, []]);
+				var db = new Collection([1, 2, 3, 4]).pushCollection("table1", [1, 2, []]);
 				equal(db.newContext("eq(-1)").move(true, "", "active", "table1").getCollection().length, 0, "simple move");
 			});
 			test("group", function () {
-				var db = new C([
+				var db = new Collection([
 					{name: "Koba", age: 22, lvl: 78},
 					{name: "Over", age: 27, lvl: 85},
 					{name: "Drobila", age: 27, lvl: 80},
@@ -117,7 +117,7 @@
 </head>
 
 <body>
-	<h1 id="qunit-header">C: mult test</h1>
+	<h1 id="qunit-header">Collection: mult test</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>

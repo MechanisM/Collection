@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>C: stack test</title>
+	<title>Collection: stack test</title>
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
@@ -10,12 +10,12 @@
 	<script type="text/javascript">
 		$(function () {
 			test("_new", function () {
-				var db = new C([[1, 2, 3, 4, 5], 2, 3, 4], {context: "0"});
+				var db = new Collection([[1, 2, 3, 4, 5], 2, 3, 4], {context: "0"});
 				equal(+db._new("context", ""), 4, "simple test");
 			});
 			//
 			test("_update", function () {
-				var db = new C([1, 2])._push("collection", "table1", [1, 2, 3]);
+				var db = new Collection([1, 2])._push("collection", "table1", [1, 2, 3]);
 				
 				equal(db
 					._update("collection", [1, 2, 3])
@@ -30,14 +30,14 @@
 			});
 			//
 			test("_get", function () {
-				var db = new C([1, 2])._push("collection", "table1", [1, 2, 3]);
+				var db = new Collection([1, 2])._push("collection", "table1", [1, 2, 3]);
 				
 				equal(db._get("collection").length, 2, "simple test");
 				equal(db._get("collection", "table1").length, 3, "with stack");
 			});
 			//
 			test("_push", function () {
-				var db = new C();
+				var db = new Collection();
 				
 				equal(db
 					._push("collection", "table1", [1, 2, 3])
@@ -63,7 +63,7 @@
 			});
 			//
 			test("_set", function () {
-				var db = new C()._push("collection", "table1", [1, 2]);
+				var db = new Collection()._push("collection", "table1", [1, 2]);
 				
 				equal(db
 					._set("collection", "table1")
@@ -72,7 +72,7 @@
 			});
 			//
 			test("_back", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("collection", {table1: [1, 2], table2: [1]});
 				
 				equal(db
@@ -84,7 +84,7 @@
 			});
 			//
 			test("_backIf", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("collection", {table1: [1, 2], table2: [1]});
 				
 				equal(db
@@ -98,7 +98,7 @@
 			});
 			//
 			test("_drop", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("collection", {table1: [1, 2], table2: [1]})
 					._set("collection", "table1");
 
@@ -109,7 +109,7 @@
 			});
 			//
 			test("_reset", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("context", {table1: "0", table2: "1"})
 					._set("context", "table1");
 
@@ -120,7 +120,7 @@
 			});
 			//
 			test("_resetTo", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("context", {table1: "0", table2: "1"})
 					._set("context", "table1");
 
@@ -131,7 +131,7 @@
 			});
 			//
 			test("_exists", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("collection", {table1: [1, 2], table2: [1]})
 					._set("collection", "table1");
 
@@ -140,7 +140,7 @@
 			});
 			//
 			test("_getActiveID", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("collection", {table1: [1, 2], table2: [1]})
 					._set("collection", "table1");
 
@@ -148,7 +148,7 @@
 			});
 			//
 			test("_active", function () {
-				var db = new C()
+				var db = new Collection()
 					._push("collection", {table1: [1, 2], table2: [1]})
 					._set("collection", "table1");
 
@@ -159,7 +159,7 @@
 </head>
 
 <body>
-	<h1 id="qunit-header">C: stack test</h1>
+	<h1 id="qunit-header">Collection: stack test</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>
