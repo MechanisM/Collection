@@ -1,5 +1,5 @@
 ﻿/**
- * <p>C — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
+ * <p>Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
  *
  * <strong>Glossary:</strong>
  * <ul>
@@ -44,7 +44,7 @@
  * @param {C|Selector} [collection=null] — collection or selector for field "target"
  * @param {Plain Object} [uProp=C.fields.dObj.active] — additional properties
  */
-var Collection = (function ($) {
+var Collection = (function () {
 	'use strict';
 	
 	var C;	
@@ -720,168 +720,181 @@ var Collection = (function ($) {
 		]
 	};	
 	/////////////////////////////////
-	//// jQuery methods (core)
+	//// DOM methods (core)
 	/////////////////////////////////
 	
-	/**
-	 * jQuery 
-	 * 
-	 * @namespace
-	 */
-	$ = $;
+	// returns the data attributes of the node
+	/** @private */
+	var dataAttr = function (el) {
+		var attr = el.attributes, data = {};
+		
+		if (attr && attr.length > 0) {
+			Array.prototype.forEach.call(attr, function (el) {
+				if (el.name.substring(0, 5) === 'data-') {
+					data[el.name] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
+				}
+			});
+		}
+		
+		return data;
+	};
 	
 	/**
-	 * jQuery prototype
+	 * create an instance of the Collection on the basis of the DOM node (using QSA Selector Engine)
 	 * 
-	 * @namespace
-	 */
-	$.fn = $.fn;
-	
-	/**
-	 * jQuery collection
-	 * 
-	 * @this {jQuery Object}
+	 * @this {Collection}
+	 * @param {String} selector — CSS selector
 	 * @param {Object} prop — user's preferences
+	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
-	$.fn.collection = function (prop) {
+	C.fromNodes = function (selector, prop) {
+		if (!JSON || !JSON.parse) { throw new Error('object JSON is not defined!'); }
+		
 		var
-			stat = $.fn.collection.stat,
+			stat = C.fromNodes.stat,
+			
+			// returns the text content of the node
 			/** @private */
-			text = function (elem) {
-				elem = elem.childNodes;
-				//
+			text = function (el) {
+				el = el.childNodes;
+				
 				var
-					eLength = elem.length,
+					eLength = el.length,
 					i = -1,
-					str = "";
-				//
+					str = '';
+				
 				while ((i += 1) < eLength) {
-					if (elem[i].nodeType === 3 && C.trim(elem[i].textContent)) { str += elem[i].textContent; }
+					if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
 				}
-				//
+				
 				if (str) { return str; }
-	
+				
 				return false;
 			},
+			
+			// converts one level nodes in the collection
 			/** @private */
-			inObj = function (elem) {
+			inObj = function (el) {
 				var array = [];
-				//
-				elem.each(function (n) {
-					var
-						$this = $(this),
-						data = $this.data(),
-						classes = $this.attr("class") ? $this.attr("class").split(" ") : "",
-	
-						txt = text(this),
-						key;
-	
-					array.push({});
-					for (key in data) { if (data.hasOwnProperty(key)) { array[n][key] = data[key]; } }
-					//
-					if (classes) {
-						array[n][stat.classes] = {};
-						classes.forEach(function (el) {
-							array[n][stat.classes][el] = el;
-						});
+				
+				// each node
+				Array.prototype.forEach.call(el, function (el) {
+					// not for text nodes
+					if (el.nodeType === 1) {
+						var
+							data = dataAttr(el),
+							classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
+							
+							txt = text(el),
+							key,
+							
+							i = array.length;
+						
+						// data
+						array.push({});
+						for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }
+						
+						// classes
+						if (classes) {
+							array[i][stat.classes] = {};
+							classes.forEach(function (el) {
+								array[i][stat.classes][el] = el;
+							});
+						}
+						
+						if (el.childNodes.length !== 0) { array[i][stat.childNodes] = inObj(el.childNodes); }
+						if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }
 					}
-					//
-					if ($this.children().length !== 0) { array[n][stat.childNodes] = inObj($this.children()); }
-					if (txt !== false) { array[n][stat.val] = txt.replace(/[\r\t\n]/g, " "); }
 				});
 	
 				return array;
 			},
-			data = inObj(this);
-		//
+			data = inObj(qsa.querySelectorAll(selector));
+		
 		if (prop) { return new C(data, prop); }
-	
 		return new C(data);
 	};
+	
 	// values by default
-	if (!$.fn.collection.stat) {
-		$.fn.collection.stat = {
-			val: "val",
-			childNodes: "childNodes",
-			classes: "classes"
+	if (!C.fromNodes.stat) {
+		C.fromNodes.stat = {
+			val: 'val',
+			childNodes: 'childNodes',
+			classes: 'classes'
 		};
 	};
 	/////////////////////////////////
-	//// jQuery methods (compiler templates)
+	//// DOM methods (compiler templates)
 	/////////////////////////////////
 	
 	/**
 	 * compile the template
 	 * 
-	 * @this {jQuery Object}
+	 * @this {Collection}
+	 * @param {String} selector — CSS selector
 	 * @throw {Error}
 	 * @return {Function}
 	 */
-	$.fn.ctplCompile = function () {
-		if (this.length === 0) { throw new Error("DOM element does't exist!"); }
+	C.ctplCompile = function (selector) {
+		C.isString(selector) && (selector = qsa.querySelectorAll(selector));
+		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
 		var
-			html = this.html(),
+			html = C.isArray(selector) ? selector[0].innerHTML : selector.innerHTML,
 			elem = html
-				.replace(/\/\*.*?\*\//g, "")
-				.split("?>")
-				.join("<?js")
-				.replace(/[\r\t\n]/g, " ")
-				.split("<?js"),
+				.replace(/\/\*.*?\*\//g, '')
+				.split('?>')
+				.join('<?js')
+				.replace(/[\r\t\n]/g, ' ')
+				.split('<?js'),
 			
 			eLength = elem.length,
-			resStr = "var key = i, result = ''; ";
-		//
+			resStr = 'var key = i, result = ""; ';
+		
 		elem.forEach(function (el, i) {
 			if (i === 0 || i % 2 === 0) {
-				resStr += "result +='" + el + "';";
-			} else { resStr += el.split("echo").join("result +="); }
+				resStr += 'result +="' + el + '";';
+			} else { resStr += el.split('echo').join('result +='); }
 		});
 		
-		return new Function("el", "i", "data", "cOLength", "cObj", "id", resStr + " return result;");
+		return new Function('el', 'i', 'data', 'cOLength', 'cObj', 'id', resStr + ' return result;');
 	};
 	
 	/**
 	 * make templates
 	 * 
-	 * @this {jQuery Object}
-	 * @param {Collection Object} cObj — an instance of C
+	 * @this {Collection Object}
+	 * @param {String} selector — CSS selector
 	 * @return {Collection Object}
 	 */
-	$.fn.ctplMake = function (cObj) {
-		this.each(function () {
+	C.prototype.ctplMake = function (selector) {
+		(selector = qsa.querySelectorAll(selector)).forEach(function (el) {
 			var
-				$this = $(this),
-				data = $this.data("ctpl"), key,
-				
-				prefix = data.prefix ? data.prefix + "_" : "";
-			//
-			if (C.isString(data)) { data = $.parseJSON(data); }
-			//
-			cObj._push("template", prefix + data.name, $this.ctplCompile());
-			if (data.set && data.set === true) { cObj._set("template", prefix + data.name); }
+				data = dataAttr(el).ctpl, key,
+				prefix = data.prefix ? data.prefix + '_' : '';
 			
-			//
+			cObj._push('template', prefix + data.name, C.ctplCompile(el));
+			if (data.set && data.set === true) { cObj._set('template', prefix + data.name); }
+			
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
-				if (key === "prefix" || key === "set" || key === "print" || key === "name" || key === "collection") { continue; }
-				if (key === "target" || key === "pager") { data[key] = $(data[key]); }
+				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
+				if (C.find(key, ['target', 'pager'])) { data[key] = qsa.querySelectorAll(data[key]); }
 				
 				cObj._push(key, prefix + data.name, data[key]);
 				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
-				//
-				if (key === "filter" || key === "parser" ) { data[key] = prefix + data.name; }
+				
+				if (C.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
 			}
-			//
+			
 			if (data.print && data.print === true) {
 				data.template = data.name;
 				if (!data.target) {
-					cObj._push("target", prefix + data.name, $this.parent());
-					if (data.set && data.set === true) { cObj._set("target", prefix + data.name); }
+					cObj._push('target', prefix + data.name, el.parentNode);
+					if (data.set && data.set === true) { cObj._set('target', prefix + data.name); }
 				}
 				
-				//
 				cObj.print(data);
 			}
 		});
@@ -3872,26 +3885,25 @@ var Collection = (function ($) {
 		
 	/**
 	 * templating (in context)
-	 * <i class="design"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - object settings
-	 * @param {C|String} [param.collection=this.ACTIVE] - collection or collection ID
-	 * @param {String} [param.context] - additional context
-	 * @param {Number} [param.page=this.ACTIVE] - page number
-	 * @param {Template} [param.template=this.ACTIVE] - template
-	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] - number of entries on per page (if "false", returns all records)
-	 * @param {Number} [param.pageBreak=this.ACTIVE] - number of displayed pages (navigation, > 2)
-	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] - element to output the result ("false" - if you print a variable)
-	 * @param {String} [param.variable=this.ACTIVE] - variable ID (if param.target === false)
-	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {Parser} [param.parser=this.ACTIVE] - parser function or string expression
-	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] - if "true", the last iteration is taken from cache
-	 * @param {Selector} [param.calculator=this.ACTIVE] - the selector for the calculation of the number of records
-	 * @param {Selector} [param.pager=this.ACTIVE] - selector to pager (navigation)
-	 * @param {String} [param.appendType=this.ACTIVE] - type additions to the DOM
-	 * @param {String} [param.resultNull=this.ACTIVE] - text displayed if no results
-	 * @param {Boolean} [clear=false] - clear the cache
+	 * @param {C|String} [param.collection=this.ACTIVE] — collection or collection ID
+	 * @param {String} [param.context] — additional context
+	 * @param {Number} [param.page=this.ACTIVE] — page number
+	 * @param {Template} [param.template=this.ACTIVE] — template
+	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] — number of entries on per page (if 'false', returns all records)
+	 * @param {Number} [param.pageBreak=this.ACTIVE] — number of displayed pages (navigation, > 2)
+	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] — element to output the result ('false' - if you print a variable)
+	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
+	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression
+	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if 'true', the last iteration is taken from cache
+	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
+	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)
+	 * @param {String} [param.appendType=this.ACTIVE] — type additions to the DOM
+	 * @param {String} [param.resultNull=this.ACTIVE] — text displayed if no results
+	 * @param {Boolean} [clear=false] — clear the cache
 	 * @return {Colletion Object}
 	 */
 	C.prototype.print = function (param, clear) {
@@ -3907,28 +3919,28 @@ var Collection = (function ($) {
 			//
 			numberBreak,
 			//
-			result = "", action, e = null;
+			result = '', action, e = null;
 			
 		// easy implementation
 		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
 			param = {page: param};
-		} else if (!C.isExists(param)) { param = {page: this._get("page")}; }
+		} else if (!C.isExists(param)) { param = {page: this._get('page')}; }
 		
 		//
 		C.extend(true, opt, this.dObj.active, param);
-		if (param) { opt.page = C.expr(opt.page, this._get("page")); }
+		if (param) { opt.page = C.expr(opt.page, this._get('page')); }
 		if (opt.page < 1) { opt.page = 1; }
 		
 		//
-		opt.collection = C.isString(opt.collection) ? this._get("collection", opt.collection) : opt.collection;
-		opt.template = C.isString(opt.template) ? this._get("template", opt.template) : opt.template;
-		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam("cache");
+		opt.collection = C.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
+		opt.template = C.isString(opt.template) ? this._get('template', opt.template) : opt.template;
+		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
 		//
 		
 		if (clear === true) { opt.cache.iteration = false; }
 		//
-		checkPage = this._get("page") - opt.page;
-		this._update("page", opt.page);
+		checkPage = this._get('page') - opt.page;
+		this._update('page', opt.page);
 		
 		// template function 
 		/** @private */
@@ -3945,11 +3957,11 @@ var Collection = (function ($) {
 		};
 		
 		// get collection
-		cObj = C.byLink(opt.collection, this._getActiveParam("context") + C.CHILDREN + ((param && param.context) || ""));
+		cObj = C.byLink(opt.collection, this._getActiveParam('context') + C.CHILDREN + ((param && param.context) || ''));
 		cOLength = this.length();
 		
 		// number of records per page
-		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam("filter")));
+		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam('filter')));
 		opt.numberBreak = opt.numberBreak || cOLength;
 		
 		// without cache
@@ -3983,7 +3995,7 @@ var Collection = (function ($) {
 			}
 			
 			//
-			tmpFilter.name && this._drop("filter", "__tmp:" + tmpFilter.name);
+			tmpFilter.name && this._drop('filter', '__tmp:' + tmpFilter.name);
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		
@@ -3991,21 +4003,21 @@ var Collection = (function ($) {
 		if (opt.cache) {
 			if (checkPage !== 0 && opt.cache.iteration !== false) {
 				// cache
-				this._get("cache").firstIteration = first;
-				this._get("cache").lastIteration = inc + 1;
+				this._get('cache').firstIteration = first;
+				this._get('cache').lastIteration = inc + 1;
 			}
-			if (opt.cache.autoIteration === true) { this._get("cache").iteration = true; }
+			if (opt.cache.autoIteration === true) { this._get('cache').iteration = true; }
 		}
 		
 		// parser
 		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);
-		tmpParser.name && this._drop("parser", "__tmp:" + tmpParser.name);
+		tmpParser.name && this._drop('parser', '__tmp:' + tmpParser.name);
 		
 		// append to DOM
 		if (opt.target === false) {
 			if (!opt.variable) {
-				this._new("variable", result);
-			} else { this._push("variable", opt.variable, result); }
+				this._new('variable', result);
+			} else { this._push('variable', opt.variable, result); }
 			
 			return this;
 		} else { opt.target[opt.appendType](result); }
@@ -4023,7 +4035,7 @@ var Collection = (function ($) {
 			this.onIPage && (e = this.onIPage.apply(this, arguments));
 			if (e === false) { return this; }
 			
-			this._update("page", (opt.page -= 1)).print(opt, true, true);
+			this._update('page', (opt.page -= 1)).print(opt, true, true);
 		} else { this.easyPage(opt); }
 		
 		return this;
@@ -4035,14 +4047,14 @@ var Collection = (function ($) {
 	 * nav: first, prev, next, last, numberSwitch, pageList
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Object} [param] - object settings
+	 * @param {Object} [param] — object settings
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 */
 	C.prototype.easyPage = function (param) {
 		var
 			self = this,
-			str = "",
+			str = '',
 			
 			//
 			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak),
@@ -4050,7 +4062,7 @@ var Collection = (function ($) {
 			/** @private */
 			genPage = function (data, classes, i, nSwitch) {
 				nSwitch = nSwitch || false;
-				var key, str = "<" + (data.tag || "span") + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
+				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
 				//
 				if (data.attr) {
 					for (key in data.attr) {
@@ -4060,13 +4072,13 @@ var Collection = (function ($) {
 					}
 				}
 				//
-				if ((!nSwitch && i === param.page) || (nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || "active") + '"'; }
-				return str += ">" + i + "</" + (data.tag || "span") + ">";
+				if ((!nSwitch && i === param.page) || (nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }
+				return str += '>' + i + '</' + (data.tag || 'span') + '>';
 			},
 			
 			/** @private */
 			wrap = function (val, tag) {
-				if (tag === "select") {
+				if (tag === 'select') {
 					return '<option value="' + val + '">' + val + '</option>';
 				}
 				
@@ -4076,55 +4088,55 @@ var Collection = (function ($) {
 			//
 			i, j = 0, from, to;
 		//
-		param.pager.find(".ctm").each(function () {
+		param.pager.find('.ctm').each(function () {
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
-			str = "";
+			str = '';
 			
 			//
 			var
 				$this = $(this),
 				tag = this.tagName.toLowerCase(),
-				type = tag === "input" ? "val" : "html",
+				type = tag === 'input' ? 'val' : 'html',
 				
-				data = $this.data("ctm"),
+				data = $this.data('ctm'),
 				classes = data.classes;
 			//
 			if (data.nav) {
 				// attach event
-				if (C.find(data.nav, ["first", "prev", "next", "last"]) && !$this.data("ctm-delegated")) {
+				if (C.find(data.nav, ['first', 'prev', 'next', 'last']) && !$this.data('ctm-delegated')) {
 					$this.click(function () {
 						var $this = $(this);
 						//
-						if (!$this.hasClass(data.classes && data.classes.disabled || "disabled")) {
-							data.nav === "first" && (param.page = 1);
-							data.nav === "prev" && (param.page = "-=1");
-							data.nav === "next" && (param.page = "+=1");
-							data.nav === "last" && (param.page = nmbOfPages);
+						if (!$this.hasClass(data.classes && data.classes.disabled || 'disabled')) {
+							data.nav === 'first' && (param.page = 1);
+							data.nav === 'prev' && (param.page = '-=1');
+							data.nav === 'next' && (param.page = '+=1');
+							data.nav === 'last' && (param.page = nmbOfPages);
 							//
 							self.print(param);
 						}
-					}).data("ctm-delegated", true);
+					}).data('ctm-delegated', true);
 				}
 				
 				//
-				if ((C.find(data.nav, ["first", "prev"]) && param.page === 1) || (C.find(data.nav, ["next", "last"]) && param.finNumber === param.nmbOfEntries)) {
-					$this.addClass(classes && classes.disabled || "disabled");
-				} else if (C.find(data.nav, ["first", "prev", "next", "last"])) { $this.removeClass(classes && classes.disabled || "disabled"); }
+				if ((C.find(data.nav, ['first', 'prev']) && param.page === 1) || (C.find(data.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
+					$this.addClass(classes && classes.disabled || 'disabled');
+				} else if (C.find(data.nav, ['first', 'prev', 'next', 'last'])) { $this.removeClass(classes && classes.disabled || 'disabled'); }
 				
 				// numberBreak switch
-				if (data.nav === "numberSwitch") {
+				if (data.nav === 'numberSwitch') {
 					data.val.forEach(function (el) {
-						if (tag === "select") {
+						if (tag === 'select') {
 							str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
 						} else {
-							str += genPage(data, classes || "", el, true);
+							str += genPage(data, classes || '', el, true);
 						}
 					});
 				}
 				
 				// page
-				if (data.nav === "pageList") {
-					if (tag === "select") {
+				if (data.nav === 'pageList') {
+					if (tag === 'select') {
 						for (i = 0; (i += 1) <= nmbOfPages;) {
 							str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
 						} 
@@ -4146,29 +4158,29 @@ var Collection = (function ($) {
 							//
 							for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
 								if (j === param.pageBreak && i !== param.page) { break; }
-								str += genPage(data, classes || "", i);
+								str += genPage(data, classes || '', i);
 							}
-						} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || "", i); } }
+						} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || '', i); } }
 					}
 				}
 				
 				//
-				if (data.nav === "numberSwitch" || data.nav === "pageList") {	
+				if (data.nav === 'numberSwitch' || data.nav === 'pageList') {	
 					// to html
 					$this.html(str);
 					
 					// delegate event
-					if (!$this.data("ctm-delegated")) {
-						if (tag !== "select") {
-							$this.on("click", data.tag || "span", function () {
+					if (!$this.data('ctm-delegated')) {
+						if (tag !== 'select') {
+							$this.on('click', data.tag || 'span', function () {
 								var $this = $(this);
 								
 								//
-								if (param.page !== $this.data("page")) {
-									if (data.nav === "pageList") {
-										param.page = +$this.data("page");
+								if (param.page !== $this.data('page')) {
+									if (data.nav === 'pageList') {
+										param.page = +$this.data('page');
 									} else {
-										self._push("numberBreak", param.name || "", +$this.data("number-break"));
+										self._push('numberBreak', param.name || '', +$this.data('number-break'));
 										delete param.numberBreak;
 									}
 
@@ -4178,15 +4190,15 @@ var Collection = (function ($) {
 						
 						// if select
 						} else {
-							$this.on("change", function () {
-								var $this = $(this).children(":selected");
+							$this.on('change', function () {
+								var $this = $(this).children(':selected');
 								
 								//
 								if (param.page !== $this.val()) {
-									if (data.nav === "pageList") {
+									if (data.nav === 'pageList') {
 										param.page = +$this.val();
 									} else {
-										self._push("numberBreak", param.name || "", +$this.val());
+										self._push('numberBreak', param.name || '', +$this.val());
 										delete param.numberBreak;
 									}
 									
@@ -4196,24 +4208,24 @@ var Collection = (function ($) {
 						}
 						
 						//
-						$this.data("ctm-delegated", true);
+						$this.data('ctm-delegated', true);
 					}
 				}
 			
 			// info
 			} else if (data.info) {
 				if (param.nmbOfEntriesInPage === 0) {
-					$this.addClass(classes && classes.noData || "no-data");
-				} else { $this.removeClass(classes && classes.noData || "no-data"); }
+					$this.addClass(classes && classes.noData || 'no-data');
+				} else { $this.removeClass(classes && classes.noData || 'no-data'); }
 				
 				//
 				switch (data.info) {
-					case "page" : { $this[type](wrap(param.page, tag)); } break;
-					case "total" : { $this[type](wrap(param.nmbOfEntries, tag)); } break;
-					case "from" : { $this[type](wrap((param.page - 1) * param.numberBreak + 1, tag)); } break;
-					case "to" : { $this[type](wrap(param.finNumber, tag)); } break;
-					case "inPage" : { $this[type](wrap(param.nmbOfEntriesInPage, tag)); } break;
-					case "nmbOfPages" : { $this[type](wrap(nmbOfPages, tag)); } break;
+					case 'page' : { $this[type](wrap(param.page, tag)); } break;
+					case 'total' : { $this[type](wrap(param.nmbOfEntries, tag)); } break;
+					case 'from' : { $this[type](wrap((param.page - 1) * param.numberBreak + 1, tag)); } break;
+					case 'to' : { $this[type](wrap(param.finNumber, tag)); } break;
+					case 'inPage' : { $this[type](wrap(param.nmbOfEntriesInPage, tag)); } break;
+					case 'nmbOfPages' : { $this[type](wrap(nmbOfPages, tag)); } break;
 				}
 			}
 		});
@@ -4226,61 +4238,60 @@ var Collection = (function ($) {
 		
 	/**
 	 * generating the table
-	 * <i class="design"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] — td number to a string
-	 * @param {String} [tag="div"] — tag name
+	 * @param {String} [tag='div'] — tag name
 	 * @param {Boolean} [empty=true] — display empty cells
 	 * @return {Colletion Object}
 	 */
-	C.prototype.genTable = function (count, tag, empty) {
+	C.prototype.genTable = function (target, count, tag, empty) {
 		count = count || 4;
-		tag = tag || "div";
+		tag = tag || 'div';
 		empty = empty === false ? false : true;
-		//
+		
 		var
 			i = 1, j,
 	
-			target = this._get("target"),
+			target = this._get('target'),
 			tagLength = target.find(tag).length,
 	
-			queryString = "";
+			queryString = '';
 		
 		target.find(tag).each(function (n) {
-			if (this.tagName !== "td") { $(this).wrap("<td></td>"); }
-			//
+			if (this.tagName !== 'td') { $(this).wrap('<td></td>'); }
+			
 			if (i === count) {
-				queryString = "";
-				//
+				queryString = '';
+				
 				for (j = -1; (j += 1) < count;) {
-					queryString += "td:eq(" + (n - j) + ")";
-					if (j !== (count - 1)) { queryString += ","; }
+					queryString += 'td:eq(' + (n - j) + ')';
+					if (j !== (count - 1)) { queryString += ','; }
 				}
-				//
-				target.find(queryString).wrapAll("<tr></tr>");
+				
+				target.find(queryString).wrapAll('<tr></tr>');
 				i = 0;
 			} else if (n === (tagLength - 1) && i !== count) {
-				queryString = "";
-				//
+				queryString = '';
+				
 				for (j = -1, i; (j += 1) < i;) {
-					queryString += "td:eq(" + (n - j) + ")";
-					if (j !== (i - 1)) { queryString += ","; }
+					queryString += 'td:eq(' + (n - j) + ')';
+					if (j !== (i - 1)) { queryString += ','; }
 				}
 				i -= 1;
-				target.find(queryString).wrapAll("<tr></tr>");	
-				//
+				target.find(queryString).wrapAll('<tr></tr>');	
+				
 				if (empty === true) {
-					queryString = "";
-					for (; (i += 1) < count;) { queryString += "<td></td>"; }
-					target.find("tr:last").append(queryString);
+					queryString = '';
+					for (; (i += 1) < count;) { queryString += '<td></td>'; }
+					target.find('tr:last').append(queryString);
 				}
 			}
 			i += 1;
 		});
-		if (target[0].tagName !== "table") { target.children("tr").wrapAll("<table></table>"); }
+		if (target[0].tagName !== 'table') { target.children('tr').wrapAll('<table></table>'); }
 	
 		return this;
 	};	return C;
-})(jQuery);
+})();
 if (typeof $C === 'undefined') { var $C = Collection; }//

@@ -18,8 +18,8 @@ copy	^
 		+ mult\core.array.prototype.js ^
 		+ core\core.prototype.js ^
 		^
-		+ jquery\collection.js ^
-		+ jquery\compile.js ^
+		+ dom\collection.js ^
+		+ dom\compile.js ^
 		^
 		+ fields\fields.js ^
 		+ fields\fields.sys.js ^
@@ -61,7 +61,7 @@ copy	^
 		^
 		+ txt\closure.end.txt ^
 		^
-		..\jquery.collection.js
+		..\collection.js
 
 goto start
 --------------------------------------
@@ -69,6 +69,6 @@ compression
 --------------------------------------
 :start
 
-java -jar compiler.jar --js ..\jquery.collection.js --js_output_file ..\jquery.collection.gcc.js
-copy txt\head.compile.txt + ..\jquery.collection.gcc.js + txt\end.txt ..\jquery.collection.min.js
-del ..\jquery.collection.gcc.js
+java -jar compiler.jar --js ..\collection.js --js_output_file ..\collection.gcc.js
+copy txt\head.compile.txt + ..\collection.gcc.js + txt\end.txt ..\collection.min.js
+del ..\collection.gcc.js

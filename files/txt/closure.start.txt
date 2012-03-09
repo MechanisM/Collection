@@ -1,5 +1,5 @@
 
-var Collection = (function ($) {
+var Collection = (function () {
 	'use strict';
 	
 	var C;

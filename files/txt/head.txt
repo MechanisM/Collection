@@ -1,5 +1,5 @@
 ﻿/**
- * <p>C — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
+ * <p>Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
  *
  * <strong>Glossary:</strong>
  * <ul>
