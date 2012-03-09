@@ -6,26 +6,37 @@
 	/**
 	 * sort collection (in context)<br />
 	 * events: onSort
-	 * <i class="sort"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} [field] - field name
-	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
-	 * @param {Function|Boolean} [fn=toUpperCase] - callback function ("false" if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Context} [field] — field name
+	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([
+	 *	{name: 'Andrey', age: 22},
+	 *	{name: 'John', age: 19},
+	 *	{name: 'Bon', age: 25},
+	 *	{name: 'Bill', age: 15}
+	 * ]);
+	 * // sort by name
+	 * db.sort('name');
+	 * // sort by age (reverse)
+	 * db.sort('age', true);
 	 */
 	C.prototype.sort = function (field, rev, fn, id) {
-		field = field || "";
+		field = field || '';
 		rev = rev || false;
-		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
+		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
 			if (C.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};
-		id = id || "";
-		//
+		id = id || '';
+		
 		var
 			self = this,
 			cObj,
@@ -45,12 +56,13 @@
 					b = fn(b);
 				}
 				
-				//
 				if (rev !== self.SHUFFLE) {	
 					if (a < b) { return r * -1; }
 					if (a > b) { return r; }
 					
 					return 0;
+				
+				// random sort
 				} else { return Math.round(Math.random() * 2  - 1); }
 			},
 			
@@ -85,7 +97,7 @@
 						});
 					}
 				}
-				field = field === true ? "value" : "value" + C.CHILDREN + field;
+				field = field === true ? 'value' : 'value' + C.CHILDREN + field;
 				sortedValues.sort(sort);
 				//
 				for (key in sortedValues) {
@@ -93,25 +105,27 @@
 				}
 	
 				return sortedObj;
-			}, e = null;
+			}, e;
 		
 		// events
 		this.onSort && (e = this.onSort.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
-		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
-		if (typeof cObj === "object") {
-			if (C.isArray(cObj)) {
-				cObj.sort(sort);
-			} else {
-				if (field) {
-					cObj = sortObject(cObj);
-				} else { cObj = sortObjectByKey(cObj); }
-				//
-				this._setOne("", cObj, id);
-			}
-		} else { throw new Error("incorrect data type!"); }
+		// get by link
+		cObj = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
+		// throw an exception if the element is not an object
+		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+
+		if (C.isArray(cObj)) {
+			cObj.sort(sort);
+		} else {
+			if (field) {
+				cObj = sortObject(cObj);
+			} else { cObj = sortObjectByKey(cObj); }
+			
+			this._setOne('', cObj, id);
+		}
 		
 		return this;
 	};
