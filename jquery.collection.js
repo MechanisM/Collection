@@ -1886,7 +1886,7 @@ var Collection = (function ($) {
 	/////////////////////////////////
 		
 	/**
-	 * remove an element from the collection by link (in context)
+	 * remove an one element from the collection by link (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context} [context] — link
@@ -1909,7 +1909,7 @@ var Collection = (function ($) {
 		return this;
 	};
 	/**
-	 * remove an element from the collection by links (in context)
+	 * remove an elements from the collection by link (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context|Array|Plain Object} objContext — link, array of links or object (collection ID: array of links)
@@ -1958,11 +1958,6 @@ var Collection = (function ($) {
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
-	 *
-	 * @example
-	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
-	 * db.concat([4, 5, 6]); // [1, 2, 3, 4, 5, 6]
-	 * db.concat({c: 3, d: 4}, '', 'test'); // {a: b, b: 2, c: 3, d: 4}
 	 *
 	 * @example
 	 * var db = new $C([1, 2, 3]).pushCollection('test', {a: 1, b: 2});
@@ -2023,34 +2018,39 @@ var Collection = (function ($) {
 	
 	/**
 	 * returns the length of the collection (in context)
-	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|C|Boolean} [filter=this.ACTIVE] - filter function, string expression, collection or true (if disabled)
-	 * @param {String|C} [id=this.ACTIVE] - collection ID or collection
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression, collection or true (if disabled)
+	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @throw {Error}
 	 * @return {Number}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.length(); // returns 6
+	 * db.length(':i % 3 === 0'); // returns 2
 	 */
 	C.prototype.length = function (filter, id) {
-		filter = filter || "";
-		//
+		filter = filter || '';
 		var
 			tmpObj = {},
 			cObj, aCheck, key, cOLength;
 		
-		//
+		// overload
+		// if the filter is a collection
 		if (!C.isFunction(filter)) {
-			if ((C.isString(filter) && !this._filterTest(filter) && !C.isExists(id)) || C.isArray(filter) || C.isPlainObject(filter)) {
+			if ((C.isString(filter) && !this._filterTest(filter) && !C.isExists(id)) || C.isCollection(filter)) {
 				id = filter;
 				filter = false;
 			}
 		}
 		
-		//
+		// overloads
+		// if the ID is not specified, it is taken active collection
 		if (!id) {
-			cObj = this._get("collection");
+			cObj = this._get('collection');
 		} else if (C.isString(id)) {
-			cObj = this._get("collection", id);
+			cObj = this._get('collection', id);
 		} else {
 			aCheck = true;
 			cObj = id;
@@ -2059,57 +2059,65 @@ var Collection = (function ($) {
 		// if cObj is null
 		if (cObj === null) { return 0; }
 		// if cObj is collection
-		if (aCheck !== true) { cObj = C.byLink(cObj, this._getActiveParam("context")); }
+		if (aCheck !== true) { cObj = C.byLink(cObj, this._getActiveParam('context')); }
 		
 		// if cObj is String
 		if (C.isString(cObj)) { return cObj.length; }
 		
-		// throw error
-		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
+		// throw an exception if the element is not an object
+		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
 		
-		//
+		// if no filter and the original object is an array
 		if (filter === false && typeof cObj.length !== 'undefined') {
 			cOLength = cObj.length;
 		} else {
+			// calclate length
 			cOLength = 0;
+			// if array
 			if (typeof cObj.length !== 'undefined') {
 				cObj.forEach(function (el, i, obj) {
 					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
 					}
 				}, this);
+			// if plain object
 			} else {
 				for (key in cObj) {
 					if (!cObj.hasOwnProperty(key)) { continue; }
-					//
+					
 					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						cOLength += 1;
 					}
 				}
 			}
 		}
-		//
-		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
+		
+		// remove the temporary filter
+		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
 		
 		return cOLength;
 	};
 	/**
 	 * forEach method (in context)
-	 * <i class="mult"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback - callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String|Boolean} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
-	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: 0)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: 0)
+	 * @param {Function} callback — function to test each element of the collection
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String|Boolean} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * // increase on 1 all elements of multiples of three
+	 * db.forEach(function (el, i, data) { data[i] += 1; }, ':i % 3 === 0');
 	 */
 	C.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
-		filter = filter || "";
+		filter = filter || '';
 		
 		// if id is Boolean
 		if (C.isBoolean(id)) {
@@ -2118,7 +2126,7 @@ var Collection = (function ($) {
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		} else { id = id || ""; }
+		} else { id = id || ''; }
 	
 		// values by default
 		mult = mult === false ? false : true;
@@ -2135,9 +2143,11 @@ var Collection = (function ($) {
 	
 			i, j = 0, res = false;
 		
-		//
-		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
-		if (typeof cObj !== "object") { throw new Error("incorrect data type!"); }
+		// get by link
+		cObj = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
+		// throw an exception if the element is not an object
+		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
 		
 		// length function
 		/** @private */
@@ -2145,16 +2155,15 @@ var Collection = (function ($) {
 			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
 			
 			return cOLength.val;
-		}
+		};
 		
-		//
+		
 		if (C.isArray(cObj)) {
-			//
+			// cut off the array to indicate the start
 			if (indexOf !== false) {
 				cloneObj = cObj.slice(indexOf);
 			} else { cloneObj = cObj; }
 			
-			//
 			cloneObj.some(function (el, i, obj) {
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
@@ -2168,16 +2177,16 @@ var Collection = (function ($) {
 						j += 1;
 					}
 				}
-				//
+				
 				if (res === true) { return true; }
 			}, this);
 		} else {
 			for (i in cObj) {
 				if (!cObj.hasOwnProperty(i)) { continue; }
-				//	
+					
 				if (count !== false && j === count) { break; }
 				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
-				//
+				
 				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
@@ -2187,29 +2196,34 @@ var Collection = (function ($) {
 						j += 1;
 					}
 				}
-				//
+				
 				if (res === true) { break; }
 			}
 		}
-		//
-		tmpObj.name && this._drop("filter", "__tmp:" + tmpObj.name);
-		//
+		
+		// remove the temporary filter
+		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
+		
 		cOLength = null;
 		
 		return this;
 	};
 	/**
-	 * some (in context)
-	 * <i class="mult"></i> 
+	 * performs an action only for one element of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback - callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Function} callback — function to test each element of the collection
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * // increase on 1 one element of multiples of three
+	 * db.some(function (el, i, data) { data[i] += 1; }, ':i % 3 === 0');
 	 */
 	C.prototype.some = function (callback, filter, id) {
-		return this.forEach(callback, filter || "", id || "", false);
+		return this.forEach(callback, filter || '', id || '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (search)
@@ -2217,35 +2231,40 @@ var Collection = (function ($) {
 	
 	/**
 	 * search for elements using filter (returns a reference to elements)(in context)
-	 * <i class="mult search"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
-	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Number|Array}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.search(':i % 3 === 0');
+	 * db.search(function (el, i, data) { return i % 3 === 0; });
 	 */
 	C.prototype.search = function (filter, id, mult, count, from, indexOf) {
-		// if id is Boolean
+		// if id is Boolean (overload)
 		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		} else { id = id || ""; }
+		} else { id = id || ''; }
 	
 		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-		//
+		
 		var
 			result = mult === true ? [] : -1,
+			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
@@ -2254,69 +2273,81 @@ var Collection = (function ($) {
 				
 				return true;
 			};
-		//
-		this.forEach(action, filter || "", id, mult, count, from, indexOf);
+		
+		this.forEach(action, filter || '', id, mult, count, from, indexOf);
 	
 		return result;
 	};
 	/**
-	 * search for element using filter (returns a reference to element)(in context)
-	 * <i class="mult search"></i>
+	 * search for one element using filter (returns a reference to element)(in context)
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Number|Array}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.searchOne(':i % 3 === 0');
+	 * db.searchOne(function (el, i, data) { return i % 3 === 0; });
 	 */
 	C.prototype.searchOne = function (filter, id) {
-		return this.search(filter || "", id || "", false);
+		return this.search(filter || '', id || '', false);
 	};
 	
 	/**
-	 * indexOf (in context)<br/>
-	 * <i class="mult search"></i>
+	 * returns the first index/key at which a given element can be found in the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} searchElement - element to locate in the array
-	 * @param {fromIndex} [fromIndex=0] - the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {mixed} searchElement — element to locate in the array
+	 * @param {fromIndex} [fromIndex=0] — the index at which to start searching backwards
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Number|String}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
+	 * db.indexOf(1); // returns 0
+	 * db.indexOf(1, 2); // returns 6
 	 */
 	C.prototype.indexOf = function (searchElement, fromIndex, id) {
-		id = id || "";
-		fromIndex = fromIndex || "";
-		//
-		var cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
-		//
+		id = id || '';
+		fromIndex = fromIndex || '';
+		
+		var cObj = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
 		if (C.isArray(cObj) && cObj.indexOf) {
 			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
-			//
+			
 			return cObj.indexOf(searchElement);
-		} else { return this.search(function (el) { return el === searchElement; }, id, false, "", "", fromIndex); }
+		} else { return this.search(function (el) { return el === searchElement; }, id, false, '', '', fromIndex); }
 	};
 	/**
-	 * lastIndexOf (in context)
-	 * <i class="mult search"></i>
+	 * returns the last index/key at which a given element can be found in the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} searchElement - element to locate in the array
-	 * @param {fromIndex} [fromIndex=0] - the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {mixed} searchElement — element to locate in the array
+	 * @param {fromIndex} [fromIndex=0] — the index at which to start searching backwards
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Number|String}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
+	 * db.lastIndexOf(1); // returns 6
+	 * db.lastIndexOf(1, 2); // returns -1
 	 */
 	C.prototype.lastIndexOf = function (searchElement, fromIndex, id) {
-		id = id || "";
-		fromIndex = fromIndex || "";
-		//
-		var el, cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
-		//
+		id = id || '';
+		fromIndex = fromIndex || '';
+		
+		var el, cObj = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
 		if (C.isArray(cObj) && cObj.lastIndexOf) {
 			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }
-			//
+			
 			return cObj.lastIndexOf(searchElement);
 		} else {
-			el = this.search(function (el) { return el === searchElement; }, id, "", "", "", fromIndex);
-			//
+			el = this.search(function (el) { return el === searchElement; }, id, '', '', '', fromIndex);
+			
 			return typeof el[el.length - 1] !== 'undefined' ? el[el.length - 1] : -1;
 		}
 	};	
@@ -2325,41 +2356,48 @@ var Collection = (function ($) {
 	/////////////////////////////////
 	
 	/**
-	 * get the items using a filter or a link (in context)
-	 * <i class="mult get"></i> 
+	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
-	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] - maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {mixed}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.get('eq(-1) > c');
+	 * db.get(':i % 3 === 0');
+	 * db.get(function (el, i, data) { return i % 3 === 0; });
 	 */
 	C.prototype.get = function (filter, id, mult, count, from, indexOf) {
+		// overload
 		if (C.isNumber(filter) || (arguments.length < 2 && C.isString(filter)
 			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
-				return this._getOne(filter, id || "");
+				return this._getOne(filter, id || '');
 			}
 	
-		// if id is Boolean
+		// if id is Boolean (overload)
 		if (C.isBoolean(id)) {
 			indexOf = from;
 			from = count;
 			count = mult;
 			mult = id;
 			id = this.ACTIVE;
-		} else { id = id || ""; }
+		} else { id = id || ''; }
 	
 		// values by default
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-		//
+		
 		var
 			result = mult === true ? [] : -1,
+			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (mult === true) {
@@ -2368,40 +2406,52 @@ var Collection = (function ($) {
 	
 				return true;
 			};
-		//
-		this.forEach(action, filter || "", id, mult, count, from, indexOf);
+		
+		this.forEach(action, filter || '', id, mult, count, from, indexOf);
 	
 		return result;
 	};
 	/**
-	 * get the item using a filter or a link (in context)
-	 * <i class="mult get"></i> 
+	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {mixed}
+	 	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.getOne('eq(-1) > c');
+	 * db.getOne(':i % 3 === 0');
+	 * db.getOne(function (el, i, data) { return i % 3 === 0; });
 	 */
 	C.prototype.getOne = function (filter, id) {
-		return this.get(filter || "", id || "", false);
+		return this.get(filter || '', id || '', false);
 	};
 	/////////////////////////////////
 	//// mult methods (set)
 	/////////////////////////////////
 	
 	/**
-	 * set new value of the element (in context)<br/>
+	 * set new value of the elements (in context)<br/>
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback) 
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult.
-	 * @param {Boolean} [mult=true] — if 'false', then there will only be one iteration
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
 	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}]);
+	 * db.set('eq(-1) > c', 4);
+	 * db.set(':i == 3', {c: 5});
+	 * db.set(function (el, i, data) { return i == 3; }, {c: 6});
+	 * db.set(function (el, i, data) { return i == 3; }, function (el) { el.c = 7; });
 	 */
 	C.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		// overload
@@ -2440,20 +2490,32 @@ var Collection = (function ($) {
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.setOne('eq(-1) > c', 4);
+	 * db.setOne(':i % 3 === 0', {c: 5});
+	 * db.setOne(function (el, i, data) { return i % 3 === 0; }, {c: 6});
+	 * db.setOne(function (el, i, data) { return i % 3 === 0; }, function (el) { el.c = 7; });
 	 */
 	C.prototype.setOne = function (filter, replaceObj, id) {
 		return this.set(filter || '', replaceObj, id || '', false);
 	};
 	
 	/**
-	 * map (in context)<br/>
+	 * pass each element in the current matched set through a function (in context)<br/>
 	 * events: onSet
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback) 
+	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6]);
+	 * //replace each even-numbered element on the value of the sine
+	 * db.map(Math.sin, ':el % 2 === 0');
 	 */
 	C.prototype.map = function (replaceObj, filter, id) {
 		return this.set(filter || '', replaceObj, id || '');
@@ -2463,41 +2525,44 @@ var Collection = (function ($) {
 	/////////////////////////////////
 		
 	/**
-	 * move elements (in context)<br />
+	 * move elements from one collection to another (in context)<br />
 	 * events: onMove
-	 * <i class="mult move"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression, context (overload) or true (if disabled)
-	 * @param {Context} [context] - source context
-	 * @param {String} [sourceID=this.ACTIVE] - source ID
-	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
-	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
-	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] - maximum number of transfers (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
-	 * @param {Boolean} [deleteType=true] - if "true", remove source element
+	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Context} [context] — source context
+	 * @param {String} [sourceID=this.ACTIVE] — source ID
+	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Boolean} [deleteType=true] — if true, remove source element
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * db.move(':i % 2 !== 0', '', 'active', 'test');
 	 */
 	C.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
-		moveFilter = moveFilter || "";
+		moveFilter = moveFilter || '';
 		deleteType = deleteType === false ? false : true;
-		context = C.isExists(context) ? context.toString() : "";
-		//
-		sourceID = sourceID || "";
-		activeID = activeID || "";
-		//
-		addType = addType || "push";
-		//
+		context = C.isExists(context) ? context.toString() : '';
+		
+		sourceID = sourceID || '';
+		activeID = activeID || '';
+		
+		addType = addType || 'push';
+		
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-		//
+		
 		var
 			deleteList = [],
-			aCheckType = C.isArray(C.byLink(this._get("collection", activeID), this._getActiveParam("context"))),
+			aCheckType = C.isArray(C.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
 	
 			elements, e = null;
 		
@@ -2507,13 +2572,13 @@ var Collection = (function ($) {
 		if (e === false) { return this; }
 		
 		// search elements
-		this.disable("context");
-		//
+		this.disable('context');
+		
 		if (C.isNumber(moveFilter) || (C.isString(moveFilter) && !this._filterTest(moveFilter))) {
 			elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
-		//
-		this.enable("context");
+		
+		this.enable('context');
 		
 		// move
 		if (mult === true && C.isArray(elements)) {
@@ -2527,42 +2592,48 @@ var Collection = (function ($) {
 		}
 		
 		// delete element
-		if (deleteType === true) { this.disable("context")._remove(deleteList, sourceID).enable("context"); }
+		if (deleteType === true) { this.disable('context')._remove(deleteList, sourceID).enable('context'); }
 	
 		return this;
 	},
 	/**
-	 * move element (in context)<br />
+	 * move one element from one collection to another (in context)<br />
 	 * events: onMove
-	 * <i class="mult move"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression, context (overload) or true (if disabled)
-	 * @param {Context} context - source context
-	 * @param {String} [sourceID=this.ACTIVE] - source ID
-	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
-	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Context} context — source context
+	 * @param {String} [sourceID=this.ACTIVE] — source ID
+	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 */
 	C.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false);
 	};
 	/**
-	 * copy elements (in context)<br />
+	 * copy elements from one collection to another (in context)<br />
 	 * events: onCopy
-	 * <i class="mult copy"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
-	 * @param {Context} context - source context
-	 * @param {String} [sourceID=this.ACTIVE] - source ID
-	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
-	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
-	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] - maximum number of copies (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Context} context — source context
+	 * @param {String} [sourceID=this.ACTIVE] — source ID
+	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
 	 */
 	C.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
 		mult = mult === false ? false : true;
@@ -2570,103 +2641,121 @@ var Collection = (function ($) {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "push", mult, count, from, indexOf, false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count, from, indexOf, false);
 	};
 	/**
-	 * copy element (in context)<br />
+	 * copy one element from one collection to another (in context)<br />
 	 * events: onCopy
-	 * <i class="mult copy"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] - filter function, string expression or true (if disabled)
-	 * @param {Context} context - source context
-	 * @param {String} [sourceID=this.ACTIVE] - source ID
-	 * @param {String} [activeID=this.ACTIVE] - collection ID (transferred to)
-	 * @param {String} [addType="push"] - add type (constants: "push", "unshift")
+	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Context} context — source context
+	 * @param {String} [sourceID=this.ACTIVE] — source ID
+	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
 	 */
 	C.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || "", C.isExists(context) ? context.toString() : "", sourceID || "", activeID || "", addType || "", false, "", "", "", false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', '', '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
 	/////////////////////////////////
 	
 	/**
-	 * delete elements (in context)<br/>
+	 * remove an elements from the collection using filter or by link (in context)<br/>
 	 * events: onRemove
-	 * <i class="mult remove"></i> 
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] - filter function, string expression, context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID, if the id is a Boolean, it is considered as mult
-	 * @param {Boolean} [mult=true] - if "false", then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] - maximum number of deletions (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}]);
+	 * db.remove('eq(-1) > c');
+	 * db.remove(':i == 2');
+	 * db.remove(function (el, i, data) { return i == 1; });
 	 */
 	C.prototype.remove = function (filter, id, mult, count, from, indexOf) {
-		var elements, i, e = null;
-		
-		//
+		// overload
 		if (C.isNumber(filter) || (arguments.length < 2 && C.isString(filter)
-			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === null)) {
-				return this._removeOne(filter, id || "");
-			} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ""); }
+			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
+				return this._removeOne(filter, id || '');
+			} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ''); }
 		
-		//
-		elements = this.search.apply(this, arguments);
+		var elements = this.search.apply(this, arguments), i = elements.length;
+		
 		if (!C.isArray(elements)) {
 			this._removeOne(elements, id);
-		} else { for (i = elements.length; (i -= 1) > -1;) { this._removeOne(elements[i], id); } }
+		} else {
+			while ((i -= 1) > -1) { this._removeOne(elements[i], id); }
+		}
 	
 		return this;
 	};
 	/**
-	 * delete element (in context)<br/>
+	 * remove an one element from the collection using filter or by link (in context)<br/>
 	 * events: onRemove
-	 * <i class="mult remove"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] - filter function, string expression or context (overload)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}]);
+	 * db.removeOne(':i % 2 !== 0');
+	 * db.removeOne(function (el, i, data) { return i % 2 !== 0; });
 	 */
 	C.prototype.removeOne = function (filter, id) {
-		return this.remove(filter || "", id || "", false);
+		return this.remove(filter || '', id || '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (group)
 	/////////////////////////////////
 	
 	/**
-	 * group elements (in context)
-	 * <i class="mult group"></i> 
+	 * group the elements on the field or condition (the method returns a new collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
-	 * @param {Boolean} [link=false] - save link
+	 * @param {Context|Expression|Function} [field] — field name, string expression or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Boolean} [link=false] — save link
 	 * @return {Colletion}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
+	 * db.group();
+	 * // group all the even-numbered elements
+	 * db.group(':el % 2 === 0');
 	 */
 	C.prototype.group = function (field, filter, id, count, from, indexOf, link) {
-		field = this._exprTest((field = field || "")) ? this._compileFilter(field) : field;
-		id = id || "";
+		field = this._exprTest((field = field || '')) ? this._compileFilter(field) : field;
+		id = id || '';
 		link = link || false;
 	
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-		//
+		
 		var
 			fieldType = C.isString(field),
 			result = {},
+			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				var param = fieldType ? C.byLink(el, field) : field.apply(field, arguments);
@@ -2677,26 +2766,31 @@ var Collection = (function ($) {
 	
 				return true;
 			};
-		//
-		this.forEach(action, filter, id, "", count, from, indexOf);
+		
+		this.forEach(action, filter, id, '', count, from, indexOf);
 	
 		return result;
 	};
 	/**
-	 * group links (in context)
-	 * <i class="mult group"></i> 
+	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection)(in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Expression|Function} [field] - field name, string expression or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {Context|Expression|Function} [field] — field name, string expression or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Colletion}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
+	 * db.group();
+	 * // group all the even-numbered elements
+	 * db.group(':el % 2 === 0');
 	 */
 	C.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
-		return this.group(field || "", filter || "", id || "", count || "", from || "", indexOf || "", true);
+		return this.group(field || '', filter || '', id || '', count || '', from || '', indexOf || '', true);
 	};		
 	/////////////////////////////////
 	//// statistic methods
@@ -2704,7 +2798,6 @@ var Collection = (function ($) {
 	
 	/**
 	 * get statistic information
-	 * <i class="stat"></i>
 	 *  
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
@@ -2784,7 +2877,6 @@ var Collection = (function ($) {
 	
 	/**
 	 * get statistic information for group
-	 * <i class="stat"></i>
 	 *  
 	 * @this {Colletion Object}
 	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
@@ -2882,26 +2974,37 @@ var Collection = (function ($) {
 	/**
 	 * sort collection (in context)<br />
 	 * events: onSort
-	 * <i class="sort"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} [field] - field name
-	 * @param {Boolean} [rev=false] - reverce (contstants: "shuffle" - random order)
-	 * @param {Function|Boolean} [fn=toUpperCase] - callback function ("false" if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {Context} [field] — field name
+	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([
+	 *	{name: 'Andrey', age: 22},
+	 *	{name: 'John', age: 19},
+	 *	{name: 'Bon', age: 25},
+	 *	{name: 'Bill', age: 15}
+	 * ]);
+	 * // sort by name
+	 * db.sort('name');
+	 * // sort by age (reverse)
+	 * db.sort('age', true);
 	 */
 	C.prototype.sort = function (field, rev, fn, id) {
-		field = field || "";
+		field = field || '';
 		rev = rev || false;
-		fn = fn && fn !== true ? fn === false ? "" : fn : function (a) {
+		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
 			if (C.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};
-		id = id || "";
-		//
+		id = id || '';
+		
 		var
 			self = this,
 			cObj,
@@ -2921,12 +3024,13 @@ var Collection = (function ($) {
 					b = fn(b);
 				}
 				
-				//
 				if (rev !== self.SHUFFLE) {	
 					if (a < b) { return r * -1; }
 					if (a > b) { return r; }
 					
 					return 0;
+				
+				// random sort
 				} else { return Math.round(Math.random() * 2  - 1); }
 			},
 			
@@ -2961,7 +3065,7 @@ var Collection = (function ($) {
 						});
 					}
 				}
-				field = field === true ? "value" : "value" + C.CHILDREN + field;
+				field = field === true ? 'value' : 'value' + C.CHILDREN + field;
 				sortedValues.sort(sort);
 				//
 				for (key in sortedValues) {
@@ -2969,25 +3073,27 @@ var Collection = (function ($) {
 				}
 	
 				return sortedObj;
-			}, e = null;
+			}, e;
 		
 		// events
 		this.onSort && (e = this.onSort.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
-		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
-		if (typeof cObj === "object") {
-			if (C.isArray(cObj)) {
-				cObj.sort(sort);
-			} else {
-				if (field) {
-					cObj = sortObject(cObj);
-				} else { cObj = sortObjectByKey(cObj); }
-				//
-				this._setOne("", cObj, id);
-			}
-		} else { throw new Error("incorrect data type!"); }
+		// get by link
+		cObj = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
+		// throw an exception if the element is not an object
+		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+
+		if (C.isArray(cObj)) {
+			cObj.sort(sort);
+		} else {
+			if (field) {
+				cObj = sortObject(cObj);
+			} else { cObj = sortObjectByKey(cObj); }
+			
+			this._setOne('', cObj, id);
+		}
 		
 		return this;
 	};	
@@ -2998,47 +3104,52 @@ var Collection = (function ($) {
 	/**
 	 * reverse collection (in context)<br />
 	 * events: onReverse
-	 * <i class="sort"></i> 
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.reverse();
 	 */
 	C.prototype.reverse = function (id) {
-		id = id || "";
-		//
+		id = id || '';
+		
 		var
 			cObj,
+			
 			/** @private */
 			reverseObject = function (obj) {
 				var
 					sortedKeys = [],
 					sortedObj = {},
 					key;
-				//
+				
 				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
 				sortedKeys.reverse();
-				//
+				
 				for (key in sortedKeys) {
 					if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
 				}
 	
 				return sortedObj;
-			}, e = null;
+			}, e;
 		
 		// events
 		this.onReverse && (e = this.onReverse.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
-		cObj = C.byLink(this._get("collection", id), this._getActiveParam("context"));
-		//
-		if (typeof cObj === "object") {
-			if (C.isArray(cObj)) {
-				cObj.reverse();
-			} else { this._setOne("", reverseObject(cObj), id); }
-		} else { throw new Error("incorrect data type!"); }
+		// get by link
+		cObj = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
+		// throw an exception if the element is not an object
+		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		
+		if (C.isArray(cObj)) {
+			cObj.reverse();
+		} else { this._setOne('', reverseObject(cObj), id); }
 		
 		return this;
 	};	

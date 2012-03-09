@@ -86,8 +86,8 @@
 			test("set", function () {
 				var db = new Collection([1, 2, 3, 4]);
 				
-				equal(db.set(false, 2).get()[0], 2, "simple replace");
-				equal(db.set(false, "+=2").get()[0], 4, "simple replace: += 2");
+				equal(db.set(true, 2).get()[0], 2, "simple replace");
+				equal(db.set(true, "+=2").get()[0], 4, "simple replace: += 2");
 			});
 			test("remove", function () {
 				var db = new Collection([1, 2, 3, 4]);
