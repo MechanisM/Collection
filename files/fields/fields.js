@@ -118,7 +118,7 @@
 				 */
 				parser: false,
 				/**
-				 * DOM insert mode (jQuery methods)
+				 * DOM insert mode ('html', 'append', 'prepend')
 				 * 
 				 * @field
 				 * @param String
@@ -128,7 +128,7 @@
 				 * target (target to insert the result templating)
 				 * 
 				 * @field
-				 * @type jQuery Object
+				 * @type DOM Node
 				 */
 				target: null,
 				/**
@@ -142,7 +142,7 @@
 				 * pager (an interface element to display the navigation through the pages of)
 				 * 
 				 * @field
-				 * @type jQuery Object
+				 * @type DOM Node
 				 */
 				pager: null,
 				/**
