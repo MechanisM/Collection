@@ -46,12 +46,14 @@
 	C.prototype.ctplMake = function (selector) {
 		(selector = qsa.querySelectorAll(selector)).forEach(function (el) {
 			var
-				data = dataAttr(el).ctpl, key,
+				data = C._dataAttr(el).ctpl, key,
 				prefix = data.prefix ? data.prefix + '_' : '';
 			
+			// compile template
 			cObj._push('template', prefix + data.name, C.ctplCompile(el));
 			if (data.set && data.set === true) { cObj._set('template', prefix + data.name); }
 			
+			// compile
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
 				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
@@ -63,6 +65,7 @@
 				if (C.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
 			}
 			
+			// print template (if need)
 			if (data.print && data.print === true) {
 				data.template = data.name;
 				if (!data.target) {

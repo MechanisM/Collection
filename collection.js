@@ -293,7 +293,20 @@ var Collection = (function () {
 	//// data types
 	/////////////////////////////////
 	
-	var toString = function (obj) { return Object.prototype.toString.call(obj); };
+	/**
+	 * returns the value of the hidden properties of [[CLASS]]
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.class('test'); // returns '[object String]'
+	 * $C.class(2); // returns '[object Number]'
+	 */
+	C.toString = function (obj) {
+		if (typeof obj === 'undefined') { return C.prototype.collection(); }
+		return Object.prototype.toString.call(obj);
+	};
 	
 	/**
 	 * returns a Boolean indicating whether the object is a string
@@ -305,7 +318,7 @@ var Collection = (function () {
 	 * $C.isString('test'); // returns true
 	 * $C.isString(2); // returns false
 	 */
-	C.isString = function (obj) { return toString(obj) === '[object String]'; };
+	C.isString = function (obj) { return C.toString(obj) === '[object String]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a number
@@ -317,7 +330,7 @@ var Collection = (function () {
 	 * $C.isNumber('test'); // returns false
 	 * $C.isNumber(2); // returns true
 	 */
-	C.isNumber = function (obj) { return toString(obj) === '[object Number]'; };
+	C.isNumber = function (obj) { return C.toString(obj) === '[object Number]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a boolean
@@ -329,7 +342,7 @@ var Collection = (function () {
 	 * $C.isNumber('test'); // returns false
 	 * $C.isNumber(false); // returns true
 	 */
-	C.isBoolean = function (obj) { return toString(obj) === '[object Boolean]'; };
+	C.isBoolean = function (obj) { return C.toString(obj) === '[object Boolean]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a function
@@ -341,7 +354,7 @@ var Collection = (function () {
 	 * $C.isFunction('test'); // returns false
 	 * $C.isFunction(function () {}); // returns true
 	 */
-	C.isFunction = function (obj) { return toString(obj) === '[object Function]'; };
+	C.isFunction = function (obj) { return C.toString(obj) === '[object Function]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a array (not an array-like object)
@@ -353,7 +366,7 @@ var Collection = (function () {
 	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns false
 	 * $C.isArray([1, 2, 3]); // returns true
 	 */
-	C.isArray = function (obj) { return toString(obj) === '[object Array]'; };
+	C.isArray = function (obj) { return C.toString(obj) === '[object Array]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a plain object
@@ -366,7 +379,7 @@ var Collection = (function () {
 	 * $C.isPlainObject(new Date); // returns false
 	 * $C.isPlainObject(Date); // returns false
 	 */
-	C.isPlainObject = function (obj) { return toString(obj) === '[object Object]'; };
+	C.isPlainObject = function (obj) { return C.toString(obj) === '[object Object]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a collection
@@ -723,15 +736,20 @@ var Collection = (function () {
 	//// DOM methods (core)
 	/////////////////////////////////
 	
-	// returns the data attributes of the node
-	/** @private */
-	var dataAttr = function (el) {
+	/**
+	 * returns the data attributes of the node
+	 * 
+	 * @this {Collection}
+	 * @param {DOM Node} el — DOM node
+	 * @return {Object}
+	 */
+	C._dataAttr = function (el) {
 		var attr = el.attributes, data = {};
 		
 		if (attr && attr.length > 0) {
 			Array.prototype.forEach.call(attr, function (el) {
 				if (el.name.substring(0, 5) === 'data-') {
-					data[el.name] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
+					data[el.name.replace('data-', '')] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
 				}
 			});
 		}
@@ -783,7 +801,7 @@ var Collection = (function () {
 					// not for text nodes
 					if (el.nodeType === 1) {
 						var
-							data = dataAttr(el),
+							data = C._dataAttr(el),
 							classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
 							
 							txt = text(el),
@@ -871,12 +889,14 @@ var Collection = (function () {
 	C.prototype.ctplMake = function (selector) {
 		(selector = qsa.querySelectorAll(selector)).forEach(function (el) {
 			var
-				data = dataAttr(el).ctpl, key,
+				data = C._dataAttr(el).ctpl, key,
 				prefix = data.prefix ? data.prefix + '_' : '';
 			
+			// compile template
 			cObj._push('template', prefix + data.name, C.ctplCompile(el));
 			if (data.set && data.set === true) { cObj._set('template', prefix + data.name); }
 			
+			// compile
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
 				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
@@ -888,6 +908,7 @@ var Collection = (function () {
 				if (C.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
 			}
 			
+			// print template (if need)
 			if (data.print && data.print === true) {
 				data.template = data.name;
 				if (!data.target) {
@@ -1744,7 +1765,7 @@ var Collection = (function () {
 		context = C.isExists(context) ? context.toString() : '';
 		value = typeof value === 'undefined' ? '' : value;
 		id = id || '';
-		
+
 		var activeContext = this._getActiveParam('context'), e;
 		
 		// events

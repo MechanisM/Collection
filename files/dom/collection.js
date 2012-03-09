@@ -3,15 +3,20 @@
 	//// DOM methods (core)
 	/////////////////////////////////
 	
-	// returns the data attributes of the node
-	/** @private */
-	var dataAttr = function (el) {
+	/**
+	 * returns the data attributes of the node
+	 * 
+	 * @this {Collection}
+	 * @param {DOM Node} el — DOM node
+	 * @return {Object}
+	 */
+	C._dataAttr = function (el) {
 		var attr = el.attributes, data = {};
 		
 		if (attr && attr.length > 0) {
 			Array.prototype.forEach.call(attr, function (el) {
 				if (el.name.substring(0, 5) === 'data-') {
-					data[el.name] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
+					data[el.name.replace('data-', '')] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
 				}
 			});
 		}
@@ -63,7 +68,7 @@
 					// not for text nodes
 					if (el.nodeType === 1) {
 						var
-							data = dataAttr(el),
+							data = C._dataAttr(el),
 							classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
 							
 							txt = text(el),

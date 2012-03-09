@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
-	<script type="text/javascript" src="../../jquery.collection.js"></script>
+	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
 			test("core", function () {
@@ -17,6 +17,7 @@
 					.set("first > 0 > eq(-1) > eq(0)", 99)
 					.get("first > 0 > eq(-1) > eq(0)"), 99,
 				"set");
+				
 				equal(db
 					.set("", 99)
 					.get(" "), 99,

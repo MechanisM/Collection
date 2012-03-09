@@ -3,7 +3,20 @@
 	//// data types
 	/////////////////////////////////
 	
-	var toString = function (obj) { return Object.prototype.toString.call(obj); };
+	/**
+	 * returns the value of the hidden properties of [[CLASS]]
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.class('test'); // returns '[object String]'
+	 * $C.class(2); // returns '[object Number]'
+	 */
+	C.toString = function (obj) {
+		if (typeof obj === 'undefined') { return C.prototype.collection(); }
+		return Object.prototype.toString.call(obj);
+	};
 	
 	/**
 	 * returns a Boolean indicating whether the object is a string
@@ -15,7 +28,7 @@
 	 * $C.isString('test'); // returns true
 	 * $C.isString(2); // returns false
 	 */
-	C.isString = function (obj) { return toString(obj) === '[object String]'; };
+	C.isString = function (obj) { return C.toString(obj) === '[object String]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a number
@@ -27,7 +40,7 @@
 	 * $C.isNumber('test'); // returns false
 	 * $C.isNumber(2); // returns true
 	 */
-	C.isNumber = function (obj) { return toString(obj) === '[object Number]'; };
+	C.isNumber = function (obj) { return C.toString(obj) === '[object Number]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a boolean
@@ -39,7 +52,7 @@
 	 * $C.isNumber('test'); // returns false
 	 * $C.isNumber(false); // returns true
 	 */
-	C.isBoolean = function (obj) { return toString(obj) === '[object Boolean]'; };
+	C.isBoolean = function (obj) { return C.toString(obj) === '[object Boolean]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a function
@@ -51,7 +64,7 @@
 	 * $C.isFunction('test'); // returns false
 	 * $C.isFunction(function () {}); // returns true
 	 */
-	C.isFunction = function (obj) { return toString(obj) === '[object Function]'; };
+	C.isFunction = function (obj) { return C.toString(obj) === '[object Function]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a array (not an array-like object)
@@ -63,7 +76,7 @@
 	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns false
 	 * $C.isArray([1, 2, 3]); // returns true
 	 */
-	C.isArray = function (obj) { return toString(obj) === '[object Array]'; };
+	C.isArray = function (obj) { return C.toString(obj) === '[object Array]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a plain object
@@ -76,7 +89,7 @@
 	 * $C.isPlainObject(new Date); // returns false
 	 * $C.isPlainObject(Date); // returns false
 	 */
-	C.isPlainObject = function (obj) { return toString(obj) === '[object Object]'; };
+	C.isPlainObject = function (obj) { return C.toString(obj) === '[object Object]'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a collection
