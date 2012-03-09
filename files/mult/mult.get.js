@@ -4,7 +4,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * get the items using a filter or a link (in context)
+	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
@@ -14,6 +14,12 @@
 	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
 	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {mixed}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.get('eq(-1) > c');
+	 * db.get(':i % 3 === 0');
+	 * db.get(function (el, i, data) { return i % 3 === 0; });
 	 */
 	C.prototype.get = function (filter, id, mult, count, from, indexOf) {
 		// overload
@@ -54,12 +60,18 @@
 		return result;
 	};
 	/**
-	 * get the item using a filter or a link (in context)
+	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {mixed}
+	 	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * db.getOne('eq(-1) > c');
+	 * db.getOne(':i % 3 === 0');
+	 * db.getOne(function (el, i, data) { return i % 3 === 0; });
 	 */
 	C.prototype.getOne = function (filter, id) {
 		return this.get(filter || '', id || '', false);

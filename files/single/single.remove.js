@@ -4,7 +4,7 @@
 	/////////////////////////////////
 		
 	/**
-	 * remove an element from the collection by link (in context)
+	 * remove an one element from the collection by link (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context} [context] — link
@@ -27,7 +27,7 @@
 		return this;
 	};
 	/**
-	 * remove an element from the collection by links (in context)
+	 * remove an elements from the collection by link (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context|Array|Plain Object} objContext — link, array of links or object (collection ID: array of links)
