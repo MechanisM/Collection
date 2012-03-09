@@ -45,6 +45,10 @@
 	 * @this {Collection Object}
 	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.enable('cache', 'filter');
 	 */
 	C.prototype.enable = function () {
 		for (var key in arguments) {
@@ -60,6 +64,10 @@
 	 * @this {Collection Object}
 	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.disable('cache', 'filter');
 	 */
 	C.prototype.disable = function () {
 		for (var key in arguments) {
@@ -75,6 +83,10 @@
 	 * @this {Collection Object}
 	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.toggle('cache', 'filter');
 	 */
 	C.prototype.toggle = function () {
 		for (var key in arguments) {

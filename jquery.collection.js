@@ -2800,47 +2800,52 @@ var Collection = (function ($) {
 	 * get statistic information
 	 *  
 	 * @this {Colletion Object}
-	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
-	 * @param {Context} [field] - field name
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function
+	 * @param {Context} [field] — field name
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Colletion}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 7, 0]);
+	 * db.stat('count');
+	 * db.stat('min');
 	 */
 	C.prototype.stat = function (oper, field, filter, id, count, from, indexOf) {
-		oper = oper || "count";
-		id = id || "";
+		oper = oper || 'count';
+		id = id || '';
 	
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
-		//
+		
 		var
 			operType = C.isString(oper),
 			result = 0, tmp = 0, key,
 			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
-				var param = C.byLink(el, field || "");
-				//
+				var param = C.byLink(el, field || '');
+				
 				switch (oper) {
-					case "count" : {
+					case 'count' : {
 						result += 1;
 					} break;
-					case "summ" : {
+					case 'summ' : {
 						result += param;
 					} break;
-					case "avg" : {
+					case 'avg' : {
 						tmp += 1;
 						result += param;
 					} break;
-					case "max" : {
+					case 'max' : {
 						if (param > result) { result = param; }
 					} break;
-					case "min" : {
+					case 'min' : {
 						if (tmp === 0) {
 							result = param;
 							tmp = 1;
@@ -2853,21 +2858,21 @@ var Collection = (function ($) {
 							if (tmp === 0) {
 								result = param;
 								tmp = 1;
-							} else { result = C.expr(oper + "=" + param, result); }
+							} else { result = C.expr(oper + '=' + param, result); }
 						}
 					}
 				}
 					
 				return true;
 			};
-		//
-		if (oper !== "first" && oper !== "last") {
-			this.forEach(action, filter || "", id, "", count, from, indexOf);
-			//
-			if (oper === "avg") { result /= tmp; }
-		} else if (oper === "first") {
-			result = this._getOne(C.ORDER[0] + "0" + C.ORDER[1]);
-		} else { result = this._getOne(C.ORDER[0] + "-1" + C.ORDER[1]); }
+		
+		if (oper !== 'first' && oper !== 'last') {
+			this.forEach(action, filter || '', id, '', count, from, indexOf);
+			
+			if (oper === 'avg') { result /= tmp; }
+		} else if (oper === 'first') {
+			result = this._getOne(C.ORDER[0] + '0' + C.ORDER[1]);
+		} else { result = this._getOne(C.ORDER[0] + '-1' + C.ORDER[1]); }
 	
 		return result;
 	};	
@@ -2879,48 +2884,53 @@ var Collection = (function ($) {
 	 * get statistic information for group
 	 *  
 	 * @this {Colletion Object}
-	 * @param {String|Function} [oper="count"] - operation type ("count", "avg", "summ", "max", "min", "first", "last") or callback function
-	 * @param {Context} [field] - field name
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] - filter function, string expression or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {Number|Boolean} [count=false] - maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] - skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] - starting point (by default: -1)
+	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function
+	 * @param {Context} [field] — field name
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
 	 * @return {Colletion}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 7, 0]);
+	 * db.pushSetCollection('test', db.group(':el % 2 === 0'));
+	 * db.groupStat('count');
+	 * db.groupStat('min');
 	 */
 	C.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
-		oper = oper || "count";
-		id = id || "";
+		oper = oper || 'count';
+		id = id || '';
 
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		//
 		var
 			operType = C.isString(oper),
 			result = {}, tmp = {}, key,
 			
 			/** @private */
 			deepAction = function (el, i, data, aLength, self, id) {
-				var param = C.byLink(el, field || "");
-				//
+				var param = C.byLink(el, field || '');
+				
 				switch (oper) {
-					case "count" : {
+					case 'count' : {
 						result[this.i] += 1;
 					} break;
-					case "summ" : {
+					case 'summ' : {
 						result[this.i] += param;
 					} break;
-					case "avg" : {
+					case 'avg' : {
 						tmp[this.i] += 1;
 						result[this.i] += param;
 					} break;
-					case "max" : {
+					case 'max' : {
 						if (param > result[this.i]) { result[this.i] = param; }
 					} break;
-					case "min" : {
+					case 'min' : {
 						if (tmp[this.i] === 0) {
 							result[this.i] = param;
 							tmp[this.i] = 1;
@@ -2933,32 +2943,33 @@ var Collection = (function ($) {
 							if (tmp[this.i] === 0) {
 								result[this.i] = param;
 								tmp[this.i] = 1;
-							} else { result[this.i] = C.expr(oper + "=" + param, result[this.i]); }
+							} else { result[this.i] = C.expr(oper + '=' + param, result[this.i]); }
 						}
 					}
 				}
 					
 				return true;
 			},
+			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				if (!result[i]) { result[i] = tmp[i] = 0; };
-				//
-				if (oper !== "first" && oper !== "last") {
+				
+				if (oper !== 'first' && oper !== 'last') {
 					self
-						._update("context", "+=" + C.CHILDREN + (deepAction.i = i))
-						.forEach(deepAction, filter || "", id, "", count, from, indexOf)
+						._update('context', '+=' + C.CHILDREN + (deepAction.i = i))
+						.forEach(deepAction, filter || '', id, '', count, from, indexOf)
 						.parent();
-				} else if (oper === "first") {
-					result[i] = C.byLink(el, C.ORDER[0] + "0" + C.ORDER[1]);
-				} else { result[i] = C.byLink(el, C.ORDER[0] + "-1" + C.ORDER[1]); }
+				} else if (oper === 'first') {
+					result[i] = C.byLink(el, C.ORDER[0] + '0' + C.ORDER[1]);
+				} else { result[i] = C.byLink(el, C.ORDER[0] + '-1' + C.ORDER[1]); }
 					
 				return true;
 			};
-		//
-		this.forEach(action, "", id);
-		//
-		if (oper === "avg") {
+		
+		this.forEach(action, '', id);
+		
+		if (oper === 'avg') {
 			for (key in result) {
 				if (!result.hasOwnProperty(key)) { continue; }
 				result[key] /= tmp[key];
@@ -3158,25 +3169,27 @@ var Collection = (function ($) {
 	/////////////////////////////////
 	
 	/**
-	 * save collection in DOM storage<br/>
+	 * save collection in the DOM storage<br/>
 	 * events: onSave
-	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {String} [local] - if "false", used session storage
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {String} [local] — if false, used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 7, 0]);
+	 * db.save();
 	 */
 	C.prototype.save = function (id, local) {
-		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
-		//
+		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		
 		id = id || this.ACTIVE;
-		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace"),
-			//
-			active = id === this.ACTIVE ? this._exists("collection") ? this._getActiveID("collection") : "" : this._active("collection", id) ? "active" : "",
+			name = '__' + this.name + '__' + this._get('namespace'),
+			
+			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveID('collection') : '' : this._active('collection', id) ? 'active' : '',
 			storage = local === false ? sessionStorage : localStorage,
 			e = null;
 		
@@ -3184,67 +3197,65 @@ var Collection = (function ($) {
 		this.onSave && (e = this.onSave.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
-		storage.setItem(name + ":" + id, this.toString(id));
-		storage.setItem(name + "__date:" + id, new Date().toString());
-		storage.setItem(name + "__active:" + id, active);
-		//
-		storage.setItem(name + "__date", new Date().toString());
+		storage.setItem(name + ':' + id, this.toString(id));
+		storage.setItem(name + '__date:' + id, new Date().toString());
+		storage.setItem(name + '__active:' + id, active);
+		
+		storage.setItem(name + '__date', new Date().toString());
 		
 		return this;
 	};
 	/**
-	 * save all collection in DOM storage<br/>
+	 * save all collections in the DOM storage<br/>
 	 * events: onSave
-	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [local] - if "false", used session storage
+	 * @param {String} [local] — if false, used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([1, 2, 3, 4, 5, 6, 7, 0]).pushCollection('test', [1, 2, 3]);
+	 * db.saveAll();
 	 */
 	C.prototype.saveAll = function (local) {
-		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
-		//
+		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		
 		local = local === false ? local : true;
-		//
 		var
 			key,
 			tmp = this.dObj.sys.tmpCollection,
 			active = false;
 		
-		// clear storage
-		this.dropAll(local);
-		//
 		for (key in tmp) {
-			this._active("C", key) && (active = true);
-			//
+			this._active('C', key) && (active = true);
 			if (tmp.hasOwnProperty(key)) { this.save(key, local); }
 		}
-		active === false && this.save("", local);
+		active === false && this.save('', local);
 		
 		return this;
 	};
 	
 	/**
-	 * load collection from DOM storage<br/>
+	 * load collection from the DOM storage<br/>
 	 * events: onLoad
-	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {String} [local=true] - if "false", used session storage
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {String} [local=true] — if false, used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C().load();
 	 */
 	C.prototype.load = function (id, local) {
-		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
-		//
+		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		
 		id = id || this.ACTIVE;
-		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace"),
-			//
+			name = '__' + this.name + '__' + this._get('namespace'),
+			
 			active,
 			storage = local === false ? sessionStorage : localStorage,
 			e = null;
@@ -3253,55 +3264,56 @@ var Collection = (function ($) {
 		this.onLoad && (e = this.onLoad.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
 		if (id === this.ACTIVE) {
-			this._new("collection", JSON.parse(storage.getItem(name + ":" + id)));
-		} else { this._push("collection", id, JSON.parse(storage.getItem(name + ":" + id))); }
-		//
-		active = storage.getItem(name + "__active:" + id);
+			this._new('collection', JSON.parse(storage.getItem(name + ':' + id)));
+		} else { this._push('collection', id, JSON.parse(storage.getItem(name + ':' + id))); }
+		
+		active = storage.getItem(name + '__active:' + id);
 		if (active === this.ACTIVE) {
-			this._set("collection", id);
+			this._set('collection', id);
 		} else if (active) {
 			this
-				._push("collection", active, this._get("collection"))
-				._set("collection", active);
+				._push('collection', active, this._get('collection'))
+				._set('collection', active);
 		}
 		
 		return this;
 	};
 	/**
-	 * load all collection from DOM storage<br/>
+	 * load all collections from the DOM storage<br/>
 	 * events: onLoad
-	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [local] - if "false", used session storage
-	 * @param {String} [type="load"] - operation type
+	 * @param {String} [local] — if false, used session storage
+	 * @param {String} [type='load'] — operation type
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C().loadAll();
 	 */
 	C.prototype.loadAll = function (local, type) {
-		type = type ? "drop" : "load";
-		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
-		//
+		type = type ? 'drop' : 'load';
+		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		
 		local = local === false ? local : true;
-		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace"),
-			//
+			name = '__' + this.name + '__' + this._get('namespace'),
+			
 			storage = local === false ? sessionStorage : localStorage,
 			sLength = storage.length,
 			key, id;
-		//
+		
+		// bug fix
 		try {
 			for (key in storage) {
 				if (storage.hasOwnProperty(key)) {
-					if ((id = key.split(":"))[0] === name) { this[type](id[1], local); }
+					if ((id = key.split(':'))[0] === name) { this[type](id[1], local); }
 				}
 			}
 		} catch (e) {
 			while ((sLength -= 1) > -1) {
-				if ((id = storage[sLength].split(":"))[0] === name) { this[type](id[1], local); }
+				if ((id = storage[sLength].split(':'))[0] === name) { this[type](id[1], local); }
 			}
 		}
 		
@@ -3311,54 +3323,62 @@ var Collection = (function ($) {
 	 * get the time of the conservation of collections
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id] - collection ID
-	 * @param {String} [local] - if "false", used session storage
+	 * @param {String} [id] — collection ID
+	 * @param {String} [local] — if false, used session storage
 	 * @throw {Error}
 	 * @return {Date}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.loadDate();
 	 */
 	C.prototype.loadDate = function (id, local) {
-		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
-		//
-		id = id ? ":" + id : "";
-		//
+		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		
+		id = id ? ':' + id : '';
 		var storage = local === false ? sessionStorage : localStorage;
-		//
-		return new Date(storage.getItem("__" + this.name + "__" + this._get("namespace") + "__date" + id));
+		
+		return new Date(storage.getItem('__' + this.name + '__' + this._get('namespace') + '__date' + id));
 	};
 	/**
 	 * checking the life of the collection
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Number} time - milliseconds
-	 * @param {String} [id] - collection ID
-	 * @param {String} [local] - if "false", used session storage
+	 * @param {Number} time — milliseconds
+	 * @param {String} [id] — collection ID
+	 * @param {String} [local] — if false, used session storage
 	 * @throw {Error}
 	 * @return {Boolean}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.isExpired();
 	 */
 	C.prototype.isExpired = function (time, id, local) {
-		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
-		//
-		return new Date(new Date() - new Date(this.loadDate(id || "", local || ""))) > time;
+		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		return new Date(new Date() - new Date(this.loadDate(id || '', local || ''))) > time;
 	};
 	
 	/**
-	 * remove collection from DOM storage<br/>
+	 * remove collection from the DOM storage<br/>
 	 * events: onDrop
-	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] - collection ID
-	 * @param {String} [local] - if "false", used session storage
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {String} [local] — if false, used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.drop('test');
 	 */
 	C.prototype.drop = function (id, local) {
-		if (!localStorage) { throw new Error("your browser doesn't support web storage!"); }
-		//
+		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		
 		id = id || this.ACTIVE;
-		//
 		var
-			name = "__" + this.name + "__" + this._get("namespace"),
+			name = '__' + this.name + '__' + this._get('namespace'),
 			storage = local === false ? sessionStorage : localStorage,
 			e = null;
 		
@@ -3366,27 +3386,29 @@ var Collection = (function ($) {
 		this.onDrop && (e = this.onDrop.apply(this, arguments));
 		if (e === false) { return this; }
 		
-		//
-		storage.removeItem(name + ":" + id);
-		storage.removeItem(name + "__date:" + id);
-		storage.removeItem(name + "__active:" + id);
+		
+		storage.removeItem(name + ':' + id);
+		storage.removeItem(name + '__date:' + id);
+		storage.removeItem(name + '__active:' + id);
 		
 		return this;
 	};
 	/**
-	 * remove all collection from DOM storage<br/>
+	 * remove all collections from the DOM storage<br/>
 	 * events: onDrop
-	 * <i class="local"></i>
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [local] - if "false", used session storage
+	 * @param {String} [local] — if false, used session storage
 	 * @throw {Error}
 	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.dropAll();
 	 */
 	C.prototype.dropAll = function (local) {
-		(local === false ? sessionStorage : localStorage).removeItem( "__" + this.name + "__" + this._get("namespace") + "__date");
-		//
-		return this.loadAll(local || "", true);
+		(local === false ? sessionStorage : localStorage).removeItem( '__' + this.name + '__' + this._get('namespace') + '__date');
+		return this.loadAll(local || '', true);
 	};	
 	/////////////////////////////////
 	//// compile (filter)
@@ -3660,35 +3682,42 @@ var Collection = (function ($) {
 	
 	/**
 	 * calculate parent context
-	 * <i class="context"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] — level
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {String}
+	 *
+	 * @example
+	 * var db = new $C().newContext('a > b > c');
+	 * db.parentContext(); // 'a > b'
+	 * db.parentContext(2); // 'a'
 	 */
 	C.prototype.parentContext = function (n, id) {
 		var
-			context = this._get("context", id || "").split(C.CHILDREN),
+			context = this._get('context', id || '').split(C.CHILDREN),
 			i = n || 1;
-		//
+		
 		while ((i -= 1) > -1) { context.splice(-1, 1); }
-		//
+		
 		return context.join(C.CHILDREN);
 	};
 	/**
 	 * change the context (the parent element)
-	 * <i class="context"></i>
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [n=1] — level
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
+	  *
+	 * @example
+	 * var db = new $C().newContext('a > b > c');
+	 * db.parent(); // 'a > b'
+	 * db.parent(2); // ''
 	 */
 	C.prototype.parent = function (n, id) {
-		if (!id) { return this._update("context", this.parentContext(n)); }
-		//
-		return this._push("context", id, this.parentContext(n, id));
+		if (!id) { return this._update('context', this.parentContext(n)); }
+		return this._push('context', id, this.parentContext(n, id));
 	};	
 	/////////////////////////////////
 	// additional methods
@@ -3736,6 +3765,10 @@ var Collection = (function ($) {
 	 * @this {Collection Object}
 	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.enable('cache', 'filter');
 	 */
 	C.prototype.enable = function () {
 		for (var key in arguments) {
@@ -3751,6 +3784,10 @@ var Collection = (function ($) {
 	 * @this {Collection Object}
 	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.disable('cache', 'filter');
 	 */
 	C.prototype.disable = function () {
 		for (var key in arguments) {
@@ -3766,6 +3803,10 @@ var Collection = (function ($) {
 	 * @this {Collection Object}
 	 * @param {String} 0...n — flag name
 	 * @return {Collection Object}
+	 *
+	 * @example
+	 * var db = new $C();
+	 * db.toggle('cache', 'filter');
 	 */
 	C.prototype.toggle = function () {
 		for (var key in arguments) {
