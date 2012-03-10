@@ -4,6 +4,29 @@
 	/////////////////////////////////
 	
 	/**
+	 * reverse object
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @return {Object}
+	 */
+	C._reverseObject = function (obj) {
+		var
+			sortedKeys = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
+		sortedKeys.reverse();
+		
+		for (key in sortedKeys) {
+			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
+		}
+
+		return sortedObj;
+	};
+	
+	/**
 	 * reverse collection (in context)<br />
 	 * events: onReverse
 	 * 
@@ -19,25 +42,7 @@
 	C.prototype.reverse = function (id) {
 		id = id || '';
 		
-		var
-			cObj,
-			
-			/** @private */
-			reverseObject = function (obj) {
-				var
-					sortedKeys = [],
-					sortedObj = {},
-					key;
-				
-				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
-				sortedKeys.reverse();
-				
-				for (key in sortedKeys) {
-					if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
-				}
-	
-				return sortedObj;
-			}, e;
+		var cObj, e;
 		
 		// events
 		this.onReverse && (e = this.onReverse.apply(this, arguments));
@@ -51,7 +56,7 @@
 		
 		if (C.isArray(cObj)) {
 			cObj.reverse();
-		} else { this._setOne('', reverseObject(cObj), id); }
+		} else { this._setOne('', C._reverseObject(cObj), id); }
 		
 		return this;
 	};

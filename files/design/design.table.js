@@ -29,62 +29,34 @@
 		selector = qsa.querySelectorAll(selector, target);
 		
 		var
-			i = 0, j,
-			selectorLength = selector.length,
-			queryString = '', td,
-			docEl,
+			i = 0,
+			table = document.createElement('table'), tr, td;
 			
-			/** @private */
-			wrapTR = function (td) {
-				var docEl = document.createElement('tr');
-				
-				td.forEach(function (el) { docEl.appendChild(el.cloneNode(true)); });
-				td[0].parentNode.insertBefore(docEl, td[0]);
-				
-				td.forEach(function (el) { el.parentNode.removeChild(el); });
-			};
-		
-		selector.forEach(function (el, n) {
-			if (el.selectorName !== 'td') {
-				docEl = document.createElement('td');
-				docEl.appendChild(el.cloneNode(true));
-				
-				el.parentNode.insertBefore(docEl, el);
-				el.parentNode.removeChild(el);
+		selector.forEach(function (el) {
+			if (i === 0) {
+				tr = document.createElement('tr');
+				table.appendChild(tr);
 			}
+			td = document.createElement('td');
+			td.appendChild(el);
+			tr.appendChild(td);
 			
-			if (i === count) {
-				queryString = '';
-				
-				for (j = -1; (j += 1) < count;) {
-					queryString += 'td:nth-child(' + (n - j) + ')';
-					if (j !== (count - 1)) { queryString += ','; }
-				}
-				td = qsa.querySelectorAll(queryString, target);
-				wrapTR(td);
-				i = 0;
-			} else if (n === (selectorLength - 1) && i !== count) {
-				queryString = '';
-				
-				for (j = -1, i; (j += 1) < i;) {
-					queryString += '> td:nth-child(' + (n - j) + ')';
-					if (j !== (i - 1)) { queryString += ','; }
-				}
-				i -= 1;
-				
-				td = qsa.querySelectorAll(queryString, target);
-				wrapTR(td);
-				
-				if (empty === true) {
-					docEl = document.createDocumentFragment();
-					for (; (i += 1) < count;) { docEl.appendChild(document.createElement('td')); }
-					
-					qsa.querySelectorAll('tr:last-child', target)[0].appendChild(docEl);
-				}
-			}
 			i += 1;
+			if (i === count) { i = 0; }
 		});
-		//if (target[0].selectorName !== 'table') { target.children('tr').wrapAll('<table></table>'); }
+		
+		if (empty === true) {
+			i = count - tr.childNodes.length;
+			while ((i -= 1) > -1) {
+				tr.appendChild(document.createElement('td'));
+			}
+		}
+		
+		if (target[0] && target.length) {
+			Array.prototype.forEach.call(target, function (el) {
+				el.appendChild(table);
+			});
+		} else { target.appendChild(table); }
 		
 		return this;
 	};

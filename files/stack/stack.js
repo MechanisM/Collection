@@ -25,6 +25,10 @@
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
+			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(newVal) ? newVal : [newVal]);
 		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// break the link with a stack
@@ -56,6 +60,10 @@
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
+			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(newVal) ? newVal : [newVal]);
 		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// update the parameter stack
@@ -137,6 +145,10 @@
 							// compile string if need
 							if (C.find(stackName, ['filter', 'parser']) && this._exprTest(objID[key])) {
 								tmp[key] = this['_compile' + C.toUpperCase(stackName, 1)](objID[key]);
+							
+							// search the DOM (can take a string selector or an array of nodes)
+							} else if (C.find(stackName, ['target', 'pager']) && C.isString(objID[key])) {
+								tmp[key] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(objID[key]) ? objID[key] : [objID[key]]);
 							} else { tmp[key] = objID[key]; }
 						}
 						
@@ -157,6 +169,10 @@
 					// compile string if need
 					if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 						tmp[objID] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+					
+					// search the DOM (can take a string selector or an array of nodes)
+					} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
+						tmp[objID] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(newVal) ? newVal : [newVal]);
 					} else { tmp[objID] = newVal; }
 				}
 			}

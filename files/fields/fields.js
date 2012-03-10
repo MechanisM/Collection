@@ -128,7 +128,7 @@
 				 * target (target to insert the result templating)
 				 * 
 				 * @field
-				 * @type DOM Node
+				 * @type Selector
 				 */
 				target: null,
 				/**
@@ -142,7 +142,7 @@
 				 * pager (an interface element to display the navigation through the pages of)
 				 * 
 				 * @field
-				 * @type DOM Node
+				 * @type Selector
 				 */
 				pager: null,
 				/**

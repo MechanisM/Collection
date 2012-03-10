@@ -730,7 +730,50 @@ var Collection = (function () {
 			'numberBreak',
 			'pageBreak',
 			'resultNull'
-		]
+		],
+		
+		// drivers for additional functions
+		drivers: {
+			dom: {
+				/** @private */
+				find: function (selector, context) {
+					for (var key in this.engines) {
+						if (!this.engines.hasOwnProperty(key)) { continue; }
+						
+						if (this.engines[key].is()) { return this.engines[key].find(selector || '', context || ''); }
+					}
+					
+					// throw an exception, if not found exploratory framework
+					throw new Error('is not set exploratory framework for DOM');
+				},
+				
+				// search frameworks
+				engines: {
+					// qsa css selector engine
+					qsa: {
+						/** @private */
+						is: function () {
+							if (typeof qsa !== 'undefined') { return true; }
+						},
+						/** @private */
+						find: function (selector, context) {
+							return qsa.querySelectorAll(selector, context);
+						}
+					},
+					// sizzle 
+					sizzle: {
+						/** @private */
+						is: function () {
+							if (typeof jQuery !== 'undefined' || typeof Sizzle !== 'undefined') { return true; }
+						},
+						/** @private */
+						find: function (selector, context) {
+							return jQuery ? jQuery(selector, context) : Sizzle(selector, context);
+						}
+					}
+				}
+			}
+		}
 	};	
 	/////////////////////////////////
 	//// DOM methods (core)
@@ -758,6 +801,73 @@ var Collection = (function () {
 	};
 	
 	/**
+	 * returns the text content of the node
+	 * 
+	 * @this {Collection}
+	 * @param {DOM Node} el — DOM node
+	 * @return {String|Boolean}
+	 */
+	C._nodeText = function (el) {
+		el = el.childNodes;		
+		
+		var
+			eLength = el.length,
+			i = -1,
+			str = '';
+		
+		while ((i += 1) < eLength) {
+			if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
+		}
+		
+		if (str) { return str; }
+		
+		return false;
+	};
+	
+	/**
+	 * converts one level nodes in the collection
+	 * 
+	 * @this {Collection}
+	 * @param {DOM Nodes} el — DOM node
+	 * @return {Array}
+	 */
+	C._inObj = function (el) {
+		var array = [], stat = C.fromNodes.stat;
+				
+		// each node
+		Array.prototype.forEach.call(el, function (el) {
+			// not for text nodes
+			if (el.nodeType === 1) {
+				var
+					data = C._dataAttr(el),
+					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
+					
+					txt = C._nodeText(el),
+					key,
+					
+					i = array.length;
+				
+				// data
+				array.push({});
+				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }
+				
+				// classes
+				if (classes) {
+					array[i][stat.classes] = {};
+					classes.forEach(function (el) {
+						array[i][stat.classes][el] = el;
+					});
+				}
+				
+				if (el.childNodes.length !== 0) { array[i][stat.childNodes] = C._inObj(el.childNodes); }
+				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }
+			}
+		});
+
+		return array;
+	};
+	
+	/**
 	 * create an instance of the Collection on the basis of the DOM node (using QSA Selector Engine)
 	 * 
 	 * @this {Collection}
@@ -769,66 +879,7 @@ var Collection = (function () {
 	C.fromNodes = function (selector, prop) {
 		if (!JSON || !JSON.parse) { throw new Error('object JSON is not defined!'); }
 		
-		var
-			stat = C.fromNodes.stat,
-			
-			// returns the text content of the node
-			/** @private */
-			text = function (el) {
-				el = el.childNodes;
-				
-				var
-					eLength = el.length,
-					i = -1,
-					str = '';
-				
-				while ((i += 1) < eLength) {
-					if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
-				}
-				
-				if (str) { return str; }
-				
-				return false;
-			},
-			
-			// converts one level nodes in the collection
-			/** @private */
-			inObj = function (el) {
-				var array = [];
-				
-				// each node
-				Array.prototype.forEach.call(el, function (el) {
-					// not for text nodes
-					if (el.nodeType === 1) {
-						var
-							data = C._dataAttr(el),
-							classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
-							
-							txt = text(el),
-							key,
-							
-							i = array.length;
-						
-						// data
-						array.push({});
-						for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }
-						
-						// classes
-						if (classes) {
-							array[i][stat.classes] = {};
-							classes.forEach(function (el) {
-								array[i][stat.classes][el] = el;
-							});
-						}
-						
-						if (el.childNodes.length !== 0) { array[i][stat.childNodes] = inObj(el.childNodes); }
-						if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }
-					}
-				});
-	
-				return array;
-			},
-			data = inObj(qsa.querySelectorAll(selector));
+		var data = C._inObj(C.prototype.drivers.dom.find(selector));
 		
 		if (prop) { return new C(data, prop); }
 		return new C(data);
@@ -1051,7 +1102,7 @@ var Collection = (function () {
 				 * target (target to insert the result templating)
 				 * 
 				 * @field
-				 * @type DOM Node
+				 * @type Selector
 				 */
 				target: null,
 				/**
@@ -1065,7 +1116,7 @@ var Collection = (function () {
 				 * pager (an interface element to display the navigation through the pages of)
 				 * 
 				 * @field
-				 * @type DOM Node
+				 * @type Selector
 				 */
 				pager: null,
 				/**
@@ -1186,6 +1237,10 @@ var Collection = (function () {
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
+			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(newVal) ? newVal : [newVal]);
 		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// break the link with a stack
@@ -1217,6 +1272,10 @@ var Collection = (function () {
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
+			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(newVal) ? newVal : [newVal]);
 		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// update the parameter stack
@@ -1298,6 +1357,10 @@ var Collection = (function () {
 							// compile string if need
 							if (C.find(stackName, ['filter', 'parser']) && this._exprTest(objID[key])) {
 								tmp[key] = this['_compile' + C.toUpperCase(stackName, 1)](objID[key]);
+							
+							// search the DOM (can take a string selector or an array of nodes)
+							} else if (C.find(stackName, ['target', 'pager']) && C.isString(objID[key])) {
+								tmp[key] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(objID[key]) ? objID[key] : [objID[key]]);
 							} else { tmp[key] = objID[key]; }
 						}
 						
@@ -1318,6 +1381,10 @@ var Collection = (function () {
 					// compile string if need
 					if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
 						tmp[objID] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+					
+					// search the DOM (can take a string selector or an array of nodes)
+					} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
+						tmp[objID] = this.drivers.dom.find.apply(this.drivers.dom, C.isArray(newVal) ? newVal : [newVal]);
 					} else { tmp[objID] = newVal; }
 				}
 			}
@@ -3017,6 +3084,62 @@ var Collection = (function () {
 	/////////////////////////////////
 	
 	/**
+	 * sort object
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @param {Context} field — field name
+	 * @param {Function} sort — sort function
+	 * @return {Object}
+	 */
+	C._sortObject = function (obj, field, sort) {
+		var
+			sortedValues = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				sortedValues.push({
+					key: key,
+					value: obj[key]
+				});
+			}
+		}
+		sortedValues.sort(sort);
+		
+		for (key in sortedValues) {
+			if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }
+		}
+		
+		return sortedObj;
+	};
+	
+	/**
+	 * sort the object by the key
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @param {Function} sort — sort function
+	 * @return {Object}
+	 */
+	C._sortObjectByKey = function (obj, sort) {
+		var
+			sortedKeys = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
+		sortedKeys.sort(sort);
+		
+		for (key in sortedKeys) {
+			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
+		}
+
+		return sortedObj;
+	};
+	
+	/**
 	 * sort collection (in context)<br />
 	 * events: onSort
 	 * 
@@ -3077,47 +3200,6 @@ var Collection = (function () {
 				
 				// random sort
 				} else { return Math.round(Math.random() * 2  - 1); }
-			},
-			
-			/** @private */
-			sortObjectByKey = function (obj) {
-				var
-					sortedKeys = [],
-					sortedObj = {},
-					key;
-				//
-				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
-				sortedKeys.sort(sort);
-				//
-				for (key in sortedKeys) {
-					if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
-				}
-	
-				return sortedObj;
-			},
-			/** @private */
-			sortObject = function (obj) {
-				var
-					sortedValues = [],
-					sortedObj = {},
-					key;
-				//
-				for (key in obj) {
-					if (obj.hasOwnProperty(key)) {
-						sortedValues.push({
-							key: key,
-							value: obj[key]
-						});
-					}
-				}
-				field = field === true ? 'value' : 'value' + C.CHILDREN + field;
-				sortedValues.sort(sort);
-				//
-				for (key in sortedValues) {
-					if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }
-				}
-	
-				return sortedObj;
 			}, e;
 		
 		// events
@@ -3134,8 +3216,10 @@ var Collection = (function () {
 			cObj.sort(sort);
 		} else {
 			if (field) {
-				cObj = sortObject(cObj);
-			} else { cObj = sortObjectByKey(cObj); }
+				// change the field to sort the object
+				field = field === true ? 'value' : 'value' + C.CHILDREN + field;
+				cObj = C._sortObject(cObj, field, sort);
+			} else { cObj = C._sortObjectByKey(cObj, sort); }
 			
 			this._setOne('', cObj, id);
 		}
@@ -3145,6 +3229,29 @@ var Collection = (function () {
 	/////////////////////////////////
 	//// sort method
 	/////////////////////////////////
+	
+	/**
+	 * reverse object
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @return {Object}
+	 */
+	C._reverseObject = function (obj) {
+		var
+			sortedKeys = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
+		sortedKeys.reverse();
+		
+		for (key in sortedKeys) {
+			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
+		}
+
+		return sortedObj;
+	};
 	
 	/**
 	 * reverse collection (in context)<br />
@@ -3162,25 +3269,7 @@ var Collection = (function () {
 	C.prototype.reverse = function (id) {
 		id = id || '';
 		
-		var
-			cObj,
-			
-			/** @private */
-			reverseObject = function (obj) {
-				var
-					sortedKeys = [],
-					sortedObj = {},
-					key;
-				
-				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
-				sortedKeys.reverse();
-				
-				for (key in sortedKeys) {
-					if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
-				}
-	
-				return sortedObj;
-			}, e;
+		var cObj, e;
 		
 		// events
 		this.onReverse && (e = this.onReverse.apply(this, arguments));
@@ -3194,7 +3283,7 @@ var Collection = (function () {
 		
 		if (C.isArray(cObj)) {
 			cObj.reverse();
-		} else { this._setOne('', reverseObject(cObj), id); }
+		} else { this._setOne('', C._reverseObject(cObj), id); }
 		
 		return this;
 	};	
@@ -4283,62 +4372,34 @@ var Collection = (function () {
 		selector = qsa.querySelectorAll(selector, target);
 		
 		var
-			i = 0, j,
-			selectorLength = selector.length,
-			queryString = '', td,
-			docEl,
+			i = 0,
+			table = document.createElement('table'), tr, td;
 			
-			/** @private */
-			wrapTR = function (td) {
-				var docEl = document.createElement('tr');
-				
-				td.forEach(function (el) { docEl.appendChild(el.cloneNode(true)); });
-				td[0].parentNode.insertBefore(docEl, td[0]);
-				
-				td.forEach(function (el) { el.parentNode.removeChild(el); });
-			};
-		
-		selector.forEach(function (el, n) {
-			if (el.selectorName !== 'td') {
-				docEl = document.createElement('td');
-				docEl.appendChild(el.cloneNode(true));
-				
-				el.parentNode.insertBefore(docEl, el);
-				el.parentNode.removeChild(el);
+		selector.forEach(function (el) {
+			if (i === 0) {
+				tr = document.createElement('tr');
+				table.appendChild(tr);
 			}
+			td = document.createElement('td');
+			td.appendChild(el);
+			tr.appendChild(td);
 			
-			if (i === count) {
-				queryString = '';
-				
-				for (j = -1; (j += 1) < count;) {
-					queryString += 'td:nth-child(' + (n - j) + ')';
-					if (j !== (count - 1)) { queryString += ','; }
-				}
-				td = qsa.querySelectorAll(queryString, target);
-				wrapTR(td);
-				i = 0;
-			} else if (n === (selectorLength - 1) && i !== count) {
-				queryString = '';
-				
-				for (j = -1, i; (j += 1) < i;) {
-					queryString += '> td:nth-child(' + (n - j) + ')';
-					if (j !== (i - 1)) { queryString += ','; }
-				}
-				i -= 1;
-				
-				td = qsa.querySelectorAll(queryString, target);
-				wrapTR(td);
-				
-				if (empty === true) {
-					docEl = document.createDocumentFragment();
-					for (; (i += 1) < count;) { docEl.appendChild(document.createElement('td')); }
-					
-					qsa.querySelectorAll('tr:last-child', target)[0].appendChild(docEl);
-				}
-			}
 			i += 1;
+			if (i === count) { i = 0; }
 		});
-		//if (target[0].selectorName !== 'table') { target.children('tr').wrapAll('<table></table>'); }
+		
+		if (empty === true) {
+			i = count - tr.childNodes.length;
+			while ((i -= 1) > -1) {
+				tr.appendChild(document.createElement('td'));
+			}
+		}
+		
+		if (target[0] && target.length) {
+			Array.prototype.forEach.call(target, function (el) {
+				el.appendChild(table);
+			});
+		} else { target.appendChild(table); }
 		
 		return this;
 	};	return C;
