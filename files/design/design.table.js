@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] — td number to a string
-	 * @param {String} [selector='div'] — CSS selector
+	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes
 	 * @param {Boolean} [empty=true] — display empty cells
 	 * @return {Colletion Object}
 	 */
@@ -20,43 +20,44 @@
 			count = target;
 			target = '';
 		}
-		
+
 		count = count || 4;
 		selector = selector || 'div';
 		empty = empty === false ? false : true;
 		
-		target = target || this._get('target');
-		selector = qsa.querySelectorAll(selector, target);
+		target = target ? C.isString(target) ? this.drivers.dom.find(target) : target : this._get('target');
 		
-		var
-			i = 0,
-			table = document.createElement('table'), tr, td;
+		var i, nodes, table, tr, td;
+		
+		// for each node
+		Array.prototype.forEach.call(target, function (el) {
+			nodes = this.drivers.dom.find(selector, el)
+			table = document.createElement('table');
+			i = 0;
 			
-		selector.forEach(function (el) {
-			if (i === 0) {
-				tr = document.createElement('tr');
-				table.appendChild(tr);
-			}
-			td = document.createElement('td');
-			td.appendChild(el);
-			tr.appendChild(td);
-			
-			i += 1;
-			if (i === count) { i = 0; }
-		});
-		
-		if (empty === true) {
-			i = count - tr.childNodes.length;
-			while ((i -= 1) > -1) {
-				tr.appendChild(document.createElement('td'));
-			}
-		}
-		
-		if (target[0] && target.length) {
-			Array.prototype.forEach.call(target, function (el) {
-				el.appendChild(table);
+			Array.prototype.forEach.call(nodes, function (el) {
+				if (i === 0) {
+					tr = document.createElement('tr');
+					table.appendChild(tr);
+				}
+				td = document.createElement('td');
+				td.appendChild(el);
+				tr.appendChild(td);
+				
+				i += 1;
+				if (i === count) { i = 0; }
 			});
-		} else { target.appendChild(table); }
+			
+			// add empty cells
+			if (empty === true) {
+				i = count - tr.childNodes.length;
+				while ((i -= 1) > -1) {
+					tr.appendChild(document.createElement('td'));
+				}
+			}
+			
+			el.appendChild(table);
+		}, this);
 		
 		return this;
 	};

@@ -6,18 +6,17 @@
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
-	<script type="text/javascript" src="../../qsa/qsa.min.js"></script>
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
 			module("other");
 			test("table", function () {
-				var db = new Collection("", {target: qsa.querySelectorAll("#test")});
+				var db = new Collection("", {target: "#test"});
 				
 				db.genTable(3, ".td");
 				equal($("#test tr:first td").length, 3, "simple test");
 				
-				db.newTarget($("#test2")).genTable(3, ".td", false);
+				db.newTarget("#test2").genTable(3, ".td", false);
 				equal($("#test2 tr:last td").length, 1, "simple test without empty cells");
 			});
 		});
@@ -30,7 +29,7 @@
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>
 	<ol id="qunit-tests"></ol>
-	<div id="test">
+	<div id="test" style="display: none">
 		<div class="td">1</div>
 		<div class="td">2</div>
 		<div class="td">3</div>
@@ -42,7 +41,7 @@
 		<div class="td">9</div>
 		<div class="td">10</div>
 	</div>
-	<div id="test2">
+	<div id="test2" style="display: none">
 		<div class="td">1</div>
 		<div class="td">2</div>
 		<div class="td">3</div>

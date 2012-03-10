@@ -98,6 +98,38 @@
 						find: function (selector, context) {
 							return jQuery ? jQuery(selector, context) : Sizzle(selector, context);
 						}
+					},
+					// dojo 
+					dojo: {
+						/** @private */
+						is: function () {
+							if (typeof dojo !== 'undefined') { return true; }
+						},
+						/** @private */
+						find: function (selector, context) {
+							return dojo.query(selector, context);
+						}
+					},
+					// mootools 
+					mootools: {
+						/** @private */
+						is: function () {
+							if (typeof Element.getElements !== 'undefined') { return true; }
+						},
+						/** @private */
+						find: function (selector, context) {
+							var res;
+							
+							if (context) {
+								res = [];
+								
+								$$(context).getElements(selector).forEach(function (el) {
+									el.forEach(function (el) { res.push(el); });
+								});
+							} else { res = $$(selector); }
+							
+							return res;
+						}
 					}
 				}
 			}

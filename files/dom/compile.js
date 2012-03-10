@@ -7,16 +7,16 @@
 	 * compile the template
 	 * 
 	 * @this {Collection}
-	 * @param {String} selector — CSS selector
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
 	 * @throw {Error}
 	 * @return {Function}
 	 */
 	C.ctplCompile = function (selector) {
-		C.isString(selector) && (selector = qsa.querySelectorAll(selector));
+		C.isString(selector) && (selector = C.prototype.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
 		var
-			html = C.isArray(selector) ? selector[0].innerHTML : selector.innerHTML,
+			html = selector[0] ? selector[0].innerHTML : selector.innerHTML,
 			elem = html
 				.replace(/\/\*.*?\*\//g, '')
 				.split('?>')
@@ -40,11 +40,13 @@
 	 * make templates
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} selector — CSS selector
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
 	 * @return {Collection Object}
 	 */
 	C.prototype.ctplMake = function (selector) {
-		(selector = qsa.querySelectorAll(selector)).forEach(function (el) {
+		C.isString(selector) && (selector = this.drivers.dom.find(selector));
+		
+		Array.prototype.forEach.call(selector, function (el) {
 			var
 				data = C._dataAttr(el).ctpl, key,
 				prefix = data.prefix ? data.prefix + '_' : '';
@@ -57,7 +59,7 @@
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
 				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
-				if (C.find(key, ['target', 'pager'])) { data[key] = qsa.querySelectorAll(data[key]); }
+				if (C.find(key, ['target', 'pager'])) { data[key] = this.drivers.dom.find(data[key]); }
 				
 				cObj._push(key, prefix + data.name, data[key]);
 				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
@@ -75,7 +77,7 @@
 				
 				cObj.print(data);
 			}
-		});
+		}, this);
 		
 		return this;
 	};

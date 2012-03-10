@@ -19,8 +19,9 @@
 		
 		if (C.isArray(obj)) {
 			obj.some(function (el, i) {
-				if (val === i) {
+				if (val === el) {
 					res = true;
+					
 					return true;
 				}
 			});

@@ -70,6 +70,10 @@ var Collection = (function () {
 		if (this._exprTest(active.filter)) { active.filter = this._compileFilter(active.filter); }
 		if (this._exprTest(active.parser)) { active.parser = this._compileParser(active.parser); }
 		
+		// search the DOM
+		if (C.isString(active.target)) { active.target = this.drivers.dom.find(active.target); }
+		if (C.isString(active.pager)) { active.pager = this.drivers.dom.find(active.pager); }
+		
 		active.collection = collection;
 	};	
 	/**
@@ -539,8 +543,9 @@ var Collection = (function () {
 		
 		if (C.isArray(obj)) {
 			obj.some(function (el, i) {
-				if (val === i) {
+				if (val === el) {
 					res = true;
+					
 					return true;
 				}
 			});
@@ -901,16 +906,16 @@ var Collection = (function () {
 	 * compile the template
 	 * 
 	 * @this {Collection}
-	 * @param {String} selector — CSS selector
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
 	 * @throw {Error}
 	 * @return {Function}
 	 */
 	C.ctplCompile = function (selector) {
-		C.isString(selector) && (selector = qsa.querySelectorAll(selector));
+		C.isString(selector) && (selector = C.prototype.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
 		var
-			html = C.isArray(selector) ? selector[0].innerHTML : selector.innerHTML,
+			html = selector[0] ? selector[0].innerHTML : selector.innerHTML,
 			elem = html
 				.replace(/\/\*.*?\*\//g, '')
 				.split('?>')
@@ -934,11 +939,13 @@ var Collection = (function () {
 	 * make templates
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} selector — CSS selector
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
 	 * @return {Collection Object}
 	 */
 	C.prototype.ctplMake = function (selector) {
-		(selector = qsa.querySelectorAll(selector)).forEach(function (el) {
+		C.isString(selector) && (selector = this.drivers.dom.find(selector));
+		
+		Array.prototype.forEach.call(selector, function (el) {
 			var
 				data = C._dataAttr(el).ctpl, key,
 				prefix = data.prefix ? data.prefix + '_' : '';
@@ -951,7 +958,7 @@ var Collection = (function () {
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
 				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
-				if (C.find(key, ['target', 'pager'])) { data[key] = qsa.querySelectorAll(data[key]); }
+				if (C.find(key, ['target', 'pager'])) { data[key] = this.drivers.dom.find(data[key]); }
 				
 				cObj._push(key, prefix + data.name, data[key]);
 				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
@@ -969,7 +976,7 @@ var Collection = (function () {
 				
 				cObj.print(data);
 			}
-		});
+		}, this);
 		
 		return this;
 	};	
@@ -1102,7 +1109,7 @@ var Collection = (function () {
 				 * target (target to insert the result templating)
 				 * 
 				 * @field
-				 * @type Selector
+				 * @type Selector|DOM nodes
 				 */
 				target: null,
 				/**
@@ -1116,7 +1123,7 @@ var Collection = (function () {
 				 * pager (an interface element to display the navigation through the pages of)
 				 * 
 				 * @field
-				 * @type Selector
+				 * @type Selector|DOM nodes
 				 */
 				pager: null,
 				/**
@@ -2860,7 +2867,7 @@ var Collection = (function () {
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
 				var param = fieldType ? C.byLink(el, field) : field.apply(field, arguments);
-				//
+				
 				if (!result[param]) {
 					result[param] = [!link ? el : i];
 				} else { result[param].push(!link ? el : i); }
@@ -4351,7 +4358,7 @@ var Collection = (function () {
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Number} [count=4] — td number to a string
-	 * @param {String} [selector='div'] — CSS selector
+	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes
 	 * @param {Boolean} [empty=true] — display empty cells
 	 * @return {Colletion Object}
 	 */
@@ -4363,43 +4370,44 @@ var Collection = (function () {
 			count = target;
 			target = '';
 		}
-		
+
 		count = count || 4;
 		selector = selector || 'div';
 		empty = empty === false ? false : true;
 		
-		target = target || this._get('target');
-		selector = qsa.querySelectorAll(selector, target);
+		target = target ? C.isString(target) ? this.drivers.dom.find(target) : target : this._get('target');
 		
-		var
-			i = 0,
-			table = document.createElement('table'), tr, td;
+		var i, nodes, table, tr, td;
+		
+		// for each node
+		Array.prototype.forEach.call(target, function (el) {
+			nodes = this.drivers.dom.find(selector, el)
+			table = document.createElement('table');
+			i = 0;
 			
-		selector.forEach(function (el) {
-			if (i === 0) {
-				tr = document.createElement('tr');
-				table.appendChild(tr);
-			}
-			td = document.createElement('td');
-			td.appendChild(el);
-			tr.appendChild(td);
-			
-			i += 1;
-			if (i === count) { i = 0; }
-		});
-		
-		if (empty === true) {
-			i = count - tr.childNodes.length;
-			while ((i -= 1) > -1) {
-				tr.appendChild(document.createElement('td'));
-			}
-		}
-		
-		if (target[0] && target.length) {
-			Array.prototype.forEach.call(target, function (el) {
-				el.appendChild(table);
+			Array.prototype.forEach.call(nodes, function (el) {
+				if (i === 0) {
+					tr = document.createElement('tr');
+					table.appendChild(tr);
+				}
+				td = document.createElement('td');
+				td.appendChild(el);
+				tr.appendChild(td);
+				
+				i += 1;
+				if (i === count) { i = 0; }
 			});
-		} else { target.appendChild(table); }
+			
+			// add empty cells
+			if (empty === true) {
+				i = count - tr.childNodes.length;
+				while ((i -= 1) > -1) {
+					tr.appendChild(document.createElement('td'));
+				}
+			}
+			
+			el.appendChild(table);
+		}, this);
 		
 		return this;
 	};	return C;
