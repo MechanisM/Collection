@@ -41,7 +41,6 @@
 		
 		// if parser is string
 		if (C.isString(parser)) {
-			//
 			if (this._getActiveParam('parser') && _tmpParser) {
 				parser = this.ACTIVE + ' && ' + parser;
 			}

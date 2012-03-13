@@ -260,7 +260,7 @@
 					ctm.val.forEach(function (el) {
 						if (tag === 'select') {
 							str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
-						} else { str += genPage(data, classes || '', el, true); }
+						} else { str += genPage(ctm, classes || '', el, true); }
 					});
 				}
 				
@@ -287,9 +287,9 @@
 							
 							for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
 								if (j === param.pageBreak && i !== param.page) { break; }
-								str += genPage(data, classes || '', i);
+								str += genPage(ctm, classes || '', i);
 							}
-						} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(data, classes || '', i); } }
+						} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }
 					}
 				}
 				
@@ -300,19 +300,19 @@
 					// delegate event
 					if (!data['ctm-delegated']) {
 						if (tag !== 'select') {
-							dom.bind(el, 'click', function () {
-								var $this = $(this);
+							dom.bind(el, 'click', function (e) {
+								e = e || window.event;
+								var target = e.target || e.srcElement, data = dom.data(target);
+								if (target.parentNode !== el) { return false; }
 								
-								if (param.page !== $this.data('page')) {
-									if (data.nav === 'pageList') {
-										param.page = +$this.data('page');
-									} else {
-										self._push('numberBreak', param.name || '', +$this.data('number-break'));
-										delete param.numberBreak;
-									}
-
-									self.print(param);
+								if (ctm.nav === 'pageList') {
+									param.page = +data.page;
+								} else {
+									self._push('numberBreak', param.name || '', +data['number-break']);
+									delete param.numberBreak;
 								}
+
+								self.print(param);
 							});
 						
 						// if select
