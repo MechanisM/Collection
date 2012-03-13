@@ -28,37 +28,39 @@
 	 */
 	C.prototype.print = function (param, clear) {
 		clear = clear || false;
-		//
+		
 		var
 			tmpParser = {}, tmpFilter = {},
 			opt = {},
-			//
+			
 			cObj, cOLength,
 			start, inc = 0, checkPage, from = null,
 			first = false,
-			//
+			
 			numberBreak,
-			//
-			result = '', action, e = null;
+			
+			result = '', action, e,
+			
+			dom = this.drivers.dom;
 			
 		// easy implementation
 		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
 			param = {page: param};
 		} else if (!C.isExists(param)) { param = {page: this._get('page')}; }
 		
-		//
 		C.extend(true, opt, this.dObj.active, param);
 		if (param) { opt.page = C.expr(opt.page, this._get('page')); }
 		if (opt.page < 1) { opt.page = 1; }
 		
-		//
 		opt.collection = C.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
 		opt.template = C.isString(opt.template) ? this._get('template', opt.template) : opt.template;
 		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
-		//
+		
+		opt.target = C.isString(opt.target) ? dom.find(opt.target) : opt.target;
+		opt.pager = C.isExists(opt.pager) ? dom.find(opt.pager) : opt.pager;
 		
 		if (clear === true) { opt.cache.iteration = false; }
-		//
+		
 		checkPage = this._get('page') - opt.page;
 		this._update('page', opt.page);
 		
@@ -87,7 +89,7 @@
 		// without cache
 		if (C.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !opt.numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
-			//
+			
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		
@@ -97,12 +99,12 @@
 			start = !numberBreak ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :
 							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;
-			//
+			
 			if (numberBreak) {
 				// rewind cached step back
 				if (checkPage > 0) {
 					checkPage = opt.numberBreak * checkPage;
-					for (; (start -= 1) > -1;) {
+					while ((start -= 1) > -1) {
 						if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE, tmpFilter) === true) {
 							if (inc === checkPage) {
 								break;
@@ -114,12 +116,10 @@
 				} else if (checkPage < 0) { from = -checkPage * opt.numberBreak - opt.numberBreak; }
 			}
 			
-			//
 			tmpFilter.name && this._drop('filter', '__tmp:' + tmpFilter.name);
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		
-		//
 		if (opt.cache) {
 			if (checkPage !== 0 && opt.cache.iteration !== false) {
 				// cache
@@ -140,13 +140,25 @@
 			} else { this._push('variable', opt.variable, result); }
 			
 			return this;
-		} else { opt.target[opt.appendType](result); }
-		//
+		} else {
+			Array.prototype.forEach.call(opt.target, function (el) {
+				// innerHTML
+				if (opt.appendType === 'html') {
+					el.innerHTML = result;
+				
+				// append
+				} else if (opt.appendType === 'append') {
+					el.innerHTML = el.innerHTML + result;
+				
+				// prepend
+				} else { el.innerHTML = result + el.innerHTML; }
+			}, this);
+		}
+		
 		if (!opt.pager) { return this; }
 		
-		//
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
-		opt.nmbOfEntriesInPage = opt.calculator ? opt.target.find(opt.calculator).length : opt.target.children().length;
+		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : opt.target[0].childNodes.length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 
 		// generate navigation bar
@@ -176,14 +188,14 @@
 			self = this,
 			str = '',
 			
-			//
+			// number of pages
 			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak),
 			
 			/** @private */
 			genPage = function (data, classes, i, nSwitch) {
 				nSwitch = nSwitch || false;
 				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
-				//
+				
 				if (data.attr) {
 					for (key in data.attr) {
 						if (data.attr.hasOwnProperty(key)) {
@@ -191,7 +203,7 @@
 						}
 					}
 				}
-				//
+				
 				if ((!nSwitch && i === param.page) || (nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }
 				return str += '>' + i + '</' + (data.tag || 'span') + '>';
 			},
@@ -205,40 +217,41 @@
 				return val;
 			},
 			
-			//
-			i, j = 0, from, to;
-		//
-		param.pager.find('.ctm').each(function () {
+			
+			i, j = 0, from, to, dom = this.drivers.dom;
+		
+		// for each node
+		Array.prototype.forEach.call(dom.find('.ctm', param.pager), function (el) {
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
 			str = '';
 			
-			//
 			var
-				$this = $(this),
-				tag = this.tagName.toLowerCase(),
+				tag = el.tagName.toLowerCase(),
 				type = tag === 'input' ? 'val' : 'html',
 				
-				data = $this.data('ctm'),
-				classes = data.classes;
-			//
-			if (data.nav) {
+				data = dom.data(el),
+				
+				ctm = data.ctm,
+				classes = ctm.classes;
+			
+			if (ctm.nav) {
 				// attach event
-				if (C.find(data.nav, ['first', 'prev', 'next', 'last']) && !$this.data('ctm-delegated')) {
-					$this.click(function () {
+				if (C.find(data.nav, ['first', 'prev', 'next', 'last']) && data['ctm-delegated']) {
+					dom.click(el, function () {
 						var $this = $(this);
-						//
+						
 						if (!$this.hasClass(data.classes && data.classes.disabled || 'disabled')) {
 							data.nav === 'first' && (param.page = 1);
 							data.nav === 'prev' && (param.page = '-=1');
 							data.nav === 'next' && (param.page = '+=1');
 							data.nav === 'last' && (param.page = nmbOfPages);
-							//
+							
 							self.print(param);
 						}
-					}).data('ctm-delegated', true);
+					});
+					el.setAttribute('data-ctm-delegated', true);
 				}
 				
-				//
 				if ((C.find(data.nav, ['first', 'prev']) && param.page === 1) || (C.find(data.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
 					$this.addClass(classes && classes.disabled || 'disabled');
 				} else if (C.find(data.nav, ['first', 'prev', 'next', 'last'])) { $this.removeClass(classes && classes.disabled || 'disabled'); }
@@ -261,12 +274,11 @@
 							str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
 						} 
 					} else {
-						//
 						if (nmbOfPages > param.pageBreak) {	
 							j = param.pageBreak % 2 !== 0 ? 1 : 0;
 							from = (param.pageBreak - j) / 2;
 							to = from;
-							//
+							
 							if (param.page - j < from) {
 								from = 0;
 							} else {
@@ -275,7 +287,7 @@
 									from -= param.page + to - nmbOfPages;
 								}
 							}
-							//
+							
 							for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
 								if (j === param.pageBreak && i !== param.page) { break; }
 								str += genPage(data, classes || '', i);
@@ -284,7 +296,6 @@
 					}
 				}
 				
-				//
 				if (data.nav === 'numberSwitch' || data.nav === 'pageList') {	
 					// to html
 					$this.html(str);
@@ -295,7 +306,6 @@
 							$this.on('click', data.tag || 'span', function () {
 								var $this = $(this);
 								
-								//
 								if (param.page !== $this.data('page')) {
 									if (data.nav === 'pageList') {
 										param.page = +$this.data('page');
@@ -313,7 +323,6 @@
 							$this.on('change', function () {
 								var $this = $(this).children(':selected');
 								
-								//
 								if (param.page !== $this.val()) {
 									if (data.nav === 'pageList') {
 										param.page = +$this.val();
@@ -327,7 +336,6 @@
 							});
 						}
 						
-						//
 						$this.data('ctm-delegated', true);
 					}
 				}
@@ -338,7 +346,6 @@
 					$this.addClass(classes && classes.noData || 'no-data');
 				} else { $this.removeClass(classes && classes.noData || 'no-data'); }
 				
-				//
 				switch (data.info) {
 					case 'page' : { $this[type](wrap(param.page, tag)); } break;
 					case 'total' : { $this[type](wrap(param.nmbOfEntries, tag)); } break;

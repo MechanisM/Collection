@@ -57,7 +57,7 @@ var Collection = (function () {
 		prop = prop || '';
 		
 		// create factory function if need
-		if (!this || (this.fn && (!this.fn.name || this.fn.name !== 'Collection'))) { return new C(collection, prop); }
+		if (!this || (!this.name || this.name !== 'Collection')) { return new C(collection, prop); }
 		
 		// mixin public fields
 		C.extend(true, this, C.fields);
@@ -677,6 +677,50 @@ var Collection = (function () {
 		return newObj;
 	};	
 	/////////////////////////////////
+	//// array prototype
+	/////////////////////////////////
+
+	if (!Array.prototype.forEach) {
+		/**
+		 * calls a function for each element in the array
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — function to test each element of the array
+		 * @param {mixed} [thisObject] — object to use as this when executing callback
+		 * @return {undefined}
+		 */
+		Array.prototype.forEach = function (callback, thisObject) {
+			var i = -1, aLength = this.length;
+			
+			while ((i += 1) < aLength) {
+				if (!thisObject) {
+					callback(this[i], i, this);
+				} else { callback.call(thisObject, this[i], i, this); }
+			}
+		}
+	}
+	
+	if (!Array.prototype.some) {
+		/**
+		 * tests whether some element in the array passes the test implemented by the provided function
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — function to test each element of the array
+		 * @param {mixed} [thisObject] — object to use as this when executing callback
+		 * @return {undefined}
+		 */
+		Array.prototype.some = function (callback, thisObject) {
+			var i = -1, aLength = this.length, res;
+			
+			while ((i += 1) < aLength) {
+				if (!thisObject) {
+					res = callback(this[i], i, this);
+				} else { res = callback.call(thisObject, this[i], i, this); }
+				if (res === true) { break; }
+			}
+		}
+	}	
+	/////////////////////////////////
 	//// prototype
 	/////////////////////////////////
 	
@@ -735,99 +779,212 @@ var Collection = (function () {
 			'numberBreak',
 			'pageBreak',
 			'resultNull'
-		],
+		]
+	};	
+	/////////////////////////////////
+	//// DOM methods
+	/////////////////////////////////
+	
+	// drivers for additional functions
+	C.prototype.drivers = C.drivers = {};	
+	/////////////////////////////////
+	//// DOM methods
+	/////////////////////////////////
+	
+	// drivers for additional functions
+	C.prototype.drivers.dom = C.drivers.dom = {
+		/** @private */
+		find: function (selector, context) {
+			return this.engines[this.lib].find(selector || '', context || '');
+		},
 		
-		// drivers for additional functions
-		drivers: {
-			dom: {
+		/**
+		 * returns the data attributes of the node
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [name] — data name
+		 * @return {Collection DOM Driver}
+		 */
+		data: function (el, name) {
+			var attr = el.attributes, data = {};
+	
+			if (attr && attr.length > 0) {
+				Array.prototype.forEach.call(attr, function (el) {
+					if (el.name.substring(0, 5) === 'data-') {
+						data[el.name.replace('data-', '')] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
+					}
+				});
+			}
+			
+			if (name) { return data[name]; }
+			return data;
+		},
+		
+		/**
+		 * returns the text content of the node
+		 * 
+		 * @this {Collection}
+		 * @param {DOM Node} el — DOM node
+		 * @return {String|Boolean}
+		 */
+		text: function (el) {
+			el = el.childNodes;		
+			
+			var
+				eLength = el.length,
+				i = -1,
+				str = '';
+			
+			while ((i += 1) < eLength) {
+				if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
+			}
+			
+			if (str) { return str; }
+			
+			return false;
+		},
+		
+		/**
+		 * attach onclick event
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [name] — data name
+		 * @return {Collection DOM Driver}
+		 */
+		click: function (el, callback) {
+			if (this.engines[this.lib].click) {
+				this.engines[this.lib].click(el, callback);
+				
+				return this;
+			}
+			
+			// if old IE
+			if (document.attachEvent) {
+				el.attachEvent('onclick', callback);
+			} else { el.addEventListener('click', callback); }
+			
+			return this;
+		},
+		
+		/**
+		 * attach onclick event
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [name] — data name
+		 * @return {Collection DOM Driver}
+		 */
+		addClass: function (el, callback) {
+			for (var key in this.engines) {
+				if (!this.engines.hasOwnProperty(key)) { continue; }
+				
+				if (this.engines[key].is() && this.engines[key].click) {
+					this.engines[key].click(el, callback);
+					
+					return this;
+				}
+			}
+			
+			// if old IE
+			if (document.attachEvent) {
+				el.attachEvent('onclick', callback);
+			} else { el.addEventListener('click', callback); }
+			
+			return this;
+		},
+		
+		// search frameworks
+		engines: {
+			// qsa css selector engine
+			qsa: {
+				/** @private */
+				is: function () {
+					if (typeof qsa !== 'undefined') { return true; }
+				},
 				/** @private */
 				find: function (selector, context) {
-					for (var key in this.engines) {
-						if (!this.engines.hasOwnProperty(key)) { continue; }
-						
-						if (this.engines[key].is()) { return this.engines[key].find(selector || '', context || ''); }
-					}
-					
-					// throw an exception, if not found exploratory framework
-					throw new Error('is not set exploratory framework for DOM');
+					return qsa.querySelectorAll(selector, context);
+				}
+			},
+			// sizzle 
+			sizzle: {
+				/** @private */
+				is: function () {
+					if (typeof Sizzle !== 'undefined') { return true; }
 				},
-				
-				// search frameworks
-				engines: {
-					// qsa css selector engine
-					qsa: {
-						/** @private */
-						is: function () {
-							if (typeof qsa !== 'undefined') { return true; }
-						},
-						/** @private */
-						find: function (selector, context) {
-							return qsa.querySelectorAll(selector, context);
-						}
-					},
-					// sizzle 
-					sizzle: {
-						/** @private */
-						is: function () {
-							if (typeof jQuery !== 'undefined' || typeof Sizzle !== 'undefined') { return true; }
-						},
-						/** @private */
-						find: function (selector, context) {
-							return jQuery ? jQuery(selector, context) : Sizzle(selector, context);
-						}
-					}
+				/** @private */
+				find: function (selector, context) {
+					return Sizzle(selector, context);
+				}
+			},
+			// jQuery 
+			jQuery: {
+				/** @private */
+				is: function () {
+					if (typeof jQuery !== 'undefined') { return true; }
+				},
+				/** @private */
+				find: function (selector, context) {
+					return jQuery(selector, context);
+				},
+				/** @private */
+				click: function (el, callback) { $(el).click(callback); }
+			},
+			// dojo 
+			dojo: {
+				/** @private */
+				is: function () {
+					if (typeof dojo !== 'undefined') { return true; }
+				},
+				/** @private */
+				find: function (selector, context) {
+					return dojo.query(selector, context);
+				},
+				/** @private */
+				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }
+			},
+			// mootools 
+			mootools: {
+				/** @private */
+				is: function () {
+					if (typeof Element.getElements !== 'undefined') { return true; }
+				},
+				/** @private */
+				find: function (selector, context) {
+					var res;
+					
+					if (context) {
+						res = [];
+						
+						$$(context).getElements(selector).forEach(function (el) {
+							el.forEach(function (el) { res.push(el); });
+						});
+					} else { res = $$(selector); }
+					
+					return res;
 				}
 			}
 		}
-	};	
+	};
+	
+	(function () {
+		var key, engines = C.drivers.dom.engines;
+		
+		for (key in engines) {
+			if (!engines.hasOwnProperty(key)) { continue; }
+					
+			if (engines[key].is()) {
+				C.drivers.dom.lib = key;
+				
+				return true;
+			}
+		}
+	})();	
 	/////////////////////////////////
 	//// DOM methods (core)
 	/////////////////////////////////
-	
-	/**
-	 * returns the data attributes of the node
-	 * 
-	 * @this {Collection}
-	 * @param {DOM Node} el — DOM node
-	 * @return {Object}
-	 */
-	C._dataAttr = function (el) {
-		var attr = el.attributes, data = {};
-		
-		if (attr && attr.length > 0) {
-			Array.prototype.forEach.call(attr, function (el) {
-				if (el.name.substring(0, 5) === 'data-') {
-					data[el.name.replace('data-', '')] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
-				}
-			});
-		}
-		
-		return data;
-	};
-	
-	/**
-	 * returns the text content of the node
-	 * 
-	 * @this {Collection}
-	 * @param {DOM Node} el — DOM node
-	 * @return {String|Boolean}
-	 */
-	C._nodeText = function (el) {
-		el = el.childNodes;		
-		
-		var
-			eLength = el.length,
-			i = -1,
-			str = '';
-		
-		while ((i += 1) < eLength) {
-			if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
-		}
-		
-		if (str) { return str; }
-		
-		return false;
-	};
 	
 	/**
 	 * converts one level nodes in the collection
@@ -837,17 +994,21 @@ var Collection = (function () {
 	 * @return {Array}
 	 */
 	C._inObj = function (el) {
-		var array = [], stat = C.fromNodes.stat;
+		var
+			array = [],
+			stat = C.fromNodes.stat,
+			
+			dom = C.drivers.dom;
 				
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
 			// not for text nodes
 			if (el.nodeType === 1) {
 				var
-					data = C._dataAttr(el),
+					data = dom.data(el),
 					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
 					
-					txt = C._nodeText(el),
+					txt = dom.text(el),
 					key,
 					
 					i = array.length;
@@ -873,7 +1034,7 @@ var Collection = (function () {
 	};
 	
 	/**
-	 * create an instance of the Collection on the basis of the DOM node (using QSA Selector Engine)
+	 * create an instance of the Collection on the basis of the DOM node
 	 * 
 	 * @this {Collection}
 	 * @param {String} selector — CSS selector
@@ -884,7 +1045,7 @@ var Collection = (function () {
 	C.fromNodes = function (selector, prop) {
 		if (!JSON || !JSON.parse) { throw new Error('object JSON is not defined!'); }
 		
-		var data = C._inObj(C.prototype.drivers.dom.find(selector));
+		var data = C._inObj(C.drivers.dom.find(selector));
 		
 		if (prop) { return new C(data, prop); }
 		return new C(data);
@@ -3971,32 +4132,6 @@ var Collection = (function () {
 	 */
 	C.prototype.valueOf = function () { return this.length(this.ACTIVE); };	
 	/////////////////////////////////
-	// other
-	/////////////////////////////////
-	
-	/**
-	 * jQuery 'then' method
-	 * 
-	 * @this {Colletion Object}
-	 * @param {Function} done - callback function (if success)
-	 * @param {Function} [fail=done] - callback function (if failed)
-	 * @return {Colletion Object}
-	 */
-	C.prototype.then = function (done, fail) {
-		var self = this;
-		
-		if (arguments.length === 1) {
-			$.when(this.active('defer')).always(function () { done.apply(self, arguments); });
-		} else {
-			$.when(this.active('defer')).then(
-				function () { done().apply(self, arguments); },
-				function () { fail().apply(self, arguments); }
-			);
-		}
-		
-		return this;
-	};	
-	/////////////////////////////////
 	//// design methods (print)
 	/////////////////////////////////
 		
@@ -4025,37 +4160,39 @@ var Collection = (function () {
 	 */
 	C.prototype.print = function (param, clear) {
 		clear = clear || false;
-		//
+		
 		var
 			tmpParser = {}, tmpFilter = {},
 			opt = {},
-			//
+			
 			cObj, cOLength,
 			start, inc = 0, checkPage, from = null,
 			first = false,
-			//
+			
 			numberBreak,
-			//
-			result = '', action, e = null;
+			
+			result = '', action, e,
+			
+			dom = this.drivers.dom;
 			
 		// easy implementation
 		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
 			param = {page: param};
 		} else if (!C.isExists(param)) { param = {page: this._get('page')}; }
 		
-		//
 		C.extend(true, opt, this.dObj.active, param);
 		if (param) { opt.page = C.expr(opt.page, this._get('page')); }
 		if (opt.page < 1) { opt.page = 1; }
 		
-		//
 		opt.collection = C.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
 		opt.template = C.isString(opt.template) ? this._get('template', opt.template) : opt.template;
 		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
-		//
+		
+		opt.target = C.isString(opt.target) ? dom.find(opt.target) : opt.target;
+		opt.pager = C.isExists(opt.pager) ? dom.find(opt.pager) : opt.pager;
 		
 		if (clear === true) { opt.cache.iteration = false; }
-		//
+		
 		checkPage = this._get('page') - opt.page;
 		this._update('page', opt.page);
 		
@@ -4084,7 +4221,7 @@ var Collection = (function () {
 		// without cache
 		if (C.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !opt.numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
-			//
+			
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		
@@ -4094,12 +4231,12 @@ var Collection = (function () {
 			start = !numberBreak ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :
 							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;
-			//
+			
 			if (numberBreak) {
 				// rewind cached step back
 				if (checkPage > 0) {
 					checkPage = opt.numberBreak * checkPage;
-					for (; (start -= 1) > -1;) {
+					while ((start -= 1) > -1) {
 						if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE, tmpFilter) === true) {
 							if (inc === checkPage) {
 								break;
@@ -4111,12 +4248,10 @@ var Collection = (function () {
 				} else if (checkPage < 0) { from = -checkPage * opt.numberBreak - opt.numberBreak; }
 			}
 			
-			//
 			tmpFilter.name && this._drop('filter', '__tmp:' + tmpFilter.name);
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
 		}
 		
-		//
 		if (opt.cache) {
 			if (checkPage !== 0 && opt.cache.iteration !== false) {
 				// cache
@@ -4137,13 +4272,25 @@ var Collection = (function () {
 			} else { this._push('variable', opt.variable, result); }
 			
 			return this;
-		} else { opt.target[opt.appendType](result); }
-		//
+		} else {
+			Array.prototype.forEach.call(opt.target, function (el) {
+				// innerHTML
+				if (opt.appendType === 'html') {
+					el.innerHTML = result;
+				
+				// append
+				} else if (opt.appendType === 'append') {
+					el.innerHTML = el.innerHTML + result;
+				
+				// prepend
+				} else { el.innerHTML = result + el.innerHTML; }
+			}, this);
+		}
+		
 		if (!opt.pager) { return this; }
 		
-		//
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
-		opt.nmbOfEntriesInPage = opt.calculator ? opt.target.find(opt.calculator).length : opt.target.children().length;
+		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : opt.target[0].childNodes.length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 
 		// generate navigation bar
@@ -4173,14 +4320,14 @@ var Collection = (function () {
 			self = this,
 			str = '',
 			
-			//
+			// number of pages
 			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak),
 			
 			/** @private */
 			genPage = function (data, classes, i, nSwitch) {
 				nSwitch = nSwitch || false;
 				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
-				//
+				
 				if (data.attr) {
 					for (key in data.attr) {
 						if (data.attr.hasOwnProperty(key)) {
@@ -4188,7 +4335,7 @@ var Collection = (function () {
 						}
 					}
 				}
-				//
+				
 				if ((!nSwitch && i === param.page) || (nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }
 				return str += '>' + i + '</' + (data.tag || 'span') + '>';
 			},
@@ -4202,40 +4349,41 @@ var Collection = (function () {
 				return val;
 			},
 			
-			//
-			i, j = 0, from, to;
-		//
-		param.pager.find('.ctm').each(function () {
+			
+			i, j = 0, from, to, dom = this.drivers.dom;
+		
+		// for each node
+		Array.prototype.forEach.call(dom.find('.ctm', param.pager), function (el) {
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
 			str = '';
 			
-			//
 			var
-				$this = $(this),
-				tag = this.tagName.toLowerCase(),
+				tag = el.tagName.toLowerCase(),
 				type = tag === 'input' ? 'val' : 'html',
 				
-				data = $this.data('ctm'),
-				classes = data.classes;
-			//
-			if (data.nav) {
+				data = dom.data(el),
+				
+				ctm = data.ctm,
+				classes = ctm.classes;
+			
+			if (ctm.nav) {
 				// attach event
-				if (C.find(data.nav, ['first', 'prev', 'next', 'last']) && !$this.data('ctm-delegated')) {
-					$this.click(function () {
+				if (C.find(data.nav, ['first', 'prev', 'next', 'last']) && data['ctm-delegated']) {
+					dom.click(el, function () {
 						var $this = $(this);
-						//
+						
 						if (!$this.hasClass(data.classes && data.classes.disabled || 'disabled')) {
 							data.nav === 'first' && (param.page = 1);
 							data.nav === 'prev' && (param.page = '-=1');
 							data.nav === 'next' && (param.page = '+=1');
 							data.nav === 'last' && (param.page = nmbOfPages);
-							//
+							
 							self.print(param);
 						}
-					}).data('ctm-delegated', true);
+					});
+					el.setAttribute('data-ctm-delegated', true);
 				}
 				
-				//
 				if ((C.find(data.nav, ['first', 'prev']) && param.page === 1) || (C.find(data.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
 					$this.addClass(classes && classes.disabled || 'disabled');
 				} else if (C.find(data.nav, ['first', 'prev', 'next', 'last'])) { $this.removeClass(classes && classes.disabled || 'disabled'); }
@@ -4258,12 +4406,11 @@ var Collection = (function () {
 							str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
 						} 
 					} else {
-						//
 						if (nmbOfPages > param.pageBreak) {	
 							j = param.pageBreak % 2 !== 0 ? 1 : 0;
 							from = (param.pageBreak - j) / 2;
 							to = from;
-							//
+							
 							if (param.page - j < from) {
 								from = 0;
 							} else {
@@ -4272,7 +4419,7 @@ var Collection = (function () {
 									from -= param.page + to - nmbOfPages;
 								}
 							}
-							//
+							
 							for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
 								if (j === param.pageBreak && i !== param.page) { break; }
 								str += genPage(data, classes || '', i);
@@ -4281,7 +4428,6 @@ var Collection = (function () {
 					}
 				}
 				
-				//
 				if (data.nav === 'numberSwitch' || data.nav === 'pageList') {	
 					// to html
 					$this.html(str);
@@ -4292,7 +4438,6 @@ var Collection = (function () {
 							$this.on('click', data.tag || 'span', function () {
 								var $this = $(this);
 								
-								//
 								if (param.page !== $this.data('page')) {
 									if (data.nav === 'pageList') {
 										param.page = +$this.data('page');
@@ -4310,7 +4455,6 @@ var Collection = (function () {
 							$this.on('change', function () {
 								var $this = $(this).children(':selected');
 								
-								//
 								if (param.page !== $this.val()) {
 									if (data.nav === 'pageList') {
 										param.page = +$this.val();
@@ -4324,7 +4468,6 @@ var Collection = (function () {
 							});
 						}
 						
-						//
 						$this.data('ctm-delegated', true);
 					}
 				}
@@ -4335,7 +4478,6 @@ var Collection = (function () {
 					$this.addClass(classes && classes.noData || 'no-data');
 				} else { $this.removeClass(classes && classes.noData || 'no-data'); }
 				
-				//
 				switch (data.info) {
 					case 'page' : { $this[type](wrap(param.page, tag)); } break;
 					case 'total' : { $this[type](wrap(param.nmbOfEntries, tag)); } break;
@@ -4375,13 +4517,13 @@ var Collection = (function () {
 		selector = selector || 'div';
 		empty = empty === false ? false : true;
 		
-		target = target ? C.isString(target) ? this.drivers.dom.find(target) : target : this._get('target');
+		var i, nodes, table, tr, td, dom = this.drivers.dom;
 		
-		var i, nodes, table, tr, td;
+		target = target ? C.isString(target) ? dom.find(target) : target : this._get('target');
 		
 		// for each node
 		Array.prototype.forEach.call(target, function (el) {
-			nodes = this.drivers.dom.find(selector, el)
+			nodes = dom.find(selector, el)
 			table = document.createElement('table');
 			i = 0;
 			

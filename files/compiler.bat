@@ -15,8 +15,10 @@ copy	^
 		+ core\core.static.string.js ^
 		+ core\core.static.expr.js ^
 		+ core\core.static.obj.js ^
-		+ mult\core.array.prototype.js ^
+		+ core\core.array.prototype.js ^
 		+ core\core.prototype.js ^
+		+ core\core.drivers.js ^
+		+ core\core.drivers.dom.js ^
 		^
 		+ dom\collection.js ^
 		+ dom\compile.js ^
@@ -54,7 +56,6 @@ copy	^
 		+ context\context.js ^
 		^
 		+ other\other.js ^
-		+ other\then.js ^
 		^
 		+ design\design.print.js ^
 		+ design\design.table.js ^

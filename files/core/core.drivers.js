@@ -1,0 +1,7 @@
+	
+	/////////////////////////////////
+	//// DOM methods
+	/////////////////////////////////
+	
+	// drivers for additional functions
+	C.prototype.drivers = C.drivers = {};

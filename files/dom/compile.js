@@ -12,7 +12,7 @@
 	 * @return {Function}
 	 */
 	C.ctplCompile = function (selector) {
-		C.isString(selector) && (selector = C.prototype.drivers.dom.find(selector));
+		C.isString(selector) && (selector = C.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
 		var

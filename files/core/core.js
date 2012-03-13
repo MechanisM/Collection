@@ -8,7 +8,7 @@
 		prop = prop || '';
 		
 		// create factory function if need
-		if (!this || (this.fn && (!this.fn.name || this.fn.name !== 'Collection'))) { return new C(collection, prop); }
+		if (!this || (!this.name || this.name !== 'Collection')) { return new C(collection, prop); }
 		
 		// mixin public fields
 		C.extend(true, this, C.fields);

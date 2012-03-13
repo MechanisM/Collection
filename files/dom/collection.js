@@ -4,51 +4,6 @@
 	/////////////////////////////////
 	
 	/**
-	 * returns the data attributes of the node
-	 * 
-	 * @this {Collection}
-	 * @param {DOM Node} el — DOM node
-	 * @return {Object}
-	 */
-	C._dataAttr = function (el) {
-		var attr = el.attributes, data = {};
-		
-		if (attr && attr.length > 0) {
-			Array.prototype.forEach.call(attr, function (el) {
-				if (el.name.substring(0, 5) === 'data-') {
-					data[el.name.replace('data-', '')] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
-				}
-			});
-		}
-		
-		return data;
-	};
-	
-	/**
-	 * returns the text content of the node
-	 * 
-	 * @this {Collection}
-	 * @param {DOM Node} el — DOM node
-	 * @return {String|Boolean}
-	 */
-	C._nodeText = function (el) {
-		el = el.childNodes;		
-		
-		var
-			eLength = el.length,
-			i = -1,
-			str = '';
-		
-		while ((i += 1) < eLength) {
-			if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
-		}
-		
-		if (str) { return str; }
-		
-		return false;
-	};
-	
-	/**
 	 * converts one level nodes in the collection
 	 * 
 	 * @this {Collection}
@@ -56,17 +11,21 @@
 	 * @return {Array}
 	 */
 	C._inObj = function (el) {
-		var array = [], stat = C.fromNodes.stat;
+		var
+			array = [],
+			stat = C.fromNodes.stat,
+			
+			dom = C.drivers.dom;
 				
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
 			// not for text nodes
 			if (el.nodeType === 1) {
 				var
-					data = C._dataAttr(el),
+					data = dom.data(el),
 					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
 					
-					txt = C._nodeText(el),
+					txt = dom.text(el),
 					key,
 					
 					i = array.length;
@@ -92,7 +51,7 @@
 	};
 	
 	/**
-	 * create an instance of the Collection on the basis of the DOM node (using QSA Selector Engine)
+	 * create an instance of the Collection on the basis of the DOM node
 	 * 
 	 * @this {Collection}
 	 * @param {String} selector — CSS selector
@@ -103,7 +62,7 @@
 	C.fromNodes = function (selector, prop) {
 		if (!JSON || !JSON.parse) { throw new Error('object JSON is not defined!'); }
 		
-		var data = C._inObj(C.prototype.drivers.dom.find(selector));
+		var data = C._inObj(C.drivers.dom.find(selector));
 		
 		if (prop) { return new C(data, prop); }
 		return new C(data);
