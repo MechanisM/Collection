@@ -17,8 +17,7 @@
 	 * @return {Boolean}
 	 */
 	C.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
-		var
-			fLength,
+		var fLength,
 			calFilter,
 			
 			result = true, tmpResult,
@@ -90,8 +89,7 @@
 		// calculate deep filter
 		/** @private */
 		calFilter = function (array, iter) {
-			var
-				i = -1,
+			var i = -1,
 				aLength = array.length,
 				pos = 0,
 				result = [];

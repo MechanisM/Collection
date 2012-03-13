@@ -13,8 +13,7 @@
 	 * @return {Object}
 	 */
 	C._sortObject = function (obj, field, sort) {
-		var
-			sortedValues = [],
+		var sortedValues = [],
 			sortedObj = {},
 			key;
 		
@@ -44,8 +43,7 @@
 	 * @return {Object}
 	 */
 	C._sortObjectByKey = function (obj, sort) {
-		var
-			sortedKeys = [],
+		var sortedKeys = [],
 			sortedObj = {},
 			key;
 		
@@ -93,8 +91,7 @@
 		};
 		id = id || '';
 		
-		var
-			self = this,
+		var self = this,
 			cObj,
 			
 			/** @private */

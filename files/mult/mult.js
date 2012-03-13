@@ -19,8 +19,7 @@
 	 */
 	C.prototype.length = function (filter, id) {
 		filter = filter || '';
-		var
-			tmpObj = {},
+		var tmpObj = {},
 			cObj, aCheck, key, cOLength;
 		
 		// overload
@@ -121,8 +120,7 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 	
-		var
-			self = this,
+		var self = this,
 			tmpObj = {},
 		
 			cObj, cOLength,

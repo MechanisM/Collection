@@ -31,8 +31,7 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			operType = C.isString(oper),
+		var operType = C.isString(oper),
 			result = {}, tmp = {}, key,
 			
 			/** @private */

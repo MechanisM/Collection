@@ -43,8 +43,7 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			result = mult === true ? [] : -1,
+		var result = mult === true ? [] : -1,
 			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {

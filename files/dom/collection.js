@@ -11,8 +11,7 @@
 	 * @return {Array}
 	 */
 	C._inObj = function (el) {
-		var
-			array = [],
+		var array = [],
 			stat = C.fromNodes.stat,
 			
 			dom = C.drivers.dom;
@@ -21,8 +20,7 @@
 		Array.prototype.forEach.call(el, function (el) {
 			// not for text nodes
 			if (el.nodeType === 1) {
-				var
-					data = dom.data(el),
+				var data = dom.data(el),
 					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
 					
 					txt = dom.text(el),

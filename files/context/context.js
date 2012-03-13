@@ -17,8 +17,7 @@
 	 * db.parentContext(2); // 'a'
 	 */
 	C.prototype.parentContext = function (n, id) {
-		var
-			context = this._get('context', id || '').split(C.CHILDREN),
+		var context = this._get('context', id || '').split(C.CHILDREN),
 			i = n || 1;
 		
 		while ((i -= 1) > -1) { context.splice(-1, 1); }

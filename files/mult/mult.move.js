@@ -39,8 +39,7 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			deleteList = [],
+		var deleteList = [],
 			aCheckType = C.isArray(C.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
 	
 			elements, e = null;

@@ -2,4 +2,5 @@
 var Collection = (function () {
 	'use strict';
 	
+	/** @private */
 	var C;

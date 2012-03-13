@@ -18,8 +18,7 @@
 	 * db.newCollection([1, 2]);
 	 */
 	C.prototype._new = function (stackName, newVal) {
-		var
-			active = this.dObj.active,
+		var active = this.dObj.active,
 			upperCase = C.toUpperCase(stackName, 1);
 		
 		// compile string if need
@@ -51,8 +50,7 @@
 	 * db.updateCollection([1, 2]);
 	 */
 	C.prototype._update = function (stackName, newVal) {
-		var
-			active = this.dObj.active,
+		var active = this.dObj.active,
 			sys = this.dObj.sys,
 			
 			activeID = this._getActiveID(stackName);
@@ -123,8 +121,7 @@
 	 * });
 	 */
 	C.prototype._push = function (stackName, objID, newVal) {
-		var
-			tmp = this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)],
+		var tmp = this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)],
 			activeID = this._getActiveID(stackName),
 
 			key;
@@ -198,8 +195,7 @@
 	 * db.setCollection('test');
 	 */
 	C.prototype._set = function (stackName, id) {
-		var
-			sys = this.dObj.sys,
+		var sys = this.dObj.sys,
 
 			upperCase = C.toUpperCase(stackName, 1),
 			tmpChangeControlStr = stackName + 'ChangeControl',
@@ -240,8 +236,7 @@
 	 * db.backCollection(2); // 'test' is active
 	 */
 	C.prototype._back = function (stackName, nmb) {
-		var
-			sys = this.dObj.sys,
+		var sys = this.dObj.sys,
 
 			upperCase = C.toUpperCase(stackName, 1),
 			propBack = sys[stackName + 'Back'],
@@ -305,8 +300,7 @@
 	C.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
 		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
 		
-		var
-			active = this.dObj.active,
+		var active = this.dObj.active,
 			sys = this.dObj.sys,
 			
 			upperCase = C.toUpperCase(stackName, 1),

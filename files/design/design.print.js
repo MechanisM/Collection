@@ -29,8 +29,7 @@
 	C.prototype.print = function (param, clear) {
 		clear = clear || false;
 		
-		var
-			tmpParser = {}, tmpFilter = {},
+		var tmpParser = {}, tmpFilter = {},
 			opt = {},
 			
 			cObj, cOLength,
@@ -185,8 +184,7 @@
 	 * @return {Colletion Object}
 	 */
 	C.prototype.easyPage = function (param) {
-		var
-			self = this,
+		var self = this,
 			str = '',
 			
 			// number of pages
@@ -225,8 +223,7 @@
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
 			str = '';
 			
-			var
-				tag = el.tagName.toLowerCase(),
+			var tag = el.tagName.toLowerCase(),
 				
 				data = dom.data(el),
 				ctm = data.ctm,

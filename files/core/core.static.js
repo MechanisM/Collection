@@ -25,8 +25,7 @@
 		
 		del = del || false;
 		
-		var
-			type = C.CHILDREN,
+		var type = C.CHILDREN,
 			last = 0, total = 0,
 			
 			key, i = context.length,
@@ -188,8 +187,7 @@
 		param = C.isExists(param) ? param : [];
 		param = C.isArray(param) ? param : [param];
 		
-		var 
-			i = -1,
+		var i = -1,
 			qLength = query.length - 1,
 			spliter;
 		

@@ -14,8 +14,7 @@
 	 * $C.trim(' test '); // returns 'test'
 	 */
 	C.trim = function (str) {
-		var
-			str = str.replace(/^\s\s*/, ''),
+		var str = str.replace(/^\s\s*/, ''),
 			ws = /\s/,
 			i = str.length;
 		

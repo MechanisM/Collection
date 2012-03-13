@@ -11,8 +11,7 @@
 	 * @return {Object}
 	 */
 	C._reverseObject = function (obj) {
-		var
-			sortedKeys = [],
+		var sortedKeys = [],
 			sortedObj = {},
 			key;
 		

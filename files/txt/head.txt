@@ -1,29 +1,29 @@
 ﻿/**
- * <p>Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
+ * <p>Collection — JS (JavaScript) framework for working with collections of data (using jQuery).<br />
+ * http://collection-js.com
+ * </p>
  *
  * <strong>Glossary:</strong>
  * <ul>
  * <li><b>Collection</b> — data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);</li>
- * <li><b>Filter</b> — is a special function, which returns a Boolean value for each "row" of the collection;</li>
+ * <li><b>Filter</b> — is a special function, which returns a Boolean value for each row of the collection;</li>
  * <li><b>Parser</b> — is a special function which makes the post—processing of the template;</li>
- * <li><b>Context</b> — a string which specifies a link to the context of the collection (for example: "Name > 1" indicates the obj.Name[1], where obj is the instance of collection);</li>
+ * <li><b>Context</b> — a string which specifies a link to the context of the collection (for example: 'Name > 1' indicates the obj.Name[1], where obj is the instance of collection);</li>
  * <li><b>Template</b> — is a special function, which converts the collection in the text, in accordance with special regulations.</li>
  * </ul>
  *
  * <strong>Addition:</strong>
- * <p>The code is documented in accordance with the standard <a href="http://en.wikipedia.org/wiki/JSDoc" target="_blank">jsDoc</a>.<br />
+ * <p>The code is documented in accordance with the standard <a href='http://en.wikipedia.org/wiki/JSDoc' target='_blank'>jsDoc</a>.<br />
  * Specific data types:</p>
  * <ul>
  * <li><b>[Collection Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of C;</li>
  * <li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li>
- * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (Sizzle syntax);</li>
+ * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (CSS3 syntax);</li>
  * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li>
  * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li>
  * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String]</b> and means the function—filter or string expression;</li>
  * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function—parser or string expression;</li>
  * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li>
- * <li><b>[jQuery Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of jQuery;</li>
- * <li><b>[jQuery Deferred]</b> is the reduced form of the <b>[Object]</b> and means an instance of jQuery.Deferred.</li>
  * </ul>
  *
  * <p>For comfortable work it is recommended to use the latest stable version of jQuery.</p>
@@ -35,12 +35,11 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 04.03.2012 11:34:56
+ * @date: 13.03.2012 07:06:15
  * @version 3.6
  *
  * @constructor
- * @example http://jsfiddle.net/kobezzza/ZEcaB/
  * @this {Colletion Object}
- * @param {C|Selector} [collection=null] — collection or selector for field "target"
+ * @param {C|Selector} [collection=null] — collection or selector for field 'target'
  * @param {Plain Object} [uProp=C.fields.dObj.active] — additional properties
  */

@@ -32,8 +32,7 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			fieldType = C.isString(field),
+		var fieldType = C.isString(field),
 			result = {},
 			
 			/** @private */

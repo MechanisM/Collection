@@ -47,8 +47,7 @@
 	
 	// generate system fields
 	(function (data) {
-		var
-			upperCase,
+		var upperCase,
 			sys = C.fields.dObj.sys;
 		
 		data.forEach(function (el) {

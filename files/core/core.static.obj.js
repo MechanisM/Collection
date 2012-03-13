@@ -26,6 +26,8 @@
 				}
 			});
 			if (res) { return res; }
+		
+		// if object
 		} else {
 			for (key in obj) {
 				if (!obj.hasOwnProperty(key)) { continue; }
@@ -49,8 +51,7 @@
 	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}}); // returns {a: {c: 3, b: 2}}
 	 */
 	C.extend = function () {
-		var
-			options, name, src, copy, copyIsArray, clone,
+		var options, name, src, copy, copyIsArray, clone,
 			target = arguments[0] || {},
 			
 			i = 0, aLength = arguments.length,

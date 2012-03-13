@@ -31,8 +31,7 @@
 				return this._setOne(filter, replaceObj, id || '');
 			}
 		
-		var
-			e, arg, replaceCheck = C.isFunction(replaceObj),
+		var e, arg, replaceCheck = C.isFunction(replaceObj),
 			
 			/** @private */
 			action = function (el, i, data, cOLength, cObj, id) {

@@ -21,8 +21,7 @@
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveID('collection') : '' : this._active('collection', id) ? 'active' : '',
 			storage = local === false ? sessionStorage : localStorage,
@@ -57,8 +56,7 @@
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
-		var
-			key,
+		var key,
 			tmp = this.dObj.sys.tmpCollection,
 			active = false;
 		
@@ -88,8 +86,7 @@
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active,
 			storage = local === false ? sessionStorage : localStorage,
@@ -132,8 +129,7 @@
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			storage = local === false ? sessionStorage : localStorage,
 			sLength = storage.length,
@@ -212,8 +208,7 @@
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			storage = local === false ? sessionStorage : localStorage,
 			e = null;
 		
