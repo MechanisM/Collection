@@ -2,15 +2,15 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>C grid</title>
+	<title>Collection grid</title>
 	<link href="style.css" type="text/css" rel="stylesheet">
 	<script type="text/javascript" src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript" src="data.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			var grid = new C(data);
-			$(".ctpl").ctplMake(grid);
+			var grid = new Collection(data);
+			grid.ctplMake(".ctpl");
 			$(".grid").on("click", "th", function () {
 				var
 					$this = $(this),

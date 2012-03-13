@@ -158,7 +158,8 @@
 		if (!opt.pager) { return this; }
 		
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
-		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : opt.target[0].childNodes.length;
+		
+		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 
 		// generate navigation bar
@@ -198,9 +199,8 @@
 				
 				if (data.attr) {
 					for (key in data.attr) {
-						if (data.attr.hasOwnProperty(key)) {
-							str += ' ' + key + '="' + data.attr[key] + '"';
-						}
+						if (!data.attr.hasOwnProperty(key)) { continue; }
+						str += ' ' + key + '="' + data.attr[key] + '"';
 					}
 				}
 				
@@ -227,24 +227,20 @@
 			
 			var
 				tag = el.tagName.toLowerCase(),
-				type = tag === 'input' ? 'val' : 'html',
 				
 				data = dom.data(el),
-				
 				ctm = data.ctm,
 				classes = ctm.classes;
 			
 			if (ctm.nav) {
 				// attach event
-				if (C.find(data.nav, ['first', 'prev', 'next', 'last']) && data['ctm-delegated']) {
-					dom.click(el, function () {
-						var $this = $(this);
-						
-						if (!$this.hasClass(data.classes && data.classes.disabled || 'disabled')) {
-							data.nav === 'first' && (param.page = 1);
-							data.nav === 'prev' && (param.page = '-=1');
-							data.nav === 'next' && (param.page = '+=1');
-							data.nav === 'last' && (param.page = nmbOfPages);
+				if (C.find(ctm.nav, ['first', 'prev', 'next', 'last']) && !data['ctm-delegated']) {
+					dom.bind(el, 'click', function () {
+						if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {
+							ctm.nav === 'first' && (param.page = 1);
+							ctm.nav === 'prev' && (param.page = '-=1');
+							ctm.nav === 'next' && (param.page = '+=1');
+							ctm.nav === 'last' && (param.page = nmbOfPages);
 							
 							self.print(param);
 						}
@@ -252,23 +248,24 @@
 					el.setAttribute('data-ctm-delegated', true);
 				}
 				
-				if ((C.find(data.nav, ['first', 'prev']) && param.page === 1) || (C.find(data.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
-					$this.addClass(classes && classes.disabled || 'disabled');
-				} else if (C.find(data.nav, ['first', 'prev', 'next', 'last'])) { $this.removeClass(classes && classes.disabled || 'disabled'); }
+				// adding classes status
+				if ((C.find(ctm.nav, ['first', 'prev']) && param.page === 1) || (C.find(ctm.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
+					dom.addClass(el, classes && classes.disabled || 'disabled');
+				} else if (C.find(ctm.nav, ['first', 'prev', 'next', 'last'])) {
+					dom.removeClass(el, classes && classes.disabled || 'disabled');
+				}
 				
 				// numberBreak switch
-				if (data.nav === 'numberSwitch') {
-					data.val.forEach(function (el) {
+				if (ctm.nav === 'numberSwitch') {
+					ctm.val.forEach(function (el) {
 						if (tag === 'select') {
 							str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
-						} else {
-							str += genPage(data, classes || '', el, true);
-						}
+						} else { str += genPage(data, classes || '', el, true); }
 					});
 				}
 				
-				// page
-				if (data.nav === 'pageList') {
+				// page navigation
+				if (ctm.nav === 'pageList') {
 					if (tag === 'select') {
 						for (i = 0; (i += 1) <= nmbOfPages;) {
 							str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
@@ -296,14 +293,14 @@
 					}
 				}
 				
-				if (data.nav === 'numberSwitch' || data.nav === 'pageList') {	
+				if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {	
 					// to html
-					$this.html(str);
+					el.innerHTML = str;
 					
 					// delegate event
-					if (!$this.data('ctm-delegated')) {
+					if (!data['ctm-delegated']) {
 						if (tag !== 'select') {
-							$this.on('click', data.tag || 'span', function () {
+							dom.bind(el, 'click', function () {
 								var $this = $(this);
 								
 								if (param.page !== $this.data('page')) {
@@ -320,14 +317,14 @@
 						
 						// if select
 						} else {
-							$this.on('change', function () {
-								var $this = $(this).children(':selected');
+							dom.bind(el, 'change', function () {
+								var option = dom.children(this, 'selected')[0];
 								
-								if (param.page !== $this.val()) {
+								if (param.page !== option.value) {
 									if (data.nav === 'pageList') {
-										param.page = +$this.val();
+										param.page = +option.value;
 									} else {
-										self._push('numberBreak', param.name || '', +$this.val());
+										self._push('numberBreak', param.name || '', +option.value);
 										delete param.numberBreak;
 									}
 									
@@ -336,23 +333,47 @@
 							});
 						}
 						
-						$this.data('ctm-delegated', true);
+						el.setAttribute('data-ctm-delegated', true);
 					}
 				}
 			
 			// info
-			} else if (data.info) {
+			} else if (ctm.info) {
 				if (param.nmbOfEntriesInPage === 0) {
-					$this.addClass(classes && classes.noData || 'no-data');
-				} else { $this.removeClass(classes && classes.noData || 'no-data'); }
+					dom.addClass(el, classes && classes.noData || 'no-data');
+				} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }
 				
-				switch (data.info) {
-					case 'page' : { $this[type](wrap(param.page, tag)); } break;
-					case 'total' : { $this[type](wrap(param.nmbOfEntries, tag)); } break;
-					case 'from' : { $this[type](wrap((param.page - 1) * param.numberBreak + 1, tag)); } break;
-					case 'to' : { $this[type](wrap(param.finNumber, tag)); } break;
-					case 'inPage' : { $this[type](wrap(param.nmbOfEntriesInPage, tag)); } break;
-					case 'nmbOfPages' : { $this[type](wrap(nmbOfPages, tag)); } break;
+				switch (ctm.info) {
+					case 'page' : {
+						if (tag === 'input') {
+							el.value = wrap(param.page, tag);
+						} else { el.innerHTML = wrap(param.page, tag); }
+					} break;
+					case 'total' : {
+						if (tag === 'input') {
+							el.value = wrap(param.nmbOfEntries, tag);
+						} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }
+					} break;
+					case 'from' : {
+						if (tag === 'input') {
+							el.value = wrap((param.page - 1) * param.numberBreak + 1, tag);
+						} else { el.innerHTML = wrap((param.page - 1) * param.numberBreak + 1, tag); }
+					} break;
+					case 'to' : {
+						if (tag === 'input') {
+							el.value = wrap(param.finNumber, tag);
+						} else { el.innerHTML = wrap(param.finNumber, tag); }
+					} break;
+					case 'inPage' : {
+						if (tag === 'input') {
+							el.value = wrap(param.nmbOfEntriesInPage, tag);
+						} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }
+					} break;
+					case 'nmbOfPages' : {
+						if (tag === 'input') {
+							el.value = wrap(nmbOfPages, tag);
+						} else { el.innerHTML = wrap(nmbOfPages, tag); }
+					} break;
 				}
 			}
 		});

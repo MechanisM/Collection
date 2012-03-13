@@ -782,20 +782,49 @@ var Collection = (function () {
 		]
 	};	
 	/////////////////////////////////
-	//// DOM methods
+	//// drivers for additional functions
 	/////////////////////////////////
 	
-	// drivers for additional functions
 	C.prototype.drivers = C.drivers = {};	
 	/////////////////////////////////
 	//// DOM methods
 	/////////////////////////////////
 	
-	// drivers for additional functions
-	C.prototype.drivers.dom = C.drivers.dom = {
-		/** @private */
+	C.drivers.dom = {
+		/**
+		 * returns a list of the elements within the document
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas
+		 * @param {DOM node} [context] — context
+		 * @throw {Error}
+		 * @return {mixin}
+		 */
 		find: function (selector, context) {
+			if (!this.lib) { throw new Error('DOM driver is not defined!'); }
+			
 			return this.engines[this.lib].find(selector || '', context || '');
+		},
+		
+		/**
+		 * returns all direct child elements
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [attr] — the properties of a node
+		 * @return {Array}
+		 */
+		children: function (el, prop) {
+			var res = [];
+			Array.prototype.forEach.call(el.childNodes, function (el) {
+				if (el.nodeType === 1) {
+					if (!prop) {
+						res.push(el);
+					} else if (el[prop]) { res.push(el); }
+				}
+			});
+			
+			return res;
 		},
 		
 		/**
@@ -830,15 +859,11 @@ var Collection = (function () {
 		 */
 		text: function (el) {
 			el = el.childNodes;		
+			var str = '';
 			
-			var
-				eLength = el.length,
-				i = -1,
-				str = '';
-			
-			while ((i += 1) < eLength) {
-				if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
-			}
+			Array.prototype.forEach.call(el, function (el) {
+				if (el.nodeType === 3 && C.trim(el.textContent)) { str += el.textContent; }
+			});
 			
 			if (str) { return str; }
 			
@@ -846,51 +871,65 @@ var Collection = (function () {
 		},
 		
 		/**
-		 * attach onclick event
+		 * attach event
 		 * 
 		 * @this {Collection DOM Driver}
 		 * @param {DOM Node} el — DOM node
-		 * @param {String} [name] — data name
+		 * @param {String} eventType — event type
+		 * @param {Function} callback — callback function
 		 * @return {Collection DOM Driver}
 		 */
-		click: function (el, callback) {
-			if (this.engines[this.lib].click) {
-				this.engines[this.lib].click(el, callback);
+		bind: function (el, eventType, callback) {
+			if (this.engines[this.lib][eventType]) {
+				this.engines[this.lib][eventType](el, callback);
 				
 				return this;
 			}
 			
 			// if old IE
 			if (document.attachEvent) {
-				el.attachEvent('onclick', callback);
-			} else { el.addEventListener('click', callback); }
+				el.attachEvent('on' + eventType, callback);
+			} else { el.addEventListener(eventType, callback); }
 			
 			return this;
 		},
 		
 		/**
-		 * attach onclick event
+		 * adds the specified class to the element
 		 * 
 		 * @this {Collection DOM Driver}
 		 * @param {DOM Node} el — DOM node
-		 * @param {String} [name] — data name
+		 * @param {String} className — class name
 		 * @return {Collection DOM Driver}
 		 */
-		addClass: function (el, callback) {
-			for (var key in this.engines) {
-				if (!this.engines.hasOwnProperty(key)) { continue; }
-				
-				if (this.engines[key].is() && this.engines[key].click) {
-					this.engines[key].click(el, callback);
-					
-					return this;
-				}
-			}
+		addClass: function (el, className) {
+			var classes = el.className;
+			if (classes.search(className) === -1) { el.className += ' ' + className; }
 			
-			// if old IE
-			if (document.attachEvent) {
-				el.attachEvent('onclick', callback);
-			} else { el.addEventListener('click', callback); }
+			return this;
+		},
+		/**
+		 * determine whether or not the specified item is needed class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Boolean}
+		 */
+		hasClass: function (el, className) {
+			return el.className.search(className) === -1 ? false : true;
+		},
+		/**
+		 * remove a single class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Collection DOM Driver}
+		 */
+		removeClass: function (el, className) {
+			var classes = el.className;
+			el.className = classes.replace(className, '');
 			
 			return this;
 		},
@@ -930,7 +969,9 @@ var Collection = (function () {
 					return jQuery(selector, context);
 				},
 				/** @private */
-				click: function (el, callback) { $(el).click(callback); }
+				click: function (el, callback) { $(el).click(callback); },
+				/** @private */
+				change: function (el, callback) { $(el).change(callback); }
 			},
 			// dojo 
 			dojo: {
@@ -969,6 +1010,7 @@ var Collection = (function () {
 		}
 	};
 	
+	// definition of DOM driver
 	(function () {
 		var key, engines = C.drivers.dom.engines;
 		
@@ -1072,7 +1114,7 @@ var Collection = (function () {
 	 * @return {Function}
 	 */
 	C.ctplCompile = function (selector) {
-		C.isString(selector) && (selector = C.prototype.drivers.dom.find(selector));
+		C.isString(selector) && (selector = C.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
 		var
@@ -1084,7 +1126,6 @@ var Collection = (function () {
 				.replace(/[\r\t\n]/g, ' ')
 				.split('<?js'),
 			
-			eLength = elem.length,
 			resStr = 'var key = i, result = ""; ';
 		
 		elem.forEach(function (el, i) {
@@ -1103,26 +1144,28 @@ var Collection = (function () {
 	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
 	 * @return {Collection Object}
 	 */
-	C.prototype.ctplMake = function (selector) {
-		C.isString(selector) && (selector = this.drivers.dom.find(selector));
+	C.prototype.ctplMake = function (selector) {	
+		var dom = C.drivers.dom;
+		C.isString(selector) && (selector = dom.find(selector));
 		
 		Array.prototype.forEach.call(selector, function (el) {
 			var
-				data = C._dataAttr(el).ctpl, key,
+				data = dom.data(el, 'ctpl'), key,
 				prefix = data.prefix ? data.prefix + '_' : '';
 			
 			// compile template
-			cObj._push('template', prefix + data.name, C.ctplCompile(el));
-			if (data.set && data.set === true) { cObj._set('template', prefix + data.name); }
+			this._push('template', prefix + data.name, C.ctplCompile(el));
+			if (data.set && data.set === true) { this._set('template', prefix + data.name); }
 			
 			// compile
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
-				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
-				if (C.find(key, ['target', 'pager'])) { data[key] = this.drivers.dom.find(data[key]); }
 				
-				cObj._push(key, prefix + data.name, data[key]);
-				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
+				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
+				if (C.find(key, ['target', 'pager'])) { data[key] = dom.find(data[key]); }
+				
+				this._push(key, prefix + data.name, data[key]);
+				if (data.set && data.set === true) { this._set(key, prefix + data.name); }
 				
 				if (C.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
 			}
@@ -1131,11 +1174,11 @@ var Collection = (function () {
 			if (data.print && data.print === true) {
 				data.template = data.name;
 				if (!data.target) {
-					cObj._push('target', prefix + data.name, el.parentNode);
-					if (data.set && data.set === true) { cObj._set('target', prefix + data.name); }
+					this._push('target', prefix + data.name, [el.parentNode]);
+					if (data.set && data.set === true) { this._set('target', prefix + data.name); }
 				}
 				
-				cObj.print(data);
+				this.print(data);
 			}
 		}, this);
 		
@@ -4290,7 +4333,8 @@ var Collection = (function () {
 		if (!opt.pager) { return this; }
 		
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
-		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : opt.target[0].childNodes.length;
+		
+		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 
 		// generate navigation bar
@@ -4330,9 +4374,8 @@ var Collection = (function () {
 				
 				if (data.attr) {
 					for (key in data.attr) {
-						if (data.attr.hasOwnProperty(key)) {
-							str += ' ' + key + '="' + data.attr[key] + '"';
-						}
+						if (!data.attr.hasOwnProperty(key)) { continue; }
+						str += ' ' + key + '="' + data.attr[key] + '"';
 					}
 				}
 				
@@ -4359,24 +4402,20 @@ var Collection = (function () {
 			
 			var
 				tag = el.tagName.toLowerCase(),
-				type = tag === 'input' ? 'val' : 'html',
 				
 				data = dom.data(el),
-				
 				ctm = data.ctm,
 				classes = ctm.classes;
 			
 			if (ctm.nav) {
 				// attach event
-				if (C.find(data.nav, ['first', 'prev', 'next', 'last']) && data['ctm-delegated']) {
-					dom.click(el, function () {
-						var $this = $(this);
-						
-						if (!$this.hasClass(data.classes && data.classes.disabled || 'disabled')) {
-							data.nav === 'first' && (param.page = 1);
-							data.nav === 'prev' && (param.page = '-=1');
-							data.nav === 'next' && (param.page = '+=1');
-							data.nav === 'last' && (param.page = nmbOfPages);
+				if (C.find(ctm.nav, ['first', 'prev', 'next', 'last']) && !data['ctm-delegated']) {
+					dom.bind(el, 'click', function () {
+						if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {
+							ctm.nav === 'first' && (param.page = 1);
+							ctm.nav === 'prev' && (param.page = '-=1');
+							ctm.nav === 'next' && (param.page = '+=1');
+							ctm.nav === 'last' && (param.page = nmbOfPages);
 							
 							self.print(param);
 						}
@@ -4384,23 +4423,24 @@ var Collection = (function () {
 					el.setAttribute('data-ctm-delegated', true);
 				}
 				
-				if ((C.find(data.nav, ['first', 'prev']) && param.page === 1) || (C.find(data.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
-					$this.addClass(classes && classes.disabled || 'disabled');
-				} else if (C.find(data.nav, ['first', 'prev', 'next', 'last'])) { $this.removeClass(classes && classes.disabled || 'disabled'); }
+				// adding classes status
+				if ((C.find(ctm.nav, ['first', 'prev']) && param.page === 1) || (C.find(ctm.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
+					dom.addClass(el, classes && classes.disabled || 'disabled');
+				} else if (C.find(ctm.nav, ['first', 'prev', 'next', 'last'])) {
+					dom.removeClass(el, classes && classes.disabled || 'disabled');
+				}
 				
 				// numberBreak switch
-				if (data.nav === 'numberSwitch') {
-					data.val.forEach(function (el) {
+				if (ctm.nav === 'numberSwitch') {
+					ctm.val.forEach(function (el) {
 						if (tag === 'select') {
 							str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
-						} else {
-							str += genPage(data, classes || '', el, true);
-						}
+						} else { str += genPage(data, classes || '', el, true); }
 					});
 				}
 				
-				// page
-				if (data.nav === 'pageList') {
+				// page navigation
+				if (ctm.nav === 'pageList') {
 					if (tag === 'select') {
 						for (i = 0; (i += 1) <= nmbOfPages;) {
 							str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
@@ -4428,14 +4468,14 @@ var Collection = (function () {
 					}
 				}
 				
-				if (data.nav === 'numberSwitch' || data.nav === 'pageList') {	
+				if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {	
 					// to html
-					$this.html(str);
+					el.innerHTML = str;
 					
 					// delegate event
-					if (!$this.data('ctm-delegated')) {
+					if (!data['ctm-delegated']) {
 						if (tag !== 'select') {
-							$this.on('click', data.tag || 'span', function () {
+							dom.bind(el, 'click', function () {
 								var $this = $(this);
 								
 								if (param.page !== $this.data('page')) {
@@ -4452,14 +4492,14 @@ var Collection = (function () {
 						
 						// if select
 						} else {
-							$this.on('change', function () {
-								var $this = $(this).children(':selected');
+							dom.bind(el, 'change', function () {
+								var option = dom.children(this, 'selected')[0];
 								
-								if (param.page !== $this.val()) {
+								if (param.page !== option.value) {
 									if (data.nav === 'pageList') {
-										param.page = +$this.val();
+										param.page = +option.value;
 									} else {
-										self._push('numberBreak', param.name || '', +$this.val());
+										self._push('numberBreak', param.name || '', +option.value);
 										delete param.numberBreak;
 									}
 									
@@ -4468,23 +4508,47 @@ var Collection = (function () {
 							});
 						}
 						
-						$this.data('ctm-delegated', true);
+						el.setAttribute('data-ctm-delegated', true);
 					}
 				}
 			
 			// info
-			} else if (data.info) {
+			} else if (ctm.info) {
 				if (param.nmbOfEntriesInPage === 0) {
-					$this.addClass(classes && classes.noData || 'no-data');
-				} else { $this.removeClass(classes && classes.noData || 'no-data'); }
+					dom.addClass(el, classes && classes.noData || 'no-data');
+				} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }
 				
-				switch (data.info) {
-					case 'page' : { $this[type](wrap(param.page, tag)); } break;
-					case 'total' : { $this[type](wrap(param.nmbOfEntries, tag)); } break;
-					case 'from' : { $this[type](wrap((param.page - 1) * param.numberBreak + 1, tag)); } break;
-					case 'to' : { $this[type](wrap(param.finNumber, tag)); } break;
-					case 'inPage' : { $this[type](wrap(param.nmbOfEntriesInPage, tag)); } break;
-					case 'nmbOfPages' : { $this[type](wrap(nmbOfPages, tag)); } break;
+				switch (ctm.info) {
+					case 'page' : {
+						if (tag === 'input') {
+							el.value = wrap(param.page, tag);
+						} else { el.innerHTML = wrap(param.page, tag); }
+					} break;
+					case 'total' : {
+						if (tag === 'input') {
+							el.value = wrap(param.nmbOfEntries, tag);
+						} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }
+					} break;
+					case 'from' : {
+						if (tag === 'input') {
+							el.value = wrap((param.page - 1) * param.numberBreak + 1, tag);
+						} else { el.innerHTML = wrap((param.page - 1) * param.numberBreak + 1, tag); }
+					} break;
+					case 'to' : {
+						if (tag === 'input') {
+							el.value = wrap(param.finNumber, tag);
+						} else { el.innerHTML = wrap(param.finNumber, tag); }
+					} break;
+					case 'inPage' : {
+						if (tag === 'input') {
+							el.value = wrap(param.nmbOfEntriesInPage, tag);
+						} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }
+					} break;
+					case 'nmbOfPages' : {
+						if (tag === 'input') {
+							el.value = wrap(nmbOfPages, tag);
+						} else { el.innerHTML = wrap(nmbOfPages, tag); }
+					} break;
 				}
 			}
 		});
@@ -4517,17 +4581,16 @@ var Collection = (function () {
 		selector = selector || 'div';
 		empty = empty === false ? false : true;
 		
-		var i, nodes, table, tr, td, dom = this.drivers.dom;
+		var i, table, tr, td, dom = this.drivers.dom;
 		
 		target = target ? C.isString(target) ? dom.find(target) : target : this._get('target');
 		
 		// for each node
 		Array.prototype.forEach.call(target, function (el) {
-			nodes = dom.find(selector, el)
 			table = document.createElement('table');
 			i = 0;
 			
-			Array.prototype.forEach.call(nodes, function (el) {
+			Array.prototype.forEach.call(dom.find(selector, el), function (el) {
 				if (i === 0) {
 					tr = document.createElement('tr');
 					table.appendChild(tr);

@@ -3,11 +3,41 @@
 	//// DOM methods
 	/////////////////////////////////
 	
-	// drivers for additional functions
 	C.drivers.dom = {
-		/** @private */
+		/**
+		 * returns a list of the elements within the document
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas
+		 * @param {DOM node} [context] — context
+		 * @throw {Error}
+		 * @return {mixin}
+		 */
 		find: function (selector, context) {
+			if (!this.lib) { throw new Error('DOM driver is not defined!'); }
+			
 			return this.engines[this.lib].find(selector || '', context || '');
+		},
+		
+		/**
+		 * returns all direct child elements
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [attr] — the properties of a node
+		 * @return {Array}
+		 */
+		children: function (el, prop) {
+			var res = [];
+			Array.prototype.forEach.call(el.childNodes, function (el) {
+				if (el.nodeType === 1) {
+					if (!prop) {
+						res.push(el);
+					} else if (el[prop]) { res.push(el); }
+				}
+			});
+			
+			return res;
 		},
 		
 		/**
@@ -42,15 +72,11 @@
 		 */
 		text: function (el) {
 			el = el.childNodes;		
+			var str = '';
 			
-			var
-				eLength = el.length,
-				i = -1,
-				str = '';
-			
-			while ((i += 1) < eLength) {
-				if (el[i].nodeType === 3 && C.trim(el[i].textContent)) { str += el[i].textContent; }
-			}
+			Array.prototype.forEach.call(el, function (el) {
+				if (el.nodeType === 3 && C.trim(el.textContent)) { str += el.textContent; }
+			});
 			
 			if (str) { return str; }
 			
@@ -58,51 +84,65 @@
 		},
 		
 		/**
-		 * attach onclick event
+		 * attach event
 		 * 
 		 * @this {Collection DOM Driver}
 		 * @param {DOM Node} el — DOM node
-		 * @param {String} [name] — data name
+		 * @param {String} eventType — event type
+		 * @param {Function} callback — callback function
 		 * @return {Collection DOM Driver}
 		 */
-		click: function (el, callback) {
-			if (this.engines[this.lib].click) {
-				this.engines[this.lib].click(el, callback);
+		bind: function (el, eventType, callback) {
+			if (this.engines[this.lib][eventType]) {
+				this.engines[this.lib][eventType](el, callback);
 				
 				return this;
 			}
 			
 			// if old IE
 			if (document.attachEvent) {
-				el.attachEvent('onclick', callback);
-			} else { el.addEventListener('click', callback); }
+				el.attachEvent('on' + eventType, callback);
+			} else { el.addEventListener(eventType, callback); }
 			
 			return this;
 		},
 		
 		/**
-		 * attach onclick event
+		 * adds the specified class to the element
 		 * 
 		 * @this {Collection DOM Driver}
 		 * @param {DOM Node} el — DOM node
-		 * @param {String} [name] — data name
+		 * @param {String} className — class name
 		 * @return {Collection DOM Driver}
 		 */
-		addClass: function (el, callback) {
-			for (var key in this.engines) {
-				if (!this.engines.hasOwnProperty(key)) { continue; }
-				
-				if (this.engines[key].is() && this.engines[key].click) {
-					this.engines[key].click(el, callback);
-					
-					return this;
-				}
-			}
+		addClass: function (el, className) {
+			var classes = el.className;
+			if (classes.search(className) === -1) { el.className += ' ' + className; }
 			
-			// if old IE
-			if (document.attachEvent) {
-				el.attachEvent('onclick', callback);
-			} else { el.addEventListener('click', callback); }
+			return this;
+		},
+		/**
+		 * determine whether or not the specified item is needed class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Boolean}
+		 */
+		hasClass: function (el, className) {
+			return el.className.search(className) === -1 ? false : true;
+		},
+		/**
+		 * remove a single class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Collection DOM Driver}
+		 */
+		removeClass: function (el, className) {
+			var classes = el.className;
+			el.className = classes.replace(className, '');
 			
 			return this;
 		},
@@ -142,7 +182,9 @@
 					return jQuery(selector, context);
 				},
 				/** @private */
-				click: function (el, callback) { $(el).click(callback); }
+				click: function (el, callback) { $(el).click(callback); },
+				/** @private */
+				change: function (el, callback) { $(el).change(callback); }
 			},
 			// dojo 
 			dojo: {
@@ -181,6 +223,7 @@
 		}
 	};
 	
+	// definition of DOM driver
 	(function () {
 		var key, engines = C.drivers.dom.engines;
 		

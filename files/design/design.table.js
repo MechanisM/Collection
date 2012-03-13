@@ -25,17 +25,16 @@
 		selector = selector || 'div';
 		empty = empty === false ? false : true;
 		
-		var i, nodes, table, tr, td, dom = this.drivers.dom;
+		var i, table, tr, td, dom = this.drivers.dom;
 		
 		target = target ? C.isString(target) ? dom.find(target) : target : this._get('target');
 		
 		// for each node
 		Array.prototype.forEach.call(target, function (el) {
-			nodes = dom.find(selector, el)
 			table = document.createElement('table');
 			i = 0;
 			
-			Array.prototype.forEach.call(nodes, function (el) {
+			Array.prototype.forEach.call(dom.find(selector, el), function (el) {
 				if (i === 0) {
 					tr = document.createElement('tr');
 					table.appendChild(tr);

@@ -24,7 +24,6 @@
 				.replace(/[\r\t\n]/g, ' ')
 				.split('<?js'),
 			
-			eLength = elem.length,
 			resStr = 'var key = i, result = ""; ';
 		
 		elem.forEach(function (el, i) {
@@ -43,26 +42,28 @@
 	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
 	 * @return {Collection Object}
 	 */
-	C.prototype.ctplMake = function (selector) {
-		C.isString(selector) && (selector = this.drivers.dom.find(selector));
+	C.prototype.ctplMake = function (selector) {	
+		var dom = C.drivers.dom;
+		C.isString(selector) && (selector = dom.find(selector));
 		
 		Array.prototype.forEach.call(selector, function (el) {
 			var
-				data = C._dataAttr(el).ctpl, key,
+				data = dom.data(el, 'ctpl'), key,
 				prefix = data.prefix ? data.prefix + '_' : '';
 			
 			// compile template
-			cObj._push('template', prefix + data.name, C.ctplCompile(el));
-			if (data.set && data.set === true) { cObj._set('template', prefix + data.name); }
+			this._push('template', prefix + data.name, C.ctplCompile(el));
+			if (data.set && data.set === true) { this._set('template', prefix + data.name); }
 			
 			// compile
 			for (key in data) {
 				if (!data.hasOwnProperty(key)){ continue; }
-				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
-				if (C.find(key, ['target', 'pager'])) { data[key] = this.drivers.dom.find(data[key]); }
 				
-				cObj._push(key, prefix + data.name, data[key]);
-				if (data.set && data.set === true) { cObj._set(key, prefix + data.name); }
+				if (C.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
+				if (C.find(key, ['target', 'pager'])) { data[key] = dom.find(data[key]); }
+				
+				this._push(key, prefix + data.name, data[key]);
+				if (data.set && data.set === true) { this._set(key, prefix + data.name); }
 				
 				if (C.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
 			}
@@ -71,11 +72,11 @@
 			if (data.print && data.print === true) {
 				data.template = data.name;
 				if (!data.target) {
-					cObj._push('target', prefix + data.name, el.parentNode);
-					if (data.set && data.set === true) { cObj._set('target', prefix + data.name); }
+					this._push('target', prefix + data.name, [el.parentNode]);
+					if (data.set && data.set === true) { this._set('target', prefix + data.name); }
 				}
 				
-				cObj.print(data);
+				this.print(data);
 			}
 		}, this);
 		
