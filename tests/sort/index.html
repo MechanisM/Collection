@@ -9,20 +9,20 @@
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			test("sort", function () {
+			test('sort', function () {
 				var
 					db = new Collection([1, 2, 3, 4, 5]),
 					db2 = new Collection({a: 1, f: 2, c: 3}),
-					db3 = new Collection([{name: "Koba"}, {name: "Andrey"}]);
+					db3 = new Collection([{name: 'Koba'}, {name: 'Andrey'}]);
 					
-					equal(db.sort("", true).get(0), 5, "simple test: array");
-					equal(db.reverse().get(0), 1, "reverse: array");
-					//
-					equal(db2.sort(true, true).get("eq(0)"), 3, "simple test: object");
-					equal(db2.sort("", true).get("eq(0)"), 2, "sort by key");
-					equal(db2.reverse().get("eq(0)"), 1, "reverse: object");
-					//
-					equal(db3.sort("name").get("eq(0)").name, "Andrey", "object with context");
+					equal(db.sort('', true).get(0), 5, 'simple test: array');
+					equal(db.reverse().get(0), 1, 'reverse: array');
+					
+					equal(db2.sort(true, true).get('eq(0)'), 3, 'simple test: object');
+					equal(db2.sort('', true).get('eq(0)'), 2, 'sort by key');
+					equal(db2.reverse().get('eq(0)'), 1, 'reverse: object');
+					
+					equal(db3.sort('name').get('eq(0)').name, 'Andrey', 'object with context');
 			});
 		});
 	</script>

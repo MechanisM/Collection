@@ -9,15 +9,15 @@
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			module("other");
-			test("table", function () {
-				var db = new Collection("", {target: "#test"});
+			module('other');
+			test('table', function () {
+				var db = new Collection('', {target: '#test'});
 				
-				db.genTable(3, ".td");
-				equal($("#test tr:first td").length, 3, "simple test");
+				db.genTable(3, '.td');
+				equal($('#test tr:first td').length, 3, 'simple test');
 				
-				db.newTarget("#test2").genTable(3, ".td", false);
-				equal($("#test2 tr:last td").length, 1, "simple test without empty cells");
+				db.newTarget('#test2').genTable(3, '.td', false);
+				equal($('#test2 tr:last td').length, 1, 'simple test without empty cells');
 			});
 		});
 	</script>

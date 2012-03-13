@@ -2,41 +2,39 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<title>Collection: mult test</title>
+	<title>Collection: local test</title>
 	<link rel="stylesheet" href="../../qunit.css" type="text/css">
 	<script src="../../jquery.js"></script>
 	<script type="text/javascript" src="../../qunit.js"></script>
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			test("local storage", function () {
+			test('local storage', function () {
 				var db = new Collection([
-					{name: "Koba", age: 22, lvl: 78},
-					{name: "Over", age: 27, lvl: 85},
-					{name: "Drobila", age: 27, lvl: 80},
-					{name: "Skins", age: 28, lvl: 79}
-				]).save().pushCollection("tt", [1, 2]).saveAll();
+					{name: 'Koba', age: 22, lvl: 78},
+					{name: 'Over', age: 27, lvl: 85},
+					{name: 'Drobila', age: 27, lvl: 80},
+					{name: 'Skins', age: 28, lvl: 79}
+				]).save().pushCollection('tt', [1, 2]).saveAll();
 				
-				equal(localStorage.getItem("__Collection__nm:active"), '[{"name":"Koba","age":22,"lvl":78},{"name":"Over","age":27,"lvl":85},{"name":"Drobila","age":27,"lvl":80},{"name":"Skins","age":28,"lvl":79}]', "simple save");
-				equal(localStorage.getItem("__Collection__nm:tt"), "[1,2]", "save all");
+				equal(localStorage.getItem('__Collection__nm:active'), '[{"name":"Koba","age":22,"lvl":78},{"name":"Over","age":27,"lvl":85},{"name":"Drobila","age":27,"lvl":80},{"name":"Skins","age":28,"lvl":79}]', 'simple save');
+				equal(localStorage.getItem('__Collection__nm:tt'), '[1,2]', 'save all');
 				
-				//
 				db = new Collection().loadAll();
-				equal(db.length(), 4, "simple load");
-				equal(db.length("tt"), 2, "load all");
+				equal(db.length(), 4, 'simple load');
+				equal(db.length('tt'), 2, 'load all');
 				
-				//
-				ok(db.loadDate().toString(), "load date");
+				ok(db.loadDate().toString(), 'load date');
 				
 				db.dropAll();
-				equal(localStorage.getItem("__Collection__nm:active"), null, "drop all");
+				equal(localStorage.getItem('__Collection__nm:active'), null, 'drop all');
 			});
 		});
 	</script>
 </head>
 
 <body>
-	<h1 id="qunit-header">Collection: mult test</h1>
+	<h1 id="qunit-header">Collection: local test</h1>
 	<h2 id="qunit-banner"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<h2 id="qunit-userAgent"></h2>

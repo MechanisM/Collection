@@ -3,6 +3,7 @@
 	//// DOM methods
 	/////////////////////////////////
 	
+	/** @private */
 	C.drivers.dom = {
 		/**
 		 * returns a list of the elements within the document
@@ -151,61 +152,48 @@
 		engines: {
 			// qsa css selector engine
 			qsa: {
-				/** @private */
 				is: function () {
 					if (typeof qsa !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return qsa.querySelectorAll(selector, context);
 				}
 			},
 			// sizzle 
 			sizzle: {
-				/** @private */
 				is: function () {
 					if (typeof Sizzle !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return Sizzle(selector, context);
 				}
 			},
 			// jQuery 
 			jQuery: {
-				/** @private */
 				is: function () {
 					if (typeof jQuery !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return jQuery(selector, context);
 				},
-				/** @private */
 				click: function (el, callback) { $(el).click(callback); },
-				/** @private */
 				change: function (el, callback) { $(el).change(callback); }
 			},
 			// dojo 
 			dojo: {
-				/** @private */
 				is: function () {
 					if (typeof dojo !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return dojo.query(selector, context);
 				},
-				/** @private */
 				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }
 			},
 			// mootools 
 			mootools: {
-				/** @private */
 				is: function () {
 					if (typeof Element.getElements !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					var res;
 					
@@ -226,7 +214,6 @@
 	// definition of DOM driver
 	(function () {
 		var key, engines = C.drivers.dom.engines;
-		
 		for (key in engines) {
 			if (!engines.hasOwnProperty(key)) { continue; }
 					

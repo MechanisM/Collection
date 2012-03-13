@@ -9,150 +9,150 @@
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			test("_new", function () {
-				var db = new Collection([[1, 2, 3, 4, 5], 2, 3, 4], {context: "0"});
-				equal(+db._new("context", ""), 4, "simple test");
+			test('_new', function () {
+				var db = new Collection([[1, 2, 3, 4, 5], 2, 3, 4], {context: '0'});
+				equal(+db._new('context', ''), 4, 'simple test');
 			});
-			//
-			test("_update", function () {
-				var db = new Collection([1, 2])._push("collection", "table1", [1, 2, 3]);
+			
+			test('_update', function () {
+				var db = new Collection([1, 2])._push('collection', 'table1', [1, 2, 3]);
 				
 				equal(db
-					._update("collection", [1, 2, 3])
-					._get("collection").length, 3,
-				"simple test");
+					._update('collection', [1, 2, 3])
+					._get('collection').length, 3,
+				'simple test');
 				
 				equal(db
-					._set("collection", "table1")
-					._update("collection", [1, 2])
-					._get("collection", "table1").length, 2,
-				"with stack");
+					._set('collection', 'table1')
+					._update('collection', [1, 2])
+					._get('collection', 'table1').length, 2,
+				'with stack');
 			});
-			//
-			test("_get", function () {
-				var db = new Collection([1, 2])._push("collection", "table1", [1, 2, 3]);
+			
+			test('_get', function () {
+				var db = new Collection([1, 2])._push('collection', 'table1', [1, 2, 3]);
 				
-				equal(db._get("collection").length, 2, "simple test");
-				equal(db._get("collection", "table1").length, 3, "with stack");
+				equal(db._get('collection').length, 2, 'simple test');
+				equal(db._get('collection', 'table1').length, 3, 'with stack');
 			});
-			//
-			test("_push", function () {
+			
+			test('_push', function () {
 				var db = new Collection();
 				
 				equal(db
-					._push("collection", "table1", [1, 2, 3])
-					._get("collection", "table1").length, 3,
-				"simple test: two input parameters");
+					._push('collection', 'table1', [1, 2, 3])
+					._get('collection', 'table1').length, 3,
+				'simple test: two input parameters');
 				
 				equal(db
-					._push("collection", {table2: [1, 2]})
-					._get("collection", "table2").length, 2,
-				"simple test: one input parameter");
+					._push('collection', {table2: [1, 2]})
+					._get('collection', 'table2').length, 2,
+				'simple test: one input parameter');
 				
 				equal(db
-					._set("collection", "table1")
-					._push("collection", "table1", [1])
-					._get("collection").length, 1,
-				"overwriting active properties: two input parameters");
+					._set('collection', 'table1')
+					._push('collection', 'table1', [1])
+					._get('collection').length, 1,
+				'overwriting active properties: two input parameters');
 				
 				equal(db
-					._set("collection", "table2")
-					._push("collection", {table2: [1, 2, 3]})
-					._get("collection").length, 3,
-				"overwriting active properties: one input parameter");
+					._set('collection', 'table2')
+					._push('collection', {table2: [1, 2, 3]})
+					._get('collection').length, 3,
+				'overwriting active properties: one input parameter');
 			});
-			//
-			test("_set", function () {
-				var db = new Collection()._push("collection", "table1", [1, 2]);
+			
+			test('_set', function () {
+				var db = new Collection()._push('collection', 'table1', [1, 2]);
 				
 				equal(db
-					._set("collection", "table1")
-					._get("collection").length, 2,
-				"simple test");
+					._set('collection', 'table1')
+					._get('collection').length, 2,
+				'simple test');
 			});
-			//
-			test("_back", function () {
+			
+			test('_back', function () {
 				var db = new Collection()
-					._push("collection", {table1: [1, 2], table2: [1]});
+					._push('collection', {table1: [1, 2], table2: [1]});
 				
 				equal(db
-					._set("collection", "table1")
-					._set("collection", "table2")
-					._back("collection")
-					._get("collection").length, 2,
-				"simple test");
+					._set('collection', 'table1')
+					._set('collection', 'table2')
+					._back('collection')
+					._get('collection').length, 2,
+				'simple test');
 			});
-			//
-			test("_backIf", function () {
+			
+			test('_backIf', function () {
 				var db = new Collection()
-					._push("collection", {table1: [1, 2], table2: [1]});
+					._push('collection', {table1: [1, 2], table2: [1]});
 				
 				equal(db
-					._set("collection", "table1")
-					._set("collection", "table2")
-					._set("collection", "table1")
-					._back("collection")
-					._backIf("collection")
-					._get("collection").length, 1,
-				"simple test");
+					._set('collection', 'table1')
+					._set('collection', 'table2')
+					._set('collection', 'table1')
+					._back('collection')
+					._backIf('collection')
+					._get('collection').length, 1,
+				'simple test');
 			});
-			//
-			test("_drop", function () {
+			
+			test('_drop', function () {
 				var db = new Collection()
-					._push("collection", {table1: [1, 2], table2: [1]})
-					._set("collection", "table1");
+					._push('collection', {table1: [1, 2], table2: [1]})
+					._set('collection', 'table1');
 
 				equal(db
-					._drop("collection", ["active", "table2"], null)
-					._get("collection"), null,
-				"simple test");
+					._drop('collection', ['active', 'table2'], null)
+					._get('collection'), null,
+				'simple test');
 			});
-			//
-			test("_reset", function () {
+			
+			test('_reset', function () {
 				var db = new Collection()
-					._push("context", {table1: "0", table2: "1"})
-					._set("context", "table1");
+					._push('context', {table1: '0', table2: '1'})
+					._set('context', 'table1');
 
 				equal(db
-					._reset("context", ["active", "table2"], "")
-					._get("context"), "",
-				"simple test");
+					._reset('context', ['active', 'table2'], '')
+					._get('context'), '',
+				'simple test');
 			});
-			//
-			test("_resetTo", function () {
+			
+			test('_resetTo', function () {
 				var db = new Collection()
-					._push("context", {table1: "0", table2: "1"})
-					._set("context", "table1");
+					._push('context', {table1: '0', table2: '1'})
+					._set('context', 'table1');
 
 				equal(db
-					._resetTo("context", "table1", "table2")
-					._get("context"), "1",
-				"simple test");
+					._resetTo('context', 'table1', 'table2')
+					._get('context'), '1',
+				'simple test');
 			});
-			//
-			test("_exists", function () {
+			
+			test('_exists', function () {
 				var db = new Collection()
-					._push("collection", {table1: [1, 2], table2: [1]})
-					._set("collection", "table1");
+					._push('collection', {table1: [1, 2], table2: [1]})
+					._set('collection', 'table1');
 
-				equal(db._exists("collection", "table3"), false, "simple test");
-				equal(db._exists("collection"), true, "with active parameter");
+				equal(db._exists('collection', 'table3'), false, 'simple test');
+				equal(db._exists('collection'), true, 'with active parameter');
 			});
-			//
-			test("_getActiveID", function () {
+			
+			test('_getActiveID', function () {
 				var db = new Collection()
-					._push("collection", {table1: [1, 2], table2: [1]})
-					._set("collection", "table1");
+					._push('collection', {table1: [1, 2], table2: [1]})
+					._set('collection', 'table1');
 
-				equal(db._getActiveID("collection"), "table1", "simple test");
+				equal(db._getActiveID('collection'), 'table1', 'simple test');
 			});
-			//
-			test("_active", function () {
+			
+			test('_active', function () {
 				var db = new Collection()
-					._push("collection", {table1: [1, 2], table2: [1]})
-					._set("collection", "table1");
+					._push('collection', {table1: [1, 2], table2: [1]})
+					._set('collection', 'table1');
 
-				equal(db._active("collection", "table1"), true, "simple test");
+				equal(db._active('collection', 'table1'), true, 'simple test');
 			});
 		});
 	</script>

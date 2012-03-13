@@ -43,7 +43,7 @@
 	 * enable flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n — flag name
+	 * @param {String} [objectN] — flag name
 	 * @return {Collection Object}
 	 *
 	 * @example
@@ -62,7 +62,7 @@
 	 * disable flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n — flag name
+	 * @param {String} [objectN] — flag name
 	 * @return {Collection Object}
 	 *
 	 * @example
@@ -81,7 +81,7 @@
 	 * toggle flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n — flag name
+	 * @param {String} [objectN] — flag name
 	 * @return {Collection Object}
 	 *
 	 * @example
@@ -103,7 +103,7 @@
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|C} [objID=this.ACTIVE] — collection ID or collection
+	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection
 	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space] — indentation of nested structures
 	 * @return {String}

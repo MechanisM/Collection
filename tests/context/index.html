@@ -9,18 +9,17 @@
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			test("parent context", function () {
-				var db = new Collection({a: {b: {c: {}}}}, {context: "a > b > c"})
-					.pushContext("tt", "a > b");
+			test('parent context', function () {
+				var db = new Collection({a: {b: {c: {}}}}, {context: 'a > b > c'}).pushContext('tt', 'a > b');
 				
-				equal(db.parentContext(), "a > b ", "simple context without parameter");
-				equal(db.parentContext(2), "a ", "simple context");
-				//
-				equal(db.parentContext("", "tt"), "a ", "simple context without parameter with ID");
-				equal(db.parentContext(2, "tt"), "", "simple context with ID");
+				equal(db.parentContext(), 'a > b ', 'simple context without parameter');
+				equal(db.parentContext(2), 'a ', 'simple context');
 				
-				equal(db.parent().getContext(), "a > b ", "set context without parameter");
-				equal(db.parent(2).getContext(), "", "set context");
+				equal(db.parentContext('', 'tt'), 'a ', 'simple context without parameter with ID');
+				equal(db.parentContext(2, 'tt'), '', 'simple context with ID');
+				
+				equal(db.parent().getContext(), 'a > b ', 'set context without parameter');
+				equal(db.parent(2).getContext(), '', 'set context');
 			});
 		});
 	</script>

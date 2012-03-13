@@ -1,29 +1,29 @@
 ﻿/**
- * <p>Collection — JS (JavaScript) framework for working with collections of data (using jQuery).</p>
+ * <p>Collection — JS (JavaScript) framework for working with collections of data (using jQuery).<br />
+ * http://collection-js.com
+ * </p>
  *
  * <strong>Glossary:</strong>
  * <ul>
  * <li><b>Collection</b> — data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);</li>
- * <li><b>Filter</b> — is a special function, which returns a Boolean value for each "row" of the collection;</li>
+ * <li><b>Filter</b> — is a special function, which returns a Boolean value for each row of the collection;</li>
  * <li><b>Parser</b> — is a special function which makes the post—processing of the template;</li>
- * <li><b>Context</b> — a string which specifies a link to the context of the collection (for example: "Name > 1" indicates the obj.Name[1], where obj is the instance of collection);</li>
+ * <li><b>Context</b> — a string which specifies a link to the context of the collection (for example: 'Name > 1' indicates the obj.Name[1], where obj is the instance of collection);</li>
  * <li><b>Template</b> — is a special function, which converts the collection in the text, in accordance with special regulations.</li>
  * </ul>
  *
  * <strong>Addition:</strong>
- * <p>The code is documented in accordance with the standard <a href="http://en.wikipedia.org/wiki/JSDoc" target="_blank">jsDoc</a>.<br />
+ * <p>The code is documented in accordance with the standard <a href='http://en.wikipedia.org/wiki/JSDoc' target='_blank'>jsDoc</a>.<br />
  * Specific data types:</p>
  * <ul>
  * <li><b>[Collection Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of C;</li>
  * <li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li>
- * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (Sizzle syntax);</li>
+ * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (CSS3 syntax);</li>
  * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li>
  * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li>
  * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String]</b> and means the function—filter or string expression;</li>
  * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function—parser or string expression;</li>
  * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li>
- * <li><b>[jQuery Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of jQuery;</li>
- * <li><b>[jQuery Deferred]</b> is the reduced form of the <b>[Object]</b> and means an instance of jQuery.Deferred.</li>
  * </ul>
  *
  * <p>For comfortable work it is recommended to use the latest stable version of jQuery.</p>
@@ -35,18 +35,18 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 04.03.2012 11:34:56
+ * @date: 13.03.2012 07:06:15
  * @version 3.6
  *
  * @constructor
- * @example http://jsfiddle.net/kobezzza/ZEcaB/
  * @this {Colletion Object}
- * @param {C|Selector} [collection=null] — collection or selector for field "target"
+ * @param {C|Selector} [collection=null] — collection or selector for field 'target'
  * @param {Plain Object} [uProp=C.fields.dObj.active] — additional properties
  */
 var Collection = (function () {
 	'use strict';
 	
+	/** @private */
 	var C;	
 	/////////////////////////////////
 	//// constructor
@@ -102,8 +102,7 @@ var Collection = (function () {
 		
 		del = del || false;
 		
-		var
-			type = C.CHILDREN,
+		var type = C.CHILDREN,
 			last = 0, total = 0,
 			
 			key, i = context.length,
@@ -265,8 +264,7 @@ var Collection = (function () {
 		param = C.isExists(param) ? param : [];
 		param = C.isArray(param) ? param : [param];
 		
-		var 
-			i = -1,
+		var i = -1,
 			qLength = query.length - 1,
 			spliter;
 		
@@ -424,8 +422,7 @@ var Collection = (function () {
 	 * $C.trim(' test '); // returns 'test'
 	 */
 	C.trim = function (str) {
-		var
-			str = str.replace(/^\s\s*/, ''),
+		var str = str.replace(/^\s\s*/, ''),
 			ws = /\s/,
 			i = str.length;
 		
@@ -550,6 +547,8 @@ var Collection = (function () {
 				}
 			});
 			if (res) { return res; }
+		
+		// if object
 		} else {
 			for (key in obj) {
 				if (!obj.hasOwnProperty(key)) { continue; }
@@ -573,8 +572,7 @@ var Collection = (function () {
 	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}}); // returns {a: {c: 3, b: 2}}
 	 */
 	C.extend = function () {
-		var
-			options, name, src, copy, copyIsArray, clone,
+		var options, name, src, copy, copyIsArray, clone,
 			target = arguments[0] || {},
 			
 			i = 0, aLength = arguments.length,
@@ -790,6 +788,7 @@ var Collection = (function () {
 	//// DOM methods
 	/////////////////////////////////
 	
+	/** @private */
 	C.drivers.dom = {
 		/**
 		 * returns a list of the elements within the document
@@ -938,61 +937,48 @@ var Collection = (function () {
 		engines: {
 			// qsa css selector engine
 			qsa: {
-				/** @private */
 				is: function () {
 					if (typeof qsa !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return qsa.querySelectorAll(selector, context);
 				}
 			},
 			// sizzle 
 			sizzle: {
-				/** @private */
 				is: function () {
 					if (typeof Sizzle !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return Sizzle(selector, context);
 				}
 			},
 			// jQuery 
 			jQuery: {
-				/** @private */
 				is: function () {
 					if (typeof jQuery !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return jQuery(selector, context);
 				},
-				/** @private */
 				click: function (el, callback) { $(el).click(callback); },
-				/** @private */
 				change: function (el, callback) { $(el).change(callback); }
 			},
 			// dojo 
 			dojo: {
-				/** @private */
 				is: function () {
 					if (typeof dojo !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					return dojo.query(selector, context);
 				},
-				/** @private */
 				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }
 			},
 			// mootools 
 			mootools: {
-				/** @private */
 				is: function () {
 					if (typeof Element.getElements !== 'undefined') { return true; }
 				},
-				/** @private */
 				find: function (selector, context) {
 					var res;
 					
@@ -1013,7 +999,6 @@ var Collection = (function () {
 	// definition of DOM driver
 	(function () {
 		var key, engines = C.drivers.dom.engines;
-		
 		for (key in engines) {
 			if (!engines.hasOwnProperty(key)) { continue; }
 					
@@ -1036,8 +1021,7 @@ var Collection = (function () {
 	 * @return {Array}
 	 */
 	C._inObj = function (el) {
-		var
-			array = [],
+		var array = [],
 			stat = C.fromNodes.stat,
 			
 			dom = C.drivers.dom;
@@ -1046,8 +1030,7 @@ var Collection = (function () {
 		Array.prototype.forEach.call(el, function (el) {
 			// not for text nodes
 			if (el.nodeType === 1) {
-				var
-					data = dom.data(el),
+				var data = dom.data(el),
 					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
 					
 					txt = dom.text(el),
@@ -1117,8 +1100,7 @@ var Collection = (function () {
 		C.isString(selector) && (selector = C.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
-		var
-			html = selector[0] ? selector[0].innerHTML : selector.innerHTML,
+		var html = selector[0] ? selector[0].innerHTML : selector.innerHTML,
 			elem = html
 				.replace(/\/\*.*?\*\//g, '')
 				.split('?>')
@@ -1149,8 +1131,7 @@ var Collection = (function () {
 		C.isString(selector) && (selector = dom.find(selector));
 		
 		Array.prototype.forEach.call(selector, function (el) {
-			var
-				data = dom.data(el, 'ctpl'), key,
+			var data = dom.data(el, 'ctpl'), key,
 				prefix = data.prefix ? data.prefix + '_' : '';
 			
 			// compile template
@@ -1409,8 +1390,7 @@ var Collection = (function () {
 	
 	// generate system fields
 	(function (data) {
-		var
-			upperCase,
+		var upperCase,
 			sys = C.fields.dObj.sys;
 		
 		data.forEach(function (el) {
@@ -1441,8 +1421,7 @@ var Collection = (function () {
 	 * db.newCollection([1, 2]);
 	 */
 	C.prototype._new = function (stackName, newVal) {
-		var
-			active = this.dObj.active,
+		var active = this.dObj.active,
 			upperCase = C.toUpperCase(stackName, 1);
 		
 		// compile string if need
@@ -1474,8 +1453,7 @@ var Collection = (function () {
 	 * db.updateCollection([1, 2]);
 	 */
 	C.prototype._update = function (stackName, newVal) {
-		var
-			active = this.dObj.active,
+		var active = this.dObj.active,
 			sys = this.dObj.sys,
 			
 			activeID = this._getActiveID(stackName);
@@ -1546,8 +1524,7 @@ var Collection = (function () {
 	 * });
 	 */
 	C.prototype._push = function (stackName, objID, newVal) {
-		var
-			tmp = this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)],
+		var tmp = this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)],
 			activeID = this._getActiveID(stackName),
 
 			key;
@@ -1621,8 +1598,7 @@ var Collection = (function () {
 	 * db.setCollection('test');
 	 */
 	C.prototype._set = function (stackName, id) {
-		var
-			sys = this.dObj.sys,
+		var sys = this.dObj.sys,
 
 			upperCase = C.toUpperCase(stackName, 1),
 			tmpChangeControlStr = stackName + 'ChangeControl',
@@ -1663,8 +1639,7 @@ var Collection = (function () {
 	 * db.backCollection(2); // 'test' is active
 	 */
 	C.prototype._back = function (stackName, nmb) {
-		var
-			sys = this.dObj.sys,
+		var sys = this.dObj.sys,
 
 			upperCase = C.toUpperCase(stackName, 1),
 			propBack = sys[stackName + 'Back'],
@@ -1728,8 +1703,7 @@ var Collection = (function () {
 	C.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
 		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
 		
-		var
-			active = this.dObj.active,
+		var active = this.dObj.active,
 			sys = this.dObj.sys,
 			
 			upperCase = C.toUpperCase(stackName, 1),
@@ -2344,8 +2318,7 @@ var Collection = (function () {
 	 */
 	C.prototype.length = function (filter, id) {
 		filter = filter || '';
-		var
-			tmpObj = {},
+		var tmpObj = {},
 			cObj, aCheck, key, cOLength;
 		
 		// overload
@@ -2446,8 +2419,7 @@ var Collection = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 	
-		var
-			self = this,
+		var self = this,
 			tmpObj = {},
 		
 			cObj, cOLength,
@@ -2574,8 +2546,7 @@ var Collection = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			result = mult === true ? [] : -1,
+		var result = mult === true ? [] : -1,
 			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
@@ -2707,8 +2678,7 @@ var Collection = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			result = mult === true ? [] : -1,
+		var result = mult === true ? [] : -1,
 			
 			/** @private */
 			action = function (el, i, data, aLength, self, id) {
@@ -2772,8 +2742,7 @@ var Collection = (function () {
 				return this._setOne(filter, replaceObj, id || '');
 			}
 		
-		var
-			e, arg, replaceCheck = C.isFunction(replaceObj),
+		var e, arg, replaceCheck = C.isFunction(replaceObj),
 			
 			/** @private */
 			action = function (el, i, data, cOLength, cObj, id) {
@@ -2872,8 +2841,7 @@ var Collection = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			deleteList = [],
+		var deleteList = [],
 			aCheckType = C.isArray(C.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
 	
 			elements, e = null;
@@ -3064,8 +3032,7 @@ var Collection = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			fieldType = C.isString(field),
+		var fieldType = C.isString(field),
 			result = {},
 			
 			/** @private */
@@ -3135,8 +3102,7 @@ var Collection = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			operType = C.isString(oper),
+		var operType = C.isString(oper),
 			result = 0, tmp = 0, key,
 			
 			/** @private */
@@ -3220,8 +3186,7 @@ var Collection = (function () {
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var
-			operType = C.isString(oper),
+		var operType = C.isString(oper),
 			result = {}, tmp = {}, key,
 			
 			/** @private */
@@ -3304,8 +3269,7 @@ var Collection = (function () {
 	 * @return {Object}
 	 */
 	C._sortObject = function (obj, field, sort) {
-		var
-			sortedValues = [],
+		var sortedValues = [],
 			sortedObj = {},
 			key;
 		
@@ -3335,8 +3299,7 @@ var Collection = (function () {
 	 * @return {Object}
 	 */
 	C._sortObjectByKey = function (obj, sort) {
-		var
-			sortedKeys = [],
+		var sortedKeys = [],
 			sortedObj = {},
 			key;
 		
@@ -3384,8 +3347,7 @@ var Collection = (function () {
 		};
 		id = id || '';
 		
-		var
-			self = this,
+		var self = this,
 			cObj,
 			
 			/** @private */
@@ -3449,8 +3411,7 @@ var Collection = (function () {
 	 * @return {Object}
 	 */
 	C._reverseObject = function (obj) {
-		var
-			sortedKeys = [],
+		var sortedKeys = [],
 			sortedObj = {},
 			key;
 		
@@ -3520,8 +3481,7 @@ var Collection = (function () {
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveID('collection') : '' : this._active('collection', id) ? 'active' : '',
 			storage = local === false ? sessionStorage : localStorage,
@@ -3556,8 +3516,7 @@ var Collection = (function () {
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
-		var
-			key,
+		var key,
 			tmp = this.dObj.sys.tmpCollection,
 			active = false;
 		
@@ -3587,8 +3546,7 @@ var Collection = (function () {
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active,
 			storage = local === false ? sessionStorage : localStorage,
@@ -3631,8 +3589,7 @@ var Collection = (function () {
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			storage = local === false ? sessionStorage : localStorage,
 			sLength = storage.length,
@@ -3711,8 +3668,7 @@ var Collection = (function () {
 		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
-		var
-			name = '__' + this.name + '__' + this._get('namespace'),
+		var name = '__' + this.name + '__' + this._get('namespace'),
 			storage = local === false ? sessionStorage : localStorage,
 			e = null;
 		
@@ -3762,8 +3718,7 @@ var Collection = (function () {
 	 * @return {Boolean}
 	 */
 	C.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
-		var
-			fLength,
+		var fLength,
 			calFilter,
 			
 			result = true, tmpResult,
@@ -3835,8 +3790,7 @@ var Collection = (function () {
 		// calculate deep filter
 		/** @private */
 		calFilter = function (array, iter) {
-			var
-				i = -1,
+			var i = -1,
 				aLength = array.length,
 				pos = 0,
 				result = [];
@@ -3959,7 +3913,6 @@ var Collection = (function () {
 		
 		// if parser is string
 		if (C.isString(parser)) {
-			//
 			if (this._getActiveParam('parser') && _tmpParser) {
 				parser = this.ACTIVE + ' && ' + parser;
 			}
@@ -4023,8 +3976,7 @@ var Collection = (function () {
 	 * db.parentContext(2); // 'a'
 	 */
 	C.prototype.parentContext = function (n, id) {
-		var
-			context = this._get('context', id || '').split(C.CHILDREN),
+		var context = this._get('context', id || '').split(C.CHILDREN),
 			i = n || 1;
 		
 		while ((i -= 1) > -1) { context.splice(-1, 1); }
@@ -4092,7 +4044,7 @@ var Collection = (function () {
 	 * enable flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n — flag name
+	 * @param {String} [objectN] — flag name
 	 * @return {Collection Object}
 	 *
 	 * @example
@@ -4111,7 +4063,7 @@ var Collection = (function () {
 	 * disable flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n — flag name
+	 * @param {String} [objectN] — flag name
 	 * @return {Collection Object}
 	 *
 	 * @example
@@ -4130,7 +4082,7 @@ var Collection = (function () {
 	 * toggle flag
 	 * 
 	 * @this {Collection Object}
-	 * @param {String} 0...n — flag name
+	 * @param {String} [objectN] — flag name
 	 * @return {Collection Object}
 	 *
 	 * @example
@@ -4152,7 +4104,7 @@ var Collection = (function () {
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|C} [objID=this.ACTIVE] — collection ID or collection
+	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection
 	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space] — indentation of nested structures
 	 * @return {String}
@@ -4204,8 +4156,7 @@ var Collection = (function () {
 	C.prototype.print = function (param, clear) {
 		clear = clear || false;
 		
-		var
-			tmpParser = {}, tmpFilter = {},
+		var tmpParser = {}, tmpFilter = {},
 			opt = {},
 			
 			cObj, cOLength,
@@ -4223,6 +4174,7 @@ var Collection = (function () {
 			param = {page: param};
 		} else if (!C.isExists(param)) { param = {page: this._get('page')}; }
 		
+		// the expansion of input parameters
 		C.extend(true, opt, this.dObj.active, param);
 		if (param) { opt.page = C.expr(opt.page, this._get('page')); }
 		if (opt.page < 1) { opt.page = 1; }
@@ -4332,8 +4284,8 @@ var Collection = (function () {
 		
 		if (!opt.pager) { return this; }
 		
+		// navigation
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
-		
 		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 
@@ -4360,8 +4312,7 @@ var Collection = (function () {
 	 * @return {Colletion Object}
 	 */
 	C.prototype.easyPage = function (param) {
-		var
-			self = this,
+		var self = this,
 			str = '',
 			
 			// number of pages
@@ -4395,13 +4346,16 @@ var Collection = (function () {
 			
 			i, j = 0, from, to, dom = this.drivers.dom;
 		
+		console.log(param.pager);
+		
 		// for each node
 		Array.prototype.forEach.call(dom.find('.ctm', param.pager), function (el) {
+			console.log(el);
+			
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
 			str = '';
 			
-			var
-				tag = el.tagName.toLowerCase(),
+			var tag = el.tagName.toLowerCase(),
 				
 				data = dom.data(el),
 				ctm = data.ctm,

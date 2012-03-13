@@ -47,6 +47,7 @@
 			param = {page: param};
 		} else if (!C.isExists(param)) { param = {page: this._get('page')}; }
 		
+		// the expansion of input parameters
 		C.extend(true, opt, this.dObj.active, param);
 		if (param) { opt.page = C.expr(opt.page, this._get('page')); }
 		if (opt.page < 1) { opt.page = 1; }
@@ -156,8 +157,8 @@
 		
 		if (!opt.pager) { return this; }
 		
+		// navigation
 		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;
-		
 		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 
@@ -218,8 +219,12 @@
 			
 			i, j = 0, from, to, dom = this.drivers.dom;
 		
+		console.log(param.pager);
+		
 		// for each node
 		Array.prototype.forEach.call(dom.find('.ctm', param.pager), function (el) {
+			console.log(el);
+			
 			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
 			str = '';
 			

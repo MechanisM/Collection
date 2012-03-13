@@ -9,70 +9,70 @@
 	<script type="text/javascript" src="../../collection.js"></script>
 	<script type="text/javascript">
 		$(function () {
-			test("core", function () {
+			test('core', function () {
 				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				
-				equal(db.get("first > 0 > eq(-1) > eq(0)"), 3, "get");
+				equal(db.get('first > 0 > eq(-1) > eq(0)'), 3, 'get');
 				equal(db
-					.set("first > 0 > eq(-1) > eq(0)", 99)
-					.get("first > 0 > eq(-1) > eq(0)"), 99,
-				"set");
+					.set('first > 0 > eq(-1) > eq(0)', 99)
+					.get('first > 0 > eq(-1) > eq(0)'), 99,
+				'set');
 				
 				equal(db
-					.set("", 99)
-					.get(" "), 99,
-				"set - without context");
+					.set('', 99)
+					.get(' '), 99,
+				'set - without context');
 			});
-			//
-			test("concat", function () {
+			
+			test('concat', function () {
 				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				equal(db
-					.concat([1, 2, 3, 4, 5], "first > 0 >")
-					.get("first > 0 >").length, 8,
-				"simple test");
+					.concat([1, 2, 3, 4, 5], 'first > 0 >')
+					.get('first > 0 >').length, 8,
+				'simple test');
 			});
-			//
-			test("remove", function () {
+			
+			test('remove', function () {
 				var
 					obj = {first: [[1, 2, {second: 3}], 2, 3], second: [1, 2, 3, 4]},
 					db = new Collection(obj);
-				//
+				
 				equal(db
-					.remove("first > 0 > 1")
-					.get("first > 0").length, 2,
-				"remove -> array");
-				//
+					.remove('first > 0 > 1')
+					.get('first > 0').length, 2,
+				'remove -> array');
+				
 				equal(db
-					.remove("first > 0 > eq(-1) > second")
-					.get("first > 0 > eq(-1)").second, undefined,
-				"remove -> object");
-				//
+					.remove('first > 0 > eq(-1) > second')
+					.get('first > 0 > eq(-1)').second, undefined,
+				'remove -> object');
+				
 				equal(db
-					.remove(["first > eq(0)", "first > eq(-1)"])
-					.get("first").length, 1,
-				"remove -> array");
-				//
+					.remove(['first > eq(0)', 'first > eq(-1)'])
+					.get('first').length, 1,
+				'remove -> array');
+				
 				equal(db
-					.pushCollection("stack", obj)
-					.remove({stack: ["second > eq(0)", "second > eq(0)"], active: "second > eq(0)"})
-					.get("second").length, 1,
-				"remove -> object");
+					.pushCollection('stack', obj)
+					.remove({stack: ['second > eq(0)', 'second > eq(0)'], active: 'second > eq(0)'})
+					.get('second').length, 1,
+				'remove -> object');
 			});
-			//
-			test("add", function () {
+			
+			test('add', function () {
 				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
 				
 				equal(db
-					.add([1, 2], "second")
-					.get("second").length, 2,
-				"add - simple add");
+					.add([1, 2], 'second')
+					.get('second').length, 2,
+				'add - simple add');
 				
 				equal(db
-					.add("first > 0", "second", "", "active", true)
-					.get("second").length, 3,
-				"add - copy");
-				equal(db.get("first").length, 2,
-				"add - move");
+					.add('first > 0', 'second', '', 'active', true)
+					.get('second').length, 3,
+				'add - copy');
+				equal(db.get('first').length, 2,
+				'add - move');
 			});
 		});
 	</script>
