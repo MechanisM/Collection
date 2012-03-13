@@ -1,5 +1,5 @@
 ﻿/**
- * <p>Collection — JS (JavaScript) framework for working with collections of data (using jQuery).<br />
+ * <p>Collection — JS (JavaScript) framework for working with collections of data.<br />
  * http://collection-js.com
  * </p>
  *
@@ -26,8 +26,6 @@
  * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li>
  * </ul>
  *
- * <p>For comfortable work it is recommended to use the latest stable version of jQuery.</p>
- *
  * <p>Enjoy!</p>
  *
  * <p>Copyright 2012, Andrey Kobets (Kobezzza)<br />
@@ -40,7 +38,7 @@
  *
  * @constructor
  * @this {Colletion Object}
- * @param {C|Selector} [collection=null] — collection or selector for field 'target'
+ * @param {Collection} [collection=null] — collection
  * @param {Plain Object} [uProp=C.fields.dObj.active] — additional properties
  */
 var Collection = (function () {
