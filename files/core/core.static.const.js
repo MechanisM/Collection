@@ -1,12 +1,1 @@
-		
-	/////////////////////////////////
-	//// constants
-	/////////////////////////////////
-	
-	C.CONTEXT_SEPARATOR =  '__context__';
-	C.QUERY_SEPARATOR = '/';
-	C.SUBQUERY_SEPARATOR = '{';
-	C.METHOD_SEPARATOR = '->';
-		
-	C.CHILDREN = '>';
-	C.ORDER = ['eq(', ')'];
+			/////////////////////////////////	//// constants	/////////////////////////////////		Collection.CONTEXT_SEPARATOR =  '__context__';	Collection.QUERY_SEPARATOR = '/';	Collection.SUBQUERY_SEPARATOR = '{';	Collection.METHOD_SEPARATOR = '->';			Collection.CHILDREN = '>';	Collection.ORDER = ['eq(', ')'];

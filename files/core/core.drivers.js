@@ -1,6 +1,1 @@
-	
-	/////////////////////////////////
-	//// drivers for additional functions
-	/////////////////////////////////
-	
-	C.prototype.drivers = C.drivers = {};
+		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};
