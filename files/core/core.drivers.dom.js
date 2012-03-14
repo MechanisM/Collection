@@ -194,7 +194,7 @@
 			// mootools 
 			mootools: {
 				is: function () {
-					if (typeof Element.getElements !== 'undefined') { return true; }
+					if (typeof MooTools !== 'undefined') { return true; }
 				},
 				find: function (selector, context) {
 					var res;
@@ -208,6 +208,17 @@
 					} else { res = $$(selector); }
 					
 					return res;
+				}
+			},
+			// prototype 
+			prototype: {
+				is: function () {
+					if (typeof Prototype !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					if (context) {
+						return context.getElementsBySelector(selector);
+					} else { return $$(selector); }
 				}
 			}
 		}

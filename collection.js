@@ -977,7 +977,7 @@ var Collection = (function () {
 			// mootools 
 			mootools: {
 				is: function () {
-					if (typeof Element.getElements !== 'undefined') { return true; }
+					if (typeof MooTools !== 'undefined') { return true; }
 				},
 				find: function (selector, context) {
 					var res;
@@ -991,6 +991,17 @@ var Collection = (function () {
 					} else { res = $$(selector); }
 					
 					return res;
+				}
+			},
+			// prototype 
+			prototype: {
+				is: function () {
+					if (typeof Prototype !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					if (context) {
+						return context.getElementsBySelector(selector);
+					} else { return $$(selector); }
 				}
 			}
 		}
@@ -1100,7 +1111,7 @@ var Collection = (function () {
 		C.isString(selector) && (selector = C.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
-		var html = selector[0] ? selector[0].innerHTML : selector.innerHTML,
+		var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,
 			elem = html
 				.replace(/\/\*.*?\*\//g, '')
 				.split('?>')
