@@ -3,6 +3,11 @@
 	//// constructor
 	/////////////////////////////////
 	
+	/**
+	 * Collection
+	 * 
+	 * @namespace
+	 */
 	C = function (collection, prop) {
 		collection = collection || null;
 		prop = prop || '';

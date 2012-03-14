@@ -33,7 +33,7 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 13.03.2012 07:06:15
+ * @date: 14.03.2012 6:15:57
  * @version 3.6
  *
  * @constructor
@@ -44,12 +44,16 @@
 var Collection = (function () {
 	'use strict';
 	
-	/** @private */
 	var C;	
 	/////////////////////////////////
 	//// constructor
 	/////////////////////////////////
 	
+	/**
+	 * Collection
+	 * 
+	 * @namespace
+	 */
 	C = function (collection, prop) {
 		collection = collection || null;
 		prop = prop || '';
