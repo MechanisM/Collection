@@ -968,7 +968,9 @@ var Collection = (function () {
 					if (typeof dojo !== 'undefined') { return true; }
 				},
 				find: function (selector, context) {
-					return dojo.query(selector, context);
+					if (context) {
+						return dojo.query(selector, context);
+					} else { return dojo.query(selector); }
 				},
 				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }
 			},
@@ -4182,7 +4184,7 @@ var Collection = (function () {
 		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
 		
 		opt.target = C.isString(opt.target) ? dom.find(opt.target) : opt.target;
-		opt.pager = C.isExists(opt.pager) ? dom.find(opt.pager) : opt.pager;
+		opt.pager = C.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
 		
 		if (clear === true) { opt.cache.iteration = false; }
 		
@@ -4344,165 +4346,163 @@ var Collection = (function () {
 			
 			i, j = 0, from, to, dom = this.drivers.dom;
 		
-		console.log(param.pager);
-		
 		// for each node
-		Array.prototype.forEach.call(dom.find('.ctm', param.pager), function (el) {
-			console.log(el);
-			
-			if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
-			str = '';
-			
-			var tag = el.tagName.toLowerCase(),
+		Array.prototype.forEach.call(param.pager, function (el) {
+			Array.prototype.forEach.call(dom.find('.ctm', el), function (el) {
+				if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
+				str = '';
 				
-				data = dom.data(el),
-				ctm = data.ctm,
-				classes = ctm.classes;
-			
-			if (ctm.nav) {
-				// attach event
-				if (C.find(ctm.nav, ['first', 'prev', 'next', 'last']) && !data['ctm-delegated']) {
-					dom.bind(el, 'click', function () {
-						if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {
-							ctm.nav === 'first' && (param.page = 1);
-							ctm.nav === 'prev' && (param.page = '-=1');
-							ctm.nav === 'next' && (param.page = '+=1');
-							ctm.nav === 'last' && (param.page = nmbOfPages);
-							
-							self.print(param);
-						}
-					});
-					el.setAttribute('data-ctm-delegated', true);
-				}
-				
-				// adding classes status
-				if ((C.find(ctm.nav, ['first', 'prev']) && param.page === 1) || (C.find(ctm.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
-					dom.addClass(el, classes && classes.disabled || 'disabled');
-				} else if (C.find(ctm.nav, ['first', 'prev', 'next', 'last'])) {
-					dom.removeClass(el, classes && classes.disabled || 'disabled');
-				}
-				
-				// numberBreak switch
-				if (ctm.nav === 'numberSwitch') {
-					ctm.val.forEach(function (el) {
-						if (tag === 'select') {
-							str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
-						} else { str += genPage(ctm, classes || '', el, true); }
-					});
-				}
-				
-				// page navigation
-				if (ctm.nav === 'pageList') {
-					if (tag === 'select') {
-						for (i = 0; (i += 1) <= nmbOfPages;) {
-							str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
-						} 
-					} else {
-						if (nmbOfPages > param.pageBreak) {	
-							j = param.pageBreak % 2 !== 0 ? 1 : 0;
-							from = (param.pageBreak - j) / 2;
-							to = from;
-							
-							if (param.page - j < from) {
-								from = 0;
-							} else {
-								from = param.page - from - j;
-								if (param.page + to > nmbOfPages) {
-									from -= param.page + to - nmbOfPages;
-								}
-							}
-							
-							for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
-								if (j === param.pageBreak && i !== param.page) { break; }
-								str += genPage(ctm, classes || '', i);
-							}
-						} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }
-					}
-				}
-				
-				if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {	
-					// to html
-					el.innerHTML = str;
+				var tag = el.tagName.toLowerCase(),
 					
-					// delegate event
-					if (!data['ctm-delegated']) {
-						if (tag !== 'select') {
-							dom.bind(el, 'click', function (e) {
-								e = e || window.event;
-								var target = e.target || e.srcElement, data = dom.data(target);
-								if (target.parentNode !== el) { return false; }
+					data = dom.data(el),
+					ctm = data.ctm,
+					classes = ctm.classes;
+				
+				if (ctm.nav) {
+					// attach event
+					if (C.find(ctm.nav, ['first', 'prev', 'next', 'last']) && !data['ctm-delegated']) {
+						dom.bind(el, 'click', function () {
+							if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {
+								ctm.nav === 'first' && (param.page = 1);
+								ctm.nav === 'prev' && (param.page = '-=1');
+								ctm.nav === 'next' && (param.page = '+=1');
+								ctm.nav === 'last' && (param.page = nmbOfPages);
 								
-								if (ctm.nav === 'pageList') {
-									param.page = +data.page;
-								} else {
-									self._push('numberBreak', param.name || '', +data['number-break']);
-									delete param.numberBreak;
-								}
-
 								self.print(param);
-							});
-						
-						// if select
-						} else {
-							dom.bind(el, 'change', function () {
-								var option = dom.children(this, 'selected')[0];
-								
-								if (param.page !== option.value) {
-									if (data.nav === 'pageList') {
-										param.page = +option.value;
-									} else {
-										self._push('numberBreak', param.name || '', +option.value);
-										delete param.numberBreak;
-									}
-									
-									self.print(param);
-								}
-							});
-						}
-						
+							}
+						});
 						el.setAttribute('data-ctm-delegated', true);
 					}
-				}
-			
-			// info
-			} else if (ctm.info) {
-				if (param.nmbOfEntriesInPage === 0) {
-					dom.addClass(el, classes && classes.noData || 'no-data');
-				} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }
+					
+					// adding classes status
+					if ((C.find(ctm.nav, ['first', 'prev']) && param.page === 1) || (C.find(ctm.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
+						dom.addClass(el, classes && classes.disabled || 'disabled');
+					} else if (C.find(ctm.nav, ['first', 'prev', 'next', 'last'])) {
+						dom.removeClass(el, classes && classes.disabled || 'disabled');
+					}
+					
+					// numberBreak switch
+					if (ctm.nav === 'numberSwitch') {
+						ctm.val.forEach(function (el) {
+							if (tag === 'select') {
+								str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
+							} else { str += genPage(ctm, classes || '', el, true); }
+						});
+					}
+					
+					// page navigation
+					if (ctm.nav === 'pageList') {
+						if (tag === 'select') {
+							for (i = 0; (i += 1) <= nmbOfPages;) {
+								str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
+							} 
+						} else {
+							if (nmbOfPages > param.pageBreak) {	
+								j = param.pageBreak % 2 !== 0 ? 1 : 0;
+								from = (param.pageBreak - j) / 2;
+								to = from;
+								
+								if (param.page - j < from) {
+									from = 0;
+								} else {
+									from = param.page - from - j;
+									if (param.page + to > nmbOfPages) {
+										from -= param.page + to - nmbOfPages;
+									}
+								}
+								
+								for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
+									if (j === param.pageBreak && i !== param.page) { break; }
+									str += genPage(ctm, classes || '', i);
+								}
+							} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }
+						}
+					}
+					
+					if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {	
+						// to html
+						el.innerHTML = str;
+						
+						// delegate event
+						if (!data['ctm-delegated']) {
+							if (tag !== 'select') {
+								dom.bind(el, 'click', function (e) {
+									e = e || window.event;
+									var target = e.target || e.srcElement, data = dom.data(target);
+									if (target.parentNode !== el) { return false; }
+									
+									if (ctm.nav === 'pageList') {
+										param.page = +data.page;
+									} else {
+										self._push('numberBreak', param.name || '', +data['number-break']);
+										delete param.numberBreak;
+									}
+	
+									self.print(param);
+								});
+							
+							// if select
+							} else {
+								dom.bind(el, 'change', function () {
+									var option = dom.children(this, 'selected')[0];
+									
+									if (param.page !== option.value) {
+										if (data.nav === 'pageList') {
+											param.page = +option.value;
+										} else {
+											self._push('numberBreak', param.name || '', +option.value);
+											delete param.numberBreak;
+										}
+										
+										self.print(param);
+									}
+								});
+							}
+							
+							el.setAttribute('data-ctm-delegated', true);
+						}
+					}
 				
-				switch (ctm.info) {
-					case 'page' : {
-						if (tag === 'input') {
-							el.value = wrap(param.page, tag);
-						} else { el.innerHTML = wrap(param.page, tag); }
-					} break;
-					case 'total' : {
-						if (tag === 'input') {
-							el.value = wrap(param.nmbOfEntries, tag);
-						} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }
-					} break;
-					case 'from' : {
-						if (tag === 'input') {
-							el.value = wrap((param.page - 1) * param.numberBreak + 1, tag);
-						} else { el.innerHTML = wrap((param.page - 1) * param.numberBreak + 1, tag); }
-					} break;
-					case 'to' : {
-						if (tag === 'input') {
-							el.value = wrap(param.finNumber, tag);
-						} else { el.innerHTML = wrap(param.finNumber, tag); }
-					} break;
-					case 'inPage' : {
-						if (tag === 'input') {
-							el.value = wrap(param.nmbOfEntriesInPage, tag);
-						} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }
-					} break;
-					case 'nmbOfPages' : {
-						if (tag === 'input') {
-							el.value = wrap(nmbOfPages, tag);
-						} else { el.innerHTML = wrap(nmbOfPages, tag); }
-					} break;
+				// info
+				} else if (ctm.info) {
+					if (param.nmbOfEntriesInPage === 0) {
+						dom.addClass(el, classes && classes.noData || 'no-data');
+					} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }
+					
+					switch (ctm.info) {
+						case 'page' : {
+							if (tag === 'input') {
+								el.value = wrap(param.page, tag);
+							} else { el.innerHTML = wrap(param.page, tag); }
+						} break;
+						case 'total' : {
+							if (tag === 'input') {
+								el.value = wrap(param.nmbOfEntries, tag);
+							} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }
+						} break;
+						case 'from' : {
+							if (tag === 'input') {
+								el.value = wrap((param.page - 1) * param.numberBreak + 1, tag);
+							} else { el.innerHTML = wrap((param.page - 1) * param.numberBreak + 1, tag); }
+						} break;
+						case 'to' : {
+							if (tag === 'input') {
+								el.value = wrap(param.finNumber, tag);
+							} else { el.innerHTML = wrap(param.finNumber, tag); }
+						} break;
+						case 'inPage' : {
+							if (tag === 'input') {
+								el.value = wrap(param.nmbOfEntriesInPage, tag);
+							} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }
+						} break;
+						case 'nmbOfPages' : {
+							if (tag === 'input') {
+								el.value = wrap(nmbOfPages, tag);
+							} else { el.innerHTML = wrap(nmbOfPages, tag); }
+						} break;
+					}
 				}
-			}
+			});
 		});
 		
 		return this;

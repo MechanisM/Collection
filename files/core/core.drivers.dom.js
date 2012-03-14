@@ -185,7 +185,9 @@
 					if (typeof dojo !== 'undefined') { return true; }
 				},
 				find: function (selector, context) {
-					return dojo.query(selector, context);
+					if (context) {
+						return dojo.query(selector, context);
+					} else { return dojo.query(selector); }
 				},
 				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }
 			},
