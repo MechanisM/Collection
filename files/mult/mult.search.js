@@ -48,7 +48,7 @@
 			};
 		
 		this.forEach(action, filter || '', id, mult, count, from, indexOf);
-	
+		
 		return result;
 	};
 	/**

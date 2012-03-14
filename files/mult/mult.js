@@ -122,10 +122,10 @@
 	
 		var self = this,
 			tmpObj = {},
-		
+			
 			cObj, cOLength,
 			cloneObj,
-	
+			
 			i, j = 0, res = false;
 		
 		// get by link
@@ -141,7 +141,6 @@
 			
 			return cOLength.val;
 		};
-		
 		
 		if (C.isArray(cObj)) {
 			// cut off the array to indicate the start

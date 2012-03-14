@@ -11,7 +11,7 @@
 	 * @return {mixed}
 	 */
 	C.prototype._getActiveParam = function (name) {
-		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true? this.dObj.active[name] : false;
+		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true ? this.dObj.active[name] : false;
 		
 		if (name === 'context') { return param ? param.toString() : ''; }
 		return param;
@@ -51,10 +51,9 @@
 	 * db.enable('cache', 'filter');
 	 */
 	C.prototype.enable = function () {
-		for (var key in arguments) {
-			if (!arguments.hasOwnProperty(key)) { continue; }
-			this.dObj.sys.flags.use[arguments[key]] = true;
-		}
+		Array.prototype.forEach.call(arguments, function (el) {
+			this.dObj.sys.flags.use[el] = true
+		}, this);
 		
 		return this;
 	};
@@ -70,10 +69,9 @@
 	 * db.disable('cache', 'filter');
 	 */
 	C.prototype.disable = function () {
-		for (var key in arguments) {
-			if (!arguments.hasOwnProperty(key)) { continue; }
-			this.dObj.sys.flags.use[arguments[key]] = false;
-		}
+		Array.prototype.forEach.call(arguments, function (el) {
+			this.dObj.sys.flags.use[el] = false
+		}, this);
 		
 		return this;
 	};
@@ -89,12 +87,11 @@
 	 * db.toggle('cache', 'filter');
 	 */
 	C.prototype.toggle = function () {
-		for (var key in arguments) {
-			if (!arguments.hasOwnProperty(key)) { continue; }
-			if (this.dObj.sys.flags.use[arguments[key]] === true) { return this.disable(arguments[key]); }
-			
-			return this.enable(arguments[key]);
-		}
+		Array.prototype.forEach.call(arguments, function (el) {
+			if (this.dObj.sys.flags.use[el] === true) {
+				this.disable(arguments[key]);
+			} else { this.enable(arguments[key]); }
+		}, this);
 	};
 	
 	// native
