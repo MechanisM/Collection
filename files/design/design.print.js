@@ -12,13 +12,13 @@
 	 * @param {String} [param.context] — additional context
 	 * @param {Number} [param.page=this.ACTIVE] — page number
 	 * @param {Template} [param.template=this.ACTIVE] — template
-	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] — number of entries on per page (if 'false', returns all records)
+	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] — number of entries on per page (if false, returns all records)
 	 * @param {Number} [param.pageBreak=this.ACTIVE] — number of displayed pages (navigation, > 2)
-	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] — element to output the result ('false' - if you print a variable)
+	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
 	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression
-	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if 'true', the last iteration is taken from cache
+	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
 	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)
 	 * @param {String} [param.appendType=this.ACTIVE] — type additions to the DOM

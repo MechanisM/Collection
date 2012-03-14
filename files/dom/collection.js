@@ -58,7 +58,7 @@
 	 * @return {Colletion Object}
 	 */
 	C.fromNodes = function (selector, prop) {
-		if (!JSON || !JSON.parse) { throw new Error('object JSON is not defined!'); }
+		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
 		
 		var data = C._inObj(C.drivers.dom.find(selector));
 		

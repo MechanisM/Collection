@@ -106,7 +106,7 @@
 	 * @return {String}
 	 */
 	C.prototype.toString = function (objID, replacer, space) {
-		if (!JSON || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
+		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
 		
 		replacer = replacer || '';
 		space = space || '';

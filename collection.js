@@ -1079,7 +1079,7 @@ var Collection = (function () {
 	 * @return {Colletion Object}
 	 */
 	C.fromNodes = function (selector, prop) {
-		if (!JSON || !JSON.parse) { throw new Error('object JSON is not defined!'); }
+		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
 		
 		var data = C._inObj(C.drivers.dom.find(selector));
 		
@@ -1418,7 +1418,8 @@ var Collection = (function () {
 	/////////////////////////////////
 	
 	/**
-	 * set new value of the parameter on the stack (no impact on the history of the stack)(has aliases, format: new + StackName)
+	 * set new value of the parameter on the stack (no impact on the history of the stack)(has aliases, format: new + StackName)<br/>
+	 * events: onNew + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1433,7 +1434,11 @@ var Collection = (function () {
 	 */
 	C.prototype._new = function (stackName, newVal) {
 		var active = this.dObj.active,
-			upperCase = C.toUpperCase(stackName, 1);
+			upperCase = C.toUpperCase(stackName, 1), e;
+		
+		// events
+		this['onNew' + upperCase] && (e = this['onNew' + upperCase](newVal));
+		if (e === false) { return this; }
 		
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
@@ -1450,7 +1455,8 @@ var Collection = (function () {
 		return this;
 	};
 	/**
-	 * update the active parameter (if the parameter is in the stack, it will be updated too)(has aliases, format: update + StackName)
+	 * update the active parameter (if the parameter is in the stack, it will be updated too)(has aliases, format: update + StackName)<br/>
+	 * events: onUpdate + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1465,13 +1471,17 @@ var Collection = (function () {
 	 */
 	C.prototype._update = function (stackName, newVal) {
 		var active = this.dObj.active,
-			sys = this.dObj.sys,
 			
+			upperCase = C.toUpperCase(stackName, 1), e,
 			activeID = this._getActiveID(stackName);
+		
+		// events
+		this['onUpdate' + upperCase] && (e = this['onUpdate' + upperCase](newVal));
+		if (e === false) { return this; }
 		
 		// compile string if need
 		if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
-			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+			active[stackName] = this['_compile' + upperCase](newVal);
 		
 		// search the DOM (can take a string selector or an array of nodes)
 		} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
@@ -1479,7 +1489,7 @@ var Collection = (function () {
 		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// update the parameter stack
-		if (activeID) { sys['tmp' + C.toUpperCase(stackName, 1)][activeID] = active[stackName]; }
+		if (activeID) { this.dObj.sys['tmp' + upperCase][activeID] = active[stackName]; }
 
 		return this;
 	};
@@ -1515,7 +1525,8 @@ var Collection = (function () {
 	};
 	
 	/**
-	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method)(if the parameter already exists in the stack, it will be updated)(has aliases, format: push + StackName)
+	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method)(if the parameter already exists in the stack, it will be updated)(has aliases, format: push + StackName)<br/>
+	 * events: onPush + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1535,10 +1546,15 @@ var Collection = (function () {
 	 * });
 	 */
 	C.prototype._push = function (stackName, objID, newVal) {
-		var tmp = this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)],
+		var	upperCase = C.toUpperCase(stackName, 1), e,
+			tmp = this.dObj.sys['tmp' + upperCase],
 			activeID = this._getActiveID(stackName),
 
 			key;
+		
+		// events
+		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objID, newVal || ''));
+		if (e === false) { return this; }
 		
 		if (C.isPlainObject(objID)) {
 			for (key in objID) {
@@ -1555,7 +1571,7 @@ var Collection = (function () {
 							
 							// compile string if need
 							if (C.find(stackName, ['filter', 'parser']) && this._exprTest(objID[key])) {
-								tmp[key] = this['_compile' + C.toUpperCase(stackName, 1)](objID[key]);
+								tmp[key] = this['_compile' + upperCase](objID[key]);
 							
 							// search the DOM (can take a string selector or an array of nodes)
 							} else if (C.find(stackName, ['target', 'pager']) && C.isString(objID[key])) {
@@ -1579,7 +1595,7 @@ var Collection = (function () {
 					
 					// compile string if need
 					if (C.find(stackName, ['filter', 'parser']) && this._exprTest(newVal)) {
-						tmp[objID] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+						tmp[objID] = this['_compile' + upperCase](newVal);
 					
 					// search the DOM (can take a string selector or an array of nodes)
 					} else if (C.find(stackName, ['target', 'pager']) && C.isString(newVal)) {
@@ -1592,7 +1608,8 @@ var Collection = (function () {
 		return this;
 	};
 	/**
-	 * set the parameter stack active (affect the story)(has aliases, format: set + StackName)
+	 * set the parameter stack active (affect the story)(has aliases, format: set + StackName)<br/>
+	 * events: onSet + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1611,12 +1628,16 @@ var Collection = (function () {
 	C.prototype._set = function (stackName, id) {
 		var sys = this.dObj.sys,
 
-			upperCase = C.toUpperCase(stackName, 1),
+			upperCase = C.toUpperCase(stackName, 1), e,
 			tmpChangeControlStr = stackName + 'ChangeControl',
 			tmpActiveIDStr = 'active' + upperCase + 'ID';
 		
 		// throw an exception if the requested parameter does not exist
 		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
+		
+		// events
+		this['onSet' + upperCase] && (e = this['onSet' + upperCase](id));
+		if (e === false) { return this; }
 		
 		// change the story, if there were changes
 		if (sys[tmpActiveIDStr] !== id) {
@@ -1630,7 +1651,8 @@ var Collection = (function () {
 		return this;
 	};
 	/**
-	 * back on the history of the stack (has aliases, format: back + StackName)
+	 * back on the history of the stack (has aliases, format: back + StackName)<br/>
+	 * events: onBack + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1650,12 +1672,17 @@ var Collection = (function () {
 	 * db.backCollection(2); // 'test' is active
 	 */
 	C.prototype._back = function (stackName, nmb) {
+		nmb = nmb || 1;
 		var sys = this.dObj.sys,
-
-			upperCase = C.toUpperCase(stackName, 1),
+			
+			upperCase = C.toUpperCase(stackName, 1), e,
 			propBack = sys[stackName + 'Back'],
-
-			pos = propBack.length - (nmb || 1) - 1;
+			
+			pos = propBack.length - (nmb) - 1;
+		
+		// events
+		this['onBack' + upperCase] && (e = this['onBack' + upperCase](nmb));
+		if (e === false) { return this; }
 		
 		if (pos >= 0 && propBack[pos]) {
 			if (sys['tmp' + upperCase][propBack[pos]]) {
@@ -1693,7 +1720,8 @@ var Collection = (function () {
 		return this;
 	};
 	/**
-	 * remove the parameter from the stack (can use a constant 'active')(if the parameter is active, then it would still be removed)(has aliases, format: drop + StackName)
+	 * remove the parameter from the stack (can use a constant 'active')(if the parameter is active, then it would still be removed)(has aliases, format: drop + StackName)<br/>
+	 * events: onDrop + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -1717,7 +1745,7 @@ var Collection = (function () {
 		var active = this.dObj.active,
 			sys = this.dObj.sys,
 			
-			upperCase = C.toUpperCase(stackName, 1),
+			upperCase = C.toUpperCase(stackName, 1), e,
 			tmpActiveIDStr = 'active' + upperCase + 'ID',
 			tmpTmpStr = 'tmp' + upperCase,
 
@@ -1725,6 +1753,15 @@ var Collection = (function () {
 			tmpArray = !objID ? activeID ? [activeID] : [] : C.isArray(objID) || C.isPlainObject(objID) ? objID : [objID],
 			
 			key;
+		
+		// events
+		if (typeof resetVal === 'undefined') {
+			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objID, deleteVal));
+			if (e === false) { return this; }
+		} else {
+			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objID, resetVal));
+			if (e === false) { return this; }
+		}
 		
 		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
 			for (key in tmpArray) {
@@ -1780,7 +1817,8 @@ var Collection = (function () {
 		return this;
 	};
 	/**
-	 * reset the parameter stack (can use a constant 'active')(has aliases, format: reset + StackName, only for: filter, parser and context)
+	 * reset the parameter stack (can use a constant 'active')(has aliases, format: reset + StackName, only for: filter, parser and context)<br/>
+	 * events: onReset + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -3488,7 +3526,7 @@ var Collection = (function () {
 	 * db.save();
 	 */
 	C.prototype.save = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
@@ -3523,7 +3561,7 @@ var Collection = (function () {
 	 * db.saveAll();
 	 */
 	C.prototype.saveAll = function (local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
 		var key,
@@ -3553,7 +3591,7 @@ var Collection = (function () {
 	 * var db = new $C().load();
 	 */
 	C.prototype.load = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
@@ -3596,7 +3634,7 @@ var Collection = (function () {
 	 */
 	C.prototype.loadAll = function (local, type) {
 		type = type ? 'drop' : 'load';
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
 		var name = '__' + this.name + '__' + this._get('namespace'),
@@ -3634,7 +3672,7 @@ var Collection = (function () {
 	 * db.loadDate();
 	 */
 	C.prototype.loadDate = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id ? ':' + id : '';
 		var storage = local === false ? sessionStorage : localStorage;
@@ -3656,7 +3694,7 @@ var Collection = (function () {
 	 * db.isExpired();
 	 */
 	C.prototype.isExpired = function (time, id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		return new Date(new Date() - new Date(this.loadDate(id || '', local || ''))) > time;
 	};
 	
@@ -3675,7 +3713,7 @@ var Collection = (function () {
 	 * db.drop('test');
 	 */
 	C.prototype.drop = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
@@ -4117,7 +4155,7 @@ var Collection = (function () {
 	 * @return {String}
 	 */
 	C.prototype.toString = function (objID, replacer, space) {
-		if (!JSON || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
+		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
 		
 		replacer = replacer || '';
 		space = space || '';
@@ -4146,13 +4184,13 @@ var Collection = (function () {
 	 * @param {String} [param.context] — additional context
 	 * @param {Number} [param.page=this.ACTIVE] — page number
 	 * @param {Template} [param.template=this.ACTIVE] — template
-	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] — number of entries on per page (if 'false', returns all records)
+	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] — number of entries on per page (if false, returns all records)
 	 * @param {Number} [param.pageBreak=this.ACTIVE] — number of displayed pages (navigation, > 2)
-	 * @param {jQuery Object|Boolean} [param.target=this.ACTIVE] — element to output the result ('false' - if you print a variable)
+	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
 	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression
-	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if 'true', the last iteration is taken from cache
+	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
 	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)
 	 * @param {String} [param.appendType=this.ACTIVE] — type additions to the DOM

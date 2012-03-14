@@ -18,7 +18,7 @@
 	 * db.save();
 	 */
 	C.prototype.save = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
@@ -53,7 +53,7 @@
 	 * db.saveAll();
 	 */
 	C.prototype.saveAll = function (local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
 		var key,
@@ -83,7 +83,7 @@
 	 * var db = new $C().load();
 	 */
 	C.prototype.load = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
@@ -126,7 +126,7 @@
 	 */
 	C.prototype.loadAll = function (local, type) {
 		type = type ? 'drop' : 'load';
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		local = local === false ? local : true;
 		var name = '__' + this.name + '__' + this._get('namespace'),
@@ -164,7 +164,7 @@
 	 * db.loadDate();
 	 */
 	C.prototype.loadDate = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id ? ':' + id : '';
 		var storage = local === false ? sessionStorage : localStorage;
@@ -186,7 +186,7 @@
 	 * db.isExpired();
 	 */
 	C.prototype.isExpired = function (time, id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		return new Date(new Date() - new Date(this.loadDate(id || '', local || ''))) > time;
 	};
 	
@@ -205,7 +205,7 @@
 	 * db.drop('test');
 	 */
 	C.prototype.drop = function (id, local) {
-		if (!localStorage) { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
