@@ -109,14 +109,11 @@
 	 * $C.isPlainObject(Date); // returns false
 	 */
 	Collection.isPlainObject = function (obj) {
-		
-		
 		if (!obj || Collection.type(obj) !== 'object' || obj.nodeType || Collection.isWindow(obj)) {
 			return false;
 		}
-		return true;
 		
-		/*try {
+		try {
 			// not own constructor property must be Object
 			if (obj.constructor &&
 				!obj.hasOwnProperty('constructor') &&
@@ -133,7 +130,7 @@
 		var key;
 		for (key in obj) {}
 
-		return key === undefined || obj.hasOwnProperty(key);*/
+		return key === undefined || obj.hasOwnProperty(key);
 	};
 	
 	/**
