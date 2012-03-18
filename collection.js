@@ -2072,10 +2072,10 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.length(':i % 3 === 0');
 	 */
-	Collection.prototype.length = function (filter, id, _eLength) {
+	Collection.prototype.length = function (filter, id) {
 		filter = filter || '';
 		var tmpObj = {},
-			data, aCheck, key, i = 0, length;
+			data, isCollection, key, i = 0, length;
 		
 		// overload
 		// if the filter is a collection
@@ -2093,16 +2093,12 @@
 		} else if (Collection.isString(id)) {
 			data = this._get('collection', id);
 		} else {
-			aCheck = true;
+			isCollection = true;
 			data = id;
 		}
 		
-		// if data is null
 		if (data === null) { return 0; }
-		// if data is collection
-		if (aCheck !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
-		
-		// if data is String
+		if (isCollection !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
 		if (Collection.isString(data)) { return data.length; }
 		
 		// throw an exception if the element is not an object
@@ -2112,13 +2108,12 @@
 		if ((filter === true || !filter) && typeof data.length !== 'undefined') {
 			length = data.length;
 		} else {
-			// calclate length
 			length = 0;
 			
 			// if array
 			if (typeof data.length !== 'undefined') {
 				data.forEach(function (el, key, obj) {
-					if (this._customFilter(filter, el, key, data, i, _eLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, el, key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 					i += 1;
@@ -2128,7 +2123,7 @@
 				for (key in data) {
 					if (!data.hasOwnProperty(key)) { continue; }
 					
-					if (this._customFilter(filter, data[key], key, data, i, _eLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, data[key], key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 				}
@@ -2184,7 +2179,7 @@
 		var self = this,
 			tmpObj = {},
 			
-			data, length,
+			data, length, fLength,
 			cloneObj,
 			
 			key, i = 0, j = 0, res = false;
@@ -2195,16 +2190,24 @@
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
-		// length function
+		// length
 		/** @private */
 		length = function () {
 			if (!length.val) {
-				length.val = self.length(filter, id, length);
+				length.val = self.length(filter, id);
 			}
 			
 			return length.val;
 		};
-		length.valueOf = length;
+		// filter length
+		/** @private */
+		fLength = function (filter, id) {
+			if (!fLength.val) {
+				fLength.val = self.length(filter, id);
+			}
+			
+			return fLength.val;
+		};
 		
 		if (Collection.isArray(data)) {
 			// cut off the array to indicate the start
@@ -2216,7 +2219,7 @@
 				key += indexOf;
 				if (count !== false && j === count) { return true; }
 				
-				if (this._customFilter(filter, el, key, data, i, length, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, el, key, data, i, fLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
@@ -2236,7 +2239,7 @@
 				if (count !== false && j === count) { break; }
 				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 				
-				if (this._customFilter(filter, data[key], key, data, i, length, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, data[key], key, data, i, fLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {	
@@ -3964,10 +3967,11 @@
 	Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
 		
-		var tmpParser = {}, tmpFilter = {},
+		var self = this,
+			tmpParser = {}, tmpFilter = {},
 			opt = {},
 			
-			data, length,
+			data, length, fLength,
 			start, inc = 0, checkPage, from = null,
 			first = false,
 			
@@ -4015,7 +4019,17 @@
 		
 		// get collection
 		data = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));
-		length = this.length();
+		length = this.length(opt.collection);
+		
+		// filter length
+		/** @private */
+		fLength = function (filter, id) {
+			if (!fLength.val) {
+				fLength.val = self.length(filter, id);
+			}
+			
+			return fLength.val;
+		};
 		
 		// number of records per page
 		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam('filter')));
@@ -4040,7 +4054,7 @@
 				if (checkPage > 0) {
 					checkPage = opt.numberBreak * checkPage;
 					while ((start -= 1) > -1) {
-						if (this._customFilter(opt.filter, data[start], data, start, length, this, this.ACTIVE, tmpFilter) === true) {
+						if (this._customFilter(opt.filter, data[start], data, start, fLength, this, this.ACTIVE, tmpFilter) === true) {
 							if (inc === checkPage) {
 								break;
 							} else { inc += 1; }
@@ -4093,7 +4107,7 @@
 		if (!opt.pager) { return this; }
 		
 		// navigation
-		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : length;
+		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter, opt.collection) : length;
 		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 

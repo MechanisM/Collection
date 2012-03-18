@@ -29,10 +29,11 @@
 	Collection.prototype.print = function (param, clear) {
 		clear = clear || false;
 		
-		var tmpParser = {}, tmpFilter = {},
+		var self = this,
+			tmpParser = {}, tmpFilter = {},
 			opt = {},
 			
-			data, length,
+			data, length, fLength,
 			start, inc = 0, checkPage, from = null,
 			first = false,
 			
@@ -80,7 +81,17 @@
 		
 		// get collection
 		data = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));
-		length = this.length();
+		length = this.length(opt.collection);
+		
+		// filter length
+		/** @private */
+		fLength = function (filter, id) {
+			if (!fLength.val) {
+				fLength.val = self.length(filter, id);
+			}
+			
+			return fLength.val;
+		};
 		
 		// number of records per page
 		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam('filter')));
@@ -105,7 +116,7 @@
 				if (checkPage > 0) {
 					checkPage = opt.numberBreak * checkPage;
 					while ((start -= 1) > -1) {
-						if (this._customFilter(opt.filter, data[start], data, start, length, this, this.ACTIVE, tmpFilter) === true) {
+						if (this._customFilter(opt.filter, data[start], data, start, fLength, this, this.ACTIVE, tmpFilter) === true) {
 							if (inc === checkPage) {
 								break;
 							} else { inc += 1; }
@@ -158,7 +169,7 @@
 		if (!opt.pager) { return this; }
 		
 		// navigation
-		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : length;
+		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter, opt.collection) : length;
 		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
 		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
 

@@ -22,7 +22,7 @@
 	Collection.prototype.length = function (filter, id) {
 		filter = filter || '';
 		var tmpObj = {},
-			data, aCheck, key, i = 0, length;
+			data, isCollection, key, i = 0, length;
 		
 		// overload
 		// if the filter is a collection
@@ -40,16 +40,12 @@
 		} else if (Collection.isString(id)) {
 			data = this._get('collection', id);
 		} else {
-			aCheck = true;
+			isCollection = true;
 			data = id;
 		}
 		
-		// if data is null
 		if (data === null) { return 0; }
-		// if data is collection
-		if (aCheck !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
-		
-		// if data is String
+		if (isCollection !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
 		if (Collection.isString(data)) { return data.length; }
 		
 		// throw an exception if the element is not an object
@@ -59,7 +55,6 @@
 		if ((filter === true || !filter) && typeof data.length !== 'undefined') {
 			length = data.length;
 		} else {
-			// calclate length
 			length = 0;
 			
 			// if array
