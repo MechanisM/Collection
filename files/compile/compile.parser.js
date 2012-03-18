@@ -73,7 +73,6 @@
 	 */
 	Collection.prototype._compileParser = function (str) {
 		var res = /^\s*\(*\s*/.exec(str);
-		
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}

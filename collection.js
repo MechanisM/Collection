@@ -2056,6 +2056,11 @@
 	//// mult methods (core)
 	/////////////////////////////////
 	
+	// blanking for length
+	Collection.prototype._empty = function () {
+		return null;
+	};
+	
 	/**
 	 * returns the length of the collection (in context)
 	 * 
@@ -2113,7 +2118,7 @@
 			// if array
 			if (typeof data.length !== 'undefined') {
 				data.forEach(function (el, key, obj) {
-					if (this._customFilter(filter, el, key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, el, key, data, i, this._empty, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 					i += 1;
@@ -2123,7 +2128,7 @@
 				for (key in data) {
 					if (!data.hasOwnProperty(key)) { continue; }
 					
-					if (this._customFilter(filter, data[key], key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, data[key], key, data, i, this._empty, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 				}
@@ -2203,7 +2208,7 @@
 		/** @private */
 		fLength = function (filter, id) {
 			if (!fLength.val) {
-				fLength.val = self.length(filter, id);
+				fLength.val = self.length(filter || '', id || '');
 			}
 			
 			return fLength.val;
@@ -2257,6 +2262,7 @@
 		// remove the temporary filter
 		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
 		length = null;
+		fLength = null;
 		
 		return this;
 	};
@@ -2518,9 +2524,19 @@
 	 *	.set(':i == 2', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
+	 *	.set(':i == 2', ':el.c = 6').get();
+	 * @example
+	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, key, data, i) {
 	 *		return i == 2;
 	 *	}, {c: 6}).get();
+	 * @example
+	 * $C([{a: 1}, {b: 2}, {c: 3}])
+	 *	.set(function (el, key, data, i) {
+	 *		return i == 2;
+	 *	}, function (el) {
+	 *		return {c: 7};
+	 *	}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, key, data, i) {
@@ -2536,13 +2552,19 @@
 				return this._setOne(filter, replaceObj, id || '');
 			}
 		
-		var e, arg, replaceCheck = Collection.isFunction(replaceObj),
-			
+		replaceObj = this._exprTest(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
+		
+		var e, arg, res,
+			isFunc = Collection.isFunction(replaceObj),
+
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
-				if (replaceCheck) {
-					data[key] = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
-				} else { data[key] = Collection.expr(replaceObj, data[key]); }
+				if (isFunc) {
+					res = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+					if (typeof res !== 'undefined') { data[key] = res; }
+				} else {
+					data[key] = Collection.expr(replaceObj, data[key]);
+				}
 	
 				return true;
 			};
@@ -3698,7 +3720,22 @@
 		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
 		
 		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', 'return ' + str.replace(/^\s*:/, '') + ';');
-	}	
+	};
+	/**
+	 * compile function
+	 * 
+	 * @param {String} str — some string
+	 * @return {Function}
+	 */
+	Collection.prototype._compileFunc = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
+		
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', str.replace(/^\s*:/, '') + ';');
+	};	
 	/////////////////////////////////
 	//// compile (parser)
 	/////////////////////////////////
@@ -3773,7 +3810,6 @@
 	 */
 	Collection.prototype._compileParser = function (str) {
 		var res = /^\s*\(*\s*/.exec(str);
-		
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}
@@ -3849,7 +3885,7 @@
 	 * @return {Boolean}
 	 */
 	Collection.prototype._filterTest = function (str) {
-		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:/) !== -1;
+		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;
 	};
 	/**
 	 * expression test
@@ -4077,6 +4113,9 @@
 			}
 			if (opt.cache.autoIteration === true) { this._get('cache').iteration = true; }
 		}
+		
+		// clear
+		fLength = null;
 		
 		// parser
 		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);

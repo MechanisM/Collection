@@ -3,6 +3,11 @@
 	//// mult methods (core)
 	/////////////////////////////////
 	
+	// blanking for length
+	Collection.prototype._empty = function () {
+		return null;
+	};
+	
 	/**
 	 * returns the length of the collection (in context)
 	 * 
@@ -60,7 +65,7 @@
 			// if array
 			if (typeof data.length !== 'undefined') {
 				data.forEach(function (el, key, obj) {
-					if (this._customFilter(filter, el, key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, el, key, data, i, this._empty, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 					i += 1;
@@ -70,7 +75,7 @@
 				for (key in data) {
 					if (!data.hasOwnProperty(key)) { continue; }
 					
-					if (this._customFilter(filter, data[key], key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, data[key], key, data, i, this._empty, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 				}
@@ -150,7 +155,7 @@
 		/** @private */
 		fLength = function (filter, id) {
 			if (!fLength.val) {
-				fLength.val = self.length(filter, id);
+				fLength.val = self.length(filter || '', id || '');
 			}
 			
 			return fLength.val;
@@ -204,6 +209,7 @@
 		// remove the temporary filter
 		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
 		length = null;
+		fLength = null;
 		
 		return this;
 	};

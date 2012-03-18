@@ -140,6 +140,9 @@
 			if (opt.cache.autoIteration === true) { this._get('cache').iteration = true; }
 		}
 		
+		// clear
+		fLength = null;
+		
 		// parser
 		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);
 		tmpParser.name && this._drop('parser', '__tmp:' + tmpParser.name);

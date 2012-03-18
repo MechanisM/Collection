@@ -25,9 +25,19 @@
 	 *	.set(':i == 2', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
+	 *	.set(':i == 2', ':el.c = 6').get();
+	 * @example
+	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, key, data, i) {
 	 *		return i == 2;
 	 *	}, {c: 6}).get();
+	 * @example
+	 * $C([{a: 1}, {b: 2}, {c: 3}])
+	 *	.set(function (el, key, data, i) {
+	 *		return i == 2;
+	 *	}, function (el) {
+	 *		return {c: 7};
+	 *	}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, key, data, i) {
@@ -43,13 +53,19 @@
 				return this._setOne(filter, replaceObj, id || '');
 			}
 		
-		var e, arg, replaceCheck = Collection.isFunction(replaceObj),
-			
+		// compile replace object if need
+		replaceObj = this._exprTest(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
+		var e, arg, res,
+			isFunc = Collection.isFunction(replaceObj),
+
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
-				if (replaceCheck) {
-					data[key] = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
-				} else { data[key] = Collection.expr(replaceObj, data[key]); }
+				if (isFunc) {
+					res = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+					if (typeof res !== 'undefined') { data[key] = res; }
+				} else {
+					data[key] = Collection.expr(replaceObj, data[key]);
+				}
 	
 				return true;
 			};
