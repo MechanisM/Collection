@@ -156,7 +156,7 @@
 			cloneObj.some(function (el, i, obj) {
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
-					
+				
 				if (this._customFilter(filter, el, i, cObj, cOLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;

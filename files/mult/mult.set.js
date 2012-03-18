@@ -22,24 +22,24 @@
 	 *	.set('eq(-1) > c', 4).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.set(':i == 3', {c: 5}).get();
+	 *	.set(':i == 2', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, i, data) {
-	 *		return i == 3;
+	 *		return i == 2;
 	 *	}, {c: 6}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, i, data) {
-	 *		return i == 3;
+	 *		return i == 2;
 	 *	}, function (el) {
 	 *		el.c = 7;
 	 *	}).get();
 	 */
 	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length < 3 && Collection.isString(filter)
-			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === false)) {
+		if (Collection.isNumber(filter) || (arguments.length <= 3 && !Collection.isBoolean(id) && Collection.isString(filter)
+			&& !this._filterTest(filter)) || arguments.length === 0 || filter === false) {
 				return this._setOne(filter, replaceObj, id || '');
 			}
 		
@@ -68,14 +68,11 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
-	* @example
-	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.setOne('eq(-1) > c', 4).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.setOne(':i == 3', {c: 5}).get();

@@ -18,18 +18,18 @@
 	 *
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove('eq(-1) > c');
+	 *	.remove('eq(-1) > c').get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove(':i == 2');
+	 *	.remove(':i == 2').get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove(function (el, i, data) { return i == 1; });
+	 *	.remove(function (el, i, data) { return i == 1; }).get();
 	 */
 	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length < 2 && Collection.isString(filter)
-			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
+		if (Collection.isNumber(filter) || (arguments.length <= 2  && !Collection.isBoolean(id) && Collection.isString(filter)
+			&& !this._filterTest(filter)) || arguments.length === 0 || filter === false) {
 				return this._removeOne(filter, id || '');
 			} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
 		
@@ -54,11 +54,11 @@
 	 *
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.removeOne(':i % 2 !== 0');
+	 *	.removeOne(':i % 2 !== 0').get();
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.removeOne(function (el, i, data) {
 	 *		return i % 2 !== 0;
-	 *	});
+	 *	}).get();
 	 */
 	Collection.prototype.removeOne = function (filter, id) {
 		return this.remove(filter || '', id || '', false);

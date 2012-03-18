@@ -174,7 +174,8 @@
 			}
 		}
 		
-		return clone;
+		if (typeof value !== 'undefined') { return clone; }
+		return obj;
 	};
 		
 	/**

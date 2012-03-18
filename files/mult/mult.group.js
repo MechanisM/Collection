@@ -17,10 +17,11 @@
 	 * @return {Colletion}
 	 *
 	 * @example
-	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
-	 * db.group();
-	 * // group all the even-numbered elements
-	 * db.group(':el % 2 === 0');
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
+	 * .group();
+	 * @example
+	 * // group all the even-numbered elements //
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]).group(':el % 2 === 0');
 	 */
 	Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
 		field = this._exprTest((field = field || '')) ? this._compileFilter(field) : field;
@@ -63,10 +64,12 @@
 	 * @return {Colletion}
 	 *
 	 * @example
-	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
-	 * db.group();
-	 * // group all the even-numbered elements
-	 * db.group(':el % 2 === 0');
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
+	 *	.groupLinks();
+	 * @example
+	 * // group all the even-numbered elements //
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
+	 *	.groupLinks(':el % 2 === 0');
 	 */
 	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
 		return this.group(field || '', filter || '', id || '', count || '', from || '', indexOf || '', true);

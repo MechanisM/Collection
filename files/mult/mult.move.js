@@ -21,8 +21,14 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.move(':i % 2 !== 0', '', 'active', 'test');
+	 * console.log(db.get());
+	 * @example
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
+	 * db.move('eq(-1)', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
@@ -53,8 +59,9 @@
 		// search elements
 		this.disable('context');
 		
-		if (Collection.isNumber(moveFilter) || (Collection.isString(moveFilter) && !this._filterTest(moveFilter))) {
-			elements = moveFilter;
+		if (Collection.isNumber(moveFilter) || (arguments.length <= 5 && Collection.isString(moveFilter)
+			&& !this._filterTest(moveFilter)) || arguments.length === 0 || moveFilter === false) {
+				elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
 		
 		this.enable('context');
@@ -80,7 +87,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -88,7 +95,8 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
@@ -100,7 +108,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -112,9 +120,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
-	 * console.log(db.get());
+	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
 		mult = mult === false ? false : true;
@@ -137,9 +146,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
-	 * console.log(db.get());
+	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', '', '', false);

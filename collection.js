@@ -203,7 +203,8 @@
 			}
 		}
 		
-		return clone;
+		if (typeof value !== 'undefined') { return clone; }
+		return obj;
 	};
 		
 	/**
@@ -1674,7 +1675,56 @@
 				return function (id) { return this._get(nm, id || ''); };
 			}(el);
 		});
-	}) (Collection.prototype.stack);		/////////////////////////////////	//// single methods (core)	/////////////////////////////////		/**	 * set new value to element by link (in context)<br/>	 * events: onSet	 * 	 * @this {Colletion Object}	 * @param {Context} [context] — additional context	 * @param {mixed} value — new value	 * @param {String} [id=this.ACTIVE] — collection ID	 * @return {Colletion Object}	 */	Collection.prototype._setOne = function (context, value, id) {		context = Collection.isExists(context) ? context.toString() : '';		value = typeof value === 'undefined' ? '' : value;		id = id || '';		var activeContext = this._getActiveParam('context'), e;				// events		this.onSet && (e = this.onSet.apply(this, arguments));		if (e === false) { return this; }				// if no context		if (!context && !activeContext) {			if (id && id !== this.ACTIVE) {				return this._push('collection', id, value);			} else { return this._update('collection', value); }		}		Collection.byLink(this._get('collection', id), activeContext + Collection.CHILDREN + context, value);			return this;	};	/**	 * get element by link (in context)<br/>	 * events: onSet	 *	 * @this {Colletion Object}	 * @param {Context} [context] — additional context	 * @param {String} [id=this.ACTIVE] — collection ID	 * @return {mixed}	 */	Collection.prototype._getOne = function (context, id) {		context = Collection.isExists(context) ? context.toString() : '';		return Collection.byLink(this._get('collection', id || ''), this._getActiveParam('context') + Collection.CHILDREN + context);	};	
+	}) (Collection.prototype.stack);	
+	/////////////////////////////////
+	//// single methods (core)
+	/////////////////////////////////
+	
+	/**
+	 * set new value to element by link (in context)<br/>
+	 * events: onSet
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Context} [context] — additional context
+	 * @param {mixed} value — new value
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @return {Colletion Object}
+	 */
+	Collection.prototype._setOne = function (context, value, id) {
+		context = Collection.isExists(context) ? context.toString() : '';
+		value = typeof value === 'undefined' ? '' : value;
+		id = id || '';
+
+		var activeContext = this._getActiveParam('context'), e;
+		
+		// events
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
+		// if no context
+		if (!context && !activeContext) {
+			if (id && id !== this.ACTIVE) {
+				return this._push('collection', id, value);
+			} else { return this._update('collection', value); }
+		}
+		
+		Collection.byLink(this._get('collection', id), activeContext + Collection.CHILDREN + context, value);
+	
+		return this;
+	};
+	/**
+	 * get element by link (in context)<br/>
+	 * events: onSet
+	 *
+	 * @this {Colletion Object}
+	 * @param {Context} [context] — additional context
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @return {mixed}
+	 */
+	Collection.prototype._getOne = function (context, id) {
+		context = Collection.isExists(context) ? context.toString() : '';
+		return Collection.byLink(this._get('collection', id || ''), this._getActiveParam('context') + Collection.CHILDREN + context);
+	};	
 	/////////////////////////////////
 	//// single methods (add)
 	/////////////////////////////////	
@@ -2077,7 +2127,7 @@
 			cloneObj.some(function (el, i, obj) {
 				i += indexOf;
 				if (count !== false && j === count) { return true; }
-					
+				
 				if (this._customFilter(filter, el, i, cObj, cOLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
@@ -2295,11 +2345,11 @@
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length < 2 && Collection.isString(filter)
-			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
+		if (Collection.isNumber(filter) || (arguments.length <= 2 && !Collection.isBoolean(id) && Collection.isString(filter)
+			&& !this._filterTest(filter)) || arguments.length === 0 || filter === false) {
 				return this._getOne(filter, id || '');
 			}
-	
+		
 		// if id is Boolean (overload)
 		if (Collection.isBoolean(id)) {
 			indexOf = from;
@@ -2334,13 +2384,10 @@
 	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {mixed}
 	 *
-	 * @example
-	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.getOne('eq(-1) > c');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.getOne(':i % 3 === 0');
@@ -2376,24 +2423,24 @@
 	 *	.set('eq(-1) > c', 4).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.set(':i == 3', {c: 5}).get();
+	 *	.set(':i == 2', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, i, data) {
-	 *		return i == 3;
+	 *		return i == 2;
 	 *	}, {c: 6}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.set(function (el, i, data) {
-	 *		return i == 3;
+	 *		return i == 2;
 	 *	}, function (el) {
 	 *		el.c = 7;
 	 *	}).get();
 	 */
 	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length < 3 && Collection.isString(filter)
-			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 3 && filter === false)) {
+		if (Collection.isNumber(filter) || (arguments.length <= 3 && !Collection.isBoolean(id) && Collection.isString(filter)
+			&& !this._filterTest(filter)) || arguments.length === 0 || filter === false) {
 				return this._setOne(filter, replaceObj, id || '');
 			}
 		
@@ -2422,14 +2469,11 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
-	* @example
-	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.setOne('eq(-1) > c', 4).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.setOne(':i == 3', {c: 5}).get();
@@ -2489,8 +2533,14 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.move(':i % 2 !== 0', '', 'active', 'test');
+	 * console.log(db.get());
+	 * @example
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
+	 * db.move('eq(-1)', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
@@ -2521,8 +2571,9 @@
 		// search elements
 		this.disable('context');
 		
-		if (Collection.isNumber(moveFilter) || (Collection.isString(moveFilter) && !this._filterTest(moveFilter))) {
-			elements = moveFilter;
+		if (Collection.isNumber(moveFilter) || (arguments.length <= 5 && Collection.isString(moveFilter)
+			&& !this._filterTest(moveFilter)) || arguments.length === 0 || moveFilter === false) {
+				elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
 		
 		this.enable('context');
@@ -2548,7 +2599,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -2556,7 +2607,8 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
@@ -2568,7 +2620,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -2580,9 +2632,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
-	 * console.log(db.get());
+	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
 		mult = mult === false ? false : true;
@@ -2605,9 +2658,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = $C([{a: 1}, {b: 2}, {c: 3}]).pushCollection('test', []);
+	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.pushCollection('test', []);
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
-	 * console.log(db.get());
+	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
 		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', '', '', false);
@@ -2631,18 +2685,18 @@
 	 *
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove('eq(-1) > c');
+	 *	.remove('eq(-1) > c').get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove(':i == 2');
+	 *	.remove(':i == 2').get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove(function (el, i, data) { return i == 1; });
+	 *	.remove(function (el, i, data) { return i == 1; }).get();
 	 */
 	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length < 2 && Collection.isString(filter)
-			&& !this._filterTest(filter)) || arguments.length === 0 || (arguments.length < 2 && filter === false)) {
+		if (Collection.isNumber(filter) || (arguments.length <= 2  && !Collection.isBoolean(id) && Collection.isString(filter)
+			&& !this._filterTest(filter)) || arguments.length === 0 || filter === false) {
 				return this._removeOne(filter, id || '');
 			} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
 		
@@ -2667,11 +2721,11 @@
 	 *
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.removeOne(':i % 2 !== 0');
+	 *	.removeOne(':i % 2 !== 0').get();
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.removeOne(function (el, i, data) {
 	 *		return i % 2 !== 0;
-	 *	});
+	 *	}).get();
 	 */
 	Collection.prototype.removeOne = function (filter, id) {
 		return this.remove(filter || '', id || '', false);
@@ -2694,10 +2748,11 @@
 	 * @return {Colletion}
 	 *
 	 * @example
-	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
-	 * db.group();
-	 * // group all the even-numbered elements
-	 * db.group(':el % 2 === 0');
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
+	 * .group();
+	 * @example
+	 * // group all the even-numbered elements //
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]).group(':el % 2 === 0');
 	 */
 	Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
 		field = this._exprTest((field = field || '')) ? this._compileFilter(field) : field;
@@ -2740,14 +2795,203 @@
 	 * @return {Colletion}
 	 *
 	 * @example
-	 * var db = new $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]);
-	 * db.group();
-	 * // group all the even-numbered elements
-	 * db.group(':el % 2 === 0');
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
+	 *	.groupLinks();
+	 * @example
+	 * // group all the even-numbered elements //
+	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
+	 *	.groupLinks(':el % 2 === 0');
 	 */
 	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
 		return this.group(field || '', filter || '', id || '', count || '', from || '', indexOf || '', true);
-	};			/////////////////////////////////	//// statistic methods	/////////////////////////////////		/**	 * get statistic information	 *  	 * @this {Colletion Object}	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function	 * @param {Context} [field] — field name	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)	 * @param {String} [id=this.ACTIVE] — collection ID	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)	 * @return {Colletion}	 *	 * @example	 * var db = new $C([1, 2, 3, 4, 5, 6, 7, 0]);	 * db.stat('count');	 * db.stat('min');	 */	Collection.prototype.stat = function (oper, field, filter, id, count, from, indexOf) {		oper = oper || 'count';		id = id || '';			// values by default		count = parseInt(count) >= 0 ? parseInt(count) : false;		from = parseInt(from) || false;		indexOf = parseInt(indexOf) || false;				var operType = Collection.isString(oper),			result = 0, tmp = 0, key,						/** @private */			action = function (el, i, data, cOLength, self, id) {				var param = Collection.byLink(el, field || '');								switch (oper) {					case 'count' : {						result += 1;					} break;					case 'summ' : {						result += param;					} break;					case 'avg' : {						tmp += 1;						result += param;					} break;					case 'max' : {						if (param > result) { result = param; }					} break;					case 'min' : {						if (tmp === 0) {							result = param;							tmp = 1;						} else if (param < result) { result = param; }					} break;					default : {						if (!operType) {							result = oper(param, result);						} else {							if (tmp === 0) {								result = param;								tmp = 1;							} else { result = Collection.expr(oper + '=' + param, result); }						}					}				}									return true;			};				if (oper !== 'first' && oper !== 'last') {			this.forEach(action, filter || '', id, '', count, from, indexOf);						if (oper === 'avg') { result /= tmp; }		} else if (oper === 'first') {			result = this._getOne(Collection.ORDER[0] + '0' + Collection.ORDER[1]);		} else { result = this._getOne(Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }			return result;	};		/////////////////////////////////	//// statistic methods (group)	/////////////////////////////////		/**	 * get statistic information for group	 *  	 * @this {Colletion Object}	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function	 * @param {Context} [field] — field name	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)	 * @param {String} [id=this.ACTIVE] — collection ID	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)	 * @return {Colletion}	 *	 * @example	 * var db = new $C([1, 2, 3, 4, 5, 6, 7, 0]);	 * db.pushSetCollection('test', db.group(':el % 2 === 0'));	 * db.groupStat('count');	 * db.groupStat('min');	 */	Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {		oper = oper || 'count';		id = id || '';		// values by default		count = parseInt(count) >= 0 ? parseInt(count) : false;		from = parseInt(from) || false;		indexOf = parseInt(indexOf) || false;				var operType = Collection.isString(oper),			result = {}, tmp = {}, key,						/** @private */			deepAction = function (el, i, data, cOLength, self, id) {				var param = Collection.byLink(el, field || '');								switch (oper) {					case 'count' : {						result[this.i] += 1;					} break;					case 'summ' : {						result[this.i] += param;					} break;					case 'avg' : {						tmp[this.i] += 1;						result[this.i] += param;					} break;					case 'max' : {						if (param > result[this.i]) { result[this.i] = param; }					} break;					case 'min' : {						if (tmp[this.i] === 0) {							result[this.i] = param;							tmp[this.i] = 1;						} else if (param < result[this.i]) { result[this.i] = param; }					} break;					default : {						if (!operType) {							result[this.i] = oper(param, result[this.i]);						} else {							if (tmp[this.i] === 0) {								result[this.i] = param;								tmp[this.i] = 1;							} else { result[this.i] = Collection.expr(oper + '=' + param, result[this.i]); }						}					}				}									return true;			},						/** @private */			action = function (el, i, data, cOLength, self, id) {				if (!result[i]) { result[i] = tmp[i] = 0; };								if (oper !== 'first' && oper !== 'last') {					self						._update('context', '+=' + Collection.CHILDREN + (deepAction.i = i))						.forEach(deepAction, filter || '', id, '', count, from, indexOf)						.parent();				} else if (oper === 'first') {					result[i] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);				} else { result[i] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }									return true;			};				this.forEach(action, '', id);				if (oper === 'avg') {			for (key in result) {				if (!result.hasOwnProperty(key)) { continue; }				result[key] /= tmp[key];			}		}			return result;	};		
+	};		
+	/////////////////////////////////
+	//// statistic methods
+	/////////////////////////////////
+	
+	/**
+	 * get statistic information
+	 *  
+	 * @this {Colletion Object}
+	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function
+	 * @param {Context} [field] — field name
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @return {Colletion}
+	 *
+	 * @example
+	 * $C([1, 2, 3, 4, 5, 6, 7, 0]).stat('count');
+	 * @example
+	 * $C([1, 2, 3, 4, 5, 6, 7, 0]).stat('min');
+	 */
+	Collection.prototype.stat = function (oper, field, filter, id, count, from, indexOf) {
+		oper = oper || 'count';
+		id = id || '';
+	
+		// values by default
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		
+		var operType = Collection.isString(oper),
+			result = 0, tmp = 0, key,
+			
+			/** @private */
+			action = function (el, i, data, cOLength, self, id) {
+				var param = Collection.byLink(el, field || '');
+				
+				switch (oper) {
+					case 'count' : {
+						result += 1;
+					} break;
+					case 'summ' : {
+						result += param;
+					} break;
+					case 'avg' : {
+						tmp += 1;
+						result += param;
+					} break;
+					case 'max' : {
+						if (param > result) { result = param; }
+					} break;
+					case 'min' : {
+						if (tmp === 0) {
+							result = param;
+							tmp = 1;
+						} else if (param < result) { result = param; }
+					} break;
+					default : {
+						if (!operType) {
+							result = oper(param, result);
+						} else {
+							if (tmp === 0) {
+								result = param;
+								tmp = 1;
+							} else { result = Collection.expr(oper + '=' + param, result); }
+						}
+					}
+				}
+					
+				return true;
+			};
+		
+		if (oper !== 'first' && oper !== 'last') {
+			this.forEach(action, filter || '', id, '', count, from, indexOf);
+			
+			if (oper === 'avg') { result /= tmp; }
+		} else if (oper === 'first') {
+			result = this._getOne(Collection.ORDER[0] + '0' + Collection.ORDER[1]);
+		} else { result = this._getOne(Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+	
+		return result;
+	};	
+	/////////////////////////////////
+	//// statistic methods (group)
+	/////////////////////////////////
+	
+	/**
+	 * get statistic information for group
+	 *  
+	 * @this {Colletion Object}
+	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function
+	 * @param {Context} [field] — field name
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @return {Colletion}
+	 *
+	 * @example
+	 * var db = $C([1, 2, 3, 4, 5, 6, 7, 0]);
+	 * db.pushSetCollection('test', db.group(':el % 2 === 0'));
+	 * console.log(db.groupStat('count'));
+	 * @example
+	 * var db = $C([1, 2, 3, 4, 5, 6, 7, 0]);
+	 * db.pushSetCollection('test', db.group(':el % 2 === 0'));
+	 * console.log(db.groupStat('min'));
+	 */
+	Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
+		oper = oper || 'count';
+		id = id || '';
+
+		// values by default
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		
+		var operType = Collection.isString(oper),
+			result = {}, tmp = {}, key,
+			
+			/** @private */
+			deepAction = function (el, i, data, cOLength, self, id) {
+				var param = Collection.byLink(el, field || '');
+				
+				switch (oper) {
+					case 'count' : {
+						result[this.i] += 1;
+					} break;
+					case 'summ' : {
+						result[this.i] += param;
+					} break;
+					case 'avg' : {
+						tmp[this.i] += 1;
+						result[this.i] += param;
+					} break;
+					case 'max' : {
+						if (param > result[this.i]) { result[this.i] = param; }
+					} break;
+					case 'min' : {
+						if (tmp[this.i] === 0) {
+							result[this.i] = param;
+							tmp[this.i] = 1;
+						} else if (param < result[this.i]) { result[this.i] = param; }
+					} break;
+					default : {
+						if (!operType) {
+							result[this.i] = oper(param, result[this.i]);
+						} else {
+							if (tmp[this.i] === 0) {
+								result[this.i] = param;
+								tmp[this.i] = 1;
+							} else { result[this.i] = Collection.expr(oper + '=' + param, result[this.i]); }
+						}
+					}
+				}
+					
+				return true;
+			},
+			
+			/** @private */
+			action = function (el, i, data, cOLength, self, id) {
+				if (!result[i]) { result[i] = tmp[i] = 0; };
+				
+				if (oper !== 'first' && oper !== 'last') {
+					self
+						._update('context', '+=' + Collection.CHILDREN + (deepAction.i = i))
+						.forEach(deepAction, filter || '', id, '', count, from, indexOf)
+						.parent();
+				} else if (oper === 'first') {
+					result[i] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);
+				} else { result[i] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+					
+				return true;
+			};
+		
+		this.forEach(action, '', id);
+		
+		if (oper === 'avg') {
+			for (key in result) {
+				if (!result.hasOwnProperty(key)) { continue; }
+				result[key] /= tmp[key];
+			}
+		}
+	
+		return result;
+	};		
 	/////////////////////////////////
 	//// sort method
 	/////////////////////////////////
@@ -3194,7 +3438,256 @@
 	Collection.prototype.dropAll = function (local) {
 		(local === false ? sessionStorage : localStorage).removeItem( '__' + this.name + '__' + this._get('namespace') + '__date');
 		return this.loadAll(local || '', true);
-	};		/////////////////////////////////	//// compile (filter)	/////////////////////////////////		/**	 * calculate custom filter	 * 	 * @this {Colletion Object}	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)	 * @param {mixed} el — current element	 * @param {Number|String} i — iteration (key)	 * @param {Collection} data — link to collection	 * @param {Function} cOLength — collection length	 * @param {Collection Object} self — link to collection object	 * @param {String} id — collection ID	 * @return {Boolean}	 */	Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {		var fLength,			calFilter,						result = true, tmpResult,			and, or, inverse,						i;				// if filter is undefined		if (!filter || filter === true) {			if (!this._getActiveParam('filter')) { return true; }						if (this._get('filter')) {				return this._customFilter(this._get('filter'), el, i, data, cOLength, self, id, _tmpFilter);			}						return true;		}		// if filter is function		if (Collection.isFunction(filter)) {			if (!this._getActiveParam('filter') || !_tmpFilter) {				return filter.call(filter, el, i, data, cOLength, self, id);			} else {				if (!_tmpFilter.name) {					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {						_tmpFilter.name = Collection.getRandomInt(0, 10000);					}					this._push('filter', '__tmp:' + _tmpFilter.name, filter);				}								return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, i, data, cOLength, self, id, _tmpFilter);			}		}				// if filter is string		if (!Collection.isArray(filter)) {			if (this._getActiveParam('filter') && _tmpFilter) {				filter = this.ACTIVE + ' && (' + filter + ')';			}						// if simple filter			if (filter.search(/\|\||&&|!/) === -1) {				if ((filter = Collection.trim(filter)).search(/^(?:\(|)*:/) !== -1) {					if (!this._exists('filter', '__tmp:' + filter)) {						this._push('filter', '__tmp:' + filter, this._compileFilter(filter));					}										return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, i, data, cOLength, self, id);				}								return this._customFilter(this._get('filter', filter), el, i, data, cOLength, self, id, _tmpFilter);			}						// prepare string			filter = Collection.trim(						filter							.toString()							.replace(/\s*(\(|\))\s*/g, ' $1 ')							.replace(/\s*(\|\||&&)\s*/g, ' $1 ')							.replace(/(!)\s*/g, '$1')					).split(' ');						// remove 'dead' elements					for (i = filter.length; (i -= 1) > -1;) {				if (filter[i] === '') { filter.splice(i, 1); }			}		}				// calculate deep filter		/** @private */		calFilter = function (array, iter) {			var i = -1,				aLength = array.length,				pos = 0,				result = [];						while ((i += 1) < aLength) {				iter += 1;				if (array[i] === '(' || array[i] === '!(') { pos += 1; }				if (array[i] === ')') {					if (pos === 0) {						return {result: result, iter: iter};					} else { pos -= 1; }				}								result.push(array[i]);			}		};				// calculate filter		fLength = filter.length;		for (i = -1; (i += 1) < fLength;) {			// calculate atoms			if (filter[i] === '(' || filter[i] === '!(') {				if (filter[i].substring(0, 1) === '!') {					inverse = true;					filter[i] = filter[i].substring(1);				} else { inverse = false; }								i = (tmpResult = calFilter(filter.slice((i + 1)), i)).iter;				tmpResult = tmpResult.result.join(' ');								tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);								if (!and && !or) {					result = inverse === true ? !tmpResult : tmpResult;				} else if (and) {					result = inverse === true ? !tmpResult : tmpResult && result;				} else { result = inverse === true ? !tmpResult : tmpResult || result; }						// calculate outer filter			} else if (filter[i] !== ')' && filter[i] !== '||' && filter[i] !== '&&') {				if (filter[i].substring(0, 1) === '!') {					inverse = true;					filter[i] = filter[i].substring(1);				} else { inverse = false; }								tmpResult = this._customFilter(this._get('filter', filter[i]), el, i, data, cOLength, self, id);								if (!and && !or) {					result = inverse === true ? !tmpResult : tmpResult;				} else if (and) {					result = inverse === true ? !tmpResult : tmpResult && result;				} else { result = inverse === true ? !tmpResult : tmpResult || result; }						// 'and' or 'or'			} else if (filter[i] === '||') {				and = false;				or = true;			} else if (filter[i] === '&&') {				or = false;				and = true;			}		}				return result;	};	/**	 * compile filter	 * 	 * @param {String} str — some string	 * @return {Function}	 */	Collection.prototype._compileFilter = function (str) {		var res = /^\s*\(*\s*/.exec(str);		if (res.length !== 0) {			str = str.substring(res[0].length + 1, str.length - res[0].length);		}		str = str.split('<:').join('self.getVariable("').split(':>').join('")');				return new Function('el', 'i', 'data', 'cOLength', 'cObj', 'id', 'var key = i; return ' + str.replace(/^\s*:/, '') + ';');	}		/////////////////////////////////	//// compile (parser)	/////////////////////////////////		/**	 * calculate custom parser	 * 	 * @this {Colletion Object}	 * @param {Parser|String|Boolean} parser — parser function or string expression or 'false'	 * @param {String} str — source string	 * @return {String}	 */	Collection.prototype._customParser = function (parser, str, _tmpParser) {		// if parser is undefined		if (!parser || parser === true) {			if (!this._getActiveParam('parser')) { return str; }						if (this._get('parser')) {				return this._customParser(this._get('parser'), str, _tmpParser);			}						return str;		}				// if parser is function		if (Collection.isFunction(parser)) {			if (!this._getActiveParam('parser') || !_tmpParser) {				return parser.call(parser, str, this);			} else {				if (!_tmpParser.name) {					while (this._exists('parser', '__tmp:' + (_tmpParser.name = Collection.getRandomInt(0, 10000)))) {						_tmpParser.name = Collection.getRandomInt(0, 10000);					}					this._push('parser', '__tmp:' + _tmpParser.name, parser);				}								return this._customParser(this.ACTIVE + ' && ' + '__tmp:' + _tmpParser.name, str, _tmpParser);			}		}				// if parser is string		if (Collection.isString(parser)) {			if (this._getActiveParam('parser') && _tmpParser) {				parser = this.ACTIVE + ' && ' + parser;			}						// if simple parser			if ((parser = Collection.trim(parser)).search('&&') === -1) {				// if need to compile parser				if (parser.search(/^(?:\(|)*:/) !== -1) {					if (!this._exists('parser', '__tmp:' + parser)) {						this._push('parser', '__tmp:' + parser, this._compileParser(parser));					}										return (parser = this._get('parser', '__tmp:' + parser)).call(parser, str, this);				}								return this._customParser(this._get('parser', parser), str);			}						// split parser			parser = parser.split('&&');		}				// calculate		parser.forEach(function (el) {			str = this._customParser((el = Collection.trim(el)), str);		}, this);		return str;	};	/**	 * compile parser	 * 	 * @param {String} str — some string	 * @return {Function}	 */	Collection.prototype._compileParser = function (str) {		var res = /^\s*\(*\s*/.exec(str);				if (res.length !== 0) {			str = str.substring(res[0].length + 1, str.length - res[0].length);		}		str = str.split('<:').join('self.getVariable("').split(':>').join('")');				return new Function('str', 'cObj', 'return ' + str.replace(/^\s*:/, '') + ';');	};	
+	};	
+	/////////////////////////////////
+	//// compile (filter)
+	/////////////////////////////////
+	
+	/**
+	 * calculate custom filter
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {mixed} el — current element
+	 * @param {Number|String} i — iteration (key)
+	 * @param {Collection} data — link to collection
+	 * @param {Function} cOLength — collection length
+	 * @param {Collection Object} self — link to collection object
+	 * @param {String} id — collection ID
+	 * @return {Boolean}
+	 */
+	Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
+		var fLength,
+			calFilter,
+			
+			result = true, tmpResult,
+			and, or, inverse,
+			
+			j;
+		
+		// if filter is undefined
+		if (!filter || filter === true) {
+			if (!this._getActiveParam('filter')) { return true; }
+			
+			if (this._get('filter')) {
+				return this._customFilter(this._get('filter'), el, i, data, cOLength, self, id, _tmpFilter);
+			}
+			
+			return true;
+		}
+
+		// if filter is function
+		if (Collection.isFunction(filter)) {
+			if (!this._getActiveParam('filter') || !_tmpFilter) {
+				return filter.call(filter, el, i, data, cOLength, self, id);
+			} else {
+				if (!_tmpFilter.name) {
+					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {
+						_tmpFilter.name = Collection.getRandomInt(0, 10000);
+					}
+					this._push('filter', '__tmp:' + _tmpFilter.name, filter);
+				}
+				
+				return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, i, data, cOLength, self, id, _tmpFilter);
+			}
+		}
+		
+		// if filter is string
+		if (!Collection.isArray(filter)) {
+			if (this._getActiveParam('filter') && _tmpFilter) {
+				filter = this.ACTIVE + ' && (' + filter + ')';
+			}
+			
+			// if need to compile filter
+			if (this._exprTest(filter = Collection.trim(filter))) {
+				if (!this._exists('filter', '__tmp:' + filter)) {
+					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
+				}
+
+				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, i, data, cOLength, self, id);
+			}
+			
+			// prepare string
+			filter = Collection.trim(
+						filter
+							.toString()
+							.replace(/\s*(\(|\))\s*/g, ' $1 ')
+							.replace(/\s*(\|\||&&)\s*/g, ' $1 ')
+							.replace(/(!)\s*/g, '$1')
+					).split(' ');
+			
+			// remove 'dead' elements		
+			for (j = filter.length; (j -= 1) > -1;) {
+				if (filter[j] === '') { filter.splice(j, 1); }
+			}
+		}
+		
+		// calculate deep filter
+		/** @private */
+		calFilter = function (array, iter) {
+			var i = -1,
+				aLength = array.length,
+				pos = 0,
+				result = [];
+			
+			while ((i += 1) < aLength) {
+				iter += 1;
+				if (array[i] === '(' || array[i] === '!(') { pos += 1; }
+				if (array[i] === ')') {
+					if (pos === 0) {
+						return {result: result, iter: iter};
+					} else { pos -= 1; }
+				}
+				
+				result.push(array[i]);
+			}
+		};
+		
+		// calculate filter
+		fLength = filter.length;
+		for (j = -1; (j += 1) < fLength;) {
+			// calculate atoms
+			if (filter[j] === '(' || filter[j] === '!(') {
+				if (filter[j].substring(0, 1) === '!') {
+					inverse = true;
+					filter[j] = filter[j].substring(1);
+				} else { inverse = false; }
+				
+				j = (tmpResult = calFilter(filter.slice((j + 1)), j)).iter;
+				tmpResult = tmpResult.result.join(' ');
+				
+				tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);
+				
+				if (!and && !or) {
+					result = inverse === true ? !tmpResult : tmpResult;
+				} else if (and) {
+					result = inverse === true ? !tmpResult : tmpResult && result;
+				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
+			
+			// calculate outer filter
+			} else if (filter[j] !== ')' && filter[j] !== '||' && filter[j] !== '&&') {
+				if (filter[j].substring(0, 1) === '!') {
+					inverse = true;
+					filter[j] = filter[j].substring(1);
+				} else { inverse = false; }
+				
+				tmpResult = this._customFilter(this._get('filter', filter[j]), el, i, data, cOLength, self, id);
+				
+				if (!and && !or) {
+					result = inverse === true ? !tmpResult : tmpResult;
+				} else if (and) {
+					result = inverse === true ? !tmpResult : tmpResult && result;
+				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
+			
+			// 'and' or 'or'
+			} else if (filter[j] === '||') {
+				and = false;
+				or = true;
+			} else if (filter[j] === '&&') {
+				or = false;
+				and = true;
+			}
+		}
+		
+		return result;
+	};
+	/**
+	 * compile filter
+	 * 
+	 * @param {String} str — some string
+	 * @return {Function}
+	 */
+	Collection.prototype._compileFilter = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split('<:').join('self.getVariable("').split(':>').join('")');
+		
+		return new Function('el', 'i', 'data', 'cOLength', 'cObj', 'id', 'var key = i; return ' + str.replace(/^\s*:/, '') + ';');
+	}	
+	/////////////////////////////////
+	//// compile (parser)
+	/////////////////////////////////
+	
+	/**
+	 * calculate custom parser
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Parser|String|Boolean} parser — parser function or string expression or 'false'
+	 * @param {String} str — source string
+	 * @return {String}
+	 */
+	Collection.prototype._customParser = function (parser, str, _tmpParser) {
+		// if parser is undefined
+		if (!parser || parser === true) {
+			if (!this._getActiveParam('parser')) { return str; }
+			
+			if (this._get('parser')) {
+				return this._customParser(this._get('parser'), str, _tmpParser);
+			}
+			
+			return str;
+		}
+		
+		// if parser is function
+		if (Collection.isFunction(parser)) {
+			if (!this._getActiveParam('parser') || !_tmpParser) {
+				return parser.call(parser, str, this);
+			} else {
+				if (!_tmpParser.name) {
+					while (this._exists('parser', '__tmp:' + (_tmpParser.name = Collection.getRandomInt(0, 10000)))) {
+						_tmpParser.name = Collection.getRandomInt(0, 10000);
+					}
+					this._push('parser', '__tmp:' + _tmpParser.name, parser);
+				}
+				
+				return this._customParser(this.ACTIVE + ' && ' + '__tmp:' + _tmpParser.name, str, _tmpParser);
+			}
+		}
+		
+		// if parser is string
+		if (Collection.isString(parser)) {
+			if (this._getActiveParam('parser') && _tmpParser) {
+				parser = this.ACTIVE + ' && ' + parser;
+			}
+			
+			// if need to compile parser
+			if (this._exprTest(parser = Collection.trim(parser))) {
+				if (!this._exists('parser', '__tmp:' + parser)) {
+					this._push('parser', '__tmp:' + parser, this._compileParser(parser));
+				}
+				
+				return (parser = this._get('parser', '__tmp:' + parser)).call(parser, str, this);
+			}
+			
+			// split parser
+			parser = parser.split('&&');
+		}
+		
+		// calculate
+		parser.forEach(function (el) {
+			str = this._customParser((el = Collection.trim(el)), str);
+		}, this);
+
+		return str;
+	};
+	/**
+	 * compile parser
+	 * 
+	 * @param {String} str — some string
+	 * @return {Function}
+	 */
+	Collection.prototype._compileParser = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split('<:').join('self.getVariable("').split(':>').join('")');
+		
+		return new Function('str', 'cObj', 'return ' + str.replace(/^\s*:/, '') + ';');
+	};	
 	/////////////////////////////////
 	// context methods
 	/////////////////////////////////
