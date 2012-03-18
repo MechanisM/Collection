@@ -10,14 +10,16 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.class('test'); // returns '[object String]'
-	 * $C.class(2); // returns '[object Number]'
+	 * $C.toString('test');
+	 * @example
+	 * $C.toString(2);
 	 */
 	Collection.toString = function (obj) {
 		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }
 		return Object.prototype.toString.call(obj);
 	};
 	
+	// the hash-table of types of data
 	Collection.types = {
 		'[object Boolean]': 'boolean',
 		'[object Number]': 'number',
@@ -28,15 +30,37 @@
 		'[object RegExp]': 'regexp',
 		'[object Object]': 'object'
 	};
+	
+	/**
+	 * returns the type of the specified element
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.type('test');
+	 * @example
+	 * $C.type(2);
+	 */
 	Collection.type = function (obj) {
 		return obj == null ? String(obj) : Collection.types[Collection.toString(obj)] || 'object';
-	}
+	};
+	
+	/**
+	 * returns true if the specified object is window
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isWindow(window);
+	 * @example
+	 * $C.isWindow(2);
+	 */
 	Collection.isWindow = function (obj) {
 		return obj && typeof obj === 'object' && 'setInterval' in obj;
 	};
-	
-	
-	
+
 	/**
 	 * returns a Boolean indicating whether the object is a string
 	 *
@@ -44,8 +68,9 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isString('test'); // returns true
-	 * $C.isString(2); // returns false
+	 * $C.isString('test');
+	 * @example
+	 * $C.isString(2);
 	 */
 	Collection.isString = function (obj) { return Collection.type(obj) === 'string'; };
 	
@@ -56,8 +81,9 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isNumber('test'); // returns false
-	 * $C.isNumber(2); // returns true
+	 * $C.isNumber('test');
+	 * @example
+	 * $C.isNumber(2);
 	 */
 	Collection.isNumber = function (obj) { return Collection.type(obj) === 'number';  };
 	
@@ -68,8 +94,9 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isNumber('test'); // returns false
-	 * $C.isNumber(false); // returns true
+	 * $C.isNumber('test');
+	 * @example
+	 * $C.isNumber(false);
 	 */
 	Collection.isBoolean = function (obj) { return Collection.type(obj) === 'boolean'; };
 	
@@ -80,8 +107,9 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isFunction('test'); // returns false
-	 * $C.isFunction(function () {}); // returns true
+	 * $C.isFunction('test');
+	 * @example
+	 * $C.isFunction(function () {});
 	 */
 	Collection.isFunction = function (obj) { return Collection.type(obj) === 'function';  };
 	
@@ -92,8 +120,9 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns false
-	 * $C.isArray([1, 2, 3]); // returns true
+	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isArray([1, 2, 3]);
 	 */
 	Collection.isArray = function (obj) { return Collection.type(obj) === 'array';  };
 	
@@ -104,9 +133,11 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns true
-	 * $C.isPlainObject(new Date); // returns false
-	 * $C.isPlainObject(Date); // returns false
+	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isPlainObject(new Date);
+	 * @example
+	 * $C.isPlainObject(Date);
 	 */
 	Collection.isPlainObject = function (obj) {
 		if (!obj || Collection.type(obj) !== 'object' || obj.nodeType || Collection.isWindow(obj)) {
@@ -140,8 +171,9 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3}); // returns true
-	 * $C.isCollection([1, 2, 3]); // returns true
+	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isCollection([1, 2, 3]);
 	 */
 	Collection.isCollection = function (obj) { return Collection.isArray(obj) || Collection.isPlainObject(obj); };
 	
@@ -152,8 +184,10 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * $C.isExists(''); // returns false
-	 * $C.isExists(null); // returns false
-	 * $C.isExists(false); // returns true
+	 * $C.isExists('');
+	 * @example
+	 * $C.isExists(null);
+	 * @example
+	 * $C.isExists(false);
 	 */
 	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };

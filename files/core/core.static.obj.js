@@ -11,8 +11,9 @@
 	 * @return {Number|String|Boolean}
 	 *
 	 * @example
-	 * $C.find('test', [1, 2, 'test']); // returns true
-	 * $C.find('test', {a: 1, b: 2, test: 3}); // returns false
+	 * $C.find('test', [1, 2, 'test']);
+	 * @example
+	 * $C.find('test', {a: 1, b: 2, test: 3});
 	 */
 	Collection.find = function (val, obj) {
 		var key, res;
@@ -47,8 +48,9 @@
 	 * @return {Object}
 	 *
 	 * @example
-	 * $C.extend({a: 1}, {a: 2}, {a: 3}); // returns {a: 3}
-	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}}); // returns {a: {c: 3, b: 2}}
+	 * $C.extend({a: 1}, {a: 2}, {a: 3});
+	 * @example
+	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}});
 	 */
 	Collection.extend = function () {
 		var options, name, src, copy, copyIsArray, clone,
@@ -114,8 +116,9 @@
 	 * @return {Plain Object|Boolean}
 	 *
 	 * @example
-	 * $C.addElementToObject({a: 1}, 'b', 2); // returns true ({a: 1, b: 2})
-	 * $C.addElementToObject({a: 1}, 'b->unshift', 2); // returns {b: 2, a: 1}
+	 * $C.addElementToObject({a: 1}, 'b', 2);
+	 * @example
+	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);
 	 */
 	Collection.addElementToObject = function (obj, keyName, value) {
 		keyName = keyName.split(Collection.METHOD_SEPARATOR);
@@ -145,7 +148,7 @@
 	 * @return {Array}
 	 *
 	 * @example
-	 * $C.unshiftArguments({'0': 1}, 2); // returns [2, 1]
+	 * $C.unshiftArguments({'0': 1}, 2);
 	 */
 	Collection.unshiftArguments = function (obj, val) {
 		var newObj = [val], i = -1, oLength = obj.length;

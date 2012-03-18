@@ -4,7 +4,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * set new value of the parameter on the stack (no impact on the history of the stack)(has aliases, format: new + StackName)<br/>
+	 * set new value of the parameter on the stack (no impact on the history of the stack) (has aliases, format: new + StackName)<br/>
 	 * events: onNew + stackName
 	 * 
 	 * @public
@@ -14,9 +14,7 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([1, 2, 3, 4, 5]);
-	 * // new collection
-	 * db.newCollection([1, 2]);
+	 * $C([1, 2, 3, 4, 5]).newCollection([1, 2]).getCollection();
 	 */
 	Collection.prototype._new = function (stackName, newVal) {
 		var active = this.dObj.active,
@@ -41,7 +39,7 @@
 		return this;
 	};
 	/**
-	 * update the active parameter (if the parameter is in the stack, it will be updated too)(has aliases, format: update + StackName)<br/>
+	 * update the active parameter (if the parameter is in the stack, it will be updated too) (has aliases, format: update + StackName)<br/>
 	 * events: onUpdate + stackName
 	 * 
 	 * @public
@@ -51,9 +49,12 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([1, 2, 3, 4, 5]);
-	 * // update collection
-	 * db.updateCollection([1, 2]);
+	 * $C([1, 2, 3, 4, 5]).updateCollection([1, 2]).getCollection();
+	 * @example
+	 * $C()
+	 *	.pushSetCollection('test', [1, 2, 3, 4, 5])
+	 *	.updateCollection([1, 2])
+	 *	.getCollection('test');
 	 */
 	Collection.prototype._update = function (stackName, newVal) {
 		var active = this.dObj.active,
@@ -80,7 +81,7 @@
 		return this;
 	};
 	/**
-	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter)(has aliases, format: get + StackName)
+	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter) (has aliases, format: get + StackName)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -90,14 +91,9 @@
 	 * @return {mixed}
 	 *
 	 * @example
-	 * var db = new $C([1, 2, 3, 4, 5]);
-	 *
-	 * // get collection
-	 * db.getCollection();
-	 *
-	 * db.pushCollection('test', [1, 2]);
-	 * // get from stack
-	 * db.getCollection('test');
+	 * $C([1, 2, 3, 4, 5]).getCollection();
+	 * @example
+	 * $C().pushCollection('test', [1, 2]).getCollection('test');
 	 */
 	Collection.prototype._get = function (stackName, id) {
 		if (id && id !== this.ACTIVE) {
@@ -111,7 +107,7 @@
 	};
 	
 	/**
-	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method)(if the parameter already exists in the stack, it will be updated)(has aliases, format: push + StackName)<br/>
+	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method) (if the parameter already exists in the stack, it will be updated) (has aliases, format: push + StackName)<br/>
 	 * events: onPush + stackName
 	 * 
 	 * @public
@@ -122,14 +118,12 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 *
-	 * // push collection
-	 * db.pushCollection('test', [1, 2, 3]);
-	 * db.pushCollection({
+	 * $C().pushCollection('test', [1, 2, 3]).getCollection('test');
+	 * @example
+	 * $C().pushCollection({
 	 *	test1: [1, 2],
 	 *	test2: [1, 2, 3, 4]
-	 * });
+	 * }).getCollection('test2');
 	 */
 	Collection.prototype._push = function (stackName, objID, newVal) {
 		var	upperCase = Collection.toUpperCase(stackName, 1), e,
@@ -194,7 +188,7 @@
 		return this;
 	};
 	/**
-	 * set the parameter stack active (affect the story)(has aliases, format: set + StackName)<br/>
+	 * set the parameter stack active (affect the story) (has aliases, format: set + StackName)<br/>
 	 * events: onSet + stackName
 	 * 
 	 * @public
@@ -205,11 +199,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 * db.pushCollection('test', [1, 2, 3]);
-	 *
-	 * // set collection
-	 * db.setCollection('test');
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.getCollection();
 	 */
 	Collection.prototype._set = function (stackName, id) {
 		var sys = this.dObj.sys,
@@ -247,15 +240,14 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 * db
+	 * $C()
 	 *	.pushCollection('test', [1, 2, 3])
 	 *	.pushSetCollection('test2', [1, 2, 3])
 	 *	.setCollection('test')
 	 *	.setCollection('test2')
-	 *	.setCollection('test');
-	 *
-	 * db.backCollection(2); // 'test' is active
+	 *	.setCollection('test')
+	 *	.backCollection(2)
+	 *	.activeCollection();
 	 */
 	Collection.prototype._back = function (stackName, nmb) {
 		nmb = nmb || 1;
@@ -281,7 +273,7 @@
 		return this;
 	};
 	/**
-	 * back on the history of the stack, if there were changes (changes are set methods and pushSet)(has aliases, format: back + StackName + If)
+	 * back on the history of the stack, if there were changes (changes are set methods and pushSet) (has aliases, format: back + StackName + If)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -290,15 +282,15 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 * db
+	 * $C()
 	 *	.pushCollection('test', [1, 2, 3])
 	 *	.pushSetCollection('test2', [1, 2, 3])
 	 *	.setCollection('test')
 	 *	.setCollection('test2')
-	 *	.setCollection('test');
-	 *
-	 * db.backCollectionIf().backCollectionIf(); // 'test2' is active, because the method of 'back' does not affect the story
+	 *	.setCollection('test')
+	 *	.backCollectionIf()
+	 *	.backCollectionIf()
+	 *	.activeCollection(); // 'test2' is active, because the method of 'back' does not affect the story
 	 */
 	Collection.prototype._backIf = function (stackName, nmb) {
 		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
@@ -306,7 +298,7 @@
 		return this;
 	};
 	/**
-	 * remove the parameter from the stack (can use a constant 'active')(if the parameter is active, then it would still be removed)(has aliases, format: drop + StackName)<br/>
+	 * remove the parameter from the stack (can use a constant 'active') (if the parameter is active, then it would still be removed) (has aliases, format: drop + StackName)<br/>
 	 * events: onDrop + stackName
 	 * 
 	 * @public
@@ -318,12 +310,11 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 * db
+	 * $C()
 	 *	.pushCollection('test', [1, 2, 3])
-	 *	.pushSetCollection('test2', [1, 2, 3]);
-	 *
-	 * db.dropCollection('test', 'active'); // removed the 'test' and' test2'
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.dropCollection('test', 'active')
+	 *	.existsCollection('test2'); // removed the 'test' and' test2'
 	 */
 	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
 		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
@@ -403,7 +394,7 @@
 		return this;
 	};
 	/**
-	 * reset the parameter stack (can use a constant 'active')(has aliases, format: reset + StackName, only for: filter, parser and context)<br/>
+	 * reset the parameter stack (can use a constant 'active') (has aliases, format: reset + StackName, only for: filter, parser and context)<br/>
 	 * events: onReset + stackName
 	 * 
 	 * @public
@@ -414,11 +405,7 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 * db.newContext('a > 2')
-	 *
-	 * // reset context
-	 * db.resetContext();
+	 * $C().newContext('a > 2').resetContext().getContext();
 	 */
 	Collection.prototype._reset = function (stackName, objID, resetVal) {
 		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
@@ -426,7 +413,7 @@
 		return this._drop(stackName, objID || '', '', resetVal);
 	};
 	/**
-	 * reset the value of the parameter stack to another (can use a constant 'active')(has aliases, format: reset + StackName + To)
+	 * reset the value of the parameter stack to another (can use a constant 'active') (has aliases, format: reset + StackName + To)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -436,11 +423,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 * db.pushCollection({test: [1, 2], test2: [1, 2, 3, 4]});
-	 *
-	 * // reset collection 'test' to 'test2'
-	 * db.resetCollectionTo('test', 'test2');
+	 * $C()
+	 *	.pushCollection({test: [1, 2], test2: [1, 2, 3, 4]})
+	 *	.resetCollectionTo('test', 'test2')
+	 *	.getCollection('test');
 	 */
 	Collection.prototype._resetTo = function (stackName, objID, id) {
 		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[stackName] : this.dObj.sys['tmp' + Collection.toUpperCase(stackName, 1)][id];
@@ -458,9 +444,7 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * var db = new $C();
-	 *
-	 * db.existsCollection('test'); // returns false
+	 * $C().existsCollection('test');
 	 */
 	Collection.prototype._exists = function (stackName, id) {
 		var upperCase = Collection.toUpperCase(stackName, 1);
@@ -471,7 +455,7 @@
 		return false;
 	};
 	/**
-	 * return the ID of the active parameter or false (has aliases, format: get + StackName + ActiveID)
+	 * return the ID of the active parameter (has aliases, format: get + StackName + ActiveID)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -479,15 +463,13 @@
 	 * @return {String|Null}
 	 *
 	 * @example
-	 * var db = new $C();
-	 *
-	 * db.getCollectionActiveID(); // returns false
+	 * $C().getCollectionActiveID();
 	 */
 	Collection.prototype._getActiveID = function (stackName) {
 		return this.dObj.sys['active' + Collection.toUpperCase(stackName, 1) + 'ID'];
 	};
 	/**
-	 * check the parameter on the activity (has aliases, format: active + StackName)
+	 * check the parameter on the activity (has aliases, format: active + StackName) or return the ID of the active parameter (if don't specify input parameters)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -496,9 +478,9 @@
 	 * @return {Boolean}
 	 *
 	 * @example
-	 * var db = new $C();
-	 *
-	 * db.activeCollection('test'); // returns false
+	 * $C().activeCollection('test');
+	 * @example
+	 * $C().pushSetCollection('test', [1, 2]).activeCollection();
 	 */
 	Collection.prototype._active = function (stackName, id) {
 		// overload, returns active ID
@@ -520,11 +502,16 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C();
-	 *
-	 * db.use('test');
-	 * db.use('test.a');
-	 * db.use('testa.a.b');
+	 * $C()
+	 *	.pushCollection({
+	 *		'test': [1, 2],
+	 *		'test.a': [1, 2, 3]
+	 *	})
+	 *	 .pushContext({
+	 *		'test': '',
+	 *		'test.a.b': 'eq(-1)'
+	 *	})
+	 *	.use('test.a.b').getCollection();
 	 */
 	Collection.prototype.use = function (id) {
 		this.stack.forEach(function (el) {

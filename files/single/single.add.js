@@ -17,20 +17,24 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([]).pushCollection('test', {});
-	 *
-	 * // add a new element to the active collection
+	 * var db = $C([]);
+	 * // add a new element to the active collection //
 	 * db.add(1);
-	 * // unshift
+	 * // unshift //
 	 * db.add(2, 'unshift');
 	 *
-	 * // add a new element to the 'test'
+	 * console.log(db.getCollection());
+	 * @example
+	 * var db = $C().pushSetCollection('test', []);
+	 * // add a new element to the 'test' //
 	 * db.add(1, 'b', 'test');
-	 * // unshift
+	 * // unshift //
 	 * db.add(2, 'a->unshift', 'test');
-	 * // without specifying the key name
-	 * db.add(3, '', 'test'); // key == collection length
+	 * // without specifying the key name //
+	 * db.add(3, '', 'test');
 	 * db.add(4, 'unshift', 'test');
+	 *
+	 * console.log(db.getCollection());
 	 */
 	Collection.prototype.add = function (cValue, propType, activeID, sourceID, del) {
 		cValue = typeof cValue !== 'undefined' ? cValue : '';
@@ -86,7 +90,7 @@
 	};
 	
 	/**
-	 * add new element to the collection (push)(in context)<br/>
+	 * add new element to the collection (push) (in context)<br/>
 	 * events: onAdd
 	 * 
 	 * @this {Colletion Object}
@@ -95,15 +99,13 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([]).pushCollection('test', {});
-	 * db.push(1);
-	 * db.push(1, 'test'); // the key is always equal to the length of the collection
+	 * $C([12]).push(1).getCollection();
 	 */
 	Collection.prototype.push = function (obj, id) {
 		return this.add(obj, '', id || '');
 	};
 	/**
-	 * add new element to the collection (unshift)(in context)<br/>
+	 * add new element to the collection (unshift) (in context)<br/>
 	 * events: onAdd
 	 * 
 	 * @this {Colletion Object}
@@ -112,9 +114,7 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([]).pushCollection('test', {});
-	 * db.unshift(1);
-	 * db.unshift(1, 'test'); // the key is always equal to the length of the collection
+	 * $C([1]).unshift(2).getCollection();
 	 */
 	Collection.prototype.unshift = function (obj, id) {
 		return this.add(obj, 'unshift', id || '');

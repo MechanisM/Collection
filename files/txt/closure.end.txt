@@ -1,1 +1,3 @@
-	return Collection;})();if (typeof $C === 'undefined') { var $C = Collection; }//
+	return Collection;
+})();
+if (typeof $C === 'undefined') { var $C = Collection; }//
