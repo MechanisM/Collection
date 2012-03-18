@@ -20,7 +20,7 @@
 	 *	.search(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.search(function (el, i, data) { return i % 3 === 0; });
+	 *	.search(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		// if id is Boolean (overload)
@@ -66,7 +66,7 @@
 	 *	.searchOne(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.searchOne(function (el, i, data) { return i % 3 === 0; });
+	 *	.searchOne(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.searchOne = function (filter, id) {
 		return this.search(filter || '', id || '', false);

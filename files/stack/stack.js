@@ -290,7 +290,8 @@
 	 *	.setCollection('test')
 	 *	.backCollectionIf()
 	 *	.backCollectionIf()
-	 *	.activeCollection(); // 'test2' is active, because the method of 'back' does not affect the story
+	 *	.activeCollection();
+	 * // 'test2' is active, because the method of 'back' does not affect the story //
 	 */
 	Collection.prototype._backIf = function (stackName, nmb) {
 		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
@@ -314,7 +315,7 @@
 	 *	.pushCollection('test', [1, 2, 3])
 	 *	.pushSetCollection('test2', [1, 2, 3])
 	 *	.dropCollection('test', 'active')
-	 *	.existsCollection('test2'); // removed the 'test' and' test2'
+	 *	.existsCollection('test2'); // removed the 'test' and' test2' //
 	 */
 	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
 		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;

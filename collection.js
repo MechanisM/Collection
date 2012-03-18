@@ -1426,7 +1426,8 @@
 	 *	.setCollection('test')
 	 *	.backCollectionIf()
 	 *	.backCollectionIf()
-	 *	.activeCollection(); // 'test2' is active, because the method of 'back' does not affect the story
+	 *	.activeCollection();
+	 * // 'test2' is active, because the method of 'back' does not affect the story //
 	 */
 	Collection.prototype._backIf = function (stackName, nmb) {
 		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
@@ -1450,7 +1451,7 @@
 	 *	.pushCollection('test', [1, 2, 3])
 	 *	.pushSetCollection('test2', [1, 2, 3])
 	 *	.dropCollection('test', 'active')
-	 *	.existsCollection('test2'); // removed the 'test' and' test2'
+	 *	.existsCollection('test2'); // removed the 'test' and' test2' //
 	 */
 	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
 		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
@@ -2071,7 +2072,7 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.length(':i % 3 === 0');
 	 */
-	Collection.prototype.length = function (filter, id) {
+	Collection.prototype.length = function (filter, id, _eLength) {
 		filter = filter || '';
 		var tmpObj = {},
 			data, aCheck, key, i = 0, length;
@@ -2108,15 +2109,16 @@
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
 		// if no filter and the original object is an array
-		if (filter === false && typeof data.length !== 'undefined') {
+		if ((filter === true || !filter) && typeof data.length !== 'undefined') {
 			length = data.length;
 		} else {
 			// calclate length
 			length = 0;
+			
 			// if array
 			if (typeof data.length !== 'undefined') {
 				data.forEach(function (el, key, obj) {
-					if (this._customFilter(filter, el, key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, el, key, data, i, _eLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 					i += 1;
@@ -2126,7 +2128,7 @@
 				for (key in data) {
 					if (!data.hasOwnProperty(key)) { continue; }
 					
-					if (this._customFilter(filter, data[key], key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, data[key], key, data, i, _eLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 				}
@@ -2154,10 +2156,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 all elements of multiples of three //
-	 * db.forEach(function (el, i, data) {
-	 *		data[i] += 1;
+	 * db.forEach(function (el, key, data, i) {
+	 *		data[key].a += 1;
 	 *	}, ':i % 3 === 0');
 	 * console.log(db.get());
 	 */
@@ -2196,10 +2198,13 @@
 		// length function
 		/** @private */
 		length = function () {
-			if (!length.val) { length.val = self.length(filter, id); }
+			if (!length.val) {
+				length.val = self.length(filter, id, length);
+			}
 			
 			return length.val;
 		};
+		length.valueOf = length;
 		
 		if (Collection.isArray(data)) {
 			// cut off the array to indicate the start
@@ -2262,10 +2267,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 one element of multiples of three //
-	 * db.some(function (el, i, data) {
-	 *		data[i] += 1;
+	 * db.some(function (el, key, data, i) {
+	 *		data[key].a += 1;
 	 *	}, ':i % 3 === 0');
 	 * console.log(db.get());
 	 */
@@ -2293,7 +2298,7 @@
 	 *	.search(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.search(function (el, i, data) { return i % 3 === 0; });
+	 *	.search(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.search = function (filter, id, mult, count, from, indexOf) {
 		// if id is Boolean (overload)
@@ -2339,7 +2344,7 @@
 	 *	.searchOne(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.searchOne(function (el, i, data) { return i % 3 === 0; });
+	 *	.searchOne(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.searchOne = function (filter, id) {
 		return this.search(filter || '', id || '', false);
@@ -2425,7 +2430,7 @@
 	 *	.get(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.get(function (el, i, data) { return i % 3 === 0; });
+	 *	.get(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf) {
 		// overload
@@ -2477,7 +2482,7 @@
 	 *	.getOne(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.getOne(function (el, i, data) {
+	 *	.getOne(function (el, key, data, i) {
 	 *		return i % 3 === 0;
 	 *	});
 	 */
@@ -2510,12 +2515,12 @@
 	 *	.set(':i == 2', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.set(function (el, i, data) {
+	 *	.set(function (el, key, data, i) {
 	 *		return i == 2;
 	 *	}, {c: 6}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.set(function (el, i, data) {
+	 *	.set(function (el, key, data, i) {
 	 *		return i == 2;
 	 *	}, function (el) {
 	 *		el.c = 7;
@@ -2563,12 +2568,12 @@
 	 *	.setOne(':i == 3', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.setOne(function (el, i, data) {
+	 *	.setOne(function (el, key, data, i) {
 	 *		return i == 3;
 	 *	}, {c: 6}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.setOne(function (el, i, data) {
+	 *	.setOne(function (el, key, data, i) {
 	 *		return i == 3;
 	 *	}, function (el) {
 	 *		el.c = 7;
@@ -2775,7 +2780,7 @@
 	 *	.remove(':i == 2').get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove(function (el, i, data) { return i == 1; }).get();
+	 *	.remove(function (el, key, data, i) { return i == 1; }).get();
 	 */
 	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
 		// overload
@@ -2807,7 +2812,7 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.removeOne(':i % 2 !== 0').get();
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.removeOne(function (el, i, data) {
+	 *	.removeOne(function (el, key, data, i) {
 	 *		return i % 2 !== 0;
 	 *	}).get();
 	 */

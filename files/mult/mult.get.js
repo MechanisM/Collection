@@ -23,7 +23,7 @@
 	 *	.get(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.get(function (el, i, data) { return i % 3 === 0; });
+	 *	.get(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf) {
 		// overload
@@ -75,7 +75,7 @@
 	 *	.getOne(':i % 3 === 0');
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
-	 *	.getOne(function (el, i, data) {
+	 *	.getOne(function (el, key, data, i) {
 	 *		return i % 3 === 0;
 	 *	});
 	 */

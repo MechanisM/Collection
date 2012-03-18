@@ -24,7 +24,7 @@
 	 *	.remove(':i == 2').get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.remove(function (el, i, data) { return i == 1; }).get();
+	 *	.remove(function (el, key, data, i) { return i == 1; }).get();
 	 */
 	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
 		// overload
@@ -56,7 +56,7 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.removeOne(':i % 2 !== 0').get();
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.removeOne(function (el, i, data) {
+	 *	.removeOne(function (el, key, data, i) {
 	 *		return i % 2 !== 0;
 	 *	}).get();
 	 */

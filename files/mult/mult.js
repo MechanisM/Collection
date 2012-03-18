@@ -56,15 +56,16 @@
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
 		// if no filter and the original object is an array
-		if (filter === false && typeof data.length !== 'undefined') {
+		if ((filter === true || !filter) && typeof data.length !== 'undefined') {
 			length = data.length;
 		} else {
 			// calclate length
 			length = 0;
+			
 			// if array
 			if (typeof data.length !== 'undefined') {
 				data.forEach(function (el, key, obj) {
-					if (this._customFilter(filter, el, key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, el, key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 					i += 1;
@@ -74,7 +75,7 @@
 				for (key in data) {
 					if (!data.hasOwnProperty(key)) { continue; }
 					
-					if (this._customFilter(filter, data[key], key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+					if (this._customFilter(filter, data[key], key, data, i, null, this, id ? id : this.ACTIVE, tmpObj) === true) {
 						length += 1;
 					}
 				}
@@ -102,10 +103,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 all elements of multiples of three //
-	 * db.forEach(function (el, i, data) {
-	 *		data[i] += 1;
+	 * db.forEach(function (el, key, data, i) {
+	 *		data[key].a += 1;
 	 *	}, ':i % 3 === 0');
 	 * console.log(db.get());
 	 */
@@ -130,7 +131,7 @@
 		var self = this,
 			tmpObj = {},
 			
-			data, length,
+			data, length, fLength,
 			cloneObj,
 			
 			key, i = 0, j = 0, res = false;
@@ -141,12 +142,23 @@
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
-		// length function
+		// length
 		/** @private */
 		length = function () {
-			if (!length.val) { length.val = self.length(filter, id); }
+			if (!length.val) {
+				length.val = self.length(filter, id);
+			}
 			
 			return length.val;
+		};
+		// filter length
+		/** @private */
+		fLength = function (filter, id) {
+			if (!fLength.val) {
+				fLength.val = self.length(filter, id);
+			}
+			
+			return fLength.val;
 		};
 		
 		if (Collection.isArray(data)) {
@@ -159,7 +171,7 @@
 				key += indexOf;
 				if (count !== false && j === count) { return true; }
 				
-				if (this._customFilter(filter, el, key, data, i, length, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, el, key, data, i, fLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
@@ -179,7 +191,7 @@
 				if (count !== false && j === count) { break; }
 				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 				
-				if (this._customFilter(filter, data[key], key, data, i, length, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, data[key], key, data, i, fLength, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {	
@@ -210,10 +222,10 @@
 	 * @return {Colletion Object}
 	 *
 	 * @example
-	 * var db = new $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}]);
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 one element of multiples of three //
-	 * db.some(function (el, i, data) {
-	 *		data[i] += 1;
+	 * db.some(function (el, key, data, i) {
+	 *		data[key].a += 1;
 	 *	}, ':i % 3 === 0');
 	 * console.log(db.get());
 	 */

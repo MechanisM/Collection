@@ -25,12 +25,12 @@
 	 *	.set(':i == 2', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.set(function (el, i, data) {
+	 *	.set(function (el, key, data, i) {
 	 *		return i == 2;
 	 *	}, {c: 6}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.set(function (el, i, data) {
+	 *	.set(function (el, key, data, i) {
 	 *		return i == 2;
 	 *	}, function (el) {
 	 *		el.c = 7;
@@ -78,12 +78,12 @@
 	 *	.setOne(':i == 3', {c: 5}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.setOne(function (el, i, data) {
+	 *	.setOne(function (el, key, data, i) {
 	 *		return i == 3;
 	 *	}, {c: 6}).get();
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
-	 *	.setOne(function (el, i, data) {
+	 *	.setOne(function (el, key, data, i) {
 	 *		return i == 3;
 	 *	}, function (el) {
 	 *		el.c = 7;
