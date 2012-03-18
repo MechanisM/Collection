@@ -37,12 +37,12 @@
 			result = {},
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				var param = fieldType ? Collection.byLink(el, field) : field.apply(field, arguments);
 				
 				if (!result[param]) {
-					result[param] = [!link ? el : i];
-				} else { result[param].push(!link ? el : i); }
+					result[param] = [!link ? el : key];
+				} else { result[param].push(!link ? el : key); }
 	
 				return true;
 			};

@@ -42,27 +42,27 @@
 		activeID = activeID || '';
 		del = del || false;
 		
-		var cObj, sObj, lCheck, e;
+		var data, sObj, lCheck, e;
 		
 		// events
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object')  { throw new Error('unable to set property!'); }
+		if (typeof data !== 'object')  { throw new Error('unable to set property!'); }
 		
 		// simple add
 		if (!sourceID) {
 			// add type
-			if (Collection.isPlainObject(cObj)) {
-				propType = propType === 'push' ? this.length(cObj) : propType === 'unshift' ? this.length(cObj) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(cObj, propType.toString(), cValue);
+			if (Collection.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = Collection.addElementToObject(data, propType.toString(), cValue);
 			} else {
 				lCheck = true;
-				cObj[propType](cValue);
+				data[propType](cValue);
 			}
 		
 		// move
@@ -71,12 +71,12 @@
 			sObj = Collection.byLink(this._get('collection', sourceID || ''), cValue);
 			
 			// add type
-			if (Collection.isPlainObject(cObj)) {
-				propType = propType === 'push' ? this.length(cObj) : propType === 'unshift' ? this.length(cObj) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(cObj, propType.toString(), sObj);
+			if (Collection.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = Collection.addElementToObject(data, propType.toString(), sObj);
 			} else {
 				lCheck = true;
-				cObj[propType](sObj);
+				data[propType](sObj);
 			}
 			
 			// delete element

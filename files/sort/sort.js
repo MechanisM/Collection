@@ -88,7 +88,7 @@
 		id = id || '';
 		
 		var self = this,
-			cObj,
+			data,
 			
 			/** @private */
 			sort = function (a, b) {
@@ -120,21 +120,21 @@
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 
-		if (Collection.isArray(cObj)) {
-			cObj.sort(sort);
+		if (Collection.isArray(data)) {
+			data.sort(sort);
 		} else {
 			if (field) {
 				// change the field to sort the object
 				field = field === true ? 'value' : 'value' + Collection.CHILDREN + field;
-				cObj = Collection._sortObject(cObj, field, sort);
-			} else { cObj = Collection._sortObjectByKey(cObj, sort); }
+				data = Collection._sortObject(data, field, sort);
+			} else { data = Collection._sortObjectByKey(data, sort); }
 			
-			this._setOne('', cObj, id);
+			this._setOne('', data, id);
 		}
 		
 		return this;

@@ -50,10 +50,10 @@
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, i, data, cCLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				if (mult === true) {
-					result.push(data[i]);
-				} else { result = data[i]; }
+					result.push(data[key]);
+				} else { result = data[key]; }
 	
 				return true;
 			};

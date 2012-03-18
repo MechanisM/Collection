@@ -41,10 +41,10 @@
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				if (mult === true) {
-					result.push(i);
-				} else { result = i; }
+					result.push(key);
+				} else { result = key; }
 				
 				return true;
 			};
@@ -90,12 +90,12 @@
 		id = id || '';
 		fromIndex = fromIndex || '';
 		
-		var cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(cObj) && cObj.indexOf) {
-			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
+		if (Collection.isArray(data) && data.indexOf) {
+			if (fromIndex) { return data.indexOf(searchElement, fromIndex); }
 			
-			return cObj.indexOf(searchElement);
+			return data.indexOf(searchElement);
 		} else { return this.search(function (el) { return el === searchElement; }, id, false, '', '', fromIndex); }
 	};
 	/**
@@ -116,12 +116,12 @@
 		id = id || '';
 		fromIndex = fromIndex || '';
 		
-		var el, cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		var el, data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(cObj) && cObj.lastIndexOf) {
-			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }
+		if (Collection.isArray(data) && data.lastIndexOf) {
+			if (fromIndex) { return data.lastIndexOf(searchElement, fromIndex); }
 			
-			return cObj.lastIndexOf(searchElement);
+			return data.lastIndexOf(searchElement);
 		} else {
 			el = this.search(function (el) { return el === searchElement; }, id, '', '', '', fromIndex);
 			

@@ -38,37 +38,37 @@
 			result = {}, tmp = {}, key,
 			
 			/** @private */
-			deepAction = function (el, i, data, cOLength, self, id) {
+			deepAction = function (el, key, data, i, length, cObj, id) {
 				var param = Collection.byLink(el, field || '');
 				
 				switch (oper) {
 					case 'count' : {
-						result[this.i] += 1;
+						result[this.key] += 1;
 					} break;
 					case 'summ' : {
-						result[this.i] += param;
+						result[this.key] += param;
 					} break;
 					case 'avg' : {
-						tmp[this.i] += 1;
-						result[this.i] += param;
+						tmp[this.key] += 1;
+						result[this.key] += param;
 					} break;
 					case 'max' : {
-						if (param > result[this.i]) { result[this.i] = param; }
+						if (param > result[this.key]) { result[this.key] = param; }
 					} break;
 					case 'min' : {
-						if (tmp[this.i] === 0) {
-							result[this.i] = param;
-							tmp[this.i] = 1;
-						} else if (param < result[this.i]) { result[this.i] = param; }
+						if (tmp[this.key] === 0) {
+							result[this.key] = param;
+							tmp[this.key] = 1;
+						} else if (param < result[this.key]) { result[this.key] = param; }
 					} break;
 					default : {
 						if (!operType) {
-							result[this.i] = oper(param, result[this.i]);
+							result[this.key] = oper(param, result[this.key]);
 						} else {
-							if (tmp[this.i] === 0) {
-								result[this.i] = param;
-								tmp[this.i] = 1;
-							} else { result[this.i] = Collection.expr(oper + '=' + param, result[this.i]); }
+							if (tmp[this.key] === 0) {
+								result[this.key] = param;
+								tmp[this.key] = 1;
+							} else { result[this.key] = Collection.expr(oper + '=' + param, result[this.key]); }
 						}
 					}
 				}
@@ -77,17 +77,17 @@
 			},
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
-				if (!result[i]) { result[i] = tmp[i] = 0; };
+			action = function (el, key, data, i, length, cObj, id) {
+				if (!result[key]) { result[key] = tmp[key] = 0; };
 				
 				if (oper !== 'first' && oper !== 'last') {
-					self
-						._update('context', '+=' + Collection.CHILDREN + (deepAction.i = i))
+					cObj
+						._update('context', '+=' + Collection.CHILDREN + (deepAction.key = key))
 						.forEach(deepAction, filter || '', id, '', count, from, indexOf)
 						.parent();
 				} else if (oper === 'first') {
-					result[i] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);
-				} else { result[i] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+					result[key] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);
+				} else { result[key] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
 					
 				return true;
 			};

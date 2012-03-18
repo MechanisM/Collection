@@ -40,21 +40,21 @@
 	 */
 	Collection.prototype.reverse = function (id) {
 		id = id || '';
-		var cObj, e;
+		var data, e;
 		
 		// events
 		this.onReverse && (e = this.onReverse.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
-		if (Collection.isArray(cObj)) {
-			cObj.reverse();
-		} else { this._setOne('', Collection._reverseObject(cObj), id); }
+		if (Collection.isArray(data)) {
+			data.reverse();
+		} else { this._setOne('', Collection._reverseObject(data), id); }
 		
 		return this;
 	};

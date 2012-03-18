@@ -46,10 +46,10 @@
 		var e, arg, replaceCheck = Collection.isFunction(replaceObj),
 			
 			/** @private */
-			action = function (el, i, data, cOLength, cObj, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				if (replaceCheck) {
-					data[i] = replaceObj.call(replaceObj, el, i, data, cOLength, cObj, id);
-				} else { data[i] = Collection.expr(replaceObj, data[i]); }
+					data[key] = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+				} else { data[key] = Collection.expr(replaceObj, data[key]); }
 	
 				return true;
 			};

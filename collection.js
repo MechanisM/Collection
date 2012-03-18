@@ -993,7 +993,88 @@
 				return true;
 			}
 		}
-	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};	/////////////////////////////////	//// DOM methods (compiler templates)	/////////////////////////////////		/**	 * compile the template	 * 	 * @this {Collection}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @throw {Error}	 * @return {Function}	 */	Collection.ctplCompile = function (selector) {		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }				var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,			elem = html				.replace(/\/\*.*?\*\//g, '')				.split('?>')				.join('<?js')				.replace(/[\r\t\n]/g, ' ')				.split('<?js'),						resStr = 'var key = i, result = ""; ';				elem.forEach(function (el, i) {			if (i === 0 || i % 2 === 0) {				resStr += 'result +="' + el.split('"').join('\\"') + '";';			} else { resStr += el.split('echo').join('result +='); }		});				return new Function('el', 'i', 'data', 'cOLength', 'cObj', 'id', resStr + ' return result;');	};		/**	 * make templates	 * 	 * @this {Collection Object}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @return {Collection Object}	 */	Collection.prototype.ctplMake = function (selector) {			var dom = Collection.drivers.dom;		Collection.isString(selector) && (selector = dom.find(selector));				Array.prototype.forEach.call(selector, function (el) {			var data = dom.data(el, 'ctpl'), key,				prefix = data.prefix ? data.prefix + '_' : '';						// compile template			this._push('template', prefix + data.name, Collection.ctplCompile(el));			if (data.set && data.set === true) { this._set('template', prefix + data.name); }						// compile			for (key in data) {				if (!data.hasOwnProperty(key)){ continue; }								if (Collection.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }				if (Collection.find(key, ['target', 'pager'])) { data[key] = dom.find(data[key]); }								this._push(key, prefix + data.name, data[key]);				if (data.set && data.set === true) { this._set(key, prefix + data.name); }								if (Collection.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }			}						// print template (if need)			if (data.print && data.print === true) {				data.template = data.name;				if (!data.target) {					this._push('target', prefix + data.name, [el.parentNode]);					if (data.set && data.set === true) { this._set('target', prefix + data.name); }				}								this.print(data);			}		}, this);				return this;	};		/////////////////////////////////	//// public fields (active)	/////////////////////////////////		Collection.fields = {		// root		dObj: {			/**			 * active properties			 * 			 * @namespace			 */			active: {				/////////////////////////////////				//// data				/////////////////////////////////								/**				 * namespace				 * 				 * @field				 * @type String				 */				namespace: 'nm',								/**				 * collection				 * 				 * @field				 * @type collection|Null				 */				collection: null,				/**				 * filter (false if disabled)				 * 				 * @field				 * @type Filter|Boolean				 */				filter: false,				/**				 * context				 * 				 * @field				 * @type Context				 */				context: '',								/**				 * cache object				 * 				 * @field				 * @type Plain Object				 */				cache: {					/**					 * auto cache					 * 					 * @field					 * @type Boolean					 */					autoIteration: true,					/**					 * use cache					 * 					 * @field					 * @type Boolean					 */					iteration: true,					/**					 * first iteration					 * 					 * @field					 * @type Number					 */					firstIteration: false,					/**					 * last iteration					 * 					 * @field					 * @type Number					 */					lastIteration: false				},								/**				 * temporary variables				 * 				 * @field				 * @type mixed				 */				variable: null,								/**				 * deferred object				 * 				 * @field				 * @type Deferred Object				 */				defer: '',								/////////////////////////////////				//// templating				/////////////////////////////////								/**				 * active page				 * 				 * @field				 * @type Number				 */				page: 1,				/**				 * parser (false if disabled)				 * 				 * @field				 * @type Parser|Boolean				 */				parser: false,				/**				 * DOM insert mode ('html', 'append', 'prepend')				 * 				 * @field				 * @param String				 */				appendType: 'html',				/**				 * target (target to insert the result templating)				 * 				 * @field				 * @type Selector|DOM nodes				 */				target: null,				/**				 * selector (used to calculate the number of records per page, by default, are all the children of the element)				 * 				 * @field				 * @type Selector				 */				calculator: null,				/**				 * pager (an interface element to display the navigation through the pages of)				 * 				 * @field				 * @type Selector|DOM nodes				 */				pager: null,				/**				 * template				 * 				 * @field				 * @type Function				 */				template: null,				/**				 * the number of entries on one page				 * 				 * @field				 * @type Number				 */				numberBreak: null,				/**				 * the number of pages in the navigation menu				 * 				 * @field				 * @type Number				 */				pageBreak: 5,				/**				 * empty result (in case if the search nothing is returned)				 * 				 * @field				 * @type String				 */				resultNull: ''			}		}	};	
+	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};
+	/////////////////////////////////
+	//// DOM methods (compiler templates)
+	/////////////////////////////////
+	
+	/**
+	 * compile the template
+	 * 
+	 * @this {Collection}
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
+	 * @throw {Error}
+	 * @return {Function}
+	 */
+	Collection.ctplCompile = function (selector) {
+		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));
+		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
+		
+		var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,
+			elem = html
+				.replace(/\/\*.*?\*\//g, '')
+				.split('?>')
+				.join('<?js')
+				.replace(/[\r\t\n]/g, ' ')
+				.split('<?js'),
+			
+			resStr = 'var result = ""; ';
+		
+		elem.forEach(function (el, i) {
+			if (i === 0 || i % 2 === 0) {
+				resStr += 'result +="' + el.split('"').join('\\"') + '";';
+			} else { resStr += el.split('echo').join('result +='); }
+		});
+		
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', resStr + ' return result;');
+	};
+	
+	/**
+	 * make templates
+	 * 
+	 * @this {Collection Object}
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.ctplMake = function (selector) {	
+		var dom = Collection.drivers.dom;
+		Collection.isString(selector) && (selector = dom.find(selector));
+		
+		Array.prototype.forEach.call(selector, function (el) {
+			var data = dom.data(el, 'ctpl'), key,
+				prefix = data.prefix ? data.prefix + '_' : '';
+			
+			// compile template
+			this._push('template', prefix + data.name, Collection.ctplCompile(el));
+			if (data.set && data.set === true) { this._set('template', prefix + data.name); }
+			
+			// compile
+			for (key in data) {
+				if (!data.hasOwnProperty(key)){ continue; }
+				
+				if (Collection.find(key, ['prefix', 'set', 'print', 'name', 'collection'])) { continue; }
+				if (Collection.find(key, ['target', 'pager'])) { data[key] = dom.find(data[key]); }
+				
+				this._push(key, prefix + data.name, data[key]);
+				if (data.set && data.set === true) { this._set(key, prefix + data.name); }
+				
+				if (Collection.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
+			}
+			
+			// print template (if need)
+			if (data.print && data.print === true) {
+				data.template = data.name;
+				if (!data.target) {
+					this._push('target', prefix + data.name, [el.parentNode]);
+					if (data.set && data.set === true) { this._set('target', prefix + data.name); }
+				}
+				
+				this.print(data);
+			}
+		}, this);
+		
+		return this;
+	};		/////////////////////////////////	//// public fields (active)	/////////////////////////////////		Collection.fields = {		// root		dObj: {			/**			 * active properties			 * 			 * @namespace			 */			active: {				/////////////////////////////////				//// data				/////////////////////////////////								/**				 * namespace				 * 				 * @field				 * @type String				 */				namespace: 'nm',								/**				 * collection				 * 				 * @field				 * @type collection|Null				 */				collection: null,				/**				 * filter (false if disabled)				 * 				 * @field				 * @type Filter|Boolean				 */				filter: false,				/**				 * context				 * 				 * @field				 * @type Context				 */				context: '',								/**				 * cache object				 * 				 * @field				 * @type Plain Object				 */				cache: {					/**					 * auto cache					 * 					 * @field					 * @type Boolean					 */					autoIteration: true,					/**					 * use cache					 * 					 * @field					 * @type Boolean					 */					iteration: true,					/**					 * first iteration					 * 					 * @field					 * @type Number					 */					firstIteration: false,					/**					 * last iteration					 * 					 * @field					 * @type Number					 */					lastIteration: false				},								/**				 * temporary variables				 * 				 * @field				 * @type mixed				 */				variable: null,								/**				 * deferred object				 * 				 * @field				 * @type Deferred Object				 */				defer: '',								/////////////////////////////////				//// templating				/////////////////////////////////								/**				 * active page				 * 				 * @field				 * @type Number				 */				page: 1,				/**				 * parser (false if disabled)				 * 				 * @field				 * @type Parser|Boolean				 */				parser: false,				/**				 * DOM insert mode ('html', 'append', 'prepend')				 * 				 * @field				 * @param String				 */				appendType: 'html',				/**				 * target (target to insert the result templating)				 * 				 * @field				 * @type Selector|DOM nodes				 */				target: null,				/**				 * selector (used to calculate the number of records per page, by default, are all the children of the element)				 * 				 * @field				 * @type Selector				 */				calculator: null,				/**				 * pager (an interface element to display the navigation through the pages of)				 * 				 * @field				 * @type Selector|DOM nodes				 */				pager: null,				/**				 * template				 * 				 * @field				 * @type Function				 */				template: null,				/**				 * the number of entries on one page				 * 				 * @field				 * @type Number				 */				numberBreak: null,				/**				 * the number of pages in the navigation menu				 * 				 * @field				 * @type Number				 */				pageBreak: 5,				/**				 * empty result (in case if the search nothing is returned)				 * 				 * @field				 * @type String				 */				resultNull: ''			}		}	};	
 	/////////////////////////////////
 	//// public fields (system)
 	/////////////////////////////////
@@ -1768,27 +1849,27 @@
 		activeID = activeID || '';
 		del = del || false;
 		
-		var cObj, sObj, lCheck, e;
+		var data, sObj, lCheck, e;
 		
 		// events
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object')  { throw new Error('unable to set property!'); }
+		if (typeof data !== 'object')  { throw new Error('unable to set property!'); }
 		
 		// simple add
 		if (!sourceID) {
 			// add type
-			if (Collection.isPlainObject(cObj)) {
-				propType = propType === 'push' ? this.length(cObj) : propType === 'unshift' ? this.length(cObj) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(cObj, propType.toString(), cValue);
+			if (Collection.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = Collection.addElementToObject(data, propType.toString(), cValue);
 			} else {
 				lCheck = true;
-				cObj[propType](cValue);
+				data[propType](cValue);
 			}
 		
 		// move
@@ -1797,12 +1878,12 @@
 			sObj = Collection.byLink(this._get('collection', sourceID || ''), cValue);
 			
 			// add type
-			if (Collection.isPlainObject(cObj)) {
-				propType = propType === 'push' ? this.length(cObj) : propType === 'unshift' ? this.length(cObj) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(cObj, propType.toString(), sObj);
+			if (Collection.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = Collection.addElementToObject(data, propType.toString(), sObj);
 			} else {
 				lCheck = true;
-				cObj[propType](sObj);
+				data[propType](sObj);
 			}
 			
 			// delete element
@@ -1947,24 +2028,24 @@
 		context = Collection.isExists(context) ? context.toString() : '';
 		id = id || '';
 		
-		var cObj, e;	
+		var data, e;	
 		
 		// events
 		this.onConcat && (e = this.onConcat.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context);
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context);
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!') }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!') }
 		
-		if (Collection.isPlainObject(cObj)) {
-			Collection.extend(true, cObj, obj)
-		} else if (Collection.isArray(cObj)) {
+		if (Collection.isPlainObject(data)) {
+			Collection.extend(true, data, obj)
+		} else if (Collection.isArray(data)) {
 			if (Collection.isArray(obj)) {
-				cObj = Array.prototype.concat(cObj, obj);
-				this._setOne(context, cObj, id);
+				data = Array.prototype.concat(data, obj);
+				this._setOne(context, data, id);
 			} else { this.add(obj, 'push', id); }
 		}
 	
@@ -1993,7 +2074,7 @@
 	Collection.prototype.length = function (filter, id) {
 		filter = filter || '';
 		var tmpObj = {},
-			cObj, aCheck, key, cOLength;
+			data, aCheck, key, i = 0, length;
 		
 		// overload
 		// if the filter is a collection
@@ -2007,54 +2088,56 @@
 		// overloads
 		// if the ID is not specified, it is taken active collection
 		if (!id) {
-			cObj = this._get('collection');
+			data = this._get('collection');
 		} else if (Collection.isString(id)) {
-			cObj = this._get('collection', id);
+			data = this._get('collection', id);
 		} else {
 			aCheck = true;
-			cObj = id;
+			data = id;
 		}
 		
-		// if cObj is null
-		if (cObj === null) { return 0; }
-		// if cObj is collection
-		if (aCheck !== true) { cObj = Collection.byLink(cObj, this._getActiveParam('context')); }
+		// if data is null
+		if (data === null) { return 0; }
+		// if data is collection
+		if (aCheck !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
 		
-		// if cObj is String
-		if (Collection.isString(cObj)) { return cObj.length; }
+		// if data is String
+		if (Collection.isString(data)) { return data.length; }
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
 		// if no filter and the original object is an array
-		if (filter === false && typeof cObj.length !== 'undefined') {
-			cOLength = cObj.length;
+		if (filter === false && typeof data.length !== 'undefined') {
+			length = data.length;
 		} else {
 			// calclate length
-			cOLength = 0;
+			length = 0;
 			// if array
-			if (typeof cObj.length !== 'undefined') {
-				cObj.forEach(function (el, i, obj) {
-					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
-						cOLength += 1;
+			if (typeof data.length !== 'undefined') {
+				data.forEach(function (el, key, obj) {
+					if (this._customFilter(filter, el, key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+						length += 1;
 					}
+					i += 1;
 				}, this);
 			// if plain object
 			} else {
-				for (key in cObj) {
-					if (!cObj.hasOwnProperty(key)) { continue; }
+				for (key in data) {
+					if (!data.hasOwnProperty(key)) { continue; }
 					
-					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
-						cOLength += 1;
+					if (this._customFilter(filter, data[key], key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+						length += 1;
 					}
 				}
+				i += 1;
 			}
 		}
 		
 		// remove the temporary filter
 		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
 		
-		return cOLength;
+		return length;
 	};
 	/**
 	 * forEach method (in context)
@@ -2099,72 +2182,73 @@
 		var self = this,
 			tmpObj = {},
 			
-			cObj, cOLength,
+			data, length,
 			cloneObj,
 			
-			i, j = 0, res = false;
+			key, i = 0, j = 0, res = false;
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
 		// length function
 		/** @private */
-		cOLength = function () {
-			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
+		length = function () {
+			if (!length.val) { length.val = self.length(filter, id); }
 			
-			return cOLength.val;
+			return length.val;
 		};
 		
-		if (Collection.isArray(cObj)) {
+		if (Collection.isArray(data)) {
 			// cut off the array to indicate the start
 			if (indexOf !== false) {
-				cloneObj = cObj.slice(indexOf);
-			} else { cloneObj = cObj; }
+				cloneObj = data.slice(indexOf);
+			} else { cloneObj = data; }
 			
-			cloneObj.some(function (el, i, obj) {
-				i += indexOf;
+			cloneObj.some(function (el, key, obj) {
+				key += indexOf;
 				if (count !== false && j === count) { return true; }
 				
-				if (this._customFilter(filter, el, i, cObj, cOLength, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, el, key, data, i, length, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
-						res = callback.call(callback, el, i, cObj, cOLength, this, id) === false;
+						res = callback.call(callback, el, key, data, i, length, this, id) === false;
 						if (mult === false) { res = true; }
 						j += 1;
 					}
 				}
 				
+				i += 1;
 				if (res === true) { return true; }
 			}, this);
 		} else {
-			for (i in cObj) {
-				if (!cObj.hasOwnProperty(i)) { continue; }
+			for (key in data) {
+				if (!data.hasOwnProperty(key)) { continue; }
 					
 				if (count !== false && j === count) { break; }
 				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 				
-				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, data[key], key, data, i, length, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {	
-						res = callback.call(callback, cObj[i], i, cObj, cOLength, this, id) === false;
+						res = callback.call(callback, data[key], key, data, i, length, this, id) === false;
 						if (mult === false) { res = true; }
 						j += 1;
 					}
 				}
 				
+				i += 1;
 				if (res === true) { break; }
 			}
 		}
 		
 		// remove the temporary filter
 		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
-		
-		cOLength = null;
+		length = null;
 		
 		return this;
 	};
@@ -2230,10 +2314,10 @@
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				if (mult === true) {
-					result.push(i);
-				} else { result = i; }
+					result.push(key);
+				} else { result = key; }
 				
 				return true;
 			};
@@ -2279,12 +2363,12 @@
 		id = id || '';
 		fromIndex = fromIndex || '';
 		
-		var cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(cObj) && cObj.indexOf) {
-			if (fromIndex) { return cObj.indexOf(searchElement, fromIndex); }
+		if (Collection.isArray(data) && data.indexOf) {
+			if (fromIndex) { return data.indexOf(searchElement, fromIndex); }
 			
-			return cObj.indexOf(searchElement);
+			return data.indexOf(searchElement);
 		} else { return this.search(function (el) { return el === searchElement; }, id, false, '', '', fromIndex); }
 	};
 	/**
@@ -2305,12 +2389,12 @@
 		id = id || '';
 		fromIndex = fromIndex || '';
 		
-		var el, cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		var el, data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(cObj) && cObj.lastIndexOf) {
-			if (fromIndex) { return cObj.lastIndexOf(searchElement, fromIndex); }
+		if (Collection.isArray(data) && data.lastIndexOf) {
+			if (fromIndex) { return data.lastIndexOf(searchElement, fromIndex); }
 			
-			return cObj.lastIndexOf(searchElement);
+			return data.lastIndexOf(searchElement);
 		} else {
 			el = this.search(function (el) { return el === searchElement; }, id, '', '', '', fromIndex);
 			
@@ -2368,10 +2452,10 @@
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, i, data, cCLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				if (mult === true) {
-					result.push(data[i]);
-				} else { result = data[i]; }
+					result.push(data[key]);
+				} else { result = data[key]; }
 	
 				return true;
 			};
@@ -2447,10 +2531,10 @@
 		var e, arg, replaceCheck = Collection.isFunction(replaceObj),
 			
 			/** @private */
-			action = function (el, i, data, cOLength, cObj, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				if (replaceCheck) {
-					data[i] = replaceObj.call(replaceObj, el, i, data, cOLength, cObj, id);
-				} else { data[i] = Collection.expr(replaceObj, data[i]); }
+					data[key] = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+				} else { data[key] = Collection.expr(replaceObj, data[key]); }
 	
 				return true;
 			};
@@ -2768,12 +2852,12 @@
 			result = {},
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				var param = fieldType ? Collection.byLink(el, field) : field.apply(field, arguments);
 				
 				if (!result[param]) {
-					result[param] = [!link ? el : i];
-				} else { result[param].push(!link ? el : i); }
+					result[param] = [!link ? el : key];
+				} else { result[param].push(!link ? el : key); }
 	
 				return true;
 			};
@@ -2840,7 +2924,7 @@
 			result = 0, tmp = 0, key,
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				var param = Collection.byLink(el, field || '');
 				
 				switch (oper) {
@@ -2927,37 +3011,37 @@
 			result = {}, tmp = {}, key,
 			
 			/** @private */
-			deepAction = function (el, i, data, cOLength, self, id) {
+			deepAction = function (el, key, data, i, length, cObj, id) {
 				var param = Collection.byLink(el, field || '');
 				
 				switch (oper) {
 					case 'count' : {
-						result[this.i] += 1;
+						result[this.key] += 1;
 					} break;
 					case 'summ' : {
-						result[this.i] += param;
+						result[this.key] += param;
 					} break;
 					case 'avg' : {
-						tmp[this.i] += 1;
-						result[this.i] += param;
+						tmp[this.key] += 1;
+						result[this.key] += param;
 					} break;
 					case 'max' : {
-						if (param > result[this.i]) { result[this.i] = param; }
+						if (param > result[this.key]) { result[this.key] = param; }
 					} break;
 					case 'min' : {
-						if (tmp[this.i] === 0) {
-							result[this.i] = param;
-							tmp[this.i] = 1;
-						} else if (param < result[this.i]) { result[this.i] = param; }
+						if (tmp[this.key] === 0) {
+							result[this.key] = param;
+							tmp[this.key] = 1;
+						} else if (param < result[this.key]) { result[this.key] = param; }
 					} break;
 					default : {
 						if (!operType) {
-							result[this.i] = oper(param, result[this.i]);
+							result[this.key] = oper(param, result[this.key]);
 						} else {
-							if (tmp[this.i] === 0) {
-								result[this.i] = param;
-								tmp[this.i] = 1;
-							} else { result[this.i] = Collection.expr(oper + '=' + param, result[this.i]); }
+							if (tmp[this.key] === 0) {
+								result[this.key] = param;
+								tmp[this.key] = 1;
+							} else { result[this.key] = Collection.expr(oper + '=' + param, result[this.key]); }
 						}
 					}
 				}
@@ -2966,17 +3050,17 @@
 			},
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
-				if (!result[i]) { result[i] = tmp[i] = 0; };
+			action = function (el, key, data, i, length, cObj, id) {
+				if (!result[key]) { result[key] = tmp[key] = 0; };
 				
 				if (oper !== 'first' && oper !== 'last') {
-					self
-						._update('context', '+=' + Collection.CHILDREN + (deepAction.i = i))
+					cObj
+						._update('context', '+=' + Collection.CHILDREN + (deepAction.key = key))
 						.forEach(deepAction, filter || '', id, '', count, from, indexOf)
 						.parent();
 				} else if (oper === 'first') {
-					result[i] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);
-				} else { result[i] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+					result[key] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);
+				} else { result[key] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
 					
 				return true;
 			};
@@ -3081,7 +3165,7 @@
 		id = id || '';
 		
 		var self = this,
-			cObj,
+			data,
 			
 			/** @private */
 			sort = function (a, b) {
@@ -3113,21 +3197,21 @@
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 
-		if (Collection.isArray(cObj)) {
-			cObj.sort(sort);
+		if (Collection.isArray(data)) {
+			data.sort(sort);
 		} else {
 			if (field) {
 				// change the field to sort the object
 				field = field === true ? 'value' : 'value' + Collection.CHILDREN + field;
-				cObj = Collection._sortObject(cObj, field, sort);
-			} else { cObj = Collection._sortObjectByKey(cObj, sort); }
+				data = Collection._sortObject(data, field, sort);
+			} else { data = Collection._sortObjectByKey(data, sort); }
 			
-			this._setOne('', cObj, id);
+			this._setOne('', data, id);
 		}
 		
 		return this;
@@ -3173,21 +3257,21 @@
 	 */
 	Collection.prototype.reverse = function (id) {
 		id = id || '';
-		var cObj, e;
+		var data, e;
 		
 		// events
 		this.onReverse && (e = this.onReverse.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
-		if (Collection.isArray(cObj)) {
-			cObj.reverse();
-		} else { this._setOne('', Collection._reverseObject(cObj), id); }
+		if (Collection.isArray(data)) {
+			data.reverse();
+		} else { this._setOne('', Collection._reverseObject(data), id); }
 		
 		return this;
 	};	
@@ -3449,14 +3533,15 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {mixed} el — current element
-	 * @param {Number|String} i — iteration (key)
+	 * @param {Number|String} key — key
 	 * @param {Collection} data — link to collection
-	 * @param {Function} cOLength — collection length
-	 * @param {Collection Object} self — link to collection object
+	 * @param {Number|String} i — iteration
+	 * @param {Function} length — collection length
+	 * @param {Collection Object} cObj — link to collection object
 	 * @param {String} id — collection ID
 	 * @return {Boolean}
 	 */
-	Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
+	Collection.prototype._customFilter = function (filter, el, key, data, i, length, cObj, id, _tmpFilter) {
 		var fLength,
 			calFilter,
 			
@@ -3470,7 +3555,7 @@
 			if (!this._getActiveParam('filter')) { return true; }
 			
 			if (this._get('filter')) {
-				return this._customFilter(this._get('filter'), el, i, data, cOLength, self, id, _tmpFilter);
+				return this._customFilter(this._get('filter'), el, key, data, i, length, cObj, id, _tmpFilter);
 			}
 			
 			return true;
@@ -3479,7 +3564,7 @@
 		// if filter is function
 		if (Collection.isFunction(filter)) {
 			if (!this._getActiveParam('filter') || !_tmpFilter) {
-				return filter.call(filter, el, i, data, cOLength, self, id);
+				return filter.call(filter, el, key, data, i, length, cObj, id);
 			} else {
 				if (!_tmpFilter.name) {
 					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {
@@ -3488,7 +3573,7 @@
 					this._push('filter', '__tmp:' + _tmpFilter.name, filter);
 				}
 				
-				return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, i, data, cOLength, self, id, _tmpFilter);
+				return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, key, data, i, length, cObj, id, _tmpFilter);
 			}
 		}
 		
@@ -3504,7 +3589,7 @@
 					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
 				}
 
-				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, i, data, cOLength, self, id);
+				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, key, data, i, length, cObj, id);
 			}
 			
 			// prepare string
@@ -3556,7 +3641,7 @@
 				j = (tmpResult = calFilter(filter.slice((j + 1)), j)).iter;
 				tmpResult = tmpResult.result.join(' ');
 				
-				tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);
+				tmpResult = this._customFilter(tmpResult, el, key, data, i, length, cObj, id);
 				
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;
@@ -3571,7 +3656,7 @@
 					filter[j] = filter[j].substring(1);
 				} else { inverse = false; }
 				
-				tmpResult = this._customFilter(this._get('filter', filter[j]), el, i, data, cOLength, self, id);
+				tmpResult = this._customFilter(this._get('filter', filter[j]), el, key, data, i, length, cObj, id);
 				
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;
@@ -3602,9 +3687,9 @@
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}
-		str = str.split('<:').join('self.getVariable("').split(':>').join('")');
+		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
 		
-		return new Function('el', 'i', 'data', 'cOLength', 'cObj', 'id', 'var key = i; return ' + str.replace(/^\s*:/, '') + ';');
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', 'return ' + str.replace(/^\s*:/, '') + ';');
 	}	
 	/////////////////////////////////
 	//// compile (parser)
@@ -3684,7 +3769,7 @@
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}
-		str = str.split('<:').join('self.getVariable("').split(':>').join('")');
+		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
 		
 		return new Function('str', 'cObj', 'return ' + str.replace(/^\s*:/, '') + ';');
 	};	
@@ -3843,6 +3928,387 @@
 	Collection.prototype.valueOf = function () {
 		if (arguments[0] === 'object') { return this; }
 		return this.length(this.ACTIVE);
-	};		/////////////////////////////////	//// design methods (print)	/////////////////////////////////			/**	 * templating (in context)	 * 	 * @this {Colletion Object}	 * @param param - object settings	 * @param {Collection|String} [param.collection=this.ACTIVE] — collection or collection ID	 * @param {String} [param.context] — additional context	 * @param {Number} [param.page=this.ACTIVE] — page number	 * @param {Template} [param.template=this.ACTIVE] — template	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] — number of entries on per page (if false, returns all records)	 * @param {Number} [param.pageBreak=this.ACTIVE] — number of displayed pages (navigation, > 2)	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] — filter function, string expression or true (if disabled)	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)	 * @param {String} [param.appendType=this.ACTIVE] — type additions to the DOM	 * @param {String} [param.resultNull=this.ACTIVE] — text displayed if no results	 * @param {Boolean} [clear=false] — clear the cache	 * @return {Colletion Object}	 */	Collection.prototype.print = function (param, clear) {		clear = clear || false;				var tmpParser = {}, tmpFilter = {},			opt = {},						cObj, cOLength,			start, inc = 0, checkPage, from = null,			first = false,						numberBreak,						result = '', action, e,						dom = this.drivers.dom;					// easy implementation		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {			param = {page: param};		} else if (!Collection.isExists(param)) { param = {page: this._get('page')}; }				// the expansion of input parameters		Collection.extend(true, opt, this.dObj.active, param);		if (param) { opt.page = Collection.expr(opt.page, this._get('page')); }		if (opt.page < 1) { opt.page = 1; }				opt.collection = Collection.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;		opt.template = Collection.isString(opt.template) ? this._get('template', opt.template) : opt.template;		opt.cache = Collection.isExists(param.cache) ? param.cache : this._getActiveParam('cache');				opt.target = Collection.isString(opt.target) ? dom.find(opt.target) : opt.target;		opt.pager = Collection.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;				if (clear === true) { opt.cache.iteration = false; }				checkPage = this._get('page') - opt.page;		this._update('page', opt.page);				// template function 		/** @private */		action = function (el, i, data, cOLength, self, id) {			// callback			opt.callback && opt.callback.apply(opt.callback, arguments);			result += opt.template.apply(opt.template, arguments);			inc = i;						// cache 			if (first === false) { first = i; }							return true;		};				// get collection		cObj = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));		cOLength = this.length();				// number of records per page		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam('filter')));		opt.numberBreak = opt.numberBreak || cOLength;				// without cache		if (Collection.isPlainObject(cObj) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {			start = !opt.numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;						this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }				// with cache		} else if (Collection.isArray(cObj) && opt.cache.iteration === true) {			// calculate the starting position			start = !numberBreak ?						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;						if (numberBreak) {				// rewind cached step back				if (checkPage > 0) {					checkPage = opt.numberBreak * checkPage;					while ((start -= 1) > -1) {						if (this._customFilter(opt.filter, cObj[start], cObj, start, cOLength, this, this.ACTIVE, tmpFilter) === true) {							if (inc === checkPage) {								break;							} else { inc += 1; }						}					}					opt.cache.lastIteration = (start += 1);					from = null;				} else if (checkPage < 0) { from = -checkPage * opt.numberBreak - opt.numberBreak; }			}						tmpFilter.name && this._drop('filter', '__tmp:' + tmpFilter.name);			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);		}				if (opt.cache) {			if (checkPage !== 0 && opt.cache.iteration !== false) {				// cache				this._get('cache').firstIteration = first;				this._get('cache').lastIteration = inc + 1;			}			if (opt.cache.autoIteration === true) { this._get('cache').iteration = true; }		}				// parser		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);		tmpParser.name && this._drop('parser', '__tmp:' + tmpParser.name);				// append to DOM		if (opt.target === false) {			if (!opt.variable) {				this._new('variable', result);			} else { this._push('variable', opt.variable, result); }						return this;		} else {			Array.prototype.forEach.call(opt.target, function (el) {				// innerHTML				if (opt.appendType === 'html') {					el.innerHTML = result;								// append				} else if (opt.appendType === 'append') {					el.innerHTML = el.innerHTML + result;								// prepend				} else { el.innerHTML = result + el.innerHTML; }			}, this);		}				if (!opt.pager) { return this; }				// navigation		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : cOLength;		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);		// generate navigation bar		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {			// events			this.onIPage && (e = this.onIPage.apply(this, arguments));			if (e === false) { return this; }						this._update('page', (opt.page -= 1)).print(opt, true, true);		} else { this.easyPage(opt); }				return this;	};		/**	 * activation of the navigation<br />	 * info: page, total, from, to, inPage, nmbOfPages<br />	 * nav: first, prev, next, last, numberSwitch, pageList	 * 	 * @this {Colletion Object}	 * @param {Object} [param] — object settings	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.prototype.easyPage = function (param) {		var self = this,			str = '',						// number of pages			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak),						/** @private */			genPage = function (data, classes, i, nSwitch) {				nSwitch = nSwitch || false;				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';								if (data.attr) {					for (key in data.attr) {						if (!data.attr.hasOwnProperty(key)) { continue; }						str += ' ' + key + '="' + data.attr[key] + '"';					}				}								if ((!nSwitch && i === param.page) || (nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }				return str += '>' + i + '</' + (data.tag || 'span') + '>';			},						/** @private */			wrap = function (val, tag) {				if (tag === 'select') {					return '<option value="' + val + '">' + val + '</option>';				}								return val;			},									i, j = 0, from, to, dom = this.drivers.dom;				// for each node		Array.prototype.forEach.call(param.pager, function (el) {			Array.prototype.forEach.call(dom.find('.ctm', el), function (el) {				if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }				str = '';								var tag = el.tagName.toLowerCase(),										data = dom.data(el),					ctm = data.ctm,					classes = ctm.classes;								if (ctm.nav) {					// attach event					if (Collection.find(ctm.nav, ['first', 'prev', 'next', 'last']) && !data['ctm-delegated']) {						dom.bind(el, 'click', function () {							if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {								ctm.nav === 'first' && (param.page = 1);								ctm.nav === 'prev' && (param.page = '-=1');								ctm.nav === 'next' && (param.page = '+=1');								ctm.nav === 'last' && (param.page = nmbOfPages);																self.print(param);							}						});						el.setAttribute('data-ctm-delegated', true);					}										// adding classes status					if ((Collection.find(ctm.nav, ['first', 'prev']) && param.page === 1) || (Collection.find(ctm.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {						dom.addClass(el, classes && classes.disabled || 'disabled');					} else if (Collection.find(ctm.nav, ['first', 'prev', 'next', 'last'])) {						dom.removeClass(el, classes && classes.disabled || 'disabled');					}										// numberBreak switch					if (ctm.nav === 'numberSwitch') {						ctm.val.forEach(function (el) {							if (tag === 'select') {								str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';							} else { str += genPage(ctm, classes || '', el, true); }						});					}										// page navigation					if (ctm.nav === 'pageList') {						if (tag === 'select') {							for (i = 0; (i += 1) <= nmbOfPages;) {								str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';							} 						} else {							if (nmbOfPages > param.pageBreak) {									j = param.pageBreak % 2 !== 0 ? 1 : 0;								from = (param.pageBreak - j) / 2;								to = from;																if (param.page - j < from) {									from = 0;								} else {									from = param.page - from - j;									if (param.page + to > nmbOfPages) {										from -= param.page + to - nmbOfPages;									}								}																for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {									if (j === param.pageBreak && i !== param.page) { break; }									str += genPage(ctm, classes || '', i);								}							} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }						}					}										if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {							// to html						el.innerHTML = str;												// delegate event						if (!data['ctm-delegated']) {							if (tag !== 'select') {								dom.bind(el, 'click', function (e) {									e = e || window.event;									var target = e.target || e.srcElement, data = dom.data(target);									if (target.parentNode !== el) { return false; }																		if (ctm.nav === 'pageList') {										param.page = +data.page;									} else {										self._push('numberBreak', param.name || '', +data['number-break']);										delete param.numberBreak;									}										self.print(param);								});														// if select							} else {								dom.bind(el, 'change', function () {									var option = dom.children(this, 'selected')[0];																		if (param.page !== option.value) {										if (data.nav === 'pageList') {											param.page = +option.value;										} else {											self._push('numberBreak', param.name || '', +option.value);											delete param.numberBreak;										}																				self.print(param);									}								});							}														el.setAttribute('data-ctm-delegated', true);						}					}								// info				} else if (ctm.info) {					if (param.nmbOfEntriesInPage === 0) {						dom.addClass(el, classes && classes.noData || 'no-data');					} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }										switch (ctm.info) {						case 'page' : {							if (tag === 'input') {								el.value = wrap(param.page, tag);							} else { el.innerHTML = wrap(param.page, tag); }						} break;						case 'total' : {							if (tag === 'input') {								el.value = wrap(param.nmbOfEntries, tag);							} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }						} break;						case 'from' : {							if (tag === 'input') {								el.value = wrap((param.page - 1) * param.numberBreak + 1, tag);							} else { el.innerHTML = wrap((param.page - 1) * param.numberBreak + 1, tag); }						} break;						case 'to' : {							if (tag === 'input') {								el.value = wrap(param.finNumber, tag);							} else { el.innerHTML = wrap(param.finNumber, tag); }						} break;						case 'inPage' : {							if (tag === 'input') {								el.value = wrap(param.nmbOfEntriesInPage, tag);							} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }						} break;						case 'nmbOfPages' : {							if (tag === 'input') {								el.value = wrap(nmbOfPages, tag);							} else { el.innerHTML = wrap(nmbOfPages, tag); }						} break;					}				}			});		});				return this;	};		/////////////////////////////////	//// design methods (table)	/////////////////////////////////			/**	 * generating the table	 * 	 * @this {Colletion Object}	 * @param {Number} [count=4] — td number to a string	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes	 * @param {Boolean} [empty=true] — display empty cells	 * @return {Colletion Object}	 */	Collection.prototype.genTable = function (target, count, selector, empty) {		// overload		if (Collection.isNumber(target)) {			empty = selector;			selector = count;			count = target;			target = '';		}		count = count || 4;		selector = selector || 'div';		empty = empty === false ? false : true;				var i, table, tr, td, dom = this.drivers.dom;				target = target ? Collection.isString(target) ? dom.find(target) : target : this._get('target');				// for each node		Array.prototype.forEach.call(target, function (el) {			table = document.createElement('table');			i = 0;						Array.prototype.forEach.call(dom.find(selector, el), function (el) {				if (i === 0) {					tr = document.createElement('tr');					table.appendChild(tr);				}				td = document.createElement('td');				td.appendChild(el);				tr.appendChild(td);								i += 1;				if (i === count) { i = 0; }			});						// add empty cells			if (empty === true) {				i = count - tr.childNodes.length;				while ((i -= 1) > -1) {					tr.appendChild(document.createElement('td'));				}			}						el.appendChild(table);		}, this);				return this;	};	return Collection;
+	};	
+	/////////////////////////////////
+	//// design methods (print)
+	/////////////////////////////////
+		
+	/**
+	 * templating (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param param - object settings
+	 * @param {Collection|String} [param.collection=this.ACTIVE] — collection or collection ID
+	 * @param {String} [param.context] — additional context
+	 * @param {Number} [param.page=this.ACTIVE] — page number
+	 * @param {Template} [param.template=this.ACTIVE] — template
+	 * @param {Number|Boolean} [param.numberBreak=this.ACTIVE] — number of entries on per page (if false, returns all records)
+	 * @param {Number} [param.pageBreak=this.ACTIVE] — number of displayed pages (navigation, > 2)
+	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
+	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
+	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression
+	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
+	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
+	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)
+	 * @param {String} [param.appendType=this.ACTIVE] — type additions to the DOM
+	 * @param {String} [param.resultNull=this.ACTIVE] — text displayed if no results
+	 * @param {Boolean} [clear=false] — clear the cache
+	 * @return {Colletion Object}
+	 */
+	Collection.prototype.print = function (param, clear) {
+		clear = clear || false;
+		
+		var tmpParser = {}, tmpFilter = {},
+			opt = {},
+			
+			data, length,
+			start, inc = 0, checkPage, from = null,
+			first = false,
+			
+			numberBreak,
+			
+			result = '', action, e,
+			
+			dom = this.drivers.dom;
+			
+		// easy implementation
+		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {
+			param = {page: param};
+		} else if (!Collection.isExists(param)) { param = {page: this._get('page')}; }
+		
+		// the expansion of input parameters
+		Collection.extend(true, opt, this.dObj.active, param);
+		if (param) { opt.page = Collection.expr(opt.page, this._get('page')); }
+		if (opt.page < 1) { opt.page = 1; }
+		
+		opt.collection = Collection.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
+		opt.template = Collection.isString(opt.template) ? this._get('template', opt.template) : opt.template;
+		opt.cache = Collection.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
+		
+		opt.target = Collection.isString(opt.target) ? dom.find(opt.target) : opt.target;
+		opt.pager = Collection.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
+		
+		if (clear === true) { opt.cache.iteration = false; }
+		
+		checkPage = this._get('page') - opt.page;
+		this._update('page', opt.page);
+		
+		// template function 
+		/** @private */
+		action = function (el, key, data, i, length, cObj, id) {
+			// callback
+			opt.callback && opt.callback.apply(opt.callback, arguments);
+			result += opt.template.apply(opt.template, arguments);
+			inc = key;
+			
+			// cache
+ 			if (first === false) { first = key; }
+				
+			return true;
+		};
+		
+		// get collection
+		data = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));
+		length = this.length();
+		
+		// number of records per page
+		numberBreak = Boolean(opt.numberBreak && (opt.filter || this._getActiveParam('filter')));
+		opt.numberBreak = opt.numberBreak || length;
+		
+		// without cache
+		if (Collection.isPlainObject(data) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+			start = !opt.numberBreak || opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak;
+			
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, start);
+			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
+		
+		// with cache
+		} else if (Collection.isArray(data) && opt.cache.iteration === true) {
+			// calculate the starting position
+			start = !numberBreak ?
+						opt.page === 1 ? 0 : (opt.page - 1) * opt.numberBreak :
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;
+			
+			if (numberBreak) {
+				// rewind cached step back
+				if (checkPage > 0) {
+					checkPage = opt.numberBreak * checkPage;
+					while ((start -= 1) > -1) {
+						if (this._customFilter(opt.filter, data[start], data, start, length, this, this.ACTIVE, tmpFilter) === true) {
+							if (inc === checkPage) {
+								break;
+							} else { inc += 1; }
+						}
+					}
+					opt.cache.lastIteration = (start += 1);
+					from = null;
+				} else if (checkPage < 0) { from = -checkPage * opt.numberBreak - opt.numberBreak; }
+			}
+			
+			tmpFilter.name && this._drop('filter', '__tmp:' + tmpFilter.name);
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.numberBreak, from, start);
+		}
+		
+		if (opt.cache) {
+			if (checkPage !== 0 && opt.cache.iteration !== false) {
+				// cache
+				this._get('cache').firstIteration = first;
+				this._get('cache').lastIteration = inc + 1;
+			}
+			if (opt.cache.autoIteration === true) { this._get('cache').iteration = true; }
+		}
+		
+		// parser
+		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);
+		tmpParser.name && this._drop('parser', '__tmp:' + tmpParser.name);
+		
+		// append to DOM
+		if (opt.target === false) {
+			if (!opt.variable) {
+				this._new('variable', result);
+			} else { this._push('variable', opt.variable, result); }
+			
+			return this;
+		} else {
+			Array.prototype.forEach.call(opt.target, function (el) {
+				// innerHTML
+				if (opt.appendType === 'html') {
+					el.innerHTML = result;
+				
+				// append
+				} else if (opt.appendType === 'append') {
+					el.innerHTML = el.innerHTML + result;
+				
+				// prepend
+				} else { el.innerHTML = result + el.innerHTML; }
+			}, this);
+		}
+		
+		if (!opt.pager) { return this; }
+		
+		// navigation
+		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter) : length;
+		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
+		opt.finNumber = opt.numberBreak * opt.page - (opt.numberBreak - opt.nmbOfEntriesInPage);
+
+		// generate navigation bar
+		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
+			// events
+			this.onIPage && (e = this.onIPage.apply(this, arguments));
+			if (e === false) { return this; }
+			
+			this._update('page', (opt.page -= 1)).print(opt, true, true);
+		} else { this.easyPage(opt); }
+		
+		return this;
+	};
+	
+	/**
+	 * activation of the navigation<br />
+	 * info: page, total, from, to, inPage, nmbOfPages<br />
+	 * nav: first, prev, next, last, numberSwitch, pageList
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Object} [param] — object settings
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 */
+	Collection.prototype.easyPage = function (param) {
+		var self = this,
+			str = '',
+			
+			// number of pages
+			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.numberBreak !== 0 ? ~~(param.nmbOfEntries / param.numberBreak) + 1 : param.nmbOfEntries / param.numberBreak),
+			
+			/** @private */
+			genPage = function (data, classes, i, nSwitch) {
+				nSwitch = nSwitch || false;
+				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
+				
+				if (data.attr) {
+					for (key in data.attr) {
+						if (!data.attr.hasOwnProperty(key)) { continue; }
+						str += ' ' + key + '="' + data.attr[key] + '"';
+					}
+				}
+				
+				if ((!nSwitch && i === param.page) || (nSwitch && i === param.numberBreak)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }
+				return str += '>' + i + '</' + (data.tag || 'span') + '>';
+			},
+			
+			/** @private */
+			wrap = function (val, tag) {
+				if (tag === 'select') {
+					return '<option value="' + val + '">' + val + '</option>';
+				}
+				
+				return val;
+			},
+			
+			
+			i, j = 0, from, to, dom = this.drivers.dom;
+		
+		// for each node
+		Array.prototype.forEach.call(param.pager, function (el) {
+			Array.prototype.forEach.call(dom.find('.ctm', el), function (el) {
+				if (param.pageBreak <= 2) { throw new Error('parameter "pageBreak" must be more than 2'); }
+				str = '';
+				
+				var tag = el.tagName.toLowerCase(),
+					
+					data = dom.data(el),
+					ctm = data.ctm,
+					classes = ctm.classes;
+				
+				if (ctm.nav) {
+					// attach event
+					if (Collection.find(ctm.nav, ['first', 'prev', 'next', 'last']) && !data['ctm-delegated']) {
+						dom.bind(el, 'click', function () {
+							if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {
+								ctm.nav === 'first' && (param.page = 1);
+								ctm.nav === 'prev' && (param.page = '-=1');
+								ctm.nav === 'next' && (param.page = '+=1');
+								ctm.nav === 'last' && (param.page = nmbOfPages);
+								
+								self.print(param);
+							}
+						});
+						el.setAttribute('data-ctm-delegated', true);
+					}
+					
+					// adding classes status
+					if ((Collection.find(ctm.nav, ['first', 'prev']) && param.page === 1) || (Collection.find(ctm.nav, ['next', 'last']) && param.finNumber === param.nmbOfEntries)) {
+						dom.addClass(el, classes && classes.disabled || 'disabled');
+					} else if (Collection.find(ctm.nav, ['first', 'prev', 'next', 'last'])) {
+						dom.removeClass(el, classes && classes.disabled || 'disabled');
+					}
+					
+					// numberBreak switch
+					if (ctm.nav === 'numberSwitch') {
+						ctm.val.forEach(function (el) {
+							if (tag === 'select') {
+								str += '<option vale="' + el + '" ' + (el === param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
+							} else { str += genPage(ctm, classes || '', el, true); }
+						});
+					}
+					
+					// page navigation
+					if (ctm.nav === 'pageList') {
+						if (tag === 'select') {
+							for (i = 0; (i += 1) <= nmbOfPages;) {
+								str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
+							} 
+						} else {
+							if (nmbOfPages > param.pageBreak) {	
+								j = param.pageBreak % 2 !== 0 ? 1 : 0;
+								from = (param.pageBreak - j) / 2;
+								to = from;
+								
+								if (param.page - j < from) {
+									from = 0;
+								} else {
+									from = param.page - from - j;
+									if (param.page + to > nmbOfPages) {
+										from -= param.page + to - nmbOfPages;
+									}
+								}
+								
+								for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
+									if (j === param.pageBreak && i !== param.page) { break; }
+									str += genPage(ctm, classes || '', i);
+								}
+							} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }
+						}
+					}
+					
+					if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {	
+						// to html
+						el.innerHTML = str;
+						
+						// delegate event
+						if (!data['ctm-delegated']) {
+							if (tag !== 'select') {
+								dom.bind(el, 'click', function (e) {
+									e = e || window.event;
+									var target = e.target || e.srcElement, data = dom.data(target);
+									if (target.parentNode !== el) { return false; }
+									
+									if (ctm.nav === 'pageList') {
+										param.page = +data.page;
+									} else {
+										self._push('numberBreak', param.name || '', +data['number-break']);
+										delete param.numberBreak;
+									}
+	
+									self.print(param);
+								});
+							
+							// if select
+							} else {
+								dom.bind(el, 'change', function () {
+									var option = dom.children(this, 'selected')[0];
+									
+									if (param.page !== option.value) {
+										if (data.nav === 'pageList') {
+											param.page = +option.value;
+										} else {
+											self._push('numberBreak', param.name || '', +option.value);
+											delete param.numberBreak;
+										}
+										
+										self.print(param);
+									}
+								});
+							}
+							
+							el.setAttribute('data-ctm-delegated', true);
+						}
+					}
+				
+				// info
+				} else if (ctm.info) {
+					if (param.nmbOfEntriesInPage === 0) {
+						dom.addClass(el, classes && classes.noData || 'no-data');
+					} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }
+					
+					switch (ctm.info) {
+						case 'page' : {
+							if (tag === 'input') {
+								el.value = wrap(param.page, tag);
+							} else { el.innerHTML = wrap(param.page, tag); }
+						} break;
+						case 'total' : {
+							if (tag === 'input') {
+								el.value = wrap(param.nmbOfEntries, tag);
+							} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }
+						} break;
+						case 'from' : {
+							if (tag === 'input') {
+								el.value = wrap((param.page - 1) * param.numberBreak + 1, tag);
+							} else { el.innerHTML = wrap((param.page - 1) * param.numberBreak + 1, tag); }
+						} break;
+						case 'to' : {
+							if (tag === 'input') {
+								el.value = wrap(param.finNumber, tag);
+							} else { el.innerHTML = wrap(param.finNumber, tag); }
+						} break;
+						case 'inPage' : {
+							if (tag === 'input') {
+								el.value = wrap(param.nmbOfEntriesInPage, tag);
+							} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }
+						} break;
+						case 'nmbOfPages' : {
+							if (tag === 'input') {
+								el.value = wrap(nmbOfPages, tag);
+							} else { el.innerHTML = wrap(nmbOfPages, tag); }
+						} break;
+					}
+				}
+			});
+		});
+		
+		return this;
+	};		/////////////////////////////////	//// design methods (table)	/////////////////////////////////			/**	 * generating the table	 * 	 * @this {Colletion Object}	 * @param {Number} [count=4] — td number to a string	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes	 * @param {Boolean} [empty=true] — display empty cells	 * @return {Colletion Object}	 */	Collection.prototype.genTable = function (target, count, selector, empty) {		// overload		if (Collection.isNumber(target)) {			empty = selector;			selector = count;			count = target;			target = '';		}		count = count || 4;		selector = selector || 'div';		empty = empty === false ? false : true;				var i, table, tr, td, dom = this.drivers.dom;				target = target ? Collection.isString(target) ? dom.find(target) : target : this._get('target');				// for each node		Array.prototype.forEach.call(target, function (el) {			table = document.createElement('table');			i = 0;						Array.prototype.forEach.call(dom.find(selector, el), function (el) {				if (i === 0) {					tr = document.createElement('tr');					table.appendChild(tr);				}				td = document.createElement('td');				td.appendChild(el);				tr.appendChild(td);								i += 1;				if (i === count) { i = 0; }			});						// add empty cells			if (empty === true) {				i = count - tr.childNodes.length;				while ((i -= 1) > -1) {					tr.appendChild(document.createElement('td'));				}			}						el.appendChild(table);		}, this);				return this;	};	return Collection;
 })();
 if (typeof $C === 'undefined') { var $C = Collection; }//

@@ -34,7 +34,7 @@
 			result = 0, tmp = 0, key,
 			
 			/** @private */
-			action = function (el, i, data, cOLength, self, id) {
+			action = function (el, key, data, i, length, cObj, id) {
 				var param = Collection.byLink(el, field || '');
 				
 				switch (oper) {

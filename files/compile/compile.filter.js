@@ -9,14 +9,15 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {mixed} el — current element
-	 * @param {Number|String} i — iteration (key)
+	 * @param {Number|String} key — key
 	 * @param {Collection} data — link to collection
-	 * @param {Function} cOLength — collection length
-	 * @param {Collection Object} self — link to collection object
+	 * @param {Number|String} i — iteration
+	 * @param {Function} length — collection length
+	 * @param {Collection Object} cObj — link to collection object
 	 * @param {String} id — collection ID
 	 * @return {Boolean}
 	 */
-	Collection.prototype._customFilter = function (filter, el, i, data, cOLength, self, id, _tmpFilter) {
+	Collection.prototype._customFilter = function (filter, el, key, data, i, length, cObj, id, _tmpFilter) {
 		var fLength,
 			calFilter,
 			
@@ -30,7 +31,7 @@
 			if (!this._getActiveParam('filter')) { return true; }
 			
 			if (this._get('filter')) {
-				return this._customFilter(this._get('filter'), el, i, data, cOLength, self, id, _tmpFilter);
+				return this._customFilter(this._get('filter'), el, key, data, i, length, cObj, id, _tmpFilter);
 			}
 			
 			return true;
@@ -39,7 +40,7 @@
 		// if filter is function
 		if (Collection.isFunction(filter)) {
 			if (!this._getActiveParam('filter') || !_tmpFilter) {
-				return filter.call(filter, el, i, data, cOLength, self, id);
+				return filter.call(filter, el, key, data, i, length, cObj, id);
 			} else {
 				if (!_tmpFilter.name) {
 					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {
@@ -48,7 +49,7 @@
 					this._push('filter', '__tmp:' + _tmpFilter.name, filter);
 				}
 				
-				return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, i, data, cOLength, self, id, _tmpFilter);
+				return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, key, data, i, length, cObj, id, _tmpFilter);
 			}
 		}
 		
@@ -64,7 +65,7 @@
 					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
 				}
 
-				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, i, data, cOLength, self, id);
+				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, key, data, i, length, cObj, id);
 			}
 			
 			// prepare string
@@ -116,7 +117,7 @@
 				j = (tmpResult = calFilter(filter.slice((j + 1)), j)).iter;
 				tmpResult = tmpResult.result.join(' ');
 				
-				tmpResult = this._customFilter(tmpResult, el, i, data, cOLength, self, id);
+				tmpResult = this._customFilter(tmpResult, el, key, data, i, length, cObj, id);
 				
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;
@@ -131,7 +132,7 @@
 					filter[j] = filter[j].substring(1);
 				} else { inverse = false; }
 				
-				tmpResult = this._customFilter(this._get('filter', filter[j]), el, i, data, cOLength, self, id);
+				tmpResult = this._customFilter(this._get('filter', filter[j]), el, key, data, i, length, cObj, id);
 				
 				if (!and && !or) {
 					result = inverse === true ? !tmpResult : tmpResult;
@@ -162,7 +163,7 @@
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}
-		str = str.split('<:').join('self.getVariable("').split(':>').join('")');
+		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
 		
-		return new Function('el', 'i', 'data', 'cOLength', 'cObj', 'id', 'var key = i; return ' + str.replace(/^\s*:/, '') + ';');
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', 'return ' + str.replace(/^\s*:/, '') + ';');
 	}

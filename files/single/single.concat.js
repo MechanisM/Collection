@@ -21,24 +21,24 @@
 		context = Collection.isExists(context) ? context.toString() : '';
 		id = id || '';
 		
-		var cObj, e;	
+		var data, e;	
 		
 		// events
 		this.onConcat && (e = this.onConcat.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context);
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context);
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!') }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!') }
 		
-		if (Collection.isPlainObject(cObj)) {
-			Collection.extend(true, cObj, obj)
-		} else if (Collection.isArray(cObj)) {
+		if (Collection.isPlainObject(data)) {
+			Collection.extend(true, data, obj)
+		} else if (Collection.isArray(data)) {
 			if (Collection.isArray(obj)) {
-				cObj = Array.prototype.concat(cObj, obj);
-				this._setOne(context, cObj, id);
+				data = Array.prototype.concat(data, obj);
+				this._setOne(context, data, id);
 			} else { this.add(obj, 'push', id); }
 		}
 	

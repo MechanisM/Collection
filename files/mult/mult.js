@@ -22,7 +22,7 @@
 	Collection.prototype.length = function (filter, id) {
 		filter = filter || '';
 		var tmpObj = {},
-			cObj, aCheck, key, cOLength;
+			data, aCheck, key, i = 0, length;
 		
 		// overload
 		// if the filter is a collection
@@ -36,54 +36,56 @@
 		// overloads
 		// if the ID is not specified, it is taken active collection
 		if (!id) {
-			cObj = this._get('collection');
+			data = this._get('collection');
 		} else if (Collection.isString(id)) {
-			cObj = this._get('collection', id);
+			data = this._get('collection', id);
 		} else {
 			aCheck = true;
-			cObj = id;
+			data = id;
 		}
 		
-		// if cObj is null
-		if (cObj === null) { return 0; }
-		// if cObj is collection
-		if (aCheck !== true) { cObj = Collection.byLink(cObj, this._getActiveParam('context')); }
+		// if data is null
+		if (data === null) { return 0; }
+		// if data is collection
+		if (aCheck !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
 		
-		// if cObj is String
-		if (Collection.isString(cObj)) { return cObj.length; }
+		// if data is String
+		if (Collection.isString(data)) { return data.length; }
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
 		// if no filter and the original object is an array
-		if (filter === false && typeof cObj.length !== 'undefined') {
-			cOLength = cObj.length;
+		if (filter === false && typeof data.length !== 'undefined') {
+			length = data.length;
 		} else {
 			// calclate length
-			cOLength = 0;
+			length = 0;
 			// if array
-			if (typeof cObj.length !== 'undefined') {
-				cObj.forEach(function (el, i, obj) {
-					if (this._customFilter(filter, el, i, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
-						cOLength += 1;
+			if (typeof data.length !== 'undefined') {
+				data.forEach(function (el, key, obj) {
+					if (this._customFilter(filter, el, key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+						length += 1;
 					}
+					i += 1;
 				}, this);
 			// if plain object
 			} else {
-				for (key in cObj) {
-					if (!cObj.hasOwnProperty(key)) { continue; }
+				for (key in data) {
+					if (!data.hasOwnProperty(key)) { continue; }
 					
-					if (this._customFilter(filter, cObj[key], key, cObj, cOLength || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
-						cOLength += 1;
+					if (this._customFilter(filter, data[key], key, data, i, length || null, this, id ? id : this.ACTIVE, tmpObj) === true) {
+						length += 1;
 					}
 				}
+				i += 1;
 			}
 		}
 		
 		// remove the temporary filter
 		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
 		
-		return cOLength;
+		return length;
 	};
 	/**
 	 * forEach method (in context)
@@ -128,72 +130,73 @@
 		var self = this,
 			tmpObj = {},
 			
-			cObj, cOLength,
+			data, length,
 			cloneObj,
 			
-			i, j = 0, res = false;
+			key, i = 0, j = 0, res = false;
 		
 		// get by link
-		cObj = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
-		if (typeof cObj !== 'object') { throw new Error('incorrect data type!'); }
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
 		// length function
 		/** @private */
-		cOLength = function () {
-			if (!cOLength.val) { cOLength.val = self.length(filter, id); }
+		length = function () {
+			if (!length.val) { length.val = self.length(filter, id); }
 			
-			return cOLength.val;
+			return length.val;
 		};
 		
-		if (Collection.isArray(cObj)) {
+		if (Collection.isArray(data)) {
 			// cut off the array to indicate the start
 			if (indexOf !== false) {
-				cloneObj = cObj.slice(indexOf);
-			} else { cloneObj = cObj; }
+				cloneObj = data.slice(indexOf);
+			} else { cloneObj = data; }
 			
-			cloneObj.some(function (el, i, obj) {
-				i += indexOf;
+			cloneObj.some(function (el, key, obj) {
+				key += indexOf;
 				if (count !== false && j === count) { return true; }
 				
-				if (this._customFilter(filter, el, i, cObj, cOLength, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, el, key, data, i, length, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {
-						res = callback.call(callback, el, i, cObj, cOLength, this, id) === false;
+						res = callback.call(callback, el, key, data, i, length, this, id) === false;
 						if (mult === false) { res = true; }
 						j += 1;
 					}
 				}
 				
+				i += 1;
 				if (res === true) { return true; }
 			}, this);
 		} else {
-			for (i in cObj) {
-				if (!cObj.hasOwnProperty(i)) { continue; }
+			for (key in data) {
+				if (!data.hasOwnProperty(key)) { continue; }
 					
 				if (count !== false && j === count) { break; }
 				if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
 				
-				if (this._customFilter(filter, cObj[i], i, cObj, cOLength, this, id, tmpObj) === true) {
+				if (this._customFilter(filter, data[key], key, data, i, length, this, id, tmpObj) === true) {
 					if (from !== false && from !== 0) {
 						from -= 1;
 					} else {	
-						res = callback.call(callback, cObj[i], i, cObj, cOLength, this, id) === false;
+						res = callback.call(callback, data[key], key, data, i, length, this, id) === false;
 						if (mult === false) { res = true; }
 						j += 1;
 					}
 				}
 				
+				i += 1;
 				if (res === true) { break; }
 			}
 		}
 		
 		// remove the temporary filter
 		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
-		
-		cOLength = null;
+		length = null;
 		
 		return this;
 	};
