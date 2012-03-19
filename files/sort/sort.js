@@ -109,7 +109,7 @@
 						b = Collection.byLink(b, field);
 					} else {
 						a = field(a, id);
-						b = field(a, id);
+						b = field(b, id);
 					}
 				}
 				// callback function

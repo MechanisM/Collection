@@ -148,7 +148,7 @@
 	 * @return {Array}
 	 *
 	 * @example
-	 * $C.unshiftArguments({'0': 1}, 2);
+	 * $C.unshiftArguments({'0': 1, length: 1}, 2);
 	 */
 	Collection.unshiftArguments = function (obj, val) {
 		var newObj = [val], i = -1, oLength = obj.length;
