@@ -8,7 +8,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} [context] — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -87,7 +87,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -108,7 +108,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -138,7 +138,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)

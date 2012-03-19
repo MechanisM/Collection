@@ -37,7 +37,6 @@
 	Collection.prototype._exprTest = function (str) {
 		return Collection.isString(str) && str.search(/^:/) !== -1;
 	};
-	
 		
 	/**
 	 * enable flag

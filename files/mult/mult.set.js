@@ -8,8 +8,8 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
-	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback) 
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
@@ -84,8 +84,8 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
-	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
@@ -115,7 +115,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
@@ -124,5 +124,5 @@
 	 * $C([1, 2, 3, 4, 5, 6]).map(Math.sin, ':el % 2 === 0').get();
 	 */
 	Collection.prototype.map = function (replaceObj, filter, id) {
-		return this.set(filter || '', replaceObj, id || '');
+		return this.set(filter || true, replaceObj, id || '');
 	};

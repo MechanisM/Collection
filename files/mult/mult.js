@@ -12,7 +12,7 @@
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression, collection or true (if disabled)
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @throw {Error}
 	 * @return {Number}
@@ -92,8 +92,8 @@
 	 * forEach method (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback — function to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String|Boolean} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
@@ -106,11 +106,16 @@
 	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 all elements of multiples of three //
 	 * db.forEach(function (el, key, data, i) {
-	 *		data[key].a += 1;
+	 *		el.a += 1;
 	 *	}, ':i % 3 === 0');
+	 * console.log(db.get());
+	 * @example
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
+	 * db.forEach(':el.a += 1', ':i % 3 === 0');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
+		callback = this._exprTest(callback) ? this._compileFunc(callback) : callback;
 		filter = filter || '';
 		
 		// if id is Boolean
@@ -217,8 +222,8 @@
 	 * performs an action only for one element of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback — function to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *

@@ -13,7 +13,11 @@
 				var
 					db = new Collection([1, 2, 3, 4, 5]),
 					db2 = new Collection({a: 1, f: 2, c: 3}),
-					db3 = new Collection([{name: 'Koba'}, {name: 'Andrey'}]);
+					db3 = new Collection([{name: 'Koba'}, {name: 'Andrey'}]),
+					db4 = new Collection([
+						{name: 'Koba', age1: 10, age2: 2},
+						{name: 'Andrey', age1: 20, age2: 22}
+					]);
 					
 					equal(db.sort('', true).get(0), 5, 'simple test: array');
 					equal(db.reverse().get(0), 1, 'reverse: array');
@@ -23,6 +27,7 @@
 					equal(db2.reverse().get('eq(0)'), 1, 'reverse: object');
 					
 					equal(db3.sort('name').get('eq(0)').name, 'Andrey', 'object with context');
+					equal(db3.sort(':el.age1 + el.age2').get('eq(0)').name, 'Andrey', 'object with string expression');
 			});
 		});
 	</script>

@@ -52,6 +52,7 @@ copy	^
 		^
 		+ compile\compile.filter.js ^
 		+ compile\compile.parser.js ^
+		+ compile\compile.func.js ^
 		^
 		+ context\context.js ^
 		^

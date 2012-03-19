@@ -7,7 +7,7 @@
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {mixed} el — current element
 	 * @param {Number|String} key — key
 	 * @param {Collection} data — link to collection
@@ -116,7 +116,6 @@
 				
 				j = (tmpResult = calFilter(filter.slice((j + 1)), j)).iter;
 				tmpResult = tmpResult.result.join(' ');
-				
 				tmpResult = this._customFilter(tmpResult, el, key, data, i, length, cObj, id);
 				
 				if (!and && !or) {
@@ -166,19 +165,4 @@
 		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
 		
 		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', 'return ' + str.replace(/^\s*:/, '') + ';');
-	};
-	/**
-	 * compile function
-	 * 
-	 * @param {String} str — some string
-	 * @return {Function}
-	 */
-	Collection.prototype._compileFunc = function (str) {
-		var res = /^\s*\(*\s*/.exec(str);
-		if (res.length !== 0) {
-			str = str.substring(res[0].length + 1, str.length - res[0].length);
-		}
-		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
-		
-		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', str.replace(/^\s*:/, '') + ';');
 	};

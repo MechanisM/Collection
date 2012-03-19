@@ -62,7 +62,7 @@
 	 * events: onSort
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} [field] — field name
+	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
 	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
@@ -76,9 +76,16 @@
 	 *	{name: 'Bon', age: 25},
 	 *	{name: 'Bill', age: 15}
 	 * ]).sort('name').getCollection();
+	 * @example
+	 * $C([
+	 *	{name: 'Andrey', age: 22, lvl: 80},
+	 *	{name: 'John', age: 19, lvl: 95},
+	 *	{name: 'Bon', age: 25, lvl: 85},
+	 *	{name: 'Bill', age: 15, lvl: 80}
+	 * ]).sort(':el.age + el.lvl').getCollection();
 	 */
 	Collection.prototype.sort = function (field, rev, fn, id) {
-		field = field || '';
+		field = (field = field || '') && this._exprTest(field) ? this._compileFilter(field) : field;
 		rev = rev || false;
 		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
 			if (Collection.isString(a)) { return a.toUpperCase(); }
@@ -96,13 +103,18 @@
 				
 				// sort by field
 				if (field) {
-					a = Collection.byLink(a, field);
-					b = Collection.byLink(b, field);
+					if (!Collection.isFunction(field)) {
+						a = Collection.byLink(a, field);
+						b = Collection.byLink(b, field);
+					} else {
+						a = field(a, id);
+						b = field(a, id);
+					}
 				}
 				// callback function
 				if (fn) {
-					a = fn(a);
-					b = fn(b);
+					a = fn(a, id);
+					b = fn(b, id);
 				}
 				
 				if (rev !== self.SHUFFLE) {	

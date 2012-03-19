@@ -7,9 +7,9 @@
 	 * get statistic information for group
 	 *  
 	 * @this {Colletion Object}
-	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function
-	 * @param {Context} [field] — field name
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
@@ -26,7 +26,8 @@
 	 * console.log(db.groupStat('min'));
 	 */
 	Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
-		oper = oper || 'count';
+		oper = (oper = oper || 'count') && this._exprTest(oper) ? this._compileFilter(oper) : oper;
+		field = (field = field || '') && this._exprTest(field) ? this._compileFilter(field) : field;
 		id = id || '';
 
 		// values by default
@@ -39,7 +40,7 @@
 			
 			/** @private */
 			deepAction = function (el, key, data, i, length, cObj, id) {
-				var param = Collection.byLink(el, field || '');
+				var param = Collection.isString(field) ? Collection.byLink(el, field) : field(el, key, data, i, length, cObj, id);
 				
 				switch (oper) {
 					case 'count' : {

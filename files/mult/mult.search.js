@@ -7,7 +7,7 @@
 	 * search for elements using filter (returns a reference to elements) (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
@@ -57,7 +57,7 @@
 	 * search for one element using filter (returns a reference to element) (in context)
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Number|Array}
 	 *

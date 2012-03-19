@@ -1,4 +1,47 @@
-﻿/** * <p>Collection — JS (JavaScript) framework for working with collections of data.<br /> * http://collection-js.com * </p> * * <strong>Glossary:</strong> * <ul> * <li><b>Collection</b> — data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);</li> * <li><b>Filter</b> — is a special function, which returns a Boolean value for each row of the collection;</li> * <li><b>Parser</b> — is a special function which makes the post—processing of the template;</li> * <li><b>Context</b> — a string which specifies a link to the context of the collection (for example: 'Name > 1' indicates the obj.Name[1], where obj is the instance of collection);</li> * <li><b>Template</b> — is a special function, which converts the collection in the text, in accordance with special regulations.</li> * </ul> * * <strong>Addition:</strong> * <p>The code is documented in accordance with the standard <a href='http://en.wikipedia.org/wiki/JSDoc' target='_blank'>jsDoc</a>.<br /> * Specific data types:</p> * <ul> * <li><b>[Collection Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of Collection;</li> * <li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li> * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (CSS3 syntax);</li> * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li> * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li> * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String]</b> and means the function—filter or string expression;</li> * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function—parser or string expression;</li> * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li> * </ul> * * <p>Enjoy!</p> * * <p>Copyright 2012, Andrey Kobets (Kobezzza)<br /> * Dual licensed under the MIT or GPL Version 2 licenses.</p> * * @class * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com) * @date: 14.03.2012 6:15:57 * @version 3.6 * * @constructor * @this {Colletion Object} * @param {Collection} [collection=null] — collection * @param {Plain Object} [uProp=Collection.fields.dObj.active] — additional properties */var Collection;(function () {	'use strict';		
+﻿/**
+ * <p>Collection — JS (JavaScript) framework for working with collections of data.<br />
+ * http://collection-js.com
+ * </p>
+ *
+ * <strong>Glossary:</strong>
+ * <ul>
+ * <li><b>Collection</b> — data object the JS, can be implemented as an array, and as a hash table (you can combine arrays with the hash, for example: [{...},{...},...]);</li>
+ * <li><b>Filter</b> — is a special function, which returns a Boolean value for each row of the collection;</li>
+ * <li><b>Parser</b> — is a special function which makes the post—processing of the template;</li>
+ * <li><b>Context</b> — a string which specifies a link to the context of the collection (for example: 'Name > 1' indicates the obj.Name[1], where obj is the instance of collection);</li>
+ * <li><b>Template</b> — is a special function, which converts the collection in the text, in accordance with special regulations.</li>
+ * </ul>
+ *
+ * <strong>Addition:</strong>
+ * <p>The code is documented in accordance with the standard <a href='http://en.wikipedia.org/wiki/JSDoc' target='_blank'>jsDoc</a>.<br />
+ * Specific data types:</p>
+ * <ul>
+ * <li><b>[Collection Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of Collection;</li>
+ * <li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li>
+ * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (CSS3 syntax);</li>
+ * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li>
+ * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li>
+ * <li><b>[String Expression]</b> is a reduced form of the <b>[String]</b> and means the abbreviated syntax recording function;</li>
+ * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String Expression]</b> and means the function or string expression;</li>
+ * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function or string expression;</li>
+ * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li>
+ * </ul>
+ *
+ * <p>Enjoy!</p>
+ *
+ * <p>Copyright 2012, Andrey Kobets (Kobezzza)<br />
+ * Dual licensed under the MIT or GPL Version 2 licenses.</p>
+ *
+ * @class
+ * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
+ * @date: 14.03.2012 6:15:57
+ * @version 3.6
+ *
+ * @constructor
+ * @this {Colletion Object}
+ * @param {Collection} [collection=null] — collection
+ * @param {Plain Object} [uProp=Collection.fields.dObj.active] — additional properties
+ */var Collection;(function () {	'use strict';		
 	/////////////////////////////////
 	//// constructor
 	/////////////////////////////////
@@ -2065,7 +2108,7 @@
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression, collection or true (if disabled)
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @throw {Error}
 	 * @return {Number}
@@ -2145,8 +2188,8 @@
 	 * forEach method (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback — function to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String|Boolean} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
@@ -2159,11 +2202,16 @@
 	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 all elements of multiples of three //
 	 * db.forEach(function (el, key, data, i) {
-	 *		data[key].a += 1;
+	 *		el.a += 1;
 	 *	}, ':i % 3 === 0');
+	 * console.log(db.get());
+	 * @example
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
+	 * db.forEach(':el.a += 1', ':i % 3 === 0');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf) {
+		callback = this._exprTest(callback) ? this._compileFunc(callback) : callback;
 		filter = filter || '';
 		
 		// if id is Boolean
@@ -2270,8 +2318,8 @@
 	 * performs an action only for one element of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Function} callback — function to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
@@ -2294,7 +2342,7 @@
 	 * search for elements using filter (returns a reference to elements) (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
@@ -2344,7 +2392,7 @@
 	 * search for one element using filter (returns a reference to element) (in context)
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Number|Array}
 	 *
@@ -2423,7 +2471,7 @@
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
@@ -2507,8 +2555,8 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
-	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback) 
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
@@ -2552,8 +2600,8 @@
 				return this._setOne(filter, replaceObj, id || '');
 			}
 		
+		// compile replace object if need
 		replaceObj = this._exprTest(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
-		
 		var e, arg, res,
 			isFunc = Collection.isFunction(replaceObj),
 
@@ -2583,8 +2631,8 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
-	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
@@ -2614,7 +2662,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
@@ -2623,7 +2671,7 @@
 	 * $C([1, 2, 3, 4, 5, 6]).map(Math.sin, ':el % 2 === 0').get();
 	 */
 	Collection.prototype.map = function (replaceObj, filter, id) {
-		return this.set(filter || '', replaceObj, id || '');
+		return this.set(filter || true, replaceObj, id || '');
 	};
 	/////////////////////////////////
 	//// mult methods (move && copy)
@@ -2634,7 +2682,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} [context] — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -2713,7 +2761,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -2734,7 +2782,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -2764,7 +2812,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String} [moveFilter] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -2789,7 +2837,7 @@
 	 * events: onRemove
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression, context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
@@ -2852,8 +2900,8 @@
 	 * group the elements on the field or condition (the method returns a new collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Expression|Function} [field] — field name, string expression or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (the record is equivalent to: return + string expression) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
@@ -2900,8 +2948,8 @@
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Expression|Function} [field] — field name, string expression or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (the record is equivalent to: return + string expression) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
@@ -2927,9 +2975,9 @@
 	 * get statistic information
 	 *  
 	 * @this {Colletion Object}
-	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function
-	 * @param {Context} [field] — field name
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
@@ -2942,7 +2990,8 @@
 	 * $C([1, 2, 3, 4, 5, 6, 7, 0]).stat('min');
 	 */
 	Collection.prototype.stat = function (oper, field, filter, id, count, from, indexOf) {
-		oper = oper || 'count';
+		oper = (oper = oper || 'count') && this._exprTest(oper) ? this._compileFilter(oper) : oper;
+		field = (field = field || '') && this._exprTest(field) ? this._compileFilter(field) : field;
 		id = id || '';
 	
 		// values by default
@@ -2955,7 +3004,7 @@
 			
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
-				var param = Collection.byLink(el, field || '');
+				var param = Collection.isString(field) ? Collection.byLink(el, field) : field(el, key, data, i, length, cObj, id);
 				
 				switch (oper) {
 					case 'count' : {
@@ -3010,9 +3059,9 @@
 	 * get statistic information for group
 	 *  
 	 * @this {Colletion Object}
-	 * @param {String|Function} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function
-	 * @param {Context} [field] — field name
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
@@ -3029,7 +3078,8 @@
 	 * console.log(db.groupStat('min'));
 	 */
 	Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
-		oper = oper || 'count';
+		oper = (oper = oper || 'count') && this._exprTest(oper) ? this._compileFilter(oper) : oper;
+		field = (field = field || '') && this._exprTest(field) ? this._compileFilter(field) : field;
 		id = id || '';
 
 		// values by default
@@ -3042,7 +3092,7 @@
 			
 			/** @private */
 			deepAction = function (el, key, data, i, length, cObj, id) {
-				var param = Collection.byLink(el, field || '');
+				var param = Collection.isString(field) ? Collection.byLink(el, field) : field(el, key, data, i, length, cObj, id);
 				
 				switch (oper) {
 					case 'count' : {
@@ -3169,7 +3219,7 @@
 	 * events: onSort
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context} [field] — field name
+	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
 	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
@@ -3183,9 +3233,16 @@
 	 *	{name: 'Bon', age: 25},
 	 *	{name: 'Bill', age: 15}
 	 * ]).sort('name').getCollection();
+	 * @example
+	 * $C([
+	 *	{name: 'Andrey', age: 22, lvl: 80},
+	 *	{name: 'John', age: 19, lvl: 95},
+	 *	{name: 'Bon', age: 25, lvl: 85},
+	 *	{name: 'Bill', age: 15, lvl: 80}
+	 * ]).sort(':el.age + el.lvl').getCollection();
 	 */
 	Collection.prototype.sort = function (field, rev, fn, id) {
-		field = field || '';
+		field = (field = field || '') && this._exprTest(field) ? this._compileFilter(field) : field;
 		rev = rev || false;
 		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
 			if (Collection.isString(a)) { return a.toUpperCase(); }
@@ -3203,13 +3260,18 @@
 				
 				// sort by field
 				if (field) {
-					a = Collection.byLink(a, field);
-					b = Collection.byLink(b, field);
+					if (!Collection.isFunction(field)) {
+						a = Collection.byLink(a, field);
+						b = Collection.byLink(b, field);
+					} else {
+						a = field(a, id);
+						b = field(a, id);
+					}
 				}
 				// callback function
 				if (fn) {
-					a = fn(a);
-					b = fn(b);
+					a = fn(a, id);
+					b = fn(b, id);
 				}
 				
 				if (rev !== self.SHUFFLE) {	
@@ -3561,7 +3623,7 @@
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {mixed} el — current element
 	 * @param {Number|String} key — key
 	 * @param {Collection} data — link to collection
@@ -3670,7 +3732,6 @@
 				
 				j = (tmpResult = calFilter(filter.slice((j + 1)), j)).iter;
 				tmpResult = tmpResult.result.join(' ');
-				
 				tmpResult = this._customFilter(tmpResult, el, key, data, i, length, cObj, id);
 				
 				if (!and && !or) {
@@ -3720,21 +3781,6 @@
 		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
 		
 		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', 'return ' + str.replace(/^\s*:/, '') + ';');
-	};
-	/**
-	 * compile function
-	 * 
-	 * @param {String} str — some string
-	 * @return {Function}
-	 */
-	Collection.prototype._compileFunc = function (str) {
-		var res = /^\s*\(*\s*/.exec(str);
-		if (res.length !== 0) {
-			str = str.substring(res[0].length + 1, str.length - res[0].length);
-		}
-		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
-		
-		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', str.replace(/^\s*:/, '') + ';');
 	};	
 	/////////////////////////////////
 	//// compile (parser)
@@ -3818,6 +3864,25 @@
 		return new Function('str', 'cObj', 'return ' + str.replace(/^\s*:/, '') + ';');
 	};	
 	/////////////////////////////////
+	//// compile (function)
+	/////////////////////////////////
+	
+	/**
+	 * compile function
+	 * 
+	 * @param {String} str — some string
+	 * @return {Function}
+	 */
+	Collection.prototype._compileFunc = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
+		
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', str.replace(/^\s*:/, '') + ';');
+	};	
+	/////////////////////////////////
 	// context methods
 	/////////////////////////////////
 	
@@ -3897,7 +3962,6 @@
 	Collection.prototype._exprTest = function (str) {
 		return Collection.isString(str) && str.search(/^:/) !== -1;
 	};
-	
 		
 	/**
 	 * enable flag

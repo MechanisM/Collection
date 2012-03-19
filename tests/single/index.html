@@ -33,8 +33,7 @@
 			});
 			
 			test('remove', function () {
-				var
-					obj = {first: [[1, 2, {second: 3}], 2, 3], second: [1, 2, 3, 4]},
+				var	obj = {first: [[1, 2, {second: 3}], 2, 3], second: [1, 2, 3, 4]};
 					db = new Collection(obj);
 				
 				equal(db
@@ -57,6 +56,9 @@
 					.remove({stack: ['second > eq(0)', 'second > eq(0)'], active: 'second > eq(0)'})
 					.get('second').length, 1,
 				'remove -> object');
+								
+				equal($C([1, 2, 3, 4]).pop().get('eq(-1)'), 3, 'pop');
+				equal($C([1, 2, 3, 4]).shift().get('0'), 2, 'shift');
 			});
 			
 			test('add', function () {
@@ -73,6 +75,12 @@
 				'add - copy');
 				equal(db.get('first').length, 2,
 				'add - move');
+				
+				equal($C([1, 2, 3, 4]).push(1).get('eq(-1)'), 1, 'push (array)');
+				equal($C([1, 2, 3, 4]).unshift(0).get('0'), 0, 'unshift (array)');
+				
+				equal($C({'0': 1, '1': 2, '2': 3, '3': 4}).push(1).get('eq(-1)'), 1, 'push (object)');
+				equal($C({'0': 1, '1': 2, '2': 3, '3': 4}).unshift(0).get('0'), 0, 'unshift (object)');
 			});
 		});
 	</script>

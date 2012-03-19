@@ -43,38 +43,38 @@
 			});
 			module('forEach methods');
 			test('forEach', function () {
-				var
-					db = new Collection([1, 2, 3, 4]),
-					db2 = new Collection([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
-					db3 = new Collection([1, 2, 3, 4]);
-				
-				equal(db.forEach(function (el, i, data) {
+				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
 					data[i] += 1;
 				}).get()[0], 2, 'simple forEach');
+				equal($C([1, 2, 3, 4]).forEach(':data[i] += 1').get()[0], 2, 'simple forEach with string expression');
 				
-				equal(db.forEach(function (el, i, data) {
+				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
 					data[i] += 1;
 				}, function (el, i, data) {
 					return el > 2;
-				}).get()[0], 2, 'forEach with filter: > 2');
-				equal(db.forEach(function (el, i, data) {
+				}).get()[0], 1, 'forEach with filter: > 2');
+				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
 					data[i] += 1;
-				}, ':el > 2').get()[0], 2, 'forEach with expression filter: :el > 2');
+				}, ':el > 2').get()[0], 1, 'forEach with expression filter: :el > 2');
 				
-				equal(db3.forEach(function (el, i, data) {
+				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
 					data[i] += 1;
 				}, '(:el > 2) && (:el < 4)').get()[3], 4, 'forEach with expression filter: (:el > 2) && (:el < 4)');
 				
-				equal(db2.forEach(function (el, i, data) {
+				equal($C([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).forEach(function (el, i, data) {
 					data[i] += 1;
 				}, '', '', '', 2, 2, 5).get('eq(-1)'), 10, 'with indexOf');
 			});
 			test('search', function () {
-				var db = new Collection([1, 2, 3, 4]);
+				var db = new Collection([1, 2, 3, 4, 1, 2, 3, 4]);
 				
 				equal(db.search(function (el, i, data) {
 					return el === 1;
 				})[0], 0, 'simple search');
+				equal(db.indexOf(1), 0, 'indexOf');
+				equal(db.indexOf(1, 2), 4, 'indexOf with fromIndex');
+				
+				equal(db.lastIndexOf(1), 4, 'lastIndexOf');
 			});
 			test('get', function () {
 				var db = new Collection([1, 2, 3, 4]);
@@ -84,10 +84,12 @@
 				})[0], 1, 'simple return');
 			});
 			test('set', function () {
-				var db = new Collection([1, 2, 3, 4]);
+				equal($C([1, 2, 3, 4]).set(true, 2).get()[0], 2, 'simple replace');
+				equal($C([1, 2, 3, 4]).set(true, '+=2').get()[0], 3, 'simple replace: += 2');
+				equal($C([{a: 1}, {a: 2}, {a: 3}, {a: 4}]).set(true, ':el.a += 1').get()[0].a, 2, 'replace with string expression (without return)');
+				equal($C([{a: 1}, {a: 2}, {a: 3}, {a: 4}]).set(true, ':return 22').get()[0], 22, 'replace with string expression');
 				
-				equal(db.set(true, 2).get()[0], 2, 'simple replace');
-				equal(db.set(true, '+=2').get()[0], 4, 'simple replace: += 2');
+				equal($C([1, 2, 3, 4]).map(Math.sin).get()[0].toFixed(2), '0.84', 'map');
 			});
 			test('remove', function () {
 				var db = new Collection([1, 2, 3, 4]);
