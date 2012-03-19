@@ -34,8 +34,8 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 14.03.2012 6:15:57
- * @version 3.6
+ * @date: 19.03.2012 6:57:58
+ * @version 3.6.2
  *
  * @constructor
  * @this {Colletion Object}
@@ -793,7 +793,7 @@
 				if (res === true) { break; }
 			}
 		}
-	}		/////////////////////////////////	//// prototype	/////////////////////////////////		Collection.prototype = {		/**		 * framework name		 * 		 * @constant		 * @type String		 */		name: 'Collection',		/**		 * framework version		 * 		 * @constant		 * @type String		 */		version: '3.6',		/**		 * return string: framework name + framework version		 *		 * @this {Collection Object}		 * @return {String}		 */		collection: function () { return this.name + ' ' + this.version; },				// const		ACTIVE: 'active',		SHUFFLE: 'shuffle',		NAMESPACE_SEPARATOR: '.',				/**		 * stack parameters		 * 		 * @private		 * @field		 * @type Array		*/		stack: [			'namespace',						'collection',			'filter',			'context',			'cache',			'variable',			'defer',				'page',			'parser',			'appendType',			'target',			'calculator',			'pager',			'template',			'numberBreak',			'pageBreak',			'resultNull'		]	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};	
+	}		/////////////////////////////////	//// prototype	/////////////////////////////////		Collection.prototype = {		/**		 * framework name		 * 		 * @constant		 * @type String		 */		name: 'Collection',		/**		 * framework version		 * 		 * @constant		 * @type String		 */		version: '3.6.2',		/**		 * return string: framework name + framework version		 *		 * @this {Collection Object}		 * @return {String}		 */		collection: function () { return this.name + ' ' + this.version; },				// const		ACTIVE: 'active',		SHUFFLE: 'shuffle',		NAMESPACE_SEPARATOR: '.',				/**		 * stack parameters		 * 		 * @private		 * @field		 * @type Array		*/		stack: [			'namespace',						'collection',			'filter',			'context',			'cache',			'variable',			'defer',				'page',			'parser',			'appendType',			'target',			'calculator',			'pager',			'template',			'numberBreak',			'pageBreak',			'resultNull'		]	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};	
 	/////////////////////////////////
 	//// DOM methods
 	/////////////////////////////////
@@ -3221,7 +3221,7 @@
 	 * @this {Colletion Object}
 	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
-	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled)
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
@@ -3249,6 +3249,7 @@
 			
 			return a;
 		};
+		fn = this._exprTest(fn) ? this._compileFilter(fn) : fn;
 		id = id || '';
 		
 		var self = this,
@@ -4054,8 +4055,9 @@
 	 * @param {Number} [param.pageBreak=this.ACTIVE] — number of displayed pages (navigation, > 2)
 	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
-	 * @param {Filter|Boolean} [param.filter=this.ACTIVE] — filter function, string expression or true (if disabled)
-	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression
+	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression)
+	 * @param {Filter} [param.filter=this.ACTIVE] — function, which is performed every iteration of the template (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (the record is equivalent to: return + string expression)
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
 	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)
@@ -4097,6 +4099,10 @@
 		
 		opt.target = Collection.isString(opt.target) ? dom.find(opt.target) : opt.target;
 		opt.pager = Collection.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
+		
+		opt.filter = this._exprTest(opt.filter) ? this._compileFilter(opt.filter) : opt.filter;
+		opt.parser = this._exprTest(opt.parser) ? this._compileParser(opt.parser) : opt.parser;
+		opt.callback = opt.callback && this._exprTest(opt.callback) ? this._compileFunc(opt.callback) : opt.callback;
 		
 		if (clear === true) { opt.cache.iteration = false; }
 		

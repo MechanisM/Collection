@@ -34,8 +34,8 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 14.03.2012 6:15:57
- * @version 3.6
+ * @date: 19.03.2012 6:57:58
+ * @version 3.6.2
  *
  * @constructor
  * @this {Colletion Object}

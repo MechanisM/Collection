@@ -64,7 +64,7 @@
 	 * @this {Colletion Object}
 	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
-	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled)
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
@@ -92,6 +92,7 @@
 			
 			return a;
 		};
+		fn = this._exprTest(fn) ? this._compileFilter(fn) : fn;
 		id = id || '';
 		
 		var self = this,

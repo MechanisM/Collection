@@ -1,5 +1,5 @@
 ﻿/**
- * Collection v3.6 | http://collection-js.com
+ * Collection v3.6.2 | http://collection-js.com
  * 
  * Copyright 2012, Andrey Kobets (Kobezzza | kobezzza@gmail.com | http://kobezzza.com)
  * Dual licensed under the MIT or GPL Version 2 licenses.
