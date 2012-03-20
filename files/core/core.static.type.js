@@ -14,7 +14,7 @@
 	 * @example
 	 * $C.toString(2);
 	 */
-	Collection.toString = function (obj) {
+	Collection.objToString = function (obj) {
 		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }
 		return Object.prototype.toString.call(obj);
 	};
@@ -43,7 +43,7 @@
 	 * $C.type(2);
 	 */
 	Collection.type = function (obj) {
-		return obj == null ? String(obj) : Collection.types[Collection.toString(obj)] || 'object';
+		return obj == null ? String(obj) : Collection.types[Collection.objToString(obj)] || 'object';
 	};
 	
 	/**

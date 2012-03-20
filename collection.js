@@ -296,7 +296,7 @@
 	 * @example
 	 * $C.toString(2);
 	 */
-	Collection.toString = function (obj) {
+	Collection.objToString = function (obj) {
 		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }
 		return Object.prototype.toString.call(obj);
 	};
@@ -325,7 +325,7 @@
 	 * $C.type(2);
 	 */
 	Collection.type = function (obj) {
-		return obj == null ? String(obj) : Collection.types[Collection.toString(obj)] || 'object';
+		return obj == null ? String(obj) : Collection.types[Collection.objToString(obj)] || 'object';
 	};
 	
 	/**
@@ -1104,13 +1104,15 @@
 				if (Collection.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
 			}
 			
+			// if the target is not defined, then take the parent node
+			if (!data.target) {
+				this._push('target', prefix + data.name, [el.parentNode]);
+				if (data.set && data.set === true) { this._set('target', prefix + data.name); }
+			}
+			
 			// print template (if need)
 			if (data.print && data.print === true) {
 				data.template = data.name;
-				if (!data.target) {
-					this._push('target', prefix + data.name, [el.parentNode]);
-					if (data.set && data.set === true) { this._set('target', prefix + data.name); }
-				}
 				
 				this.print(data);
 			}
@@ -4082,7 +4084,7 @@
 			result = '', action, e,
 			
 			dom = this.drivers.dom;
-			
+		
 		// easy implementation
 		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {
 			param = {page: param};

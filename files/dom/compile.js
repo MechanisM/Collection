@@ -66,13 +66,15 @@
 				if (Collection.find(key, ['filter', 'parser'])) { data[key] = prefix + data.name; }
 			}
 			
+			// if the target is not defined, then take the parent node
+			if (!data.target) {
+				this._push('target', prefix + data.name, [el.parentNode]);
+				if (data.set && data.set === true) { this._set('target', prefix + data.name); }
+			}
+			
 			// print template (if need)
 			if (data.print && data.print === true) {
 				data.template = data.name;
-				if (!data.target) {
-					this._push('target', prefix + data.name, [el.parentNode]);
-					if (data.set && data.set === true) { this._set('target', prefix + data.name); }
-				}
 				
 				this.print(data);
 			}

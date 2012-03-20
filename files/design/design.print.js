@@ -43,7 +43,7 @@
 			result = '', action, e,
 			
 			dom = this.drivers.dom;
-			
+		
 		// easy implementation
 		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {
 			param = {page: param};
