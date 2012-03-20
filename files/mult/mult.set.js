@@ -13,8 +13,8 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example

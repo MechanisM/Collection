@@ -2323,6 +2323,8 @@
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2333,8 +2335,8 @@
 	 *	}, ':i % 3 === 0');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.some = function (callback, filter, id) {
-		return this.forEach(callback, filter || '', id || '', false);
+	Collection.prototype.some = function (callback, filter, id, from, indexOf) {
+		return this.forEach(callback, filter || '', id || '', false, '', from || '', indexOf || '');
 	};	
 	/////////////////////////////////
 	//// mult methods (search)
@@ -2348,8 +2350,8 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Number|Array}
 	 *
 	 * @example
@@ -2396,6 +2398,8 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Number|Array}
 	 *
 	 * @example
@@ -2405,8 +2409,8 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.searchOne(function (el, key, data, i) { return i % 3 === 0; });
 	 */
-	Collection.prototype.searchOne = function (filter, id) {
-		return this.search(filter || '', id || '', false);
+	Collection.prototype.searchOne = function (filter, id, from, indexOf) {
+		return this.search(filter || '', id || '', false, '', from || '', indexOf || '');
 	};
 	
 	/**
@@ -2477,8 +2481,8 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {mixed}
 	 *
 	 * @example
@@ -2534,6 +2538,8 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {mixed}
 	 *
 	 * @example
@@ -2545,8 +2551,8 @@
 	 *		return i % 3 === 0;
 	 *	});
 	 */
-	Collection.prototype.getOne = function (filter, id) {
-		return this.get(filter || '', id || '', false);
+	Collection.prototype.getOne = function (filter, id, from, indexOf) {
+		return this.get(filter || '', id || '', false, '', from || '', indexOf || '');
 	};
 	/////////////////////////////////
 	//// mult methods (set)
@@ -2562,8 +2568,8 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2691,8 +2697,8 @@
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @param {Boolean} [deleteType=true] — if true, remove source element
 	 * @return {Colletion Object}
 	 *
@@ -2768,6 +2774,8 @@
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2776,8 +2784,8 @@
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false);
+	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf) {
+		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
@@ -2791,8 +2799,8 @@
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2819,6 +2827,8 @@
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2827,8 +2837,8 @@
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', '', '', false);
+	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf) {
+		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -2843,8 +2853,8 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2881,6 +2891,8 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2891,8 +2903,8 @@
 	 *		return i % 2 !== 0;
 	 *	}).get();
 	 */
-	Collection.prototype.removeOne = function (filter, id) {
-		return this.remove(filter || '', id || '', false);
+	Collection.prototype.removeOne = function (filter, id, from, indexOf) {
+		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '');
 	};	
 	/////////////////////////////////
 	//// mult methods (group)
@@ -2906,8 +2918,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @param {Boolean} [link=false] — save link
 	 * @return {Colletion}
 	 *
@@ -2954,8 +2966,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -2982,8 +2994,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -3066,8 +3078,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion}
 	 *
 	 * @example

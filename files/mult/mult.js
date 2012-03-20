@@ -225,6 +225,8 @@
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -235,6 +237,6 @@
 	 *	}, ':i % 3 === 0');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.some = function (callback, filter, id) {
-		return this.forEach(callback, filter || '', id || '', false);
+	Collection.prototype.some = function (callback, filter, id, from, indexOf) {
+		return this.forEach(callback, filter || '', id || '', false, '', from || '', indexOf || '');
 	};

@@ -12,8 +12,8 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -50,6 +50,8 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -60,6 +62,6 @@
 	 *		return i % 2 !== 0;
 	 *	}).get();
 	 */
-	Collection.prototype.removeOne = function (filter, id) {
-		return this.remove(filter || '', id || '', false);
+	Collection.prototype.removeOne = function (filter, id, from, indexOf) {
+		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '');
 	};

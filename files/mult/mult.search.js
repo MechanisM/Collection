@@ -11,8 +11,8 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Number|Array}
 	 *
 	 * @example
@@ -59,6 +59,8 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Number|Array}
 	 *
 	 * @example
@@ -68,8 +70,8 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.searchOne(function (el, key, data, i) { return i % 3 === 0; });
 	 */
-	Collection.prototype.searchOne = function (filter, id) {
-		return this.search(filter || '', id || '', false);
+	Collection.prototype.searchOne = function (filter, id, from, indexOf) {
+		return this.search(filter || '', id || '', false, '', from || '', indexOf || '');
 	};
 	
 	/**

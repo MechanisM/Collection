@@ -15,8 +15,8 @@
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @param {Boolean} [deleteType=true] — if true, remove source element
 	 * @return {Colletion Object}
 	 *
@@ -92,6 +92,8 @@
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -100,8 +102,8 @@
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false);
+	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf) {
+		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
@@ -115,8 +117,8 @@
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
-	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: -1)
-	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: -1)
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -143,6 +145,8 @@
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
+	 * @param {Number|Boolean} [from=false] — skip a number of elements (by default: 0)
+	 * @param {Number|Boolean} [indexOf=false] — starting point (by default: 0)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -151,6 +155,6 @@
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', '', '', false);
+	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf) {
+		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', false);
 	};
