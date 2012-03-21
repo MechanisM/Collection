@@ -143,7 +143,7 @@
 			data, length, fLength,
 			cloneObj,
 			
-			key, i = 0, j = 0, n,
+			key, i = 0, j = 0,
 			res = false;
 		
 		// get by link
@@ -174,12 +174,7 @@
 		if (Collection.isArray(data)) {
 			// cut off the array to indicate the start
 			if (indexOf !== false) {
-				if (!rev) {
-					cloneObj = data.slice(indexOf);
-				} else {
-					cloneObj = data;
-					cloneObj.splice(cloneObj.length - indexOf, indexOf);
-				}
+				if (!rev) { cloneObj = data.slice(indexOf); }
 			} else { cloneObj = data; }
 			
 			// bypassing the array in ascending order
@@ -204,14 +199,14 @@
 			
 			// bypassing the array in descending order
 			} else {
-				for (n = cloneObj.length; (n -= 1) > -1;) {
+				for (key = cloneObj.length - indexOf; (key -= 1) > -1;) {
 					if (count !== false && j === count) { return true; }
 					
-					if (this._customFilter(filter, cloneObj[n], n, data, i, fLength, this, id, tmpObj) === true) {
+					if (this._customFilter(filter, cloneObj[key], key, data, i, fLength, this, id, tmpObj) === true) {
 						if (from !== false && from !== 0) {
 							from -= 1;
 						} else {
-							res = callback.call(callback, cloneObj[n], n, data, i, length, this, id) === false;
+							res = callback.call(callback, cloneObj[key], key, data, i, length, this, id) === false;
 							if (mult === false) { res = true; }
 							j += 1;
 						}
@@ -251,20 +246,14 @@
 					tmpArray.push(key);
 				}
 				
-				// cut off the array to indicate the start
-				cloneObj = tmpArray;
-				if (indexOf !== false) {
-					cloneObj.splice(cloneObj.length - indexOf, indexOf);
-				}
-				
-				for (n = cloneObj.length; (n -= 1) > -1;) {
+				for (key = tmpArray.length - indexOf; (key -= 1) > -1;) {
 					if (count !== false && j === count) { return true; }
 					
-					if (this._customFilter(filter, data[cloneObj[n]], cloneObj[n], data, i, fLength, this, id, tmpObj) === true) {
+					if (this._customFilter(filter, data[tmpArray[key]], tmpArray[key], data, i, fLength, this, id, tmpObj) === true) {
 						if (from !== false && from !== 0) {
 							from -= 1;
 						} else {
-							res = callback.call(callback, data[cloneObj[n]], cloneObj[n], data, i, length, this, id) === false;
+							res = callback.call(callback, data[tmpArray[key]], tmpArray[key], data, i, length, this, id) === false;
 							if (mult === false) { res = true; }
 							j += 1;
 						}
