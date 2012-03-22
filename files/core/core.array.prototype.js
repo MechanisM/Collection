@@ -1,45 +1,1 @@
-	
-	/////////////////////////////////
-	//// array prototype
-	/////////////////////////////////
-
-	if (!Array.prototype.forEach) {
-		/**
-		 * calls a function for each element in the array
-		 *
-		 * @this {Array}
-		 * @param {Function} callback — function to test each element of the array
-		 * @param {mixed} [thisObject] — object to use as this when executing callback
-		 * @return {undefined}
-		 */
-		Array.prototype.forEach = function (callback, thisObject) {
-			var i = -1, aLength = this.length;
-			
-			while ((i += 1) < aLength) {
-				if (!thisObject) {
-					callback(this[i], i, this);
-				} else { callback.call(thisObject, this[i], i, this); }
-			}
-		}
-	}
-	
-	if (!Array.prototype.some) {
-		/**
-		 * tests whether some element in the array passes the test implemented by the provided function
-		 *
-		 * @this {Array}
-		 * @param {Function} callback — function to test each element of the array
-		 * @param {mixed} [thisObject] — object to use as this when executing callback
-		 * @return {undefined}
-		 */
-		Array.prototype.some = function (callback, thisObject) {
-			var i = -1, aLength = this.length, res;
-			
-			while ((i += 1) < aLength) {
-				if (!thisObject) {
-					res = callback(this[i], i, this);
-				} else { res = callback.call(thisObject, this[i], i, this); }
-				if (res === true) { break; }
-			}
-		}
-	}
+		/////////////////////////////////	//// array prototype	/////////////////////////////////	if (!Array.prototype.forEach) {		/**		 * calls a function for each element in the array		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {undefined}		 */		Array.prototype.forEach = function (callback, thisObject) {			var i = -1, aLength = this.length;						while ((i += 1) < aLength) {				if (!thisObject) {					callback(this[i], i, this);				} else { callback.call(thisObject, this[i], i, this); }			}		}	}		if (!Array.prototype.some) {		/**		 * tests whether some element in the array passes the test implemented by the provided function		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {Boolean}		 */		Array.prototype.some = function (callback, thisObject) {			var i = -1, aLength = this.length, res;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }				if (res) { return true; }			}						return false;		}	}		if (!Array.prototype.every) {		/**		 * метод возвращает false, если ли хотя бы один элемент массива не удовлетворит фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Boolean}		 *		 * @example		 * [1, 2, 3, 4, 5].every(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.every = function (callback, thisObject) {			var i = -1, aLength = this.length,				res, fRes = true;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }								if (fRes === true && !res) { fRes = false; }			}						return fRes;		};	}		if (!Array.prototype.filter) {		/**		 * метод возвращает новый массив, из элементов исходного, которые удовлетворили фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение для каждого элемента массива		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].filter(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.filter = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					if (callback(this[i], i, this)) {						res.push(this[i]);					}				} else {					if (callback.call(thisObject, this[i], i, this)) {						res.push(this[i]);					}				}			}						return res;		};	}		if (!Array.prototype.map) {		/**		 * метод возвращает новый массив, из элементов исходного, которые прошли через функцию callback		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать новое значение элемента		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].map(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.map = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					res.push(callback(this[i], i, this));				} else {					res.push(callback.call(thisObject, this[i], i, this));				}			}						return res;		};	}		if (!Array.prototype.indexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает его индекс (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=0] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5].indexOf(4); // 3		 * [1, 2, 3, 4, 5].indexOf(4, 4); // -1		 */		Array.prototype.indexOf = function (searchElement, fromIndex) {			var i = (fromIndex || 0) - 1,				aLength = this.length;						while ((i += 1) < aLength) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.lastIndexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает индекс последнего совпадения (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=Array.length] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4); // 5		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4, 3); // 3		 */		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {			var i = fromIndex || this.length;						while ((i -= 1) > -1) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.reduce) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, слева-направо), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduce(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе первый элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduce = function (callback, initialValue) {			var i = 0, aLength = this.length, res;						if (aLength === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[0]; }						while ((i += 1) < aLength) {				res = callback(res, this[i], i, this);			}						return res;		};	}		if (!Array.prototype.reduceRight) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, справа-налево), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduceRight(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе последний элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduceRight = function (callback, initialValue) {			var i = this.length - 1, res;						if (this.length === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[i]; }						while ((i -= 1) > -1) {				res = callback(res, this[i], i, this);			}						return res;		};	}
