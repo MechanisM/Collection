@@ -1281,14 +1281,9 @@
 	Collection.prototype.indexOf = function (searchElement, fromIndex, id) {
 		id = id || '';
 		fromIndex = fromIndex || '';
-		
 		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(data)) {
-			if (fromIndex) { return data.indexOf(searchElement, fromIndex); }
-			
-			return data.indexOf(searchElement);
-		} else { return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex); }
+		return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex);
 	};
 	/**
 	 * returns the last index/key at which a given element can be found in the collection (in context)
@@ -1307,16 +1302,9 @@
 	Collection.prototype.lastIndexOf = function (searchElement, fromIndex, id) {
 		id = id || '';
 		fromIndex = fromIndex || '';
-		
 		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(data)) {
-			if (fromIndex) { return data.lastIndexOf(searchElement, fromIndex); }
-			
-			return data.lastIndexOf(searchElement);
-		} else {
-			return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex, '', true);
-		}
+		return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex, '', true);
 	};	
 	/////////////////////////////////
 	//// mult methods (get)
@@ -1364,7 +1352,7 @@
 				return true;
 			};
 		
-		this.forEach.apply(Collection.unshiftArguments(arguments, action));
+		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
 	
 		return result;
 	};
@@ -1443,10 +1431,9 @@
 	 */
 	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length <= 3 && !Collection.isBoolean(id) && Collection.isString(filter)
-			&& !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-				return this._setOne(filter, replaceObj, id || '');
-			}
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			return this._setOne(filter, replaceObj, id || '');
+		}
 		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;

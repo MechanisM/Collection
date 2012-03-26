@@ -210,43 +210,85 @@
 				equal(db.length('! (a && b) && a', {0: 1, 1: 2, 2: 3}), 1, 'object with filter -> "! (! a && b) && a"');
 			});
 			
-			
 			module('search methods');
 			test('search', function () {
-				var db = new Collection([1, 2, 3, 4, 1, 2, 3, 4]);
+				var db = $C([1, 2, 3, 4, 1, 2, 3, 4]),
+					db2 = $C({0: 1, 1: 2, 2: 3, 3: 4, 4: 1, 5: 2, 6: 3, 7: 4});
 				
 				equal(db.search(function (el, key, data) {
 					return el === 1;
 				})[0], 0, 'simple search');
-				equal(db.indexOf(1), 0, 'indexOf');
-				equal(db.indexOf(1, 2), 4, 'indexOf with fromIndex');
 				
-				equal(db.lastIndexOf(1), 4, 'lastIndexOf');
+				equal(db.search(function (el, key, data) {
+					return el === 1676;
+				}).length, 0, 'empty result');
+				
+				equal(db.search(function (el, key, data) {
+					return el === 2;
+				}, '', false), 1, 'mult -> false');
+				
+				
+				equal(db.indexOf(1), 0, 'indexOf (array)');
+				equal(db2.indexOf(1), '0', 'indexOf (object)');
+				equal(db.indexOf(1, 2), 4, 'indexOf, fromIndex -> 2 (array)');
+				equal(db2.indexOf(1, 2), '4', 'indexOf, fromIndex -> 2 (object)');
+				
+				equal(db.lastIndexOf(4), 7, 'lastIndexOf (array)');
+				equal(db2.lastIndexOf(4), '7', 'lastIndexOf (object)');
+				equal(db.lastIndexOf(4, 3), 3, 'lastIndexOf (array)');
+				equal(db2.lastIndexOf(4, 1), '3', 'lastIndexOf (object)');
 			});
 			
-			/*test('get', function () {
+			module('get methods');
+			test('get', function () {
 				var db = new Collection([1, 2, 3, 4]);
+				
+				equal(db.get()[0], 1, 'empty get');
 				
 				equal(db.get(function (el, key, data) {
 					return el === 1;
-				})[0], 1, 'simple return');
+				})[0], 1, 'simple get');
+				
+				equal(db.get(':el === 1 || el === 2')[1], 2, 'with string expression');
+				
+				equal(db.get('eq(-1)'), 4, 'get by link -> "eq(-1)"');
+				equal(db.get('0'), 1, 'get by link -> "0"');
 			});
+			
+			module('set methods');
 			test('set', function () {
 				equal($C([1, 2, 3, 4]).set(true, 2).get()[0], 2, 'simple replace');
 				equal($C([1, 2, 3, 4]).set(true, '+=2').get()[0], 3, 'simple replace: += 2');
 				equal($C([{a: 1}, {a: 2}, {a: 3}, {a: 4}]).set(true, ':el.a += 1').get()[0].a, 2, 'replace with string expression (without return)');
 				equal($C([{a: 1}, {a: 2}, {a: 3}, {a: 4}]).set(true, ':return 22').get()[0], 22, 'replace with string expression');
 				
-				equal($C([1, 2, 3, 4]).map(Math.sin).get()[0].toFixed(2), '0.84', 'map');
+				equal($C([1, 2, 3, 4]).set('eq(-1)', 2).get('eq(-1)'), 2, 'replace by link');
 			});
-			test('remove', function () {
-				var db = new Collection([1, 2, 3, 4]);
+			
+			test('map', function () {
+				equal($C([1, 4, 3, 16]).map(Math.sqrt, ':el % 2 === 0')[0], 2, 'simple map (array)');
+				equal($C([1, 4, 3, 16]).map('+=1', ':el % 2 === 0')[0], 5, 'inc (array)');
+				equal($C([1, 4, 3, 16]).map()[3], 16, 'empty (array)');
 				
-				equal(db.remove(function (el, key, data) {
+				equal($C({0: 1, 1: 4, 2: 3, 3: 16}).map(Math.sqrt, ':el % 2 === 0')[3], 4, 'simple map (object)');
+				equal($C({0: 1, 1: 4, 2: 3, 3: 16}).map('+=1', ':el % 2 === 0')[1], 5, 'inc (object)');
+				equal($C([1, 4, 3, 16]).map()[3], 16, 'empty (object)');
+			});
+			
+			module('remove methods');
+			test('remove', function () {
+				equal($C([1, 2, 3, 4]).remove(function (el, key, data) {
 					return el === 1;
 				}).get('0'), 2, 'simple remove');
+				
+				equal($C([1, 2, 3, 4]).remove(':el % 2 === 0', '', '', '', '', '', '', true).get('0'), 1, 'rev -> true');
+				
+				equal($C([1, 2, 3, 4]).remove([0, 1]).get('0'), 3, 'with array param');
+				equal($C([1, 2, 3, 4]).remove({active: [0, 1]}).get('0'), 3, 'with object param');
+				equal($C([1, 2, 3, 4]).remove({active: 0}).get('0'), 2, 'with object param (without array)');
 			});
-			test('move', function () {
+			
+			/*test('move', function () {
 				var db = new Collection([1, 2, 3, 4]).pushCollection('table1', [1, 2, []]);
 				equal(db.newContext('eq(-1)').move(true, '', 'active', 'table1').getCollection().length, 0, 'simple move');
 				equal(db.resetContext().move('eq(-1)', '', 'table1').getCollection()[0].length, 4, 'move by link');

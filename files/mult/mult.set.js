@@ -50,10 +50,9 @@
 	 */
 	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length <= 3 && !Collection.isBoolean(id) && Collection.isString(filter)
-			&& !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-				return this._setOne(filter, replaceObj, id || '');
-			}
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			return this._setOne(filter, replaceObj, id || '');
+		}
 		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;

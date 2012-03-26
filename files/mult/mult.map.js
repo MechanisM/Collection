@@ -4,7 +4,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * pass each element in the current matched set through a function (in context)<br/>
+	 * pass each element in the current matched set through a function and return new object (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set

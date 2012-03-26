@@ -54,28 +54,3 @@
 	
 		return this;
 	};
-	
-	/**
-	 * remove an element from the collection (pop) (in context)<br/>
-	 * events: onRemove
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @return {Colletion Object}
-	 *
-	 * @example
-	 * $C([1, 2, 3]).pop().getCollection();
-	 */
-	Collection.prototype.pop = function (id) { return this._removeOne('eq(-1)', id || ''); };
-	/**
-	 * remove an element from the collection (shift) (in context)<br/>
-	 * events: onRemove
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @return {Colletion Object}
-	 *
-	 * @example
-	 * $C([1, 2, 3]).shift().getCollection();
-	 */
-	Collection.prototype.shift = function (id) { return this._removeOne('eq(0)', id || ''); };

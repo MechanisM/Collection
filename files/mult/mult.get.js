@@ -45,7 +45,7 @@
 				return true;
 			};
 		
-		this.forEach.apply(Collection.unshiftArguments(arguments, action));
+		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
 	
 		return result;
 	};

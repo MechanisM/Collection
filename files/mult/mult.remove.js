@@ -68,3 +68,54 @@
 	Collection.prototype.removeOne = function (filter, id, from, indexOf, lastIndexOf, rev) {
 		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
+	
+	/**
+	 * remove an element from the collection (pop) (in context)<br/>
+	 * events: onRemove
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3]).pop().getCollection();
+	 */
+	Collection.prototype.pop = function (id, filter, from, indexOf, lastIndexOf) {
+		id = id || '';
+		
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+			return this._removeOne('eq(-1)', id);
+		}
+		
+		return this.removeOne(filter || '', id, from || '', indexOf || '', lastIndexOf || '', true);	
+	};
+	/**
+	 * remove an element from the collection (shift) (in context)<br/>
+	 * events: onRemove
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3]).shift().getCollection();
+	 */
+	Collection.prototype.shift = function (id, filter, from, indexOf, lastIndexOf) {
+		id = id || '';
+		
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+			return this._removeOne('eq(0)', id);
+		}
+		
+		return this.removeOne(filter || '', id, from || '', indexOf || '', lastIndexOf || '');	
+	};
