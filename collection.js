@@ -952,8 +952,9 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.length(':i % 3 === 0');
 	 */
-	Collection.prototype.length = function (filter, id, count, from, indexOf, lastIndexOf, rev) {
+	Collection.prototype.length = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		filter = filter || '';
+		mult = mult === false ? false : true;
 		var data, isCollection, length;
 		
 		// overload
@@ -985,7 +986,7 @@
 			length = data.length;
 		} else {
 			length = 0;
-			this.forEach(function () { length += 1; }, filter, data, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+			this.forEach(function () { length += 1; }, filter, data, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 		}
 		
 		return length;
@@ -1043,7 +1044,7 @@
 		
 		// get by link
 		data = !Collection.isCollection(id) ? Collection.byLink(this._get('collection', id), this._getActiveParam('context')) : id;
-		
+
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
@@ -1225,20 +1226,20 @@
 	 */
 	Collection.prototype.search = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		var result = mult === true ? [] : -1,
+		var res = mult === true ? [] : -1,
 			
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
 				if (mult === true) {
-					result.push(key);
-				} else { result = key; }
+					res.push(key);
+				} else { res = key; }
 				
 				return true;
 			};
 		
-		this.forEach(Collection.unshiftArguments(arguments, action));
+		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
 		
-		return result;
+		return res;
 	};
 	/**
 	 * search for one element using filter (returns a reference to element) (in context)

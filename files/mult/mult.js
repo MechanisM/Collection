@@ -24,8 +24,9 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.length(':i % 3 === 0');
 	 */
-	Collection.prototype.length = function (filter, id, count, from, indexOf, lastIndexOf, rev) {
+	Collection.prototype.length = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		filter = filter || '';
+		mult = mult === false ? false : true;
 		var data, isCollection, length;
 		
 		// overload
@@ -57,7 +58,7 @@
 			length = data.length;
 		} else {
 			length = 0;
-			this.forEach(function () { length += 1; }, filter, data, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+			this.forEach(function () { length += 1; }, filter, data, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 		}
 		
 		return length;
@@ -115,7 +116,7 @@
 		
 		// get by link
 		data = !Collection.isCollection(id) ? Collection.byLink(this._get('collection', id), this._getActiveParam('context')) : id;
-		
+
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		

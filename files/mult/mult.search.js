@@ -26,20 +26,20 @@
 	 */
 	Collection.prototype.search = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		var result = mult === true ? [] : -1,
+		var res = mult === true ? [] : -1,
 			
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
 				if (mult === true) {
-					result.push(key);
-				} else { result = key; }
+					res.push(key);
+				} else { res = key; }
 				
 				return true;
 			};
 		
-		this.forEach(Collection.unshiftArguments(arguments, action));
+		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
 		
-		return result;
+		return res;
 	};
 	/**
 	 * search for one element using filter (returns a reference to element) (in context)

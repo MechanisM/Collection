@@ -18,7 +18,11 @@
 				
 				equal($C().pushCollection('test', [1, 2, 3, 4]).forEach(function (el, key, data) {
 					data[key] += 1;
-				}, '', 'test').get()[0], 2, 'id -> test');
+				}, '', 'test').getCollection('test')[0], 2, 'id -> test');
+				
+				equal($C().pushSetCollection('test', [1, 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '', 'active').getCollection('test')[0], 2, 'id -> active');
 				
 				equal($C([1, 2, 3, 4]).forEach(function (el, key, data) {
 					data[key] += 1;
@@ -67,7 +71,23 @@
 						.get();
 					
 					return db[11] === 12 && db[7] === 10 && db[5] === 6;
-				})(), true);
+				})(), true, 'filter -> ":el % 2 === 0", count -> 2, from -> 1, indexOf -> 2, lastIndexOf -> 6, rev -> true');
+				
+				equal((function () {
+					var cLength, fLength;
+					
+					$C([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+						.forEach(function (el, key, data, i, length) {
+							cLength = length();
+							data[key] += 2;
+						}, function (el, key, data, i, length) {
+							fLength = length();
+							
+							return el % 2 === 0;
+						}, '', '', 2, 1, 2, 6, true);
+						
+					return cLength === 6 && fLength === 12;
+				})(), true, 'call the internal functions');
 			});
 			
 			test('forEach (with object)', function () {
@@ -75,6 +95,14 @@
 					data[key] += 1;
 				}).get()[0], 2, 'simple forEach');
 				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(':data[key] += 1').get()[0], 2, 'simple forEach with string expression');
+				
+				equal($C().pushCollection('test', {0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '', 'test').getCollection('test')[0], 2, 'id -> test');
+				
+				equal($C().pushSetCollection('test', {0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '', 'active').getCollection('test')[0], 2, 'id -> active');
 				
 				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
 					data[key] += 1;
@@ -118,16 +146,31 @@
 				}, '(:el > 2) && (:el < 4)').get()[3], 4, 'filter -> "(:el > 2) && (:el < 4)"');
 				
 				equal((function () {
-					var db = $C({0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 9: 10, 10: 11, 11: 12})
+					var db = $C({0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 11, 11: 12})
 						.forEach(':data[key] += 2', ':el % 2 === 0', '', '', 2, 1, 2, 6, true)
 						.get();
 					
 					return db[11] === 12 && db[7] === 10 && db[5] === 6;
-				})(), true);
+				})(), true, 'filter -> ":el % 2 === 0", count -> 2, from -> 1, indexOf -> 2, lastIndexOf -> 6, rev -> true');
+				
+				equal((function () {
+					var cLength, fLength;
+					
+					$C({0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 11, 11: 12})
+						.forEach(function (el, key, data, i, length) {
+							cLength = length();
+							data[key] += 2;
+						}, function (el, key, data, i, length) {
+							fLength = length();
+							
+							return el % 2 === 0;
+						}, '', '', 2, 1, 2, 6, true);
+					
+					return cLength === 6 && fLength === 12;
+				})(), true, 'call the internal functions');
 			});
 			
-			
-			/*test('length', function () {
+			test('length', function () {
 				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3], last: 2});
 				db.pushCollection({table1: null, table2: 'GO!'});
 				
@@ -140,7 +183,7 @@
 				equal(db.length(true, 'table2'), 3, 'string');
 				equal(db.length(), 2, 'object');
 				equal(db.length(function (el, key, data) {
-					return i === 'first';
+					return key === 'first';
 				}), 1, 'object with filter');
 				
 				db.pushFilter({
@@ -151,14 +194,24 @@
 						return el === 2;
 					}
 				});
-				equal(db.length('a || b', [1, 2, 3]), 2, 'array with filter: a || b');
-				equal(db.length('a && b', [1, 2, 3]), 0, 'array with filter: a && b');
-				equal(db.length('(a && b) || a', [1, 2, 3]), 1, 'array with filter: (a && b) || a');
-				equal(db.length('a && !b', [1, 2, 3]), 2, 'array with filter: a && !b');
-				equal(db.length('!(a && b)', [1, 2, 3]), 3, 'array with filter: !(a && b)');
-				equal(db.length('! (a && b) && a', [1, 2, 3]), 1, 'array with filter: ! (! a && b) && a');
+				
+				equal(db.length('a || b', [1, 2, 3]), 2, 'array with filter -> "a || b"');
+				equal(db.length('a && b', [1, 2, 3]), 0, 'array with filter -> "a && b"');
+				equal(db.length('(a && b) || a', [1, 2, 3]), 1, 'array with filter -> "(a && b) || a"');
+				equal(db.length('a && !b', [1, 2, 3]), 2, 'array with filter -> "a && !b"');
+				equal(db.length('!(a && b)', [1, 2, 3]), 3, 'array with filter -> "!(a && b)"');
+				equal(db.length('! (a && b) && a', [1, 2, 3]), 1, 'array with filter -> "! (! a && b) && a"');
+				
+				equal(db.length('a || b', {0: 1, 1: 2, 2: 3}), 2, 'object with filter -> "a || b"');
+				equal(db.length('a && b', {0: 1, 1: 2, 2: 3}), 0, 'object with filter -> "a && b"');
+				equal(db.length('(a && b) || a', {0: 1, 1: 2, 2: 3}), 1, 'object with filter -> "(a && b) || a"');
+				equal(db.length('a && !b', {0: 1, 1: 2, 2: 3}), 2, 'object with filter -> "a && !b"');
+				equal(db.length('!(a && b)', {0: 1, 1: 2, 2: 3}), 3, 'object with filter -> "!(a && b)"');
+				equal(db.length('! (a && b) && a', {0: 1, 1: 2, 2: 3}), 1, 'object with filter -> "! (! a && b) && a"');
 			});
-			module('forEach methods');
+			
+			
+			module('search methods');
 			test('search', function () {
 				var db = new Collection([1, 2, 3, 4, 1, 2, 3, 4]);
 				
@@ -170,7 +223,8 @@
 				
 				equal(db.lastIndexOf(1), 4, 'lastIndexOf');
 			});
-			test('get', function () {
+			
+			/*test('get', function () {
 				var db = new Collection([1, 2, 3, 4]);
 				
 				equal(db.get(function (el, key, data) {
