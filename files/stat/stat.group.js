@@ -12,8 +12,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
 	 * @return {Colletion}
 	 *
 	 * @example

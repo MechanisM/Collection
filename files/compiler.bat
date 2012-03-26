@@ -38,6 +38,7 @@ copy	^
 		+ mult\mult.search.js ^
 		+ mult\mult.get.js ^
 		+ mult\mult.set.js ^
+		+ mult\mult.map.js ^
 		+ mult\mult.move.js ^
 		+ mult\mult.remove.js ^
 		+ mult\mult.group.js ^

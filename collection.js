@@ -926,7 +926,278 @@
 		}
 	
 		return this;
-	};		/////////////////////////////////	//// mult methods (core)	/////////////////////////////////		// blanking for length	Collection.prototype._empty = function () {		return null;	};		/**	 * returns the length of the collection (in context)	 * 	 * @this {Colletion Object}	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), collection or true (if disabled)	 * @param {String|Collection|Boolean} [id=this.ACTIVE] — collection ID or collection, if the id is a Boolean, it is considered as mult (overload)	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration	 * @param {Number|Boolean} [count] — maximum number of results (by default: all object)	 * @param {Number|Boolean} [from=0] — skip a number of elements	 * @param {Number|Boolean} [indexOf=0] — starting point	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing	 * @return {Number}	 *	 * @example	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])	 *	.length();	 * @example	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])	 *	.length(':i % 3 === 0');	 */	Collection.prototype.length = function (filter, id, mult, count, from, indexOf, rev) {		filter = filter || '';		var data, isCollection,			key, i = 0, length;				// overload		// if the filter is a collection		if (!Collection.isFunction(filter)) {			if ((Collection.isString(filter) && !this._isFilter(filter) && !Collection.isExists(id)) || Collection.isCollection(filter)) {				id = filter;				filter = false;			}		}				// if id is Boolean		if (Collection.isBoolean(id)) {			rev = indexOf;			indexOf = from;			from = count;			count = mult;			mult = id;			id = this.ACTIVE;		} else { id = id || ''; }				// overloads		// if the ID is not specified, it is taken active collection		if (!id) {			data = this._get('collection');		} else if (Collection.isString(id)) {			data = this._get('collection', id);		} else {			isCollection = true;			data = id;		}				if (data === null) { return 0; }		if (isCollection !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }		if (Collection.isString(data)) { return data.length; }				// if no filter and the original object is an array		if ((filter === true || !filter) && !this._getActiveParam('filter') && typeof data.length !== 'undefined') {			length = data.length;		} else {			length = 0;			this.forEach(function () { length += 1; }, filter, id, mult || '', count || '', from || '', indexOf || '', rev || '');		}				return length;	};	/**	 * forEach method (in context)	 * 	 * @this {Colletion Object}	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)	 * @param {String|Boolean} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult (overload)	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration	 * @param {Number|Boolean} [count] — maximum number of results (by default: all object)	 * @param {Number|Boolean} [from=0] — skip a number of elements	 * @param {Number|Boolean} [indexOf=0] — starting point	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing	 * @throw {Error}	 * @return {Colletion Object}	 *	 * @example	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);	 * // increase on 1 all elements of multiples of three //	 * db.forEach(function (el, key, data, i) {	 *		el.a += 1;	 *	}, ':i % 3 === 0');	 * console.log(db.get());	 * @example	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);	 * db.forEach(':el.a += 1', ':i % 3 === 0');	 * console.log(db.get());	 */	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, rev) {		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;		filter = filter || '';				// if id is Boolean		if (Collection.isBoolean(id)) {			rev = indexOf;			indexOf = from;			from = count;			count = mult;			mult = id;			id = this.ACTIVE;		} else { id = id || ''; }			// values by default		mult = mult === false ? false : true;		count = parseInt(count) >= 0 ? parseInt(count) : false;		from = parseInt(from) || false;		indexOf = parseInt(indexOf) || false;		rev = rev || false;			var self = this,			tmpObj = {},			tmpArray = [],						data, length, fLength,			cloneObj,						key, i = 0, j = 0,			res = false;				// get by link		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));				// throw an exception if the element is not an object		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }				// length		/** @private */		length = function () {			if (!length.val) {				length.val = self.length(filter, id);			}						return length.val;		};		// filter length		/** @private */		fLength = function (filter, id) {			if (!fLength.val) {				fLength.val = self.length(filter || '', id || '');			}						return fLength.val;		};				if (Collection.isArray(data)) {			// cut off the array to indicate the start			if (indexOf !== false) {				if (!rev) { cloneObj = data.slice(indexOf); }			} else { cloneObj = data; }						// bypassing the array in ascending order			if (!rev) {				cloneObj.some(function (el, key, obj) {					key += indexOf;					if (count !== false && j === count) { return true; }										if (this._customFilter(filter, el, key, data, i, fLength, this, id, tmpObj) === true) {						if (from !== false && from !== 0) {							from -= 1;						} else {							res = callback.call(callback, el, key, data, i, length, this, id) === false;							if (mult === false) { res = true; }							j += 1;						}					}										i += 1;					if (res === true) { return true; }				}, this);						// bypassing the array in descending order			} else {				for (key = cloneObj.length - indexOf; (key -= 1) > -1;) {					if (count !== false && j === count) { return true; }										if (this._customFilter(filter, cloneObj[key], key, data, i, fLength, this, id, tmpObj) === true) {						if (from !== false && from !== 0) {							from -= 1;						} else {							res = callback.call(callback, cloneObj[key], key, data, i, length, this, id) === false;							if (mult === false) { res = true; }							j += 1;						}					}										i += 1;					if (res === true) { return true; }				}			}		} else {			// bypassing the object in ascending order			if (!rev) {				for (key in data) {					if (!data.hasOwnProperty(key)) { continue; }											if (count !== false && j === count) { break; }					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }										if (this._customFilter(filter, data[key], key, data, i, fLength, this, id, tmpObj) === true) {						if (from !== false && from !== 0) {							from -= 1;						} else {								res = callback.call(callback, data[key], key, data, i, length, this, id) === false;							if (mult === false) { res = true; }							j += 1;						}					}										i += 1;					if (res === true) { break; }				}						// bypassing the object in descending order			} else {				for (key in data) {					if (!data.hasOwnProperty(key)) { continue; }					tmpArray.push(key);				}								for (key = tmpArray.length - indexOf; (key -= 1) > -1;) {					if (count !== false && j === count) { return true; }										if (this._customFilter(filter, data[tmpArray[key]], tmpArray[key], data, i, fLength, this, id, tmpObj) === true) {						if (from !== false && from !== 0) {							from -= 1;						} else {							res = callback.call(callback, data[tmpArray[key]], tmpArray[key], data, i, length, this, id) === false;							if (mult === false) { res = true; }							j += 1;						}					}										i += 1;					if (res === true) { return true; }				}			}		}				// remove the temporary filter		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);		length = null;		fLength = null;				return this;	};	/**	 * performs an action only for one element of the collection (in context)	 * 	 * @this {Colletion Object}	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)	 * @param {String} [id=this.ACTIVE] — collection ID	 * @param {Number|Boolean} [from=0] — skip a number of elements	 * @param {Number|Boolean} [indexOf=0] — starting point	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing	 * @return {Colletion Object}	 *	 * @example	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);	 * // increase on 1 one element of multiples of three //	 * db.some(function (el, key, data, i) {	 *		data[key].a += 1;	 *	}, ':i % 3 === 0');	 * console.log(db.get());	 */	Collection.prototype.some = function (callback, filter, id, from, indexOf, rev) {		return this.forEach(callback, filter || '', id || '', false, '', from || '', indexOf || '', rev || '');	};	
+	};	
+	/////////////////////////////////
+	//// mult methods (core)
+	/////////////////////////////////
+	
+	/**
+	 * returns the length of the collection (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), collection or true (if disabled)
+	 * @param {String|Collection|Boolean} [id=this.ACTIVE] — collection ID or collection, if the id is a Boolean
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number} [count] — maximum number of results (by default: all object)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {Number}
+	 *
+	 * @example
+	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.length();
+	 * @example
+	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.length(':i % 3 === 0');
+	 */
+	Collection.prototype.length = function (filter, id, count, from, indexOf, lastIndexOf, rev) {
+		filter = filter || '';
+		var data, isCollection, length;
+		
+		// overload
+		// if the filter is a collection
+		if (!Collection.isFunction(filter)) {
+			if ((Collection.isString(filter) && !this._isFilter(filter) && !Collection.isExists(id)) || Collection.isCollection(filter)) {
+				id = filter;
+				filter = false;
+			}
+		}
+		
+		// overloads
+		// if the ID is not specified, it is taken active collection
+		if (!id) {
+			data = this._get('collection');
+		} else if (Collection.isString(id)) {
+			data = this._get('collection', id);
+		} else {
+			isCollection = true;
+			data = id;
+		}
+		
+		if (data === null) { return 0; }
+		if (isCollection !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
+		if (Collection.isString(data)) { return data.length; }
+		
+		// if no filter and the original object is an array
+		if ((filter === true || !filter) && !this._getActiveParam('filter') && typeof data.length !== 'undefined') {
+			length = data.length;
+		} else {
+			length = 0;
+			this.forEach(function () { length += 1; }, filter, data, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+		}
+		
+		return length;
+	};
+	/**
+	 * forEach method (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {String|Boolean} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
+	 * @param {Number} [count] — maximum number of results (by default: all object)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
+	 * // increase on 1 all elements of multiples of three //
+	 * db.forEach(function (el, key, data, i) {
+	 *		el.a += 1;
+	 *	}, ':i % 3 === 0');
+	 * console.log(db.get());
+	 * @example
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
+	 * db.forEach(':el.a += 1', ':i % 3 === 0');
+	 * console.log(db.get());
+	 */
+	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
+		// values by default
+		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;
+		filter = filter || '';
+		id = id || '';
+
+		mult = mult === false ? false : true;
+		count = parseInt(count) >= 0 ? parseInt(count) : false;
+		from = parseInt(from) || false;
+		indexOf = parseInt(indexOf) || false;
+		lastIndexOf = parseInt(lastIndexOf) || false;
+		rev = rev || false;
+		
+		var self = this,
+			tmpObj = {},
+			tmpArray = [],
+			
+			data, length, fLength,
+			cloneObj,
+			
+			key, i = 0, j = 0,
+			res = false;
+		
+		// get by link
+		data = !Collection.isCollection(id) ? Collection.byLink(this._get('collection', id), this._getActiveParam('context')) : id;
+		
+		// throw an exception if the element is not an object
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
+		
+		// length
+		/** @private */
+		length = function () {
+			if (!length.val) {
+				length.val = self.length(filter, id);
+			}
+			
+			return length.val;
+		};
+		// filter length
+		/** @private */
+		fLength = function (filter, id) {
+			if (!fLength.val) {
+				fLength.val = self.length(filter || '', id || '');
+			}
+			
+			return fLength.val;
+		};
+		
+		if (Collection.isArray(data)) {
+			// cut off the array to indicate the start
+			if (indexOf !== false && !rev) {
+				cloneObj = data.slice(indexOf);
+			} else { cloneObj = data; }
+			
+			// bypassing the array in ascending order
+			if (!rev) {
+				cloneObj.some(function (el, key, obj) {
+					key += indexOf;
+					
+					if (lastIndexOf && key === lastIndexOf) { return true; }
+					if (count !== false && j === count) { return true; }
+					
+					if (this._customFilter(filter, el, key, data, i, fLength, this, id, tmpObj) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {
+							res = callback.call(callback, el, key, data, i, length, this, id) === false;
+							if (mult === false) { res = true; }
+							j += 1;
+						}
+					}
+					
+					i += 1;
+					if (res === true) { return true; }
+				}, this);
+			
+			// bypassing the array in descending order
+			} else {
+				lastIndexOf && (cloneObj.length - lastIndexOf);
+				for (key = cloneObj.length - indexOf; (key -= 1) > -1;) {
+					if (lastIndexOf && key === lastIndexOf) { break; }
+					if (count !== false && j === count) { break; }
+					
+					if (this._customFilter(filter, cloneObj[key], key, data, i, fLength, this, id, tmpObj) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {
+							res = callback.call(callback, cloneObj[key], key, data, i, length, this, id) === false;
+							if (mult === false) { res = true; }
+							j += 1;
+						}
+					}
+					
+					i += 1;
+					if (res === true) { break; }
+				}
+			}
+		} else {
+			// bypassing the object in ascending order
+			if (!rev) {
+				for (key in data) {
+					if (!data.hasOwnProperty(key)) { continue; }
+					
+					if (lastIndexOf && i === lastIndexOf) { break; }
+					if (count !== false && j === count) { break; }
+					if (indexOf !== false && indexOf !== 0) { indexOf -= 1; continue; }
+					
+					if (this._customFilter(filter, data[key], key, data, i, fLength, this, id, tmpObj) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {	
+							res = callback.call(callback, data[key], key, data, i, length, this, id) === false;
+							if (mult === false) { res = true; }
+							j += 1;
+						}
+					}
+					
+					i += 1;
+					if (res === true) { break; }
+				}
+			
+			// bypassing the object in descending order
+			} else {
+				for (key in data) {
+					if (!data.hasOwnProperty(key)) { continue; }
+					tmpArray.push(key);
+				}
+				
+				lastIndexOf && (tmpArray.length - lastIndexOf);
+				for (key = tmpArray.length - indexOf; (key -= 1) > -1;) {
+					if (lastIndexOf && key === lastIndexOf) { break; }
+					if (count !== false && j === count) { break; }
+					
+					if (this._customFilter(filter, data[tmpArray[key]], tmpArray[key], data, i, fLength, this, id, tmpObj) === true) {
+						if (from !== false && from !== 0) {
+							from -= 1;
+						} else {
+							res = callback.call(callback, data[tmpArray[key]], tmpArray[key], data, i, length, this, id) === false;
+							if (mult === false) { res = true; }
+							j += 1;
+						}
+					}
+					
+					i += 1;
+					if (res === true) { break; }
+				}
+			}
+		}
+		
+		// remove the temporary filter
+		tmpObj.name && this._drop('filter', '__tmp:' + tmpObj.name);
+		length = null;
+		fLength = null;
+		
+		return this;
+	};
+	/**
+	 * performs an action only for one element of the collection (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
+	 * // increase on 1 one element of multiples of three //
+	 * db.some(function (el, key, data, i) {
+	 *		data[key].a += 1;
+	 *	}, ':i % 3 === 0');
+	 * console.log(db.get());
+	 */
+	Collection.prototype.some = function (callback, filter, id, from, indexOf, lastIndexOf, rev) {
+		return this.forEach(callback, filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+	};	
 	/////////////////////////////////
 	//// mult methods (search)
 	/////////////////////////////////
@@ -936,12 +1207,13 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
-	 * @param {Number|Boolean} [count] — maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
-	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @param {Number} [count] — maximum number of results (by default: all object)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Number|Array}
 	 *
 	 * @example
@@ -951,24 +1223,8 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.search(function (el, key, data, i) { return i % 3 === 0; });
 	 */
-	Collection.prototype.search = function (filter, id, mult, count, from, indexOf, rev) {
-		// if id is Boolean (overload)
-		if (Collection.isBoolean(id)) {
-			rev = indexOf;
-			indexOf = from;
-			from = count;
-			count = mult;
-			mult = id;
-			id = this.ACTIVE;
-		} else { id = id || ''; }
-	
-		// values by default
+	Collection.prototype.search = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
-		rev = rev || false;
-		
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
@@ -980,7 +1236,7 @@
 				return true;
 			};
 		
-		this.forEach(action, filter || '', id, mult, count, from, indexOf, rev);
+		this.forEach(Collection.unshiftArguments(arguments, action));
 		
 		return result;
 	};
@@ -990,9 +1246,10 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
-	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Number|Array}
 	 *
 	 * @example
@@ -1002,8 +1259,8 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.searchOne(function (el, key, data, i) { return i % 3 === 0; });
 	 */
-	Collection.prototype.searchOne = function (filter, id, from, indexOf, rev) {
-		return this.search(filter || '', id || '', false, '', from || '', indexOf || '', rev || '');
+	Collection.prototype.searchOne = function (filter, id, from, indexOf, lastIndexOf, rev) {
+		return this.search(filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	
 	/**
@@ -1026,18 +1283,18 @@
 		
 		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(data) && data.indexOf) {
+		if (Collection.isArray(data)) {
 			if (fromIndex) { return data.indexOf(searchElement, fromIndex); }
 			
 			return data.indexOf(searchElement);
-		} else { return this.search(function (el) { return el === searchElement; }, id, false, '', '', fromIndex); }
+		} else { return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex); }
 	};
 	/**
 	 * returns the last index/key at which a given element can be found in the collection (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
-	 * @param {fromIndex} [fromIndex=0] — the index at which to start searching backwards
+	 * @param {fromIndex} [fromIndex=Collection Length] — the index at which to start searching backwards
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Number|String}
 	 *
@@ -1050,16 +1307,14 @@
 		id = id || '';
 		fromIndex = fromIndex || '';
 		
-		var el, data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
-		if (Collection.isArray(data) && data.lastIndexOf) {
+		if (Collection.isArray(data)) {
 			if (fromIndex) { return data.lastIndexOf(searchElement, fromIndex); }
 			
 			return data.lastIndexOf(searchElement);
 		} else {
-			el = this.search(function (el) { return el === searchElement; }, id, '', '', '', fromIndex);
-			
-			return typeof el[el.length - 1] !== 'undefined' ? el[el.length - 1] : -1;
+			return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex, '', true);
 		}
 	};	
 	/////////////////////////////////
@@ -1071,12 +1326,14 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
-	 * @param {Number|Boolean} [count] — maximum number of results (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
-	 * @return {mixed}
+	 * @param {Number} [count] — maximum number of results (by default: all object)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {Array|mixed}
 	 *
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
@@ -1088,28 +1345,13 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.get(function (el, key, data, i) { return i % 3 === 0; });
 	 */
-	Collection.prototype.get = function (filter, id, mult, count, from, indexOf) {
+	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overload
-		if (Collection.isNumber(filter) || (arguments.length <= 2 && !Collection.isBoolean(id) && Collection.isString(filter)
-			&& !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-				return this._getOne(filter, id || '');
-			}
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			return this._getOne(filter, id || '');
+		}
 		
-		// if id is Boolean (overload)
-		if (Collection.isBoolean(id)) {
-			indexOf = from;
-			from = count;
-			count = mult;
-			mult = id;
-			id = this.ACTIVE;
-		} else { id = id || ''; }
-	
-		// values by default
 		mult = mult === false ? false : true;
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
-		
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
@@ -1121,7 +1363,7 @@
 				return true;
 			};
 		
-		this.forEach(action, filter || '', id, mult, count, from, indexOf);
+		this.forEach.apply(Collection.unshiftArguments(arguments, action));
 	
 		return result;
 	};
@@ -1131,8 +1373,10 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {mixed}
 	 *
 	 * @example
@@ -1144,8 +1388,8 @@
 	 *		return i % 3 === 0;
 	 *	});
 	 */
-	Collection.prototype.getOne = function (filter, id, from, indexOf) {
-		return this.get(filter || '', id || '', false, '', from || '', indexOf || '');
+	Collection.prototype.getOne = function (filter, id, from, indexOf, lastIndexOf, rev) {
+		return this.get(filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	/////////////////////////////////
 	//// mult methods (set)
@@ -1158,12 +1402,13 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
-	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -1195,7 +1440,7 @@
 	 *		el.c = 7;
 	 *	}).get();
 	 */
-	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, rev) {
+	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overload
 		if (Collection.isNumber(filter) || (arguments.length <= 3 && !Collection.isBoolean(id) && Collection.isString(filter)
 			&& !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
@@ -1236,6 +1481,10 @@
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -1254,13 +1503,15 @@
 	 *		el.c = 7;
 	 *	}).get();
 	 */
-	Collection.prototype.setOne = function (filter, replaceObj, id, from, indexOf, rev) {
-		return this.set(filter || '', replaceObj, id || '', false, '', from || '', indexOf || '', rev || '');
+	Collection.prototype.setOne = function (filter, replaceObj, id, from, indexOf, lastIndexOf, rev) {
+		return this.set(filter || '', replaceObj, id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
+	/////////////////////////////////
+	//// mult methods (map)
+	/////////////////////////////////
 	
 	/**
 	 * pass each element in the current matched set through a function (in context)<br/>
-	 * events: onSet
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
@@ -1268,17 +1519,64 @@
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
-	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing
-	 * @return {Colletion Object}
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {mixed}
 	 *
 	 * @example
 	 * // replace each even-numbered element on the value of the sine //
-	 * $C([1, 2, 3, 4, 5, 6]).map(Math.sin, ':el % 2 === 0').get();
+	 * $C([1, 2, 3, 4, 5, 6]).map(Math.sin, ':el % 2 === 0');
 	 */
-	Collection.prototype.map = function (replaceObj, filter, id, mult, count, from, indexOf, rev) {
-		return this.set(filter || true, replaceObj, id || '', mult || '', count || '', from || '', indexOf || '', rev || '');
+	Collection.prototype.map = function (replaceObj, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
+		// compile replace object if need
+		replaceObj = this._isStringExpression(replaceObj) ? this._compileFilter(replaceObj) : replaceObj;
+		var e, arg, res,
+			isExists = Collection.isExists(replaceObj),
+			isFunc = Collection.isFunction(replaceObj),
+			
+			isArray = null,
+
+			/** @private */
+			action = function (el, key, data, i, length, cObj, id) {
+				if (isArray === null) {
+					isArray = Collection.isArray(data);
+					if (isArray) {
+						res = [];
+					} else { res = {}; }
+				}
+				
+				if (isFunc) {
+					if (isArray) {
+						res.push(replaceObj.call(replaceObj, el, key, data, i, length, cObj, id));
+					} else {
+						res[key] = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+					}
+				} else {
+					if (isExists) {
+						if (isArray) {
+							res.push(Collection.expr(replaceObj, data[key]));
+						} else {
+							res[key] = Collection.expr(replaceObj, data[key]);
+						}
+					} else {
+						if (isArray) {
+							res.push(data[key]);
+						} else {
+							res[key] = data[key];
+						}
+					}
+				}
+	
+				return true;
+			};
+		
+		arg = Collection.unshiftArguments(arguments, action);
+		arg.splice(1, 1);
+		
+		this.forEach.apply(this, arg);
+		return res;
 	};
 	/////////////////////////////////
 	//// mult methods (move && copy)
@@ -1296,8 +1594,10 @@
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @param {Boolean} [deleteType=true] — if true, remove source element
 	 * @return {Colletion Object}
 	 *
@@ -1312,9 +1612,8 @@
 	 * db.move('eq(-1)', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, deleteType) {
+	Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
 		moveFilter = moveFilter || '';
-		deleteType = deleteType === false ? false : true;
 		context = Collection.isExists(context) ? context.toString() : '';
 		
 		sourceID = sourceID || '';
@@ -1323,9 +1622,7 @@
 		addType = addType || 'push';
 		
 		mult = mult === false ? false : true;
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
+		deleteType = deleteType === false ? false : true;
 		
 		var deleteList = [],
 			aCheckType = Collection.isArray(Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
@@ -1340,10 +1637,9 @@
 		// search elements
 		this.disable('context');
 		
-		if (Collection.isNumber(moveFilter) || (arguments.length <= 5 && Collection.isString(moveFilter)
-			&& !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
-				elements = moveFilter;
-		} else { elements = this.search(moveFilter, sourceID, mult, count, from, indexOf); }
+		if (Collection.isNumber(moveFilter) || (Collection.isString(moveFilter) && !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
+			elements = moveFilter;
+		} else { elements = this.search(moveFilter, sourceID, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
 		
 		this.enable('context');
 		
@@ -1373,8 +1669,10 @@
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -1383,8 +1681,8 @@
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '');
+	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
@@ -1398,8 +1696,10 @@
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -1408,13 +1708,9 @@
 	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf) {
+	Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
-		
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count, from, indexOf, false);
+		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
 	};
 	/**
 	 * copy one element from one collection to another (in context)<br />
@@ -1426,8 +1722,10 @@
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -1436,8 +1734,8 @@
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', false);
+	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -1449,11 +1747,13 @@
 	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -1466,12 +1766,11 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.remove(function (el, key, data, i) { return i == 1; }).get();
 	 */
-	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
-		// overload
-		if (Collection.isNumber(filter) || (arguments.length <= 2  && !Collection.isBoolean(id) && Collection.isString(filter)
-			&& !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-				return this._removeOne(filter, id || '');
-			} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
+	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
+		// overloads
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			return this._removeOne(filter, id || '');
+		} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
 		
 		var elements = this.search.apply(this, arguments), i = elements.length;
 		
@@ -1490,8 +1789,10 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -1502,8 +1803,8 @@
 	 *		return i % 2 !== 0;
 	 *	}).get();
 	 */
-	Collection.prototype.removeOne = function (filter, id, from, indexOf) {
-		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '');
+	Collection.prototype.removeOne = function (filter, id, from, indexOf, lastIndexOf, rev) {
+		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};	
 	/////////////////////////////////
 	//// mult methods (group)
@@ -1516,10 +1817,13 @@
 	 * @param {Context|Function|String Expression} [field] — field name, string expression (the record is equivalent to: return + string expression) or callback function
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Boolean} [link=false] — save link
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -1529,15 +1833,10 @@
 	 * // group all the even-numbered elements //
 	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]).group(':el % 2 === 0');
 	 */
-	Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
+	Collection.prototype.group = function (field, filter, id, mult, count, from, indexOf, lastIndexOf, rev, link) {
 		field = this._isStringExpression((field = field || '')) ? this._compileFilter(field) : field;
-		id = id || '';
+		mult = mult === false ? false : true;
 		link = link || false;
-	
-		// values by default
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
 		
 		var fieldType = Collection.isString(field),
 			result = {},
@@ -1548,12 +1847,12 @@
 				
 				if (!result[param]) {
 					result[param] = [!link ? el : key];
-				} else { result[param].push(!link ? el : key); }
+				} else if (mult === true) { result[param].push(!link ? el : key); }
 	
 				return true;
 			};
 		
-		this.forEach(action, filter, id, '', count, from, indexOf);
+		this.forEach.apply(Collection.unshiftArguments(arguments, action));
 	
 		return result;
 	};
@@ -1565,8 +1864,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -1577,8 +1876,11 @@
 	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
 	 *	.groupLinks(':el % 2 === 0');
 	 */
-	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
-		return this.group(field || '', filter || '', id || '', count || '', from || '', indexOf || '', true);
+	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf, lastIndexOf, rev) {
+		var arg = Collection.unshiftArguments(arguments, action);
+		arg.push(true);
+		
+		return this.group.apply(arg);
 	};		
 	/////////////////////////////////
 	//// statistic methods
@@ -1593,8 +1895,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -1677,8 +1979,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
 	 * @return {Colletion}
 	 *
 	 * @example

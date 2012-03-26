@@ -10,27 +10,144 @@
 	<script type="text/javascript">
 		$(function () {
 			module('core');
-			test('length', function () {
+			test('forEach (with array)', function () {
+				equal($C([1, 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}).get()[0], 2, 'simple forEach');
+				equal($C([1, 2, 3, 4]).forEach(':data[key] += 1').get()[0], 2, 'simple forEach with string expression');
+				
+				equal($C().pushCollection('test', [1, 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '', 'test').get()[0], 2, 'id -> test');
+				
+				equal($C([1, 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '', '', false).get()[1], 2, 'mult -> false');
+				
+				equal((function () {
+					var db = $C([1, 2, 3, 4]).forEach(function (el, key, data) {
+						data[key] += 1;
+					}, '', '', '', 2);
+					
+					return db.get()[1] === 3 &&  db.get()[2] === 3;
+				})(), true, 'count -> 2');
+				
+				equal((function () {
+					var db = $C([1, 2, 3, 4]).forEach(function (el, key, data) {
+						data[key] += 1;
+					}, '', '', '', 2, 1).get();
+					
+					return db[1] === 3 && db[2] === 4;
+				})(), true, 'count -> 2, from -> 1');
+				
+				equal((function () {
+					var db = $C([1, 2, 3, 4]).forEach(function (el, key, data) {
+						data[key] += 1;
+					}, '', '', '', 2, 1, '', true);
+					
+					return db.get()[1] === 3 &&  db.get()[2] === 4;
+				})(), true, 'count -> 2, from -> 1, rev -> true');
+				
+				equal($C([1, 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, function (el) {
+					return el > 2;
+				}).get()[0], 1, 'filter -> "function (el) { return el > 2; }"');
+				equal($C([1, 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, ':el > 2').get()[0], 1, 'filter -> ":el > 2"');
+				
+				equal($C([1, 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '(:el > 2) && (:el < 4)').get()[3], 4, 'filter -> "(:el > 2) && (:el < 4)"');
+				
+				equal((function () {
+					var db = $C([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
+						.forEach(':data[key] += 2', ':el % 2 === 0', '', '', 2, 1, 2, 6, true)
+						.get();
+					
+					return db[11] === 12 && db[7] === 10 && db[5] === 6;
+				})(), true);
+			});
+			
+			test('forEach (with object)', function () {
+				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}).get()[0], 2, 'simple forEach');
+				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(':data[key] += 1').get()[0], 2, 'simple forEach with string expression');
+				
+				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '', '', false).get()[1], 2, 'mult -> false');
+				
+				equal((function () {
+					var db = $C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+						data[key] += 1;
+					}, '', '', '', 2);
+					
+					return db.get()[1] === 3 &&  db.get()[2] === 3;
+				})(), true, 'count -> 2');
+				
+				equal((function () {
+					var db = $C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+						data[key] += 1;
+					}, '', '', '', 2, 1).get();
+					
+					return db[1] === 3 && db[2] === 4;
+				})(), true, 'count -> 2, from -> 1');
+				
+				equal((function () {
+					var db = $C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+						data[key] += 1;
+					}, '', '', '', 2, 1, '', true);
+					
+					return db.get()[1] === 3 &&  db.get()[2] === 4;
+				})(), true, 'count -> 2, from -> 1, rev -> true');
+				
+				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, function (el) {
+					return el > 2;
+				}).get()[0], 1, 'filter -> "function (el) { return el > 2; }"');
+				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, ':el > 2').get()[0], 1, 'filter -> ":el > 2"');
+				
+				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '(:el > 2) && (:el < 4)').get()[3], 4, 'filter -> "(:el > 2) && (:el < 4)"');
+				
+				equal((function () {
+					var db = $C({0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 9: 10, 10: 11, 11: 12})
+						.forEach(':data[key] += 2', ':el % 2 === 0', '', '', 2, 1, 2, 6, true)
+						.get();
+					
+					return db[11] === 12 && db[7] === 10 && db[5] === 6;
+				})(), true);
+			});
+			
+			
+			/*test('length', function () {
 				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3], last: 2});
 				db.pushCollection({table1: null, table2: 'GO!'});
 				
 				equal(db.length([1, 2, 3]), 3, 'array');
-				equal(db.length(function (el, i, data) {
+				equal(db.length(function (el, key, data) {
 					return el === 1;
 				}, [1, 2, 3]), 1, 'array with filter');
 				
-				equal(db.length(false, 'table1'), 0, 'null');
-				equal(db.length(false, 'table2'), 3, 'string');
+				equal(db.length(true, 'table1'), 0, 'null');
+				equal(db.length(true, 'table2'), 3, 'string');
 				equal(db.length(), 2, 'object');
-				equal(db.length(function (el, i, data) {
+				equal(db.length(function (el, key, data) {
 					return i === 'first';
 				}), 1, 'object with filter');
 				
 				db.pushFilter({
-					a: function (el, i, data) {
+					a: function (el, key, data) {
 						return el === 1;
 					},
-					b: function (el, i, data) {
+					b: function (el, key, data) {
 						return el === 2;
 					}
 				});
@@ -42,33 +159,10 @@
 				equal(db.length('! (a && b) && a', [1, 2, 3]), 1, 'array with filter: ! (! a && b) && a');
 			});
 			module('forEach methods');
-			test('forEach', function () {
-				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
-					data[i] += 1;
-				}).get()[0], 2, 'simple forEach');
-				equal($C([1, 2, 3, 4]).forEach(':data[i] += 1').get()[0], 2, 'simple forEach with string expression');
-				
-				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
-					data[i] += 1;
-				}, function (el, i, data) {
-					return el > 2;
-				}).get()[0], 1, 'forEach with filter: > 2');
-				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
-					data[i] += 1;
-				}, ':el > 2').get()[0], 1, 'forEach with expression filter: :el > 2');
-				
-				equal($C([1, 2, 3, 4]).forEach(function (el, i, data) {
-					data[i] += 1;
-				}, '(:el > 2) && (:el < 4)').get()[3], 4, 'forEach with expression filter: (:el > 2) && (:el < 4)');
-				
-				equal($C([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).forEach(function (el, i, data) {
-					data[i] += 1;
-				}, '', '', '', 2, 2, 5).get('eq(-1)'), 10, 'with indexOf');
-			});
 			test('search', function () {
 				var db = new Collection([1, 2, 3, 4, 1, 2, 3, 4]);
 				
-				equal(db.search(function (el, i, data) {
+				equal(db.search(function (el, key, data) {
 					return el === 1;
 				})[0], 0, 'simple search');
 				equal(db.indexOf(1), 0, 'indexOf');
@@ -79,7 +173,7 @@
 			test('get', function () {
 				var db = new Collection([1, 2, 3, 4]);
 				
-				equal(db.get(function (el, i, data) {
+				equal(db.get(function (el, key, data) {
 					return el === 1;
 				})[0], 1, 'simple return');
 			});
@@ -94,7 +188,7 @@
 			test('remove', function () {
 				var db = new Collection([1, 2, 3, 4]);
 				
-				equal(db.remove(function (el, i, data) {
+				equal(db.remove(function (el, key, data) {
 					return el === 1;
 				}).get('0'), 2, 'simple remove');
 			});
@@ -114,7 +208,7 @@
 				equal(db.group('age')[27].length, 2, 'group by parameter');
 				equal(db.group(':el.age < 28')[true].length, 3, 'group by expression');
 				equal(db.group(function (el, i) { return i % 2 === 0; })[true].length, 2, 'group by function');
-			});
+			});*/
 		});
 	</script>
 </head>

@@ -9,11 +9,13 @@
 	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -26,12 +28,11 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}])
 	 *	.remove(function (el, key, data, i) { return i == 1; }).get();
 	 */
-	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf) {
-		// overload
-		if (Collection.isNumber(filter) || (arguments.length <= 2  && !Collection.isBoolean(id) && Collection.isString(filter)
-			&& !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-				return this._removeOne(filter, id || '');
-			} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
+	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
+		// overloads
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			return this._removeOne(filter, id || '');
+		} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
 		
 		var elements = this.search.apply(this, arguments), i = elements.length;
 		
@@ -50,8 +51,10 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -62,6 +65,6 @@
 	 *		return i % 2 !== 0;
 	 *	}).get();
 	 */
-	Collection.prototype.removeOne = function (filter, id, from, indexOf) {
-		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '');
+	Collection.prototype.removeOne = function (filter, id, from, indexOf, lastIndexOf, rev) {
+		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};

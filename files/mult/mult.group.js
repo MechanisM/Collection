@@ -10,10 +10,13 @@
 	 * @param {Context|Function|String Expression} [field] — field name, string expression (the record is equivalent to: return + string expression) or callback function
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Boolean} [link=false] — save link
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -23,15 +26,10 @@
 	 * // group all the even-numbered elements //
 	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5]).group(':el % 2 === 0');
 	 */
-	Collection.prototype.group = function (field, filter, id, count, from, indexOf, link) {
+	Collection.prototype.group = function (field, filter, id, mult, count, from, indexOf, lastIndexOf, rev, link) {
 		field = this._isStringExpression((field = field || '')) ? this._compileFilter(field) : field;
-		id = id || '';
+		mult = mult === false ? false : true;
 		link = link || false;
-	
-		// values by default
-		count = parseInt(count) >= 0 ? parseInt(count) : false;
-		from = parseInt(from) || false;
-		indexOf = parseInt(indexOf) || false;
 		
 		var fieldType = Collection.isString(field),
 			result = {},
@@ -42,12 +40,12 @@
 				
 				if (!result[param]) {
 					result[param] = [!link ? el : key];
-				} else { result[param].push(!link ? el : key); }
+				} else if (mult === true) { result[param].push(!link ? el : key); }
 	
 				return true;
 			};
 		
-		this.forEach(action, filter, id, '', count, from, indexOf);
+		this.forEach.apply(Collection.unshiftArguments(arguments, action));
 	
 		return result;
 	};
@@ -59,8 +57,8 @@
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -71,6 +69,9 @@
 	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
 	 *	.groupLinks(':el % 2 === 0');
 	 */
-	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf) {
-		return this.group(field || '', filter || '', id || '', count || '', from || '', indexOf || '', true);
+	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf, lastIndexOf, rev) {
+		var arg = Collection.unshiftArguments(arguments, action);
+		arg.push(true);
+		
+		return this.group.apply(arg);
 	};	

@@ -10,12 +10,13 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean, it is considered as mult (overload)
+	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
-	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -47,7 +48,7 @@
 	 *		el.c = 7;
 	 *	}).get();
 	 */
-	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, rev) {
+	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overload
 		if (Collection.isNumber(filter) || (arguments.length <= 3 && !Collection.isBoolean(id) && Collection.isString(filter)
 			&& !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
@@ -88,6 +89,10 @@
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -106,29 +111,6 @@
 	 *		el.c = 7;
 	 *	}).get();
 	 */
-	Collection.prototype.setOne = function (filter, replaceObj, id, from, indexOf, rev) {
-		return this.set(filter || '', replaceObj, id || '', false, '', from || '', indexOf || '', rev || '');
-	};
-	
-	/**
-	 * pass each element in the current matched set through a function (in context)<br/>
-	 * events: onSet
-	 * 
-	 * @this {Colletion Object}
-	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
-	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
-	 * @param {Number|Boolean} [from=0] — skip a number of elements
-	 * @param {Number|Boolean} [indexOf=0] — starting point
-	 * @param {Number|Boolean} [rev=false] — if true, the collection is processed in order of decreasing
-	 * @return {Colletion Object}
-	 *
-	 * @example
-	 * // replace each even-numbered element on the value of the sine //
-	 * $C([1, 2, 3, 4, 5, 6]).map(Math.sin, ':el % 2 === 0').get();
-	 */
-	Collection.prototype.map = function (replaceObj, filter, id, mult, count, from, indexOf, rev) {
-		return this.set(filter || true, replaceObj, id || '', mult || '', count || '', from || '', indexOf || '', rev || '');
+	Collection.prototype.setOne = function (filter, replaceObj, id, from, indexOf, lastIndexOf, rev) {
+		return this.set(filter || '', replaceObj, id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
