@@ -306,6 +306,8 @@
 				var db = $C([1, 2, 3, 4]).pushCollection('table1', [1, 2, []]);
 				equal(db.newContext('eq(-1)').move(true, '', 'active', 'table1').getCollection().length, 0, 'simple move');
 				equal(db.resetContext().move('eq(-1)', '', 'table1').getCollection()[0].length, 4, 'move by link');
+				
+				equal($C([1, 2, 3, 4, []], {context: 'eq(-1)'}).move(':$C.isNumber(el)', '', 'active').get('eq(-1)').length, 4, 'move by link');
 			});
 			
 			module('group methods');

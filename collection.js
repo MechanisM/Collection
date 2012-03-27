@@ -1606,6 +1606,8 @@
 		
 		this.enable('context');
 		
+		console.log(elements);
+		
 		// move
 		if (mult === true && Collection.isArray(elements)) {
 			elements.forEach(function (el) {
