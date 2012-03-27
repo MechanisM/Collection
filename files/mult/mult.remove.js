@@ -39,7 +39,11 @@
 		if (!Collection.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else {
-			while ((i -= 1) > -1) { this._removeOne(elements[i], id); }
+			if (rev === true) {
+				elements.forEach(function (el) {
+					this._removeOne(el, id);
+				}, this);
+			} else { this._remove(elements, id); }
 		}
 	
 		return this;

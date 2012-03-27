@@ -14,9 +14,9 @@
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
-	 * @param {Boolean} [link=false] — save link
 	 * @param {Number} [lastIndexOf] — ending point
 	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @param {Boolean} [link=false] — save link
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -31,23 +31,25 @@
 		mult = mult === false ? false : true;
 		link = link || false;
 		
-		var fieldType = Collection.isString(field),
-			result = {},
+		var isString = Collection.isString(field),
+			res = {}, arg,
 			
 			/** @private */
-			action = function (el, key, data, i, length, cObj, id) {
-				var param = fieldType ? Collection.byLink(el, field) : field.apply(field, arguments);
+			action = function (el, key, data, i) {
+				var param = isString ? Collection.byLink(el, field) : field.apply(field, arguments);
 				
-				if (!result[param]) {
-					result[param] = [!link ? el : key];
-				} else if (mult === true) { result[param].push(!link ? el : key); }
+				if (!res[param]) {
+					res[param] = [!link ? el : key];
+				} else { res[param].push(!link ? el : key); }
 	
 				return true;
 			};
 		
-		this.forEach.apply(Collection.unshiftArguments(arguments, action));
+		arg = Collection.unshiftArguments(arguments, action);
+		arg.splice(1, 1);
+		this.forEach.apply(this, arg);
 	
-		return result;
+		return res;
 	};
 	/**
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
@@ -59,6 +61,8 @@
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -73,5 +77,5 @@
 		var arg = Collection.unshiftArguments(arguments, action);
 		arg.push(true);
 		
-		return this.group.apply(arg);
+		return this.group.apply(this, arg);
 	};	

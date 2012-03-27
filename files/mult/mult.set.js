@@ -62,7 +62,7 @@
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
 				if (isFunc) {
-					res = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+					res = replaceObj.apply(replaceObj, arguments);
 					if (typeof res !== 'undefined') { data[key] = res; }
 				} else {
 					data[key] = Collection.expr(replaceObj, data[key]);

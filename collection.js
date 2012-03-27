@@ -856,32 +856,7 @@
 		} else { this._removeOne(objContext, id); }
 	
 		return this;
-	};
-	
-	/**
-	 * remove an element from the collection (pop) (in context)<br/>
-	 * events: onRemove
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @return {Colletion Object}
-	 *
-	 * @example
-	 * $C([1, 2, 3]).pop().getCollection();
-	 */
-	Collection.prototype.pop = function (id) { return this._removeOne('eq(-1)', id || ''); };
-	/**
-	 * remove an element from the collection (shift) (in context)<br/>
-	 * events: onRemove
-	 * 
-	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @return {Colletion Object}
-	 *
-	 * @example
-	 * $C([1, 2, 3]).shift().getCollection();
-	 */
-	Collection.prototype.shift = function (id) { return this._removeOne('eq(0)', id || ''); };	
+	};	
 	/////////////////////////////////
 	//// single methods (concatenation)
 	/////////////////////////////////
@@ -1229,7 +1204,7 @@
 		var res = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, key, data, i, length, cObj, id) {
+			action = function (el, key) {
 				if (mult === true) {
 					res.push(key);
 				} else { res = key; }
@@ -1344,7 +1319,7 @@
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, key, data, i, length, cObj, id) {
+			action = function (el, key, data) {
 				if (mult === true) {
 					result.push(data[key]);
 				} else { result = data[key]; }
@@ -1443,7 +1418,7 @@
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
 				if (isFunc) {
-					res = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+					res = replaceObj.apply(replaceObj, arguments);
 					if (typeof res !== 'undefined') { data[key] = res; }
 				} else {
 					data[key] = Collection.expr(replaceObj, data[key]);
@@ -1499,7 +1474,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * pass each element in the current matched set through a function (in context)<br/>
+	 * pass each element in the current matched set through a function and return new object (in context)
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
@@ -1537,9 +1512,9 @@
 				
 				if (isFunc) {
 					if (isArray) {
-						res.push(replaceObj.call(replaceObj, el, key, data, i, length, cObj, id));
+						res.push(replaceObj.apply(replaceObj, arguments));
 					} else {
-						res[key] = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+						res[key] = replaceObj.apply(replaceObj, arguments);
 					}
 				} else {
 					if (isExists) {
@@ -1613,7 +1588,7 @@
 		deleteType = deleteType === false ? false : true;
 		
 		var deleteList = [],
-			aCheckType = Collection.isArray(Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
+			isArray = Collection.isArray(Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
 	
 			elements, e = null;
 		
@@ -1634,16 +1609,26 @@
 		// move
 		if (mult === true && Collection.isArray(elements)) {
 			elements.forEach(function (el) {
-				this.add(context + Collection.CHILDREN + el, aCheckType === true ? addType : el + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+				this.add(context + Collection.CHILDREN + el, isArray === true ? addType : el + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
 			}, this);
 		} else {
-			this.add(context + Collection.CHILDREN + elements, aCheckType === true ? addType : elements + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.add(context + Collection.CHILDREN + elements, isArray === true ? addType : elements + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 		
 		// delete element
-		if (deleteType === true) { this.disable('context')._remove(deleteList, sourceID).enable('context'); }
+		if (deleteType === true) {
+			this.disable('context');
+			
+			if (rev === true) {
+				deleteList.forEach(function (el) {
+					this._removeOne(el, sourceID);
+				}, this);
+			} else { this._remove(deleteList, sourceID); }
+			
+			this.enable('context');
+		}
 	
 		return this;
 	},
@@ -1765,7 +1750,11 @@
 		if (!Collection.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else {
-			while ((i -= 1) > -1) { this._removeOne(elements[i], id); }
+			if (rev === true) {
+				elements.forEach(function (el) {
+					this._removeOne(el, id);
+				}, this);
+			} else { this._remove(elements, id); }
 		}
 	
 		return this;
@@ -1793,6 +1782,57 @@
 	 */
 	Collection.prototype.removeOne = function (filter, id, from, indexOf, lastIndexOf, rev) {
 		return this.remove(filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+	};
+	
+	/**
+	 * remove an element from the collection (pop) (in context)<br/>
+	 * events: onRemove
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3]).pop().getCollection();
+	 */
+	Collection.prototype.pop = function (id, filter, from, indexOf, lastIndexOf) {
+		id = id || '';
+		
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+			return this._removeOne('eq(-1)', id);
+		}
+		
+		return this.removeOne(filter || '', id, from || '', indexOf || '', lastIndexOf || '', true);	
+	};
+	/**
+	 * remove an element from the collection (shift) (in context)<br/>
+	 * events: onRemove
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Number} [from=0] — skip a number of elements
+	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3]).shift().getCollection();
+	 */
+	Collection.prototype.shift = function (id, filter, from, indexOf, lastIndexOf) {
+		id = id || '';
+		
+		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+			return this._removeOne('eq(0)', id);
+		}
+		
+		return this.removeOne(filter || '', id, from || '', indexOf || '', lastIndexOf || '');	
 	};	
 	/////////////////////////////////
 	//// mult methods (group)
@@ -1809,9 +1849,9 @@
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
-	 * @param {Boolean} [link=false] — save link
 	 * @param {Number} [lastIndexOf] — ending point
 	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
+	 * @param {Boolean} [link=false] — save link
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -1826,23 +1866,25 @@
 		mult = mult === false ? false : true;
 		link = link || false;
 		
-		var fieldType = Collection.isString(field),
-			result = {},
+		var isString = Collection.isString(field),
+			res = {}, arg,
 			
 			/** @private */
-			action = function (el, key, data, i, length, cObj, id) {
-				var param = fieldType ? Collection.byLink(el, field) : field.apply(field, arguments);
+			action = function (el, key, data, i) {
+				var param = isString ? Collection.byLink(el, field) : field.apply(field, arguments);
 				
-				if (!result[param]) {
-					result[param] = [!link ? el : key];
-				} else if (mult === true) { result[param].push(!link ? el : key); }
+				if (!res[param]) {
+					res[param] = [!link ? el : key];
+				} else { res[param].push(!link ? el : key); }
 	
 				return true;
 			};
 		
-		this.forEach.apply(Collection.unshiftArguments(arguments, action));
+		arg = Collection.unshiftArguments(arguments, action);
+		arg.splice(1, 1);
+		this.forEach.apply(this, arg);
 	
-		return result;
+		return res;
 	};
 	/**
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
@@ -1854,6 +1896,8 @@
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -1868,7 +1912,7 @@
 		var arg = Collection.unshiftArguments(arguments, action);
 		arg.push(true);
 		
-		return this.group.apply(arg);
+		return this.group.apply(this, arg);
 	};		
 	/////////////////////////////////
 	//// statistic methods

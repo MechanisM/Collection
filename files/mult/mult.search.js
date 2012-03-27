@@ -29,7 +29,7 @@
 		var res = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, key, data, i, length, cObj, id) {
+			action = function (el, key) {
 				if (mult === true) {
 					res.push(key);
 				} else { res = key; }

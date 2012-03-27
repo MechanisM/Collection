@@ -37,7 +37,7 @@
 		var result = mult === true ? [] : -1,
 			
 			/** @private */
-			action = function (el, key, data, i, length, cObj, id) {
+			action = function (el, key, data) {
 				if (mult === true) {
 					result.push(data[key]);
 				} else { result = data[key]; }

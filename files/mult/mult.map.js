@@ -42,9 +42,9 @@
 				
 				if (isFunc) {
 					if (isArray) {
-						res.push(replaceObj.call(replaceObj, el, key, data, i, length, cObj, id));
+						res.push(replaceObj.apply(replaceObj, arguments));
 					} else {
-						res[key] = replaceObj.call(replaceObj, el, key, data, i, length, cObj, id);
+						res[key] = replaceObj.apply(replaceObj, arguments);
 					}
 				} else {
 					if (isExists) {

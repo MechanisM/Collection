@@ -46,7 +46,7 @@
 		deleteType = deleteType === false ? false : true;
 		
 		var deleteList = [],
-			aCheckType = Collection.isArray(Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
+			isArray = Collection.isArray(Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
 	
 			elements, e = null;
 		
@@ -67,16 +67,26 @@
 		// move
 		if (mult === true && Collection.isArray(elements)) {
 			elements.forEach(function (el) {
-				this.add(context + Collection.CHILDREN + el, aCheckType === true ? addType : el + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+				this.add(context + Collection.CHILDREN + el, isArray === true ? addType : el + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
 			}, this);
 		} else {
-			this.add(context + Collection.CHILDREN + elements, aCheckType === true ? addType : elements + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.add(context + Collection.CHILDREN + elements, isArray === true ? addType : elements + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 		
 		// delete element
-		if (deleteType === true) { this.disable('context')._remove(deleteList, sourceID).enable('context'); }
+		if (deleteType === true) {
+			this.disable('context');
+			
+			if (rev === true) {
+				deleteList.forEach(function (el) {
+					this._removeOne(el, sourceID);
+				}, this);
+			} else { this._remove(deleteList, sourceID); }
+			
+			this.enable('context');
+		}
 	
 		return this;
 	},
