@@ -65,6 +65,18 @@
 					data[key] += 1;
 				}, '(:el > 2) && (:el < 4)').get()[3], 4, 'filter -> "(:el > 2) && (:el < 4)"');
 				
+				equal($C([[1, 2, 3, 4], 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '0 >>> :el % 2 === 0').get(0)[1], 3, 'filter -> "0 >>> :el % 2 === 0"');
+				
+				equal($C([[1, 2, 3, 4], 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '0 >>> ').get(0)[0], 2, 'filter -> "0 >>> "');
+				
+				equal($C([[1, 2, 3, 4], 2, 3, 4]).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, ' >>> :$C.isNumber(el)').get(1), 3, 'filter -> " >>> :$C.isNumber(el)"');
+				
 				equal((function () {
 					var db = $C([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12])
 						.forEach(':data[key] += 2', ':el % 2 === 0', '', '', 2, 1, 2, 6, true)
@@ -144,6 +156,18 @@
 				equal($C({0: 1, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
 					data[key] += 1;
 				}, '(:el > 2) && (:el < 4)').get()[3], 4, 'filter -> "(:el > 2) && (:el < 4)"');
+				
+				equal($C({0: {0: 1, 1: 2, 2: 3, 3: 4}, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '0 >>> :el % 2 === 0').get(0)[1], 3, 'filter -> "0 >>> :el % 2 === 0"');
+				
+				equal($C({0: {0: 1, 1: 2, 2: 3, 3: 4}, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, '0 >>> ').get(0)[0], 2, 'filter -> "0 >>> "');
+				
+				equal($C({0: {0: 1, 1: 2, 2: 3, 3: 4}, 1: 2, 2: 3, 3: 4}).forEach(function (el, key, data) {
+					data[key] += 1;
+				}, ' >>> :$C.isNumber(el)').get(1), 3, 'filter -> " >>> :$C.isNumber(el)"');
 				
 				equal((function () {
 					var db = $C({0: 1, 1: 2, 2: 3, 3: 4, 4: 5, 5: 6, 6: 7, 7: 8, 8: 9, 9: 10, 10: 11, 11: 12})

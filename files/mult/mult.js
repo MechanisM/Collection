@@ -7,8 +7,8 @@
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), collection or true (if disabled)
-	 * @param {String|Collection|Boolean} [id=this.ACTIVE] — collection ID or collection, if the id is a Boolean
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
+	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -25,9 +25,8 @@
 	 *	.length(':i % 3 === 0');
 	 */
 	Collection.prototype.length = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		filter = filter || '';
 		mult = mult === false ? false : true;
-		var data, isCollection, length;
+		var data, length;
 		
 		// overload
 		// if the filter is a collection
@@ -44,13 +43,9 @@
 			data = this._get('collection');
 		} else if (Collection.isString(id)) {
 			data = this._get('collection', id);
-		} else {
-			isCollection = true;
-			data = id;
-		}
+		} else { data = id; }
 		
 		if (data === null) { return 0; }
-		if (isCollection !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
 		if (Collection.isString(data)) { return data.length; }
 		
 		// if no filter and the original object is an array
@@ -68,8 +63,8 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
-	 * @param {String|Boolean} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -79,6 +74,10 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 *
+	 * @example
+	 * var db = $C([[1, 2, 3, 4, 5, 6, 7, 8], 2, 3, 4]);
+	 * db.forEach(':data[key] += 1', '0 >>> :el % 2 === 0');
+	 * console.log(db.get());
 	 * @example
 	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 all elements of multiples of three //
@@ -94,7 +93,8 @@
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// values by default
 		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;
-		filter = filter || '';
+		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SPLITTER) : filter;
+		
 		id = id || '';
 
 		mult = mult === false ? false : true;
@@ -108,15 +108,25 @@
 			tmpObj = {},
 			tmpArray = [],
 			
+			context = filter.length === 2 ? filter[0] : '',
+			
 			data, length, fLength,
 			cloneObj,
 			
 			key, i = 0, j = 0,
 			res = false;
 		
+		if (Collection.isArray(filter)) {
+			if (filter.length === 2) {
+				filter = Collection.trim(filter[1]);
+			} else { filter = Collection.trim(filter[0]); }
+		}
+		
 		// get by link
-		data = !Collection.isCollection(id) ? Collection.byLink(this._get('collection', id), this._getActiveParam('context')) : id;
-
+		data = !Collection.isCollection(id)
+					? Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context)
+						: id;
+		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
@@ -252,7 +262,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point

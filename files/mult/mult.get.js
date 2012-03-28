@@ -7,8 +7,8 @@
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (context + >>> + filter (the record is equivalent to: return + string expression))), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -28,26 +28,37 @@
 	 *	.get(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
+		id = id || '';
+		
 		// overload
 		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-			return this._getOne(filter, id || '');
+			return this._getOne(filter, id);
 		}
 		
 		mult = mult === false ? false : true;
-		var result = mult === true ? [] : -1,
+		var res = mult === true || Collection.isArray(filter) ? [] : -1, action;
+		
+		// overload
+		if (Collection.isArray(filter)) {
+			filter.forEach(function (el) {
+				res.push(this.get(el, id, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''));
+			}, this);
 			
-			/** @private */
-			action = function (el, key, data) {
-				if (mult === true) {
-					result.push(data[key]);
-				} else { result = data[key]; }
+			return res;
+		}
+			
+		/** @private */
+		action = function (el, key, data) {
+			if (mult === true) {
+				res.push(data[key]);
+			} else { res = data[key]; }
 	
-				return true;
-			};
+			return true;
+		};
 		
 		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
 	
-		return result;
+		return res;
 	};
 	/**
 	 * get the one element using a filter or by link (in context)

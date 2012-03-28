@@ -371,7 +371,74 @@
 		
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
-			/////////////////////////////////	//// methods of arrays and objects	/////////////////////////////////		/**	 * merge the contents of two or more objects together into the first object	 *	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend	 * @param {Object} [target] — the object to extend	 * @param {Object} [objectN] — additional objects containing properties to merge in	 * @return {Object}	 *	 * @example	 * $C.extend({a: 1}, {a: 2}, {a: 3});	 * @example	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}});	 */	Collection.extend = function () {		var options, name, src, copy, copyIsArray, clone,			target = arguments[0] || {},						i = 0, aLength = arguments.length,						deep = false;				// handle a deep copy situation		if (Collection.isBoolean(target)) {			deep = target;			target = arguments[1] || {};			i = 1;		}			// handle case when target is a string or something (possible in deep copy)		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }			// extend Collection itself if only one argument is passed		if (aLength === i) {			target = Collection;			i -= 1;		}			while ((i += 1) < aLength) {			// only deal with non-null/undefined values			if (Collection.isExists(options = arguments[i])) {				// extend the base object				for (name in options) {					src = target[name];					copy = options[name];						// prevent never-ending loop					if (target === copy) { continue; }										// recurse if we're merging plain objects or arrays					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {						if (copyIsArray) {							copyIsArray = false;							clone = src && Collection.isArray(src) ? src : [];						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }							// never move original objects, clone them						target[name] = Collection.extend(deep, clone, copy);										// don't bring in undefined values					} else if (typeof copy !== 'undefined') { target[name] = copy; }				}			}		}				return target;	};			/**	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)	 *	 * @this {Collection}	 * @param {Plain Object} obj — the object to extend	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)	 * @param {mixed} value — some value	 * @return {Plain Object|Boolean}	 *	 * @example	 * $C.addElementToObject({a: 1}, 'b', 2);	 * @example	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);	 */	Collection.addElementToObject = function (obj, keyName, value) {		keyName = keyName.split(Collection.METHOD_SEPARATOR);		var key, newObj = {};			if (keyName[1] && keyName[1] === 'unshift') {			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;						for (key in obj) {				if (obj.hasOwnProperty(key)) {					newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key];				}			}			obj = newObj;				return obj;		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }			return true;	};		/**	 * unshift for arguments (object)	 * 	 * @param {Object} obj — some object	 * @param {mixed} val — new value	 * @return {Array}	 *	 * @example	 * $C.unshiftArguments({'0': 1, length: 1}, 2);	 */	Collection.unshiftArguments = function (obj, val) {		var newObj = [val], i = -1, oLength = obj.length;		while ((i += 1) < oLength) { newObj.push(obj[i]); }				return newObj;	};		/////////////////////////////////	//// array prototype	/////////////////////////////////	if (!Array.prototype.forEach) {		/**		 * calls a function for each element in the array		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {undefined}		 */		Array.prototype.forEach = function (callback, thisObject) {			var i = -1, aLength = this.length;						while ((i += 1) < aLength) {				if (!thisObject) {					callback(this[i], i, this);				} else { callback.call(thisObject, this[i], i, this); }			}		}	}		if (!Array.prototype.some) {		/**		 * tests whether some element in the array passes the test implemented by the provided function		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {Boolean}		 */		Array.prototype.some = function (callback, thisObject) {			var i = -1, aLength = this.length, res;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }				if (res) { return true; }			}						return false;		}	}		if (!Array.prototype.every) {		/**		 * метод возвращает false, если ли хотя бы один элемент массива не удовлетворит фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Boolean}		 *		 * @example		 * [1, 2, 3, 4, 5].every(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.every = function (callback, thisObject) {			var i = -1, aLength = this.length,				res, fRes = true;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }								if (fRes === true && !res) { fRes = false; }			}						return fRes;		};	}		if (!Array.prototype.filter) {		/**		 * метод возвращает новый массив, из элементов исходного, которые удовлетворили фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение для каждого элемента массива		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].filter(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.filter = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					if (callback(this[i], i, this)) {						res.push(this[i]);					}				} else {					if (callback.call(thisObject, this[i], i, this)) {						res.push(this[i]);					}				}			}						return res;		};	}		if (!Array.prototype.map) {		/**		 * метод возвращает новый массив, из элементов исходного, которые прошли через функцию callback		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать новое значение элемента		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].map(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.map = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					res.push(callback(this[i], i, this));				} else {					res.push(callback.call(thisObject, this[i], i, this));				}			}						return res;		};	}		if (!Array.prototype.indexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает его индекс (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=0] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5].indexOf(4); // 3		 * [1, 2, 3, 4, 5].indexOf(4, 4); // -1		 */		Array.prototype.indexOf = function (searchElement, fromIndex) {			var i = (fromIndex || 0) - 1,				aLength = this.length;						while ((i += 1) < aLength) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.lastIndexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает индекс последнего совпадения (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=Array.length] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4); // 5		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4, 3); // 3		 */		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {			var i = fromIndex || this.length;						while ((i -= 1) > -1) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.reduce) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, слева-направо), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduce(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе первый элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduce = function (callback, initialValue) {			var i = 0, aLength = this.length, res;						if (aLength === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[0]; }						while ((i += 1) < aLength) {				res = callback(res, this[i], i, this);			}						return res;		};	}		if (!Array.prototype.reduceRight) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, справа-налево), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduceRight(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе последний элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduceRight = function (callback, initialValue) {			var i = this.length - 1, res;						if (this.length === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[i]; }						while ((i -= 1) > -1) {				res = callback(res, this[i], i, this);			}						return res;		};	}		/////////////////////////////////	//// prototype	/////////////////////////////////		Collection.prototype = {		/**		 * framework name		 * 		 * @constant		 * @type String		 */		name: 'Collection',		/**		 * framework version		 * 		 * @constant		 * @type String		 */		version: '3.7',		/**		 * return string: framework name + framework version		 *		 * @this {Collection Object}		 * @return {String}		 */		collection: function () { return this.name + ' ' + this.version; },				// const		ACTIVE: 'active',		SHUFFLE: 'shuffle',		NAMESPACE_SEPARATOR: '.',				/**		 * stack parameters		 * 		 * @private		 * @field		 * @type Array		*/		stack: [			'namespace',						'collection',			'filter',			'context',			'cache',			'variable',			'defer',				'page',			'parser',						'toHTML',						'target',			'calculator',			'pager',						'template',						'breaker',			'navBreaker',						'resultNull'		]	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};		/////////////////////////////////	//// DOM methods	/////////////////////////////////		/** @private */	Collection.drivers.dom = {		/**		 * returns a list of the elements within the document		 * 		 * @this {Collection DOM Driver}		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas		 * @param {DOM node} [context] — context		 * @throw {Error}		 * @return {mixin}		 */		find: function (selector, context) {			if (!this.lib) { throw new Error('DOM driver is not defined!'); }						return this.engines[this.lib].find(selector || '', context || '');		},				/**		 * returns all direct child elements		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [attr] — the properties of a node		 * @return {Array}		 */		children: function (el, prop) {			var res = [];			Array.prototype.forEach.call(el.childNodes, function (el) {				if (el.nodeType === 1) {					if (!prop) {						res.push(el);					} else if (el[prop]) { res.push(el); }				}			});						return res;		},				/**		 * returns the data attributes of the node		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [name] — data name		 * @return {Collection DOM Driver}		 */		data: function (el, name) {			var attr = el.attributes, data = {};				if (attr && attr.length > 0) {				Array.prototype.forEach.call(attr, function (el) {					if (el.name.substring(0, 5) === 'data-') {						data[el.name.replace('data-', '')] = Collection.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;					}				});			}						if (name) { return data[name]; }			return data;		},				/**		 * returns the text content of the node		 * 		 * @this {Collection}		 * @param {DOM Node} el — DOM node		 * @return {String|Boolean}		 */		text: function (el) {			el = el.childNodes;					var str = '';						Array.prototype.forEach.call(el, function (el) {				if (el.nodeType === 3 && Collection.trim(el.textContent)) { str += el.textContent; }			});						if (str) { return str; }						return false;		},				/**		 * attach event		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} eventType — event type		 * @param {Function} callback — callback function		 * @return {Collection DOM Driver}		 */		bind: function (el, eventType, callback) {			if (this.engines[this.lib][eventType]) {				this.engines[this.lib][eventType](el, callback);								return this;			}						// if old IE			if (document.attachEvent) {				el.attachEvent('on' + eventType, callback);			} else { el.addEventListener(eventType, callback); }						return this;		},				/**		 * adds the specified class to the element		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		addClass: function (el, className) {			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }						return this;		},		/**		 * determine whether or not the specified item is needed class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Boolean}		 */		hasClass: function (el, className) {			return el.className.split(' ').indexOf(className) !== -1;		},		/**		 * remove a single class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		removeClass: function (el, className) {			var classes = el.className.split(' '),				newClass = [];						classes.forEach(function (el) {				if (el !== className) { newClass.push(el); }			});						el.className = newClass.join(' ');						return this;		},				// search frameworks		engines: {			// qsa css selector engine			qsa: {				is: function () {					if (typeof qsa !== 'undefined') { return true; }				},				find: function (selector, context) {					return qsa.querySelectorAll(selector, context);				}			},			// sizzle 			sizzle: {				is: function () {					if (typeof Sizzle !== 'undefined') { return true; }				},				find: function (selector, context) {					return Sizzle(selector, context);				}			},			// jQuery 			jQuery: {				is: function () {					if (typeof jQuery !== 'undefined') { return true; }				},				find: function (selector, context) {					return jQuery(selector, context);				},				click: function (el, callback) { $(el).click(callback); },				change: function (el, callback) { $(el).change(callback); }			},			// dojo 			dojo: {				is: function () {					if (typeof dojo !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return dojo.query(selector, context);					} else { return dojo.query(selector); }				},				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }			},			// mootools 			mootools: {				is: function () {					if (typeof MooTools !== 'undefined') { return true; }				},				find: function (selector, context) {					var res;										if (context) {						res = [];												$$(context).getElements(selector).forEach(function (el) {							el.forEach(function (el) { res.push(el); });						});					} else { res = $$(selector); }										return res;				}			},			// prototype 			prototype: {				is: function () {					if (typeof Prototype !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return context.getElementsBySelector(selector);					} else { return $$(selector); }				}			}		}	};		// definition of DOM driver	(function () {		var key, engines = Collection.drivers.dom.engines;		for (key in engines) {			if (!engines.hasOwnProperty(key)) { continue; }								if (engines[key].is()) {				Collection.drivers.dom.lib = key;								return true;			}		}	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};	/////////////////////////////////	//// DOM methods (compiler templates)	/////////////////////////////////		/**	 * compile the template	 * 	 * @this {Collection}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @throw {Error}	 * @return {Function}	 */	Collection.ctplCompile = function (selector) {		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }				var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,			elem = html				.replace(/\/\*.*?\*\//g, '')				.split('?>')				.join('<?js')				.replace(/[\r\t\n]/g, ' ')				.split('<?js'),						resStr = 'var result = ""; ';				elem.forEach(function (el, i) {			if (i === 0 || i % 2 === 0) {				resStr += 'result +="' + el.split('"').join('\\"') + '";';			} else { resStr += el.split('echo').join('result +='); }		});				return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', resStr + ' return result;');	};		/**	 * make templates	 * 	 * @this {Collection Object}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @return {Collection Object}	 */	Collection.prototype.ctplMake = function (selector) {			var dom = Collection.drivers.dom;		Collection.isString(selector) && (selector = dom.find(selector));				Array.prototype.forEach.call(selector, function (el) {			var data = dom.data(el, 'ctpl'), key,				prefix = data.prefix ? data.prefix + '_' : '';						// compile template			this._push('template', prefix + data.name, Collection.ctplCompile(el));			if (data.set && data.set === true) { this._set('template', prefix + data.name); }						// compile			for (key in data) {				if (!data.hasOwnProperty(key)){ continue; }								if (['prefix', 'set', 'print', 'name', 'collection'].indexOf(key) !== -1) { continue; }				if (['target', 'pager'].indexOf(key) !== -1) { data[key] = dom.find(data[key]); }								this._push(key, prefix + data.name, data[key]);				if (data.set && data.set === true) { this._set(key, prefix + data.name); }								if (['filter', 'parser'].indexOf(key) !== -1) { data[key] = prefix + data.name; }			}						// if the target is not defined, then take the parent node			if (!data.target) {				this._push('target', prefix + data.name, [el.parentNode]);				if (data.set && data.set === true) { this._set('target', prefix + data.name); }			}						// print template (if need)			if (data.print && data.print === true) {				data.template = data.name;								this.print(data);			}		}, this);				return this;	};	
+			/////////////////////////////////	//// methods of arrays and objects	/////////////////////////////////		/**	 * merge the contents of two or more objects together into the first object	 *	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend	 * @param {Object} [target] — the object to extend	 * @param {Object} [objectN] — additional objects containing properties to merge in	 * @return {Object}	 *	 * @example	 * $C.extend({a: 1}, {a: 2}, {a: 3});	 * @example	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}});	 */	Collection.extend = function () {		var options, name, src, copy, copyIsArray, clone,			target = arguments[0] || {},						i = 0, aLength = arguments.length,						deep = false;				// handle a deep copy situation		if (Collection.isBoolean(target)) {			deep = target;			target = arguments[1] || {};			i = 1;		}			// handle case when target is a string or something (possible in deep copy)		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }			// extend Collection itself if only one argument is passed		if (aLength === i) {			target = Collection;			i -= 1;		}			while ((i += 1) < aLength) {			// only deal with non-null/undefined values			if (Collection.isExists(options = arguments[i])) {				// extend the base object				for (name in options) {					src = target[name];					copy = options[name];						// prevent never-ending loop					if (target === copy) { continue; }										// recurse if we're merging plain objects or arrays					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {						if (copyIsArray) {							copyIsArray = false;							clone = src && Collection.isArray(src) ? src : [];						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }							// never move original objects, clone them						target[name] = Collection.extend(deep, clone, copy);										// don't bring in undefined values					} else if (typeof copy !== 'undefined') { target[name] = copy; }				}			}		}				return target;	};			/**	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)	 *	 * @this {Collection}	 * @param {Plain Object} obj — the object to extend	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)	 * @param {mixed} value — some value	 * @return {Plain Object|Boolean}	 *	 * @example	 * $C.addElementToObject({a: 1}, 'b', 2);	 * @example	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);	 */	Collection.addElementToObject = function (obj, keyName, value) {		keyName = keyName.split(Collection.METHOD_SEPARATOR);		var key, newObj = {};			if (keyName[1] && keyName[1] === 'unshift') {			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;						for (key in obj) {				if (obj.hasOwnProperty(key)) {					newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key];				}			}			obj = newObj;				return obj;		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }			return true;	};		/**	 * unshift for arguments (object)	 * 	 * @param {Object} obj — some object	 * @param {mixed} val — new value	 * @return {Array}	 *	 * @example	 * $C.unshiftArguments({'0': 1, length: 1}, 2);	 */	Collection.unshiftArguments = function (obj, val) {		var newObj = [val], i = -1, oLength = obj.length;		while ((i += 1) < oLength) { newObj.push(obj[i]); }				return newObj;	};		/////////////////////////////////	//// array prototype	/////////////////////////////////	if (!Array.prototype.forEach) {		/**		 * calls a function for each element in the array		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {undefined}		 */		Array.prototype.forEach = function (callback, thisObject) {			var i = -1, aLength = this.length;						while ((i += 1) < aLength) {				if (!thisObject) {					callback(this[i], i, this);				} else { callback.call(thisObject, this[i], i, this); }			}		}	}		if (!Array.prototype.some) {		/**		 * tests whether some element in the array passes the test implemented by the provided function		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {Boolean}		 */		Array.prototype.some = function (callback, thisObject) {			var i = -1, aLength = this.length, res;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }				if (res) { return true; }			}						return false;		}	}		if (!Array.prototype.every) {		/**		 * метод возвращает false, если ли хотя бы один элемент массива не удовлетворит фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Boolean}		 *		 * @example		 * [1, 2, 3, 4, 5].every(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.every = function (callback, thisObject) {			var i = -1, aLength = this.length,				res, fRes = true;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }								if (fRes === true && !res) { fRes = false; }			}						return fRes;		};	}		if (!Array.prototype.filter) {		/**		 * метод возвращает новый массив, из элементов исходного, которые удовлетворили фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение для каждого элемента массива		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].filter(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.filter = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					if (callback(this[i], i, this)) {						res.push(this[i]);					}				} else {					if (callback.call(thisObject, this[i], i, this)) {						res.push(this[i]);					}				}			}						return res;		};	}		if (!Array.prototype.map) {		/**		 * метод возвращает новый массив, из элементов исходного, которые прошли через функцию callback		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать новое значение элемента		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].map(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.map = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					res.push(callback(this[i], i, this));				} else {					res.push(callback.call(thisObject, this[i], i, this));				}			}						return res;		};	}		if (!Array.prototype.indexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает его индекс (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=0] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5].indexOf(4); // 3		 * [1, 2, 3, 4, 5].indexOf(4, 4); // -1		 */		Array.prototype.indexOf = function (searchElement, fromIndex) {			var i = (fromIndex || 0) - 1,				aLength = this.length;						while ((i += 1) < aLength) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.lastIndexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает индекс последнего совпадения (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=Array.length] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4); // 5		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4, 3); // 3		 */		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {			var i = fromIndex || this.length;						while ((i -= 1) > -1) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.reduce) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, слева-направо), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduce(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе первый элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduce = function (callback, initialValue) {			var i = 0, aLength = this.length, res;						if (aLength === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[0]; }						while ((i += 1) < aLength) {				res = callback(res, this[i], i, this);			}						return res;		};	}		if (!Array.prototype.reduceRight) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, справа-налево), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduceRight(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе последний элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduceRight = function (callback, initialValue) {			var i = this.length - 1, res;						if (this.length === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[i]; }						while ((i -= 1) > -1) {				res = callback(res, this[i], i, this);			}						return res;		};	}	
+	/////////////////////////////////
+	//// prototype
+	/////////////////////////////////
+	
+	Collection.prototype = {
+		/**
+		 * framework name
+		 * 
+		 * @constant
+		 * @type String
+		 */
+		name: 'Collection',
+		/**
+		 * framework version
+		 * 
+		 * @constant
+		 * @type String
+		 */
+		version: '3.7',
+		/**
+		 * return string: framework name + framework version
+		 *
+		 * @this {Collection Object}
+		 * @return {String}
+		 */
+		collection: function () { return this.name + ' ' + this.version; },
+		
+		// const
+		ACTIVE: 'active',
+		SHUFFLE: 'shuffle',
+		NAMESPACE_SEPARATOR: '.',
+		SPLITTER: '>>>',
+		
+		/**
+		 * stack parameters
+		 * 
+		 * @private
+		 * @field
+		 * @type Array
+		*/
+		stack: [
+			'namespace',
+			
+			'collection',
+			'filter',
+			'context',
+			'cache',
+			'variable',
+			'defer',
+	
+			'page',
+			'parser',
+			
+			'toHTML',
+			
+			'target',
+			'calculator',
+			'pager',
+			
+			'template',
+			
+			'breaker',
+			'navBreaker',
+			
+			'resultNull'
+		]
+	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};		/////////////////////////////////	//// DOM methods	/////////////////////////////////		/** @private */	Collection.drivers.dom = {		/**		 * returns a list of the elements within the document		 * 		 * @this {Collection DOM Driver}		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas		 * @param {DOM node} [context] — context		 * @throw {Error}		 * @return {mixin}		 */		find: function (selector, context) {			if (!this.lib) { throw new Error('DOM driver is not defined!'); }						return this.engines[this.lib].find(selector || '', context || '');		},				/**		 * returns all direct child elements		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [attr] — the properties of a node		 * @return {Array}		 */		children: function (el, prop) {			var res = [];			Array.prototype.forEach.call(el.childNodes, function (el) {				if (el.nodeType === 1) {					if (!prop) {						res.push(el);					} else if (el[prop]) { res.push(el); }				}			});						return res;		},				/**		 * returns the data attributes of the node		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [name] — data name		 * @return {Collection DOM Driver}		 */		data: function (el, name) {			var attr = el.attributes, data = {};				if (attr && attr.length > 0) {				Array.prototype.forEach.call(attr, function (el) {					if (el.name.substring(0, 5) === 'data-') {						data[el.name.replace('data-', '')] = Collection.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;					}				});			}						if (name) { return data[name]; }			return data;		},				/**		 * returns the text content of the node		 * 		 * @this {Collection}		 * @param {DOM Node} el — DOM node		 * @return {String|Boolean}		 */		text: function (el) {			el = el.childNodes;					var str = '';						Array.prototype.forEach.call(el, function (el) {				if (el.nodeType === 3 && Collection.trim(el.textContent)) { str += el.textContent; }			});						if (str) { return str; }						return false;		},				/**		 * attach event		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} eventType — event type		 * @param {Function} callback — callback function		 * @return {Collection DOM Driver}		 */		bind: function (el, eventType, callback) {			if (this.engines[this.lib][eventType]) {				this.engines[this.lib][eventType](el, callback);								return this;			}						// if old IE			if (document.attachEvent) {				el.attachEvent('on' + eventType, callback);			} else { el.addEventListener(eventType, callback); }						return this;		},				/**		 * adds the specified class to the element		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		addClass: function (el, className) {			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }						return this;		},		/**		 * determine whether or not the specified item is needed class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Boolean}		 */		hasClass: function (el, className) {			return el.className.split(' ').indexOf(className) !== -1;		},		/**		 * remove a single class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		removeClass: function (el, className) {			var classes = el.className.split(' '),				newClass = [];						classes.forEach(function (el) {				if (el !== className) { newClass.push(el); }			});						el.className = newClass.join(' ');						return this;		},				// search frameworks		engines: {			// qsa css selector engine			qsa: {				is: function () {					if (typeof qsa !== 'undefined') { return true; }				},				find: function (selector, context) {					return qsa.querySelectorAll(selector, context);				}			},			// sizzle 			sizzle: {				is: function () {					if (typeof Sizzle !== 'undefined') { return true; }				},				find: function (selector, context) {					return Sizzle(selector, context);				}			},			// jQuery 			jQuery: {				is: function () {					if (typeof jQuery !== 'undefined') { return true; }				},				find: function (selector, context) {					return jQuery(selector, context);				},				click: function (el, callback) { $(el).click(callback); },				change: function (el, callback) { $(el).change(callback); }			},			// dojo 			dojo: {				is: function () {					if (typeof dojo !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return dojo.query(selector, context);					} else { return dojo.query(selector); }				},				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }			},			// mootools 			mootools: {				is: function () {					if (typeof MooTools !== 'undefined') { return true; }				},				find: function (selector, context) {					var res;										if (context) {						res = [];												$$(context).getElements(selector).forEach(function (el) {							el.forEach(function (el) { res.push(el); });						});					} else { res = $$(selector); }										return res;				}			},			// prototype 			prototype: {				is: function () {					if (typeof Prototype !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return context.getElementsBySelector(selector);					} else { return $$(selector); }				}			}		}	};		// definition of DOM driver	(function () {		var key, engines = Collection.drivers.dom.engines;		for (key in engines) {			if (!engines.hasOwnProperty(key)) { continue; }								if (engines[key].is()) {				Collection.drivers.dom.lib = key;								return true;			}		}	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};	/////////////////////////////////	//// DOM methods (compiler templates)	/////////////////////////////////		/**	 * compile the template	 * 	 * @this {Collection}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @throw {Error}	 * @return {Function}	 */	Collection.ctplCompile = function (selector) {		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }				var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,			elem = html				.replace(/\/\*.*?\*\//g, '')				.split('?>')				.join('<?js')				.replace(/[\r\t\n]/g, ' ')				.split('<?js'),						resStr = 'var result = ""; ';				elem.forEach(function (el, i) {			if (i === 0 || i % 2 === 0) {				resStr += 'result +="' + el.split('"').join('\\"') + '";';			} else { resStr += el.split('echo').join('result +='); }		});				return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', resStr + ' return result;');	};		/**	 * make templates	 * 	 * @this {Collection Object}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @return {Collection Object}	 */	Collection.prototype.ctplMake = function (selector) {			var dom = Collection.drivers.dom;		Collection.isString(selector) && (selector = dom.find(selector));				Array.prototype.forEach.call(selector, function (el) {			var data = dom.data(el, 'ctpl'), key,				prefix = data.prefix ? data.prefix + '_' : '';						// compile template			this._push('template', prefix + data.name, Collection.ctplCompile(el));			if (data.set && data.set === true) { this._set('template', prefix + data.name); }						// compile			for (key in data) {				if (!data.hasOwnProperty(key)){ continue; }								if (['prefix', 'set', 'print', 'name', 'collection'].indexOf(key) !== -1) { continue; }				if (['target', 'pager'].indexOf(key) !== -1) { data[key] = dom.find(data[key]); }								this._push(key, prefix + data.name, data[key]);				if (data.set && data.set === true) { this._set(key, prefix + data.name); }								if (['filter', 'parser'].indexOf(key) !== -1) { data[key] = prefix + data.name; }			}						// if the target is not defined, then take the parent node			if (!data.target) {				this._push('target', prefix + data.name, [el.parentNode]);				if (data.set && data.set === true) { this._set('target', prefix + data.name); }			}						// print template (if need)			if (data.print && data.print === true) {				data.template = data.name;								this.print(data);			}		}, this);				return this;	};	
 	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
@@ -910,8 +977,8 @@
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), collection or true (if disabled)
-	 * @param {String|Collection|Boolean} [id=this.ACTIVE] — collection ID or collection, if the id is a Boolean
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
+	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -928,9 +995,8 @@
 	 *	.length(':i % 3 === 0');
 	 */
 	Collection.prototype.length = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		filter = filter || '';
 		mult = mult === false ? false : true;
-		var data, isCollection, length;
+		var data, length;
 		
 		// overload
 		// if the filter is a collection
@@ -947,13 +1013,9 @@
 			data = this._get('collection');
 		} else if (Collection.isString(id)) {
 			data = this._get('collection', id);
-		} else {
-			isCollection = true;
-			data = id;
-		}
+		} else { data = id; }
 		
 		if (data === null) { return 0; }
-		if (isCollection !== true) { data = Collection.byLink(data, this._getActiveParam('context')); }
 		if (Collection.isString(data)) { return data.length; }
 		
 		// if no filter and the original object is an array
@@ -971,8 +1033,8 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
-	 * @param {String|Boolean} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -982,6 +1044,10 @@
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 *
+	 * @example
+	 * var db = $C([[1, 2, 3, 4, 5, 6, 7, 8], 2, 3, 4]);
+	 * db.forEach(':data[key] += 1', '0 >>> :el % 2 === 0');
+	 * console.log(db.get());
 	 * @example
 	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
 	 * // increase on 1 all elements of multiples of three //
@@ -997,7 +1063,8 @@
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// values by default
 		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;
-		filter = filter || '';
+		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SPLITTER) : filter;
+		
 		id = id || '';
 
 		mult = mult === false ? false : true;
@@ -1011,15 +1078,25 @@
 			tmpObj = {},
 			tmpArray = [],
 			
+			context = filter.length === 2 ? filter[0] : '',
+			
 			data, length, fLength,
 			cloneObj,
 			
 			key, i = 0, j = 0,
 			res = false;
 		
+		if (Collection.isArray(filter)) {
+			if (filter.length === 2) {
+				filter = Collection.trim(filter[1]);
+			} else { filter = Collection.trim(filter[0]); }
+		}
+		
 		// get by link
-		data = !Collection.isCollection(id) ? Collection.byLink(this._get('collection', id), this._getActiveParam('context')) : id;
-
+		data = !Collection.isCollection(id)
+					? Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context)
+						: id;
+		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
@@ -1155,7 +1232,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -1182,8 +1259,8 @@
 	 * search for elements using filter (returns a reference to elements) (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -1220,7 +1297,7 @@
 	 * search for one element using filter (returns a reference to element) (in context)
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -1289,8 +1366,8 @@
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (context + >>> + filter (the record is equivalent to: return + string expression))), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -1310,26 +1387,37 @@
 	 *	.get(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
+		id = id || '';
+		
 		// overload
 		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-			return this._getOne(filter, id || '');
+			return this._getOne(filter, id);
 		}
 		
 		mult = mult === false ? false : true;
-		var result = mult === true ? [] : -1,
+		var res = mult === true || Collection.isArray(filter) ? [] : -1, action;
+		
+		// overload
+		if (Collection.isArray(filter)) {
+			filter.forEach(function (el) {
+				res.push(this.get(el, id, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''));
+			}, this);
 			
-			/** @private */
-			action = function (el, key, data) {
-				if (mult === true) {
-					result.push(data[key]);
-				} else { result = data[key]; }
+			return res;
+		}
+			
+		/** @private */
+		action = function (el, key, data) {
+			if (mult === true) {
+				res.push(data[key]);
+			} else { res = data[key]; }
 	
-				return true;
-			};
+			return true;
+		};
 		
 		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
 	
-		return result;
+		return res;
 	};
 	/**
 	 * get the one element using a filter or by link (in context)
@@ -1364,9 +1452,9 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -1441,7 +1529,7 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
@@ -1478,7 +1566,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
@@ -1550,7 +1638,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} [context] — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1639,7 +1727,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1664,7 +1752,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1692,7 +1780,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1721,8 +1809,8 @@
 	 * events: onRemove
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID, if the id is a Boolean
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -1792,7 +1880,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -1817,7 +1905,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -1844,8 +1932,8 @@
 	 * group the elements on the field or condition (the method returns a new collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (the record is equivalent to: return + string expression) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
@@ -1892,8 +1980,8 @@
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (the record is equivalent to: return + string expression) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -1926,7 +2014,7 @@
 	 * @this {Colletion Object}
 	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -2010,7 +2098,7 @@
 	 * @this {Colletion Object}
 	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -2411,7 +2499,255 @@
 	Collection.prototype.dropAll = function (local) {
 		(local === false ? sessionStorage : localStorage).removeItem( '__' + this.name + '__' + this._get('namespace') + '__date');
 		return this.loadAll(local || '', true);
-	};		/////////////////////////////////	//// compile (filter)	/////////////////////////////////		/**	 * calculate custom filter	 * 	 * @this {Colletion Object}	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression) or true (if disabled)	 * @param {mixed} el — current element	 * @param {Number|String} key — key	 * @param {Collection} data — link to collection	 * @param {Number|String} i — iteration	 * @param {Function} length — collection length	 * @param {Collection Object} cObj — link to collection object	 * @param {String} id — collection ID	 * @return {Boolean}	 */	Collection.prototype._customFilter = function (filter, el, key, data, i, length, cObj, id, _tmpFilter) {		var fLength,			calFilter,						result = true, tmpResult,			and, or, inverse,						j;				// if filter is undefined		if (!filter || filter === true) {			if (!this._getActiveParam('filter')) { return true; }						if (this._get('filter')) {				return this._customFilter(this._get('filter'), el, key, data, i, length, cObj, id, _tmpFilter);			}						return true;		}		// if filter is function		if (Collection.isFunction(filter)) {			if (!this._getActiveParam('filter') || !_tmpFilter) {				return filter.call(filter, el, key, data, i, length, cObj, id);			} else {				if (!_tmpFilter.name) {					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {						_tmpFilter.name = Collection.getRandomInt(0, 10000);					}					this._push('filter', '__tmp:' + _tmpFilter.name, filter);				}								return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, key, data, i, length, cObj, id, _tmpFilter);			}		}				// if filter is string		if (!Collection.isArray(filter)) {			if (this._getActiveParam('filter') && _tmpFilter) {				filter = this.ACTIVE + ' && (' + filter + ')';			}						// if need to compile filter			if (this._isStringExpression(filter = Collection.trim(filter))) {				if (!this._exists('filter', '__tmp:' + filter)) {					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));				}				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, key, data, i, length, cObj, id);			}						// prepare string			filter = Collection.trim(						filter							.toString()							.replace(/\s*(\(|\))\s*/g, ' $1 ')							.replace(/\s*(\|\||&&)\s*/g, ' $1 ')							.replace(/(!)\s*/g, '$1')					).split(' ');						// remove 'dead' elements					for (j = filter.length; (j -= 1) > -1;) {				if (filter[j] === '') { filter.splice(j, 1); }			}		}				// calculate deep filter		/** @private */		calFilter = function (array, iter) {			var i = -1,				aLength = array.length,				pos = 0,				result = [];						while ((i += 1) < aLength) {				iter += 1;				if (array[i] === '(' || array[i] === '!(') { pos += 1; }				if (array[i] === ')') {					if (pos === 0) {						return {result: result, iter: iter};					} else { pos -= 1; }				}								result.push(array[i]);			}		};				// calculate filter		fLength = filter.length;		for (j = -1; (j += 1) < fLength;) {			// calculate atoms			if (filter[j] === '(' || filter[j] === '!(') {				if (filter[j].substring(0, 1) === '!') {					inverse = true;					filter[j] = filter[j].substring(1);				} else { inverse = false; }								j = (tmpResult = calFilter(filter.slice((j + 1)), j)).iter;				tmpResult = tmpResult.result.join(' ');				tmpResult = this._customFilter(tmpResult, el, key, data, i, length, cObj, id);								if (!and && !or) {					result = inverse === true ? !tmpResult : tmpResult;				} else if (and) {					result = inverse === true ? !tmpResult : tmpResult && result;				} else { result = inverse === true ? !tmpResult : tmpResult || result; }						// calculate outer filter			} else if (filter[j] !== ')' && filter[j] !== '||' && filter[j] !== '&&') {				if (filter[j].substring(0, 1) === '!') {					inverse = true;					filter[j] = filter[j].substring(1);				} else { inverse = false; }								tmpResult = this._customFilter(this._get('filter', filter[j]), el, key, data, i, length, cObj, id);								if (!and && !or) {					result = inverse === true ? !tmpResult : tmpResult;				} else if (and) {					result = inverse === true ? !tmpResult : tmpResult && result;				} else { result = inverse === true ? !tmpResult : tmpResult || result; }						// 'and' or 'or'			} else if (filter[j] === '||') {				and = false;				or = true;			} else if (filter[j] === '&&') {				or = false;				and = true;			}		}				return result;	};	/**	 * compile filter	 * 	 * @param {String} str — some string	 * @return {Function}	 */	Collection.prototype._compileFilter = function (str) {		var res = /^\s*\(*\s*/.exec(str);		if (res.length !== 0) {			str = str.substring(res[0].length + 1, str.length - res[0].length);		}		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');				return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', 'return ' + str.replace(/^\s*:/, '') + ';');	};		/////////////////////////////////	//// compile (parser)	/////////////////////////////////		/**	 * calculate custom parser	 * 	 * @this {Colletion Object}	 * @param {Parser|String|Boolean} parser — parser function, string expression (the record is equivalent to: return + string expression) or true (if disabled)	 * @param {String} str — source string	 * @return {String}	 */	Collection.prototype._customParser = function (parser, str, _tmpParser) {		// if parser is undefined		if (!parser || parser === true) {			if (!this._getActiveParam('parser')) { return str; }						if (this._get('parser')) {				return this._customParser(this._get('parser'), str, _tmpParser);			}						return str;		}				// if parser is function		if (Collection.isFunction(parser)) {			if (!this._getActiveParam('parser') || !_tmpParser) {				return parser.call(parser, str, this);			} else {				if (!_tmpParser.name) {					while (this._exists('parser', '__tmp:' + (_tmpParser.name = Collection.getRandomInt(0, 10000)))) {						_tmpParser.name = Collection.getRandomInt(0, 10000);					}					this._push('parser', '__tmp:' + _tmpParser.name, parser);				}								return this._customParser(this.ACTIVE + ' && ' + '__tmp:' + _tmpParser.name, str, _tmpParser);			}		}				// if parser is string		if (Collection.isString(parser)) {			if (this._getActiveParam('parser') && _tmpParser) {				parser = this.ACTIVE + ' && ' + parser;			}						// if need to compile parser			if (this._isStringExpression(parser = Collection.trim(parser))) {				if (!this._exists('parser', '__tmp:' + parser)) {					this._push('parser', '__tmp:' + parser, this._compileParser(parser));				}								return (parser = this._get('parser', '__tmp:' + parser)).call(parser, str, this);			}						// split parser			parser = parser.split('&&');		}				// calculate		parser.forEach(function (el) {			str = this._customParser((el = Collection.trim(el)), str);		}, this);		return str;	};	/**	 * compile parser	 * 	 * @param {String} str — some string	 * @return {Function}	 */	Collection.prototype._compileParser = function (str) {		var res = /^\s*\(*\s*/.exec(str);		if (res.length !== 0) {			str = str.substring(res[0].length + 1, str.length - res[0].length);		}		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');				return new Function('str', 'cObj', 'return ' + str.replace(/^\s*:/, '') + ';');	};	
+	};	
+	/////////////////////////////////
+	//// compile (filter)
+	/////////////////////////////////
+	
+	/**
+	 * calculate custom filter
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {mixed} el — current element
+	 * @param {Number|String} key — key
+	 * @param {Collection} data — link to collection
+	 * @param {Number|String} i — iteration
+	 * @param {Function} length — collection length
+	 * @param {Collection Object} cObj — link to collection object
+	 * @param {String} id — collection ID
+	 * @return {Boolean}
+	 */
+	Collection.prototype._customFilter = function (filter, el, key, data, i, length, cObj, id, _tmpFilter) {
+		var fLength,
+			calFilter,
+			
+			result = true, tmpResult,
+			and, or, inverse,
+			
+			j;
+		
+		// if filter is undefined
+		if (!filter || filter === true) {
+			if (!this._getActiveParam('filter')) { return true; }
+			
+			if (this._get('filter')) {
+				return this._customFilter(this._get('filter'), el, key, data, i, length, cObj, id, _tmpFilter);
+			}
+			
+			return true;
+		}
+
+		// if filter is function
+		if (Collection.isFunction(filter)) {
+			if (!this._getActiveParam('filter') || !_tmpFilter) {
+				return filter.call(filter, el, key, data, i, length, cObj, id);
+			} else {
+				if (!_tmpFilter.name) {
+					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {
+						_tmpFilter.name = Collection.getRandomInt(0, 10000);
+					}
+					this._push('filter', '__tmp:' + _tmpFilter.name, filter);
+				}
+				
+				return this._customFilter(this.ACTIVE + ' && ' + '__tmp:' + _tmpFilter.name, el, key, data, i, length, cObj, id, _tmpFilter);
+			}
+		}
+		
+		// if filter is string
+		if (!Collection.isArray(filter)) {
+			if (this._getActiveParam('filter') && _tmpFilter) {
+				filter = this.ACTIVE + ' && (' + filter + ')';
+			}
+			
+			// if need to compile filter
+			if (this._isStringExpression(filter = Collection.trim(filter))) {
+				if (!this._exists('filter', '__tmp:' + filter)) {
+					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
+				}
+
+				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, key, data, i, length, cObj, id);
+			}
+			
+			// prepare string
+			filter = Collection.trim(
+						filter
+							.toString()
+							.replace(/\s*(\(|\))\s*/g, ' $1 ')
+							.replace(/\s*(\|\||&&)\s*/g, ' $1 ')
+							.replace(/(!)\s*/g, '$1')
+					).split(' ');
+			
+			// remove 'dead' elements		
+			for (j = filter.length; (j -= 1) > -1;) {
+				if (filter[j] === '') { filter.splice(j, 1); }
+			}
+		}
+		
+		// calculate deep filter
+		/** @private */
+		calFilter = function (array, iter) {
+			var i = -1,
+				aLength = array.length,
+				pos = 0,
+				result = [];
+			
+			while ((i += 1) < aLength) {
+				iter += 1;
+				if (array[i] === '(' || array[i] === '!(') { pos += 1; }
+				if (array[i] === ')') {
+					if (pos === 0) {
+						return {result: result, iter: iter};
+					} else { pos -= 1; }
+				}
+				
+				result.push(array[i]);
+			}
+		};
+		
+		// calculate filter
+		fLength = filter.length;
+		for (j = -1; (j += 1) < fLength;) {
+			// calculate atoms
+			if (filter[j] === '(' || filter[j] === '!(') {
+				if (filter[j].substring(0, 1) === '!') {
+					inverse = true;
+					filter[j] = filter[j].substring(1);
+				} else { inverse = false; }
+				
+				j = (tmpResult = calFilter(filter.slice((j + 1)), j)).iter;
+				tmpResult = tmpResult.result.join(' ');
+				tmpResult = this._customFilter(tmpResult, el, key, data, i, length, cObj, id);
+				
+				if (!and && !or) {
+					result = inverse === true ? !tmpResult : tmpResult;
+				} else if (and) {
+					result = inverse === true ? !tmpResult : tmpResult && result;
+				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
+			
+			// calculate outer filter
+			} else if (filter[j] !== ')' && filter[j] !== '||' && filter[j] !== '&&') {
+				if (filter[j].substring(0, 1) === '!') {
+					inverse = true;
+					filter[j] = filter[j].substring(1);
+				} else { inverse = false; }
+				
+				tmpResult = this._customFilter(this._get('filter', filter[j]), el, key, data, i, length, cObj, id);
+				
+				if (!and && !or) {
+					result = inverse === true ? !tmpResult : tmpResult;
+				} else if (and) {
+					result = inverse === true ? !tmpResult : tmpResult && result;
+				} else { result = inverse === true ? !tmpResult : tmpResult || result; }
+			
+			// 'and' or 'or'
+			} else if (filter[j] === '||') {
+				and = false;
+				or = true;
+			} else if (filter[j] === '&&') {
+				or = false;
+				and = true;
+			}
+		}
+		
+		return result;
+	};
+	/**
+	 * compile filter
+	 * 
+	 * @param {String} str — some string
+	 * @return {Function}
+	 */
+	Collection.prototype._compileFilter = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
+		
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', 'return ' + str.replace(/^\s*:/, '') + ';');
+	};	
+	/////////////////////////////////
+	//// compile (parser)
+	/////////////////////////////////
+	
+	/**
+	 * calculate custom parser
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Parser|String|Boolean} parser — parser function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String} str — source string
+	 * @return {String}
+	 */
+	Collection.prototype._customParser = function (parser, str, _tmpParser) {
+		// if parser is undefined
+		if (!parser || parser === true) {
+			if (!this._getActiveParam('parser')) { return str; }
+			
+			if (this._get('parser')) {
+				return this._customParser(this._get('parser'), str, _tmpParser);
+			}
+			
+			return str;
+		}
+		
+		// if parser is function
+		if (Collection.isFunction(parser)) {
+			if (!this._getActiveParam('parser') || !_tmpParser) {
+				return parser.call(parser, str, this);
+			} else {
+				if (!_tmpParser.name) {
+					while (this._exists('parser', '__tmp:' + (_tmpParser.name = Collection.getRandomInt(0, 10000)))) {
+						_tmpParser.name = Collection.getRandomInt(0, 10000);
+					}
+					this._push('parser', '__tmp:' + _tmpParser.name, parser);
+				}
+				
+				return this._customParser(this.ACTIVE + ' && ' + '__tmp:' + _tmpParser.name, str, _tmpParser);
+			}
+		}
+		
+		// if parser is string
+		if (Collection.isString(parser)) {
+			if (this._getActiveParam('parser') && _tmpParser) {
+				parser = this.ACTIVE + ' && ' + parser;
+			}
+			
+			// if need to compile parser
+			if (this._isStringExpression(parser = Collection.trim(parser))) {
+				if (!this._exists('parser', '__tmp:' + parser)) {
+					this._push('parser', '__tmp:' + parser, this._compileParser(parser));
+				}
+				
+				return (parser = this._get('parser', '__tmp:' + parser)).call(parser, str, this);
+			}
+			
+			// split parser
+			parser = parser.split('&&');
+		}
+		
+		// calculate
+		parser.forEach(function (el) {
+			str = this._customParser((el = Collection.trim(el)), str);
+		}, this);
+
+		return str;
+	};
+	/**
+	 * compile parser
+	 * 
+	 * @param {String} str — some string
+	 * @return {Function}
+	 */
+	Collection.prototype._compileParser = function (str) {
+		var res = /^\s*\(*\s*/.exec(str);
+		if (res.length !== 0) {
+			str = str.substring(res[0].length + 1, str.length - res[0].length);
+		}
+		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
+		
+		return new Function('str', 'cObj', 'return ' + str.replace(/^\s*:/, '') + ';');
+	};	
 	/////////////////////////////////
 	//// compile (function)
 	/////////////////////////////////
@@ -2472,6 +2808,406 @@
 	Collection.prototype.parent = function (n, id) {
 		if (!id) { return this._update('context', this.parentContext(n)); }
 		return this._push('context', id, this.parentContext(n, id));
-	};		/////////////////////////////////	// additional methods	/////////////////////////////////		/**	 * return to active parameter stack (flags included)	 * 	 * @this {Collection Object}	 * @param {String} name — property name	 * @return {mixed}	 */	Collection.prototype._getActiveParam = function (name) {		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true ? this.dObj.active[name] : false;				if (name === 'context') { return param ? param.toString() : ''; }		return param;	};		/**	 * returns a Boolean indicating whether the string is a filter	 * 	 * @this {Collection Object}	 * @param {String} str — some string	 * @return {Boolean}	 */	Collection.prototype._isFilter = function (str) {		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;	};	/**	 * returns a Boolean indicating whether the object is a string expression	 * 	 * @this {Collection Object}	 * @param {mixed} obj — some object	 * @return {Boolean}	 */	Collection.prototype._isStringExpression = function (obj) {		return Collection.isString(obj) && obj.search(/^:/) !== -1;	};		/**	 * enable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.enable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = true		}, this);				return this;	};	/**	 * disable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.disable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = false		}, this);				return this;	};	/**	 * toggle flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.toggle = function () {		Array.prototype.forEach.call(arguments, function (el) {			if (this.dObj.sys.flags.use[el] === true) {				this.disable(arguments[key]);			} else { this.enable(arguments[key]); }		}, this);	};		// native		/**	 * return JSON string collection (in context)	 * 	 * @this {Colletion Object}	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects	 * @param {Number|String} [space] — indentation of nested structures	 * @return {String}	 */	Collection.prototype.toString = function (objID, replacer, space) {		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }				replacer = replacer || '';		space = space || '';				if (objID && Collection.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }				return JSON.stringify(Collection.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);	};	/**	 * return collection length (only active)	 * 	 * @this {Colletion Object}	 * @return {Number}	 */	Collection.prototype.valueOf = function () {		if (arguments[0] === 'object') { return this; }		return this.length(this.ACTIVE);	};		/////////////////////////////////	//// design methods (print)	/////////////////////////////////			/**	 * templating (in context)	 * 	 * @this {Colletion Object}	 * @param param - object settings	 * @param {Collection|String} [param.collection=this.ACTIVE] — collection or collection ID	 * @param {String} [param.context] — additional context	 * @param {Number} [param.page=this.ACTIVE] — page number	 * @param {Template} [param.template=this.ACTIVE] — template	 * @param {Number|Boolean} [param.breaker=this.ACTIVE] — number of entries on per page (if false, returns all records)	 * @param {Number} [param.navBreaker=this.ACTIVE] — number of displayed pages (navigation, > 2)	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression)	 * @param {Filter} [param.filter=this.ACTIVE] — function, which is performed every iteration of the template (can be used string expression, the record is equivalent to: return + string expression)	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (the record is equivalent to: return + string expression)	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)	 * @param {String} [param.toHTML=this.ACTIVE] — type additions to the DOM	 * @param {String} [param.resultNull=this.ACTIVE] — text displayed if no results	 * @param {Boolean} [clear=false] — clear the cache	 * @return {Colletion Object}	 */	Collection.prototype.print = function (param, clear) {		clear = clear || false;				var self = this,			tmpParser = {}, tmpFilter = {},			opt = {},						data, length, fLength,			start, inc = 0, checkPage, from = null,			first = false,						breaker,						result = '', action, e,						dom = this.drivers.dom;				// easy implementation		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {			param = {page: param};		} else if (!Collection.isExists(param)) { param = {page: this._get('page')}; }				// the expansion of input parameters		Collection.extend(true, opt, this.dObj.active, param);		if (param) { opt.page = Collection.expr(opt.page, this._get('page')); }		if (opt.page < 1) { opt.page = 1; }				opt.collection = Collection.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;		opt.template = Collection.isString(opt.template) ? this._get('template', opt.template) : opt.template;		opt.cache = Collection.isExists(param.cache) ? param.cache : this._getActiveParam('cache');				opt.target = Collection.isString(opt.target) ? dom.find(opt.target) : opt.target;		opt.pager = Collection.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;				opt.filter = this._isStringExpression(opt.filter) ? this._compileFilter(opt.filter) : opt.filter;		opt.parser = this._isStringExpression(opt.parser) ? this._compileParser(opt.parser) : opt.parser;		opt.callback = opt.callback && this._isStringExpression(opt.callback) ? this._compileFunc(opt.callback) : opt.callback;				if (clear === true) { opt.cache.iteration = false; }				checkPage = this._get('page') - opt.page;		this._update('page', opt.page);				// template function 		/** @private */		action = function (el, key, data, i, length, cObj, id) {			// callback			opt.callback && opt.callback.apply(opt.callback, arguments);			result += opt.template.apply(opt.template, arguments);			inc = key;						// cache 			if (first === false) { first = key; }							return true;		};				// get collection		data = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));		length = this.length(opt.collection);				// filter length		/** @private */		fLength = function (filter, id) {			if (!fLength.val) {				fLength.val = self.length(filter, id);			}						return fLength.val;		};				// number of records per page		breaker = Boolean(opt.breaker && (opt.filter || this._getActiveParam('filter')));		opt.breaker = opt.breaker || length;				// without cache		if (Collection.isPlainObject(data) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {			start = !opt.breaker || opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker;						this.forEach(action, opt.filter, this.ACTIVE, true, opt.breaker, start);			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }				// with cache		} else if (Collection.isArray(data) && opt.cache.iteration === true) {			// calculate the starting position			start = !breaker ?						opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker :							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;						if (breaker) {				// rewind cached step back				if (checkPage > 0) {					checkPage = opt.breaker * checkPage;					while ((start -= 1) > -1) {						if (this._customFilter(opt.filter, data[start], data, start, fLength, this, this.ACTIVE, tmpFilter) === true) {							if (inc === checkPage) {								break;							} else { inc += 1; }						}					}					opt.cache.lastIteration = (start += 1);					from = null;				} else if (checkPage < 0) { from = -checkPage * opt.breaker - opt.breaker; }			}						tmpFilter.name && this._drop('filter', '__tmp:' + tmpFilter.name);			this.forEach(action, opt.filter, this.ACTIVE, true, opt.breaker, from, start);		}				if (opt.cache) {			if (checkPage !== 0 && opt.cache.iteration !== false) {				// cache				this._get('cache').firstIteration = first;				this._get('cache').lastIteration = inc + 1;			}			if (opt.cache.autoIteration === true) { this._get('cache').iteration = true; }		}				// clear		fLength = null;				// parser		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);		tmpParser.name && this._drop('parser', '__tmp:' + tmpParser.name);				// append to DOM		if (opt.target === false) {			if (!opt.variable) {				this._new('variable', result);			} else { this._push('variable', opt.variable, result); }						return this;		} else {			Array.prototype.forEach.call(opt.target, function (el) {				// innerHTML				if (opt.toHTML === 'replace') {					el.innerHTML = result;								// append				} else if (opt.toHTML === 'append') {					el.innerHTML = el.innerHTML + result;								// prepend				} else { el.innerHTML = result + el.innerHTML; }			}, this);		}				if (!opt.pager) { return this; }				// navigation		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter, opt.collection) : length;		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;		opt.finNumber = opt.breaker * opt.page - (opt.breaker - opt.nmbOfEntriesInPage);		// generate navigation bar		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {			// events			this.onIPage && (e = this.onIPage.apply(this, arguments));			if (e === false) { return this; }						this._update('page', (opt.page -= 1)).print(opt, true, true);		} else { this.easyPage(opt); }				return this;	};		/**	 * activation of the navigation<br />	 * info: page, total, from, to, inPage, nmbOfPages<br />	 * nav: first, prev, next, last, numberSwitch, pageList	 * 	 * @this {Colletion Object}	 * @param {Object} [param] — object settings	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.prototype.easyPage = function (param) {		var self = this,			str = '',						// number of pages			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.breaker !== 0 ? ~~(param.nmbOfEntries / param.breaker) + 1 : param.nmbOfEntries / param.breaker),						/** @private */			genPage = function (data, classes, i, nSwitch) {				nSwitch = nSwitch || false;				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';								if (data.attr) {					for (key in data.attr) {						if (!data.attr.hasOwnProperty(key)) { continue; }						str += ' ' + key + '="' + data.attr[key] + '"';					}				}								if ((!nSwitch && i === param.page) || (nSwitch && i === param.breaker)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }				return str += '>' + i + '</' + (data.tag || 'span') + '>';			},						/** @private */			wrap = function (val, tag) {				if (tag === 'select') {					return '<option value="' + val + '">' + val + '</option>';				}								return val;			},									i, j = 0, from, to, dom = this.drivers.dom;				// for each node		Array.prototype.forEach.call(param.pager, function (el) {			Array.prototype.forEach.call(dom.find('.ctm', el), function (el) {				if (param.navBreaker <= 2) { throw new Error('parameter "navBreaker" must be more than 2'); }				str = '';								var tag = el.tagName.toLowerCase(),										data = dom.data(el),					ctm = data.ctm,					classes = ctm.classes;								if (ctm.nav) {					// attach event					if (['first', 'prev', 'next', 'last'].indexOf(ctm.nav) !== -1 && !data['ctm-delegated']) {						dom.bind(el, 'click', function () {							if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {								ctm.nav === 'first' && (param.page = 1);								ctm.nav === 'prev' && (param.page = '-=1');								ctm.nav === 'next' && (param.page = '+=1');								ctm.nav === 'last' && (param.page = nmbOfPages);																self.print(param);							}						});						el.setAttribute('data-ctm-delegated', true);					}										// adding classes status					if ((['first', 'prev'].indexOf(ctm.nav) !== -1 && param.page === 1) || (['next', 'last'].indexOf(ctm.nav) !== -1 && param.finNumber === param.nmbOfEntries)) {						dom.addClass(el, classes && classes.disabled || 'disabled');					} else if (['first', 'prev', 'next', 'last'].indexOf(ctm.nav) !== -1) {						dom.removeClass(el, classes && classes.disabled || 'disabled');					}										// breaker switch					if (ctm.nav === 'numberSwitch') {						ctm.val.forEach(function (el) {							if (tag === 'select') {								str += '<option vale="' + el + '" ' + (el === param.breaker ? 'selected="selected"' : '') + '>' + el + '</option>';							} else { str += genPage(ctm, classes || '', el, true); }						});					}										// page navigation					if (ctm.nav === 'pageList') {						if (tag === 'select') {							for (i = 0; (i += 1) <= nmbOfPages;) {								str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';							} 						} else {							if (nmbOfPages > param.navBreaker) {									j = param.navBreaker % 2 !== 0 ? 1 : 0;								from = (param.navBreaker - j) / 2;								to = from;																if (param.page - j < from) {									from = 0;								} else {									from = param.page - from - j;									if (param.page + to > nmbOfPages) {										from -= param.page + to - nmbOfPages;									}								}																for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {									if (j === param.navBreaker && i !== param.page) { break; }									str += genPage(ctm, classes || '', i);								}							} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }						}					}										if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {							// to html						el.innerHTML = str;												// delegate event						if (!data['ctm-delegated']) {							if (tag !== 'select') {								dom.bind(el, 'click', function (e) {									e = e || window.event;									var target = e.target || e.srcElement, data = dom.data(target);									if (target.parentNode !== el) { return false; }																		if (ctm.nav === 'pageList') {										param.page = +data.page;									} else {										self._push('breaker', param.name || '', +data['number-break']);										delete param.breaker;									}										self.print(param);								});														// if select							} else {								dom.bind(el, 'change', function () {									var option = dom.children(this, 'selected')[0];																		if (param.page !== option.value) {										if (data.nav === 'pageList') {											param.page = +option.value;										} else {											self._push('breaker', param.name || '', +option.value);											delete param.breaker;										}																				self.print(param);									}								});							}														el.setAttribute('data-ctm-delegated', true);						}					}								// info				} else if (ctm.info) {					if (param.nmbOfEntriesInPage === 0) {						dom.addClass(el, classes && classes.noData || 'no-data');					} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }										switch (ctm.info) {						case 'page' : {							if (tag === 'input') {								el.value = wrap(param.page, tag);							} else { el.innerHTML = wrap(param.page, tag); }						} break;						case 'total' : {							if (tag === 'input') {								el.value = wrap(param.nmbOfEntries, tag);							} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }						} break;						case 'from' : {							if (tag === 'input') {								el.value = wrap((param.page - 1) * param.breaker + 1, tag);							} else { el.innerHTML = wrap((param.page - 1) * param.breaker + 1, tag); }						} break;						case 'to' : {							if (tag === 'input') {								el.value = wrap(param.finNumber, tag);							} else { el.innerHTML = wrap(param.finNumber, tag); }						} break;						case 'inPage' : {							if (tag === 'input') {								el.value = wrap(param.nmbOfEntriesInPage, tag);							} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }						} break;						case 'nmbOfPages' : {							if (tag === 'input') {								el.value = wrap(nmbOfPages, tag);							} else { el.innerHTML = wrap(nmbOfPages, tag); }						} break;					}				}			});		});				return this;	};		/////////////////////////////////	//// design methods (table)	/////////////////////////////////			/**	 * generating the table	 * 	 * @this {Colletion Object}	 * @param {Number} [count=4] — td number to a string	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes	 * @param {Boolean} [empty=true] — display empty cells	 * @return {Colletion Object}	 */	Collection.prototype.genTable = function (target, count, selector, empty) {		// overload		if (Collection.isNumber(target)) {			empty = selector;			selector = count;			count = target;			target = '';		}		count = count || 4;		selector = selector || 'div';		empty = empty === false ? false : true;				var i, table, tr, td, dom = this.drivers.dom;				target = target ? Collection.isString(target) ? dom.find(target) : target : this._get('target');				Array.prototype.forEach.call(target, function (el) {			table = document.createElement('table');			i = 0;						Array.prototype.forEach.call(dom.find(selector, el), function (el) {				if (i === 0) {					tr = document.createElement('tr');					table.appendChild(tr);				}				td = document.createElement('td');				td.appendChild(el);				tr.appendChild(td);								i += 1;				if (i === count) { i = 0; }			});						// add empty cells			if (empty === true) {				i = count - tr.childNodes.length;				while ((i -= 1) > -1) {					tr.appendChild(document.createElement('td'));				}			}						el.appendChild(table);		}, this);				return this;	};	return Collection;
+	};		/////////////////////////////////	// additional methods	/////////////////////////////////		/**	 * return to active parameter stack (flags included)	 * 	 * @this {Collection Object}	 * @param {String} name — property name	 * @return {mixed}	 */	Collection.prototype._getActiveParam = function (name) {		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true ? this.dObj.active[name] : false;				if (name === 'context') { return param ? param.toString() : ''; }		return param;	};		/**	 * returns a Boolean indicating whether the string is a filter	 * 	 * @this {Collection Object}	 * @param {String} str — some string	 * @return {Boolean}	 */	Collection.prototype._isFilter = function (str) {		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;	};	/**	 * returns a Boolean indicating whether the object is a string expression	 * 	 * @this {Collection Object}	 * @param {mixed} obj — some object	 * @return {Boolean}	 */	Collection.prototype._isStringExpression = function (obj) {		return Collection.isString(obj) && obj.search(/^:/) !== -1;	};		/**	 * enable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.enable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = true		}, this);				return this;	};	/**	 * disable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.disable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = false		}, this);				return this;	};	/**	 * toggle flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.toggle = function () {		Array.prototype.forEach.call(arguments, function (el) {			if (this.dObj.sys.flags.use[el] === true) {				this.disable(arguments[key]);			} else { this.enable(arguments[key]); }		}, this);	};		// native		/**	 * return JSON string collection (in context)	 * 	 * @this {Colletion Object}	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects	 * @param {Number|String} [space] — indentation of nested structures	 * @return {String}	 */	Collection.prototype.toString = function (objID, replacer, space) {		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }				replacer = replacer || '';		space = space || '';				if (objID && Collection.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }				return JSON.stringify(Collection.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);	};	/**	 * return collection length (only active)	 * 	 * @this {Colletion Object}	 * @return {Number}	 */	Collection.prototype.valueOf = function () {		if (arguments[0] === 'object') { return this; }		return this.length(this.ACTIVE);	};	
+	/////////////////////////////////
+	//// design methods (print)
+	/////////////////////////////////
+		
+	/**
+	 * templating (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param param - object settings
+	 * @param {Collection|String} [param.collection=this.ACTIVE] — collection or collection ID
+	 * @param {String} [param.context] — additional context
+	 * @param {Number} [param.page=this.ACTIVE] — page number
+	 * @param {Template} [param.template=this.ACTIVE] — template
+	 * @param {Number|Boolean} [param.breaker=this.ACTIVE] — number of entries on per page (if false, returns all records)
+	 * @param {Number} [param.navBreaker=this.ACTIVE] — number of displayed pages (navigation, > 2)
+	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
+	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
+	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression))
+	 * @param {Filter} [param.filter=this.ACTIVE] — function, which is performed every iteration of the template (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (context + >>> + filter (the record is equivalent to: return + string expression))
+	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
+	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
+	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)
+	 * @param {String} [param.toHTML=this.ACTIVE] — type additions to the DOM
+	 * @param {String} [param.resultNull=this.ACTIVE] — text displayed if no results
+	 * @param {Boolean} [clear=false] — clear the cache
+	 * @return {Colletion Object}
+	 */
+	Collection.prototype.print = function (param, clear) {
+		clear = clear || false;
+		
+		var self = this,
+			tmpParser = {}, tmpFilter = {},
+			opt = {},
+			
+			data, length, fLength,
+			start, inc = 0, checkPage, from = null,
+			first = false,
+			
+			breaker,
+			
+			result = '', action, e,
+			
+			dom = this.drivers.dom;
+		
+		// easy implementation
+		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {
+			param = {page: param};
+		} else if (!Collection.isExists(param)) { param = {page: this._get('page')}; }
+		
+		// the expansion of input parameters
+		Collection.extend(true, opt, this.dObj.active, param);
+		if (param) { opt.page = Collection.expr(opt.page, this._get('page')); }
+		if (opt.page < 1) { opt.page = 1; }
+		
+		opt.collection = Collection.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
+		opt.template = Collection.isString(opt.template) ? this._get('template', opt.template) : opt.template;
+		opt.cache = Collection.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
+		
+		opt.target = Collection.isString(opt.target) ? dom.find(opt.target) : opt.target;
+		opt.pager = Collection.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
+		
+		opt.filter = this._isStringExpression(opt.filter) ? this._compileFilter(opt.filter) : opt.filter;
+		opt.parser = this._isStringExpression(opt.parser) ? this._compileParser(opt.parser) : opt.parser;
+		opt.callback = opt.callback && this._isStringExpression(opt.callback) ? this._compileFunc(opt.callback) : opt.callback;
+		
+		if (clear === true) { opt.cache.iteration = false; }
+		
+		checkPage = this._get('page') - opt.page;
+		this._update('page', opt.page);
+		
+		// template function 
+		/** @private */
+		action = function (el, key, data, i, length, cObj, id) {
+			// callback
+			opt.callback && opt.callback.apply(opt.callback, arguments);
+			result += opt.template.apply(opt.template, arguments);
+			inc = key;
+			
+			// cache
+ 			if (first === false) { first = key; }
+				
+			return true;
+		};
+		
+		// get collection
+		data = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));
+		length = this.length(opt.collection);
+		
+		// filter length
+		/** @private */
+		fLength = function (filter, id) {
+			if (!fLength.val) {
+				fLength.val = self.length(filter, id);
+			}
+			
+			return fLength.val;
+		};
+		
+		// number of records per page
+		breaker = Boolean(opt.breaker && (opt.filter || this._getActiveParam('filter')));
+		opt.breaker = opt.breaker || length;
+		
+		// without cache
+		if (Collection.isPlainObject(data) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+			start = !opt.breaker || opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker;
+			
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.breaker, start);
+			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
+		
+		// with cache
+		} else if (Collection.isArray(data) && opt.cache.iteration === true) {
+			// calculate the starting position
+			start = !breaker ?
+						opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker :
+							checkPage >= 0 ? opt.cache.firstIteration : opt.cache.lastIteration;
+			
+			if (breaker) {
+				// rewind cached step back
+				if (checkPage > 0) {
+					checkPage = opt.breaker * checkPage;
+					while ((start -= 1) > -1) {
+						if (this._customFilter(opt.filter, data[start], data, start, fLength, this, this.ACTIVE, tmpFilter) === true) {
+							if (inc === checkPage) {
+								break;
+							} else { inc += 1; }
+						}
+					}
+					opt.cache.lastIteration = (start += 1);
+					from = null;
+				} else if (checkPage < 0) { from = -checkPage * opt.breaker - opt.breaker; }
+			}
+			
+			tmpFilter.name && this._drop('filter', '__tmp:' + tmpFilter.name);
+			this.forEach(action, opt.filter, this.ACTIVE, true, opt.breaker, from, start);
+		}
+		
+		if (opt.cache) {
+			if (checkPage !== 0 && opt.cache.iteration !== false) {
+				// cache
+				this._get('cache').firstIteration = first;
+				this._get('cache').lastIteration = inc + 1;
+			}
+			if (opt.cache.autoIteration === true) { this._get('cache').iteration = true; }
+		}
+		
+		// clear
+		fLength = null;
+		
+		// parser
+		result = !result ? opt.resultNull : this._customParser(opt.parser, result, tmpParser);
+		tmpParser.name && this._drop('parser', '__tmp:' + tmpParser.name);
+		
+		// append to DOM
+		if (opt.target === false) {
+			if (!opt.variable) {
+				this._new('variable', result);
+			} else { this._push('variable', opt.variable, result); }
+			
+			return this;
+		} else {
+			Array.prototype.forEach.call(opt.target, function (el) {
+				// innerHTML
+				if (opt.toHTML === 'replace') {
+					el.innerHTML = result;
+				
+				// append
+				} else if (opt.toHTML === 'append') {
+					el.innerHTML = el.innerHTML + result;
+				
+				// prepend
+				} else { el.innerHTML = result + el.innerHTML; }
+			}, this);
+		}
+		
+		if (!opt.pager) { return this; }
+		
+		// navigation
+		opt.nmbOfEntries = opt.filter !== false ? this.length(opt.filter, opt.collection) : length;
+		opt.nmbOfEntriesInPage = opt.calculator ? dom.find(opt.calculator, opt.target[0]).length : dom.children(opt.target[0]).length;
+		opt.finNumber = opt.breaker * opt.page - (opt.breaker - opt.nmbOfEntriesInPage);
+
+		// generate navigation bar
+		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
+			// events
+			this.onIPage && (e = this.onIPage.apply(this, arguments));
+			if (e === false) { return this; }
+			
+			this._update('page', (opt.page -= 1)).print(opt, true, true);
+		} else { this.easyPage(opt); }
+		
+		return this;
+	};
+	
+	/**
+	 * activation of the navigation<br />
+	 * info: page, total, from, to, inPage, nmbOfPages<br />
+	 * nav: first, prev, next, last, numberSwitch, pageList
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Object} [param] — object settings
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 */
+	Collection.prototype.easyPage = function (param) {
+		var self = this,
+			str = '',
+			
+			// number of pages
+			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.breaker !== 0 ? ~~(param.nmbOfEntries / param.breaker) + 1 : param.nmbOfEntries / param.breaker),
+			
+			/** @private */
+			genPage = function (data, classes, i, nSwitch) {
+				nSwitch = nSwitch || false;
+				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
+				
+				if (data.attr) {
+					for (key in data.attr) {
+						if (!data.attr.hasOwnProperty(key)) { continue; }
+						str += ' ' + key + '="' + data.attr[key] + '"';
+					}
+				}
+				
+				if ((!nSwitch && i === param.page) || (nSwitch && i === param.breaker)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }
+				return str += '>' + i + '</' + (data.tag || 'span') + '>';
+			},
+			
+			/** @private */
+			wrap = function (val, tag) {
+				if (tag === 'select') {
+					return '<option value="' + val + '">' + val + '</option>';
+				}
+				
+				return val;
+			},
+			
+			
+			i, j = 0, from, to, dom = this.drivers.dom;
+		
+		// for each node
+		Array.prototype.forEach.call(param.pager, function (el) {
+			Array.prototype.forEach.call(dom.find('.ctm', el), function (el) {
+				if (param.navBreaker <= 2) { throw new Error('parameter "navBreaker" must be more than 2'); }
+				str = '';
+				
+				var tag = el.tagName.toLowerCase(),
+					
+					data = dom.data(el),
+					ctm = data.ctm,
+					classes = ctm.classes;
+				
+				if (ctm.nav) {
+					// attach event
+					if (['first', 'prev', 'next', 'last'].indexOf(ctm.nav) !== -1 && !data['ctm-delegated']) {
+						dom.bind(el, 'click', function () {
+							if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {
+								ctm.nav === 'first' && (param.page = 1);
+								ctm.nav === 'prev' && (param.page = '-=1');
+								ctm.nav === 'next' && (param.page = '+=1');
+								ctm.nav === 'last' && (param.page = nmbOfPages);
+								
+								self.print(param);
+							}
+						});
+						el.setAttribute('data-ctm-delegated', true);
+					}
+					
+					// adding classes status
+					if ((['first', 'prev'].indexOf(ctm.nav) !== -1 && param.page === 1) || (['next', 'last'].indexOf(ctm.nav) !== -1 && param.finNumber === param.nmbOfEntries)) {
+						dom.addClass(el, classes && classes.disabled || 'disabled');
+					} else if (['first', 'prev', 'next', 'last'].indexOf(ctm.nav) !== -1) {
+						dom.removeClass(el, classes && classes.disabled || 'disabled');
+					}
+					
+					// breaker switch
+					if (ctm.nav === 'numberSwitch') {
+						ctm.val.forEach(function (el) {
+							if (tag === 'select') {
+								str += '<option vale="' + el + '" ' + (el === param.breaker ? 'selected="selected"' : '') + '>' + el + '</option>';
+							} else { str += genPage(ctm, classes || '', el, true); }
+						});
+					}
+					
+					// page navigation
+					if (ctm.nav === 'pageList') {
+						if (tag === 'select') {
+							for (i = 0; (i += 1) <= nmbOfPages;) {
+								str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
+							} 
+						} else {
+							if (nmbOfPages > param.navBreaker) {	
+								j = param.navBreaker % 2 !== 0 ? 1 : 0;
+								from = (param.navBreaker - j) / 2;
+								to = from;
+								
+								if (param.page - j < from) {
+									from = 0;
+								} else {
+									from = param.page - from - j;
+									if (param.page + to > nmbOfPages) {
+										from -= param.page + to - nmbOfPages;
+									}
+								}
+								
+								for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
+									if (j === param.navBreaker && i !== param.page) { break; }
+									str += genPage(ctm, classes || '', i);
+								}
+							} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }
+						}
+					}
+					
+					if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {	
+						// to html
+						el.innerHTML = str;
+						
+						// delegate event
+						if (!data['ctm-delegated']) {
+							if (tag !== 'select') {
+								dom.bind(el, 'click', function (e) {
+									e = e || window.event;
+									var target = e.target || e.srcElement, data = dom.data(target);
+									if (target.parentNode !== el) { return false; }
+									
+									if (ctm.nav === 'pageList') {
+										param.page = +data.page;
+									} else {
+										self._push('breaker', param.name || '', +data['number-break']);
+										delete param.breaker;
+									}
+	
+									self.print(param);
+								});
+							
+							// if select
+							} else {
+								dom.bind(el, 'change', function () {
+									var option = dom.children(this, 'selected')[0];
+									
+									if (param.page !== option.value) {
+										if (data.nav === 'pageList') {
+											param.page = +option.value;
+										} else {
+											self._push('breaker', param.name || '', +option.value);
+											delete param.breaker;
+										}
+										
+										self.print(param);
+									}
+								});
+							}
+							
+							el.setAttribute('data-ctm-delegated', true);
+						}
+					}
+				
+				// info
+				} else if (ctm.info) {
+					if (param.nmbOfEntriesInPage === 0) {
+						dom.addClass(el, classes && classes.noData || 'no-data');
+					} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }
+					
+					switch (ctm.info) {
+						case 'page' : {
+							if (tag === 'input') {
+								el.value = wrap(param.page, tag);
+							} else { el.innerHTML = wrap(param.page, tag); }
+						} break;
+						case 'total' : {
+							if (tag === 'input') {
+								el.value = wrap(param.nmbOfEntries, tag);
+							} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }
+						} break;
+						case 'from' : {
+							if (tag === 'input') {
+								el.value = wrap((param.page - 1) * param.breaker + 1, tag);
+							} else { el.innerHTML = wrap((param.page - 1) * param.breaker + 1, tag); }
+						} break;
+						case 'to' : {
+							if (tag === 'input') {
+								el.value = wrap(param.finNumber, tag);
+							} else { el.innerHTML = wrap(param.finNumber, tag); }
+						} break;
+						case 'inPage' : {
+							if (tag === 'input') {
+								el.value = wrap(param.nmbOfEntriesInPage, tag);
+							} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }
+						} break;
+						case 'nmbOfPages' : {
+							if (tag === 'input') {
+								el.value = wrap(nmbOfPages, tag);
+							} else { el.innerHTML = wrap(nmbOfPages, tag); }
+						} break;
+					}
+				}
+			});
+		});
+		
+		return this;
+	};		/////////////////////////////////	//// design methods (table)	/////////////////////////////////			/**	 * generating the table	 * 	 * @this {Colletion Object}	 * @param {Number} [count=4] — td number to a string	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes	 * @param {Boolean} [empty=true] — display empty cells	 * @return {Colletion Object}	 */	Collection.prototype.genTable = function (target, count, selector, empty) {		// overload		if (Collection.isNumber(target)) {			empty = selector;			selector = count;			count = target;			target = '';		}		count = count || 4;		selector = selector || 'div';		empty = empty === false ? false : true;				var i, table, tr, td, dom = this.drivers.dom;				target = target ? Collection.isString(target) ? dom.find(target) : target : this._get('target');				Array.prototype.forEach.call(target, function (el) {			table = document.createElement('table');			i = 0;						Array.prototype.forEach.call(dom.find(selector, el), function (el) {				if (i === 0) {					tr = document.createElement('tr');					table.appendChild(tr);				}				td = document.createElement('td');				td.appendChild(el);				tr.appendChild(td);								i += 1;				if (i === count) { i = 0; }			});						// add empty cells			if (empty === true) {				i = count - tr.childNodes.length;				while ((i -= 1) > -1) {					tr.appendChild(document.createElement('td'));				}			}						el.appendChild(table);		}, this);				return this;	};	return Collection;
 })();
 if (typeof $C === 'undefined') { var $C = Collection; }//
