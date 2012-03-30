@@ -41,7 +41,40 @@
  * @this {Colletion Object}
  * @param {Collection} [collection=null] — collection
  * @param {Plain Object} [uProp=Collection.fields.dObj.active] — additional properties
- */var Collection;(function () {	'use strict';			/////////////////////////////////	//// constructor	/////////////////////////////////		Collection = function (collection, prop) {		collection = collection || null;		prop = prop || '';				// create factory function if need		if (!this || (!this.name || this.name !== 'Collection')) { return new Collection(collection, prop); }				// mixin public fields		Collection.extend(true, this, Collection.fields);				var active = this.dObj.active;				// extend public fields by additional properties if need		if (prop) { Collection.extend(true, active, prop); }				// compile (if need)		if (this._isStringExpression(active.filter)) { active.filter = this._compileFilter(active.filter); }		if (this._isStringExpression(active.parser)) { active.parser = this._compileParser(active.parser); }				// search the DOM		if (Collection.isString(active.target)) { active.target = this.drivers.dom.find(active.target); }		if (Collection.isString(active.pager)) { active.pager = this.drivers.dom.find(active.pager); }				active.collection = collection;	};	
+ */
+var Collection;
+(function () {
+	'use strict';
+		
+	/////////////////////////////////
+	//// constructor
+	/////////////////////////////////
+	
+	Collection = function (collection, prop) {
+		collection = collection || null;
+		prop = prop || '';
+		
+		// create factory function if need
+		if (!this || (!this.name || this.name !== 'Collection')) { return new Collection(collection, prop); }
+		
+		// mixin public fields
+		Collection.extend(true, this, Collection.fields);
+		
+		var active = this.dObj.active;
+		
+		// extend public fields by additional properties if need
+		if (prop) { Collection.extend(true, active, prop); }
+		
+		// compile (if need)
+		if (this._isStringExpression(active.filter)) { active.filter = this._compileFilter(active.filter); }
+		if (this._isStringExpression(active.parser)) { active.parser = this._compileParser(active.parser); }
+		
+		// search the DOM
+		if (Collection.isString(active.target)) { active.target = this.drivers.dom.find(active.target); }
+		if (Collection.isString(active.pager)) { active.pager = this.drivers.dom.find(active.pager); }
+		
+		active.collection = collection;
+	};	
 	/**
 	 * set new value of the object by the link, get/remove an element by the link, or return a fragment of the context (overload)
 	 * 
@@ -251,7 +284,210 @@
 			
 			return event.apply(thisObject, param);
 		} else { return event[query[i]].apply(thisObject, param); }
-	};			/////////////////////////////////	//// constants	/////////////////////////////////		Collection.CONTEXT_SEPARATOR =  '__context__';	Collection.QUERY_SEPARATOR = '/';	Collection.SUBQUERY_SEPARATOR = '{';	Collection.METHOD_SEPARATOR = '->';			Collection.CHILDREN = '>';	Collection.ORDER = ['eq(', ')'];			/////////////////////////////////	//// data types	/////////////////////////////////		/**	 * returns the value of the hidden properties of [[CLASS]]	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.toString('test');	 * @example	 * $C.toString(2);	 */	Collection.objToString = function (obj) {		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }		return Object.prototype.toString.call(obj);	};		// the hash-table of types of data	Collection.types = {		'[object Boolean]': 'boolean',		'[object Number]': 'number',		'[object String]': 'string',		'[object Function]': 'function',		'[object Array]': 'array',		'[object Date]': 'date',		'[object RegExp]': 'regexp',		'[object Object]': 'object'	};		/**	 * returns the type of the specified element	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.type('test');	 * @example	 * $C.type(2);	 */	Collection.type = function (obj) {		return obj == null ? String(obj) : Collection.types[Collection.objToString(obj)] || 'object';	};		/**	 * returns true if the specified object is window	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.isWindow(window);	 * @example	 * $C.isWindow(2);	 */	Collection.isWindow = function (obj) {		return obj && typeof obj === 'object' && 'setInterval' in obj;	};	/**	 * returns a Boolean indicating whether the object is a string	 *	 * @param {mixed} obj — object to test whether or not it is a string	 * @return {Boolean}	 *	 * @example	 * $C.isString('test');	 * @example	 * $C.isString(2);	 */	Collection.isString = function (obj) { return Collection.type(obj) === 'string'; };		/**	 * returns a Boolean indicating whether the object is a number	 *	 * @param {mixed} obj — object to test whether or not it is a number	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(2);	 */	Collection.isNumber = function (obj) { return Collection.type(obj) === 'number';  };		/**	 * returns a Boolean indicating whether the object is a boolean	 *	 * @param {mixed} obj — object to test whether or not it is a boolean	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(false);	 */	Collection.isBoolean = function (obj) { return Collection.type(obj) === 'boolean'; };		/**	 * returns a Boolean indicating whether the object is a function	 *	 * @param {mixed} obj — object to test whether or not it is a function	 * @return {Boolean}	 *	 * @example	 * $C.isFunction('test');	 * @example	 * $C.isFunction(function () {});	 */	Collection.isFunction = function (obj) { return Collection.type(obj) === 'function';  };		/**	 * returns a Boolean indicating whether the object is a array (not an array-like object)	 *	 * @param {mixed} obj — object to test whether or not it is a array	 * @return {Boolean}	 *	 * @example	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isArray([1, 2, 3]);	 */	Collection.isArray = function (obj) { return Collection.type(obj) === 'array';  };		/**	 * returns a Boolean indicating whether the object is a plain object	 *	 * @param {mixed} obj — object to test whether or not it is a plain object	 * @return {Boolean}	 *	 * @example	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isPlainObject(new Date);	 * @example	 * $C.isPlainObject(Date);	 */	Collection.isPlainObject = function (obj) {		if (!obj || Collection.type(obj) !== 'object' || obj.nodeType || Collection.isWindow(obj)) {			return false;		}				try {			// not own constructor property must be Object			if (obj.constructor &&				!obj.hasOwnProperty('constructor') &&				!obj.constructor.prototype.hasOwnProperty('isPrototypeOf')) {					return false;				}		} catch (e) {			// IE8,9 will throw exceptions on certain host objects #9897			return false;		}		// own properties are enumerated firstly, so to speed up,		// if last one is own, then all properties are own.		var key;		for (key in obj) {}		return key === undefined || obj.hasOwnProperty(key);	};		/**	 * returns a Boolean indicating whether the object is a collection	 *	 * @param {mixed} obj — object to test whether or not it is a collection	 * @return {Boolean}	 *	 * @example	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isCollection([1, 2, 3]);	 */	Collection.isCollection = function (obj) { return Collection.isArray(obj) || Collection.isPlainObject(obj); };		/**	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)	 *	 * @param {mixed} obj — the object, to test its existence	 * @return {Boolean}	 *	 * @example	 * $C.isExists('');	 * @example	 * $C.isExists(null);	 * @example	 * $C.isExists(false);	 */	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
+	};		
+	/////////////////////////////////
+	//// constants
+	/////////////////////////////////
+	
+	Collection.CONTEXT_SEPARATOR =  '__context__';
+	Collection.QUERY_SEPARATOR = '/';
+	Collection.SUBQUERY_SEPARATOR = '{';
+	Collection.METHOD_SEPARATOR = '->';
+		
+	Collection.CHILDREN = '>';
+	Collection.ORDER = ['eq(', ')'];		
+	/////////////////////////////////
+	//// data types
+	/////////////////////////////////
+	
+	/**
+	 * returns the value of the hidden properties of [[CLASS]]
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.toString('test');
+	 * @example
+	 * $C.toString(2);
+	 */
+	Collection.objToString = function (obj) {
+		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }
+		return Object.prototype.toString.call(obj);
+	};
+	
+	// the hash-table of types of data
+	Collection.types = {
+		'[object Boolean]': 'boolean',
+		'[object Number]': 'number',
+		'[object String]': 'string',
+		'[object Function]': 'function',
+		'[object Array]': 'array',
+		'[object Date]': 'date',
+		'[object RegExp]': 'regexp',
+		'[object Object]': 'object'
+	};
+	
+	/**
+	 * returns the type of the specified element
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.type('test');
+	 * @example
+	 * $C.type(2);
+	 */
+	Collection.type = function (obj) {
+		return obj == null ? String(obj) : Collection.types[Collection.objToString(obj)] || 'object';
+	};
+	
+	/**
+	 * returns true if the specified object is window
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isWindow(window);
+	 * @example
+	 * $C.isWindow(2);
+	 */
+	Collection.isWindow = function (obj) {
+		return obj && typeof obj === 'object' && 'setInterval' in obj;
+	};
+
+	/**
+	 * returns a Boolean indicating whether the object is a string
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a string
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isString('test');
+	 * @example
+	 * $C.isString(2);
+	 */
+	Collection.isString = function (obj) { return Collection.type(obj) === 'string'; };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a number
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a number
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isNumber('test');
+	 * @example
+	 * $C.isNumber(2);
+	 */
+	Collection.isNumber = function (obj) { return Collection.type(obj) === 'number';  };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a boolean
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a boolean
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isNumber('test');
+	 * @example
+	 * $C.isNumber(false);
+	 */
+	Collection.isBoolean = function (obj) { return Collection.type(obj) === 'boolean'; };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a function
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a function
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isFunction('test');
+	 * @example
+	 * $C.isFunction(function () {});
+	 */
+	Collection.isFunction = function (obj) { return Collection.type(obj) === 'function';  };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a array (not an array-like object)
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a array
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isArray([1, 2, 3]);
+	 */
+	Collection.isArray = function (obj) { return Collection.type(obj) === 'array';  };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a plain object
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a plain object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isPlainObject(new Date);
+	 * @example
+	 * $C.isPlainObject(Date);
+	 */
+	Collection.isPlainObject = function (obj) {
+		if (!obj || Collection.type(obj) !== 'object' || obj.nodeType || Collection.isWindow(obj)) {
+			return false;
+		}
+		
+		try {
+			// not own constructor property must be Object
+			if (obj.constructor &&
+				!obj.hasOwnProperty('constructor') &&
+				!obj.constructor.prototype.hasOwnProperty('isPrototypeOf')) {
+					return false;
+				}
+		} catch (e) {
+			// IE8,9 will throw exceptions on certain host objects #9897
+			return false;
+		}
+
+		// own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+		var key;
+		for (key in obj) {}
+
+		return key === undefined || obj.hasOwnProperty(key);
+	};
+	
+	/**
+	 * returns a Boolean indicating whether the object is a collection
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a collection
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isCollection([1, 2, 3]);
+	 */
+	Collection.isCollection = function (obj) { return Collection.isArray(obj) || Collection.isPlainObject(obj); };
+	
+	/**
+	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)
+	 *
+	 * @param {mixed} obj — the object, to test its existence
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isExists('');
+	 * @example
+	 * $C.isExists(null);
+	 * @example
+	 * $C.isExists(false);
+	 */
+	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
 	/////////////////////////////////
 	//// string methods
 	/////////////////////////////////
@@ -371,7 +607,395 @@
 		
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
-			/////////////////////////////////	//// methods of arrays and objects	/////////////////////////////////		/**	 * merge the contents of two or more objects together into the first object	 *	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend	 * @param {Object} [target] — the object to extend	 * @param {Object} [objectN] — additional objects containing properties to merge in	 * @return {Object}	 *	 * @example	 * $C.extend({a: 1}, {a: 2}, {a: 3});	 * @example	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}});	 */	Collection.extend = function () {		var options, name, src, copy, copyIsArray, clone,			target = arguments[0] || {},						i = 0, aLength = arguments.length,						deep = false;				// handle a deep copy situation		if (Collection.isBoolean(target)) {			deep = target;			target = arguments[1] || {};			i = 1;		}			// handle case when target is a string or something (possible in deep copy)		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }			// extend Collection itself if only one argument is passed		if (aLength === i) {			target = Collection;			i -= 1;		}			while ((i += 1) < aLength) {			// only deal with non-null/undefined values			if (Collection.isExists(options = arguments[i])) {				// extend the base object				for (name in options) {					src = target[name];					copy = options[name];						// prevent never-ending loop					if (target === copy) { continue; }										// recurse if we're merging plain objects or arrays					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {						if (copyIsArray) {							copyIsArray = false;							clone = src && Collection.isArray(src) ? src : [];						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }							// never move original objects, clone them						target[name] = Collection.extend(deep, clone, copy);										// don't bring in undefined values					} else if (typeof copy !== 'undefined') { target[name] = copy; }				}			}		}				return target;	};			/**	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)	 *	 * @this {Collection}	 * @param {Plain Object} obj — the object to extend	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)	 * @param {mixed} value — some value	 * @return {Plain Object|Boolean}	 *	 * @example	 * $C.addElementToObject({a: 1}, 'b', 2);	 * @example	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);	 */	Collection.addElementToObject = function (obj, keyName, value) {		keyName = keyName.split(Collection.METHOD_SEPARATOR);		var key, newObj = {};			if (keyName[1] && keyName[1] === 'unshift') {			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;						for (key in obj) {				if (obj.hasOwnProperty(key)) {					newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key];				}			}			obj = newObj;				return obj;		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }			return true;	};		/**	 * unshift for arguments (object)	 * 	 * @param {Object} obj — some object	 * @param {mixed} val — new value	 * @return {Array}	 *	 * @example	 * $C.unshiftArguments({'0': 1, length: 1}, 2);	 */	Collection.unshiftArguments = function (obj, val) {		var newObj = [val], i = -1, oLength = obj.length;		while ((i += 1) < oLength) { newObj.push(obj[i]); }				return newObj;	};		/////////////////////////////////	//// array prototype	/////////////////////////////////	if (!Array.prototype.forEach) {		/**		 * calls a function for each element in the array		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {undefined}		 */		Array.prototype.forEach = function (callback, thisObject) {			var i = -1, aLength = this.length;						while ((i += 1) < aLength) {				if (!thisObject) {					callback(this[i], i, this);				} else { callback.call(thisObject, this[i], i, this); }			}		}	}		if (!Array.prototype.some) {		/**		 * tests whether some element in the array passes the test implemented by the provided function		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {Boolean}		 */		Array.prototype.some = function (callback, thisObject) {			var i = -1, aLength = this.length, res;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }				if (res) { return true; }			}						return false;		}	}		if (!Array.prototype.every) {		/**		 * метод возвращает false, если ли хотя бы один элемент массива не удовлетворит фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Boolean}		 *		 * @example		 * [1, 2, 3, 4, 5].every(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.every = function (callback, thisObject) {			var i = -1, aLength = this.length,				res, fRes = true;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }								if (fRes === true && !res) { fRes = false; }			}						return fRes;		};	}		if (!Array.prototype.filter) {		/**		 * метод возвращает новый массив, из элементов исходного, которые удовлетворили фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение для каждого элемента массива		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].filter(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.filter = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					if (callback(this[i], i, this)) {						res.push(this[i]);					}				} else {					if (callback.call(thisObject, this[i], i, this)) {						res.push(this[i]);					}				}			}						return res;		};	}		if (!Array.prototype.map) {		/**		 * метод возвращает новый массив, из элементов исходного, которые прошли через функцию callback		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать новое значение элемента		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].map(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.map = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					res.push(callback(this[i], i, this));				} else {					res.push(callback.call(thisObject, this[i], i, this));				}			}						return res;		};	}		if (!Array.prototype.indexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает его индекс (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=0] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5].indexOf(4); // 3		 * [1, 2, 3, 4, 5].indexOf(4, 4); // -1		 */		Array.prototype.indexOf = function (searchElement, fromIndex) {			var i = (fromIndex || 0) - 1,				aLength = this.length;						while ((i += 1) < aLength) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.lastIndexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает индекс последнего совпадения (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=Array.length] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4); // 5		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4, 3); // 3		 */		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {			var i = fromIndex || this.length;						while ((i -= 1) > -1) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.reduce) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, слева-направо), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduce(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе первый элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduce = function (callback, initialValue) {			var i = 0, aLength = this.length, res;						if (aLength === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[0]; }						while ((i += 1) < aLength) {				res = callback(res, this[i], i, this);			}						return res;		};	}		if (!Array.prototype.reduceRight) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, справа-налево), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduceRight(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе последний элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduceRight = function (callback, initialValue) {			var i = this.length - 1, res;						if (this.length === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[i]; }						while ((i -= 1) > -1) {				res = callback(res, this[i], i, this);			}						return res;		};	}	
+		
+	/////////////////////////////////
+	//// methods of arrays and objects
+	/////////////////////////////////
+	
+	/**
+	 * merge the contents of two or more objects together into the first object
+	 *
+	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend
+	 * @param {Object} [target] — the object to extend
+	 * @param {Object} [objectN] — additional objects containing properties to merge in
+	 * @return {Object}
+	 *
+	 * @example
+	 * $C.extend({a: 1}, {a: 2}, {a: 3});
+	 * @example
+	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}});
+	 */
+	Collection.extend = function () {
+		var options, name, src, copy, copyIsArray, clone,
+			target = arguments[0] || {},
+			
+			i = 0, aLength = arguments.length,
+			
+			deep = false;
+		
+		// handle a deep copy situation
+		if (Collection.isBoolean(target)) {
+			deep = target;
+			target = arguments[1] || {};
+			i = 1;
+		}
+	
+		// handle case when target is a string or something (possible in deep copy)
+		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }
+	
+		// extend Collection itself if only one argument is passed
+		if (aLength === i) {
+			target = Collection;
+			i -= 1;
+		}
+	
+		while ((i += 1) < aLength) {
+			// only deal with non-null/undefined values
+			if (Collection.isExists(options = arguments[i])) {
+				// extend the base object
+				for (name in options) {
+					src = target[name];
+					copy = options[name];
+	
+					// prevent never-ending loop
+					if (target === copy) { continue; }
+					
+					// recurse if we're merging plain objects or arrays
+					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {
+						if (copyIsArray) {
+							copyIsArray = false;
+							clone = src && Collection.isArray(src) ? src : [];
+						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }
+	
+						// never move original objects, clone them
+						target[name] = Collection.extend(deep, clone, copy);
+					
+					// don't bring in undefined values
+					} else if (typeof copy !== 'undefined') { target[name] = copy; }
+				}
+			}
+		}
+		
+		return target;
+	};
+		
+	/**
+	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)
+	 *
+	 * @this {Collection}
+	 * @param {Plain Object} obj — the object to extend
+	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)
+	 * @param {mixed} value — some value
+	 * @return {Plain Object|Boolean}
+	 *
+	 * @example
+	 * $C.addElementToObject({a: 1}, 'b', 2);
+	 * @example
+	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);
+	 */
+	Collection.addElementToObject = function (obj, keyName, value) {
+		keyName = keyName.split(Collection.METHOD_SEPARATOR);
+		var key, newObj = {};
+	
+		if (keyName[1] && keyName[1] === 'unshift') {
+			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;
+			
+			for (key in obj) {
+				if (obj.hasOwnProperty(key)) {
+					newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key];
+				}
+			}
+			obj = newObj;
+	
+			return obj;
+		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }
+	
+		return true;
+	};
+	
+	/**
+	 * unshift for arguments (object)
+	 * 
+	 * @param {Object} obj — some object
+	 * @param {mixed} val — new value
+	 * @return {Array}
+	 *
+	 * @example
+	 * $C.unshiftArguments({'0': 1, length: 1}, 2);
+	 */
+	Collection.unshiftArguments = function (obj, val) {
+		var newObj = [val], i = -1, oLength = obj.length;
+		while ((i += 1) < oLength) { newObj.push(obj[i]); }
+		
+		return newObj;
+	};	
+	/////////////////////////////////
+	//// array prototype
+	/////////////////////////////////
+
+	if (!Array.prototype.forEach) {
+		/**
+		 * calls a function for each element in the array
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — function to test each element of the array
+		 * @param {mixed} [thisObject] — object to use as this when executing callback
+		 * @return {undefined}
+		 */
+		Array.prototype.forEach = function (callback, thisObject) {
+			var i = -1, aLength = this.length;
+			
+			while ((i += 1) < aLength) {
+				if (!thisObject) {
+					callback(this[i], i, this);
+				} else { callback.call(thisObject, this[i], i, this); }
+			}
+		}
+	}
+	
+	if (!Array.prototype.some) {
+		/**
+		 * tests whether some element in the array passes the test implemented by the provided function
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — function to test each element of the array
+		 * @param {mixed} [thisObject] — object to use as this when executing callback
+		 * @return {Boolean}
+		 */
+		Array.prototype.some = function (callback, thisObject) {
+			var i = -1, aLength = this.length, res;
+			
+			while ((i += 1) < aLength) {
+				if (!thisObject) {
+					res = callback(this[i], i, this);
+				} else { res = callback.call(thisObject, this[i], i, this); }
+				if (res) { return true; }
+			}
+			
+			return false;
+		}
+	}
+	
+	if (!Array.prototype.every) {
+		/**
+		 * метод возвращает false, если ли хотя бы один элемент массива не удовлетворит фильтр
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение
+		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback
+		 * @return {Boolean}
+		 *
+		 * @example
+		 * [1, 2, 3, 4, 5].every(function (el, i, data) {
+		 *	el — элемент массива
+		 *	i — итерация
+		 *	data — исходный массив
+		 * });
+		 */
+		Array.prototype.every = function (callback, thisObject) {
+			var i = -1, aLength = this.length,
+				res, fRes = true;
+			
+			while ((i += 1) < aLength) {
+				if (!thisObject) {
+					res = callback(this[i], i, this);
+				} else { res = callback.call(thisObject, this[i], i, this); }
+				
+				if (fRes === true && !res) { fRes = false; }
+			}
+			
+			return fRes;
+		};
+	}
+	
+	if (!Array.prototype.filter) {
+		/**
+		 * метод возвращает новый массив, из элементов исходного, которые удовлетворили фильтр
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение для каждого элемента массива
+		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback
+		 * @return {Array}
+		 *
+		 * @example
+		 * [1, 2, 3, 4, 5].filter(function (el, i, data) {
+		 *	el — элемент массива
+		 *	i — итерация
+		 *	data — исходный массив
+		 * });
+		 */
+		Array.prototype.filter = function (callback, thisObject) {
+			var i = -1, aLength = this.length, res = [];
+			
+			while ((i += 1) < aLength) {
+				if (!thisObject) {
+					if (callback(this[i], i, this)) {
+						res.push(this[i]);
+					}
+				} else {
+					if (callback.call(thisObject, this[i], i, this)) {
+						res.push(this[i]);
+					}
+				}
+			}
+			
+			return res;
+		};
+	}
+	
+	if (!Array.prototype.map) {
+		/**
+		 * метод возвращает новый массив, из элементов исходного, которые прошли через функцию callback
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать новое значение элемента
+		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback
+		 * @return {Array}
+		 *
+		 * @example
+		 * [1, 2, 3, 4, 5].map(function (el, i, data) {
+		 *	el — элемент массива
+		 *	i — итерация
+		 *	data — исходный массив
+		 * });
+		 */
+		Array.prototype.map = function (callback, thisObject) {
+			var i = -1, aLength = this.length, res = [];
+			
+			while ((i += 1) < aLength) {
+				if (!thisObject) {
+					res.push(callback(this[i], i, this));
+				} else {
+					res.push(callback.call(thisObject, this[i], i, this));
+				}
+			}
+			
+			return res;
+		};
+	}
+	
+	if (!Array.prototype.indexOf) {
+		/**
+		 * метод обходит массив в поисках элемента, равного указанному, и возвращает его индекс (-1 если ничего не найдено)
+		 * сравнение идёт строгое (1 != '1')
+		 *
+		 * @this {Array}
+		 * @param {Function} searchElement — искомый элемент
+		 * @param {Number} [fromIndex=0] — начальная позиция
+		 * @return {Number}
+		 *
+		 * @example
+		 * [1, 2, 3, 4, 5].indexOf(4); // 3
+		 * [1, 2, 3, 4, 5].indexOf(4, 4); // -1
+		 */
+		Array.prototype.indexOf = function (searchElement, fromIndex) {
+			var i = (fromIndex || 0) - 1,
+				aLength = this.length;
+			
+			while ((i += 1) < aLength) {
+				if (this[i] === searchElement) {
+					return i;
+				}
+			}
+			
+			return -1;
+		};
+	}
+	
+	if (!Array.prototype.lastIndexOf) {
+		/**
+		 * метод обходит массив в поисках элемента, равного указанному, и возвращает индекс последнего совпадения (-1 если ничего не найдено)
+		 * сравнение идёт строгое (1 != '1')
+		 *
+		 * @this {Array}
+		 * @param {Function} searchElement — искомый элемент
+		 * @param {Number} [fromIndex=Array.length] — начальная позиция
+		 * @return {Number}
+		 *
+		 * @example
+		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4); // 5
+		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4, 3); // 3
+		 */
+		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {
+			var i = fromIndex || this.length;
+			
+			while ((i -= 1) > -1) {
+				if (this[i] === searchElement) {
+					return i;
+				}
+			}
+			
+			return -1;
+		};
+	}
+	
+	if (!Array.prototype.reduce) {
+		/**
+		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, слева-направо), для того, чтобы свести массив к одному значению
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — искомый элемент
+		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)
+		 * @return {mixed}
+		 *
+		 * @example
+		 * [1, 2, 3, 4, 5].reduce(function (a, b, i, data) {
+		 *	a — для первой итерации, если указан, то initialValue, иначе первый элемент массива, для последующих итераций равна возвращаемому значению прошлого callback
+		 *	b — элемент массива
+		 *	i — итерация (начиная с 1)
+		 *	data - исходный массив
+		 * });
+		 */
+		Array.prototype.reduce = function (callback, initialValue) {
+			var i = 0, aLength = this.length, res;
+			
+			if (aLength === 1) { return this[0]; } 
+			
+			if (initialValue) {
+				res = initialValue;
+			} else { res = this[0]; }
+			
+			while ((i += 1) < aLength) {
+				res = callback(res, this[i], i, this);
+			}
+			
+			return res;
+		};
+	}
+	
+	if (!Array.prototype.reduceRight) {
+		/**
+		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, справа-налево), для того, чтобы свести массив к одному значению
+		 *
+		 * @this {Array}
+		 * @param {Function} callback — искомый элемент
+		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)
+		 * @return {mixed}
+		 *
+		 * @example
+		 * [1, 2, 3, 4, 5].reduceRight(function (a, b, i, data) {
+		 *	a — для первой итерации, если указан, то initialValue, иначе последний элемент массива, для последующих итераций равна возвращаемому значению прошлого callback
+		 *	b — элемент массива
+		 *	i — итерация (начиная с 1)
+		 *	data - исходный массив
+		 * });
+		 */
+		Array.prototype.reduceRight = function (callback, initialValue) {
+			var i = this.length - 1, res;
+			
+			if (this.length === 1) { return this[0]; } 
+			
+			if (initialValue) {
+				res = initialValue;
+			} else { res = this[i]; }
+			
+			while ((i -= 1) > -1) {
+				res = callback(res, this[i], i, this);
+			}
+			
+			return res;
+		};
+	}	
 	/////////////////////////////////
 	//// prototype
 	/////////////////////////////////
@@ -438,7 +1062,413 @@
 			
 			'resultNull'
 		]
-	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};		/////////////////////////////////	//// DOM methods	/////////////////////////////////		/** @private */	Collection.drivers.dom = {		/**		 * returns a list of the elements within the document		 * 		 * @this {Collection DOM Driver}		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas		 * @param {DOM node} [context] — context		 * @throw {Error}		 * @return {mixin}		 */		find: function (selector, context) {			if (!this.lib) { throw new Error('DOM driver is not defined!'); }						return this.engines[this.lib].find(selector || '', context || '');		},				/**		 * returns all direct child elements		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [attr] — the properties of a node		 * @return {Array}		 */		children: function (el, prop) {			var res = [];			Array.prototype.forEach.call(el.childNodes, function (el) {				if (el.nodeType === 1) {					if (!prop) {						res.push(el);					} else if (el[prop]) { res.push(el); }				}			});						return res;		},				/**		 * returns the data attributes of the node		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [name] — data name		 * @return {Collection DOM Driver}		 */		data: function (el, name) {			var attr = el.attributes, data = {};				if (attr && attr.length > 0) {				Array.prototype.forEach.call(attr, function (el) {					if (el.name.substring(0, 5) === 'data-') {						data[el.name.replace('data-', '')] = Collection.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;					}				});			}						if (name) { return data[name]; }			return data;		},				/**		 * returns the text content of the node		 * 		 * @this {Collection}		 * @param {DOM Node} el — DOM node		 * @return {String|Boolean}		 */		text: function (el) {			el = el.childNodes;					var str = '';						Array.prototype.forEach.call(el, function (el) {				if (el.nodeType === 3 && Collection.trim(el.textContent)) { str += el.textContent; }			});						if (str) { return str; }						return false;		},				/**		 * attach event		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} eventType — event type		 * @param {Function} callback — callback function		 * @return {Collection DOM Driver}		 */		bind: function (el, eventType, callback) {			if (this.engines[this.lib][eventType]) {				this.engines[this.lib][eventType](el, callback);								return this;			}						// if old IE			if (document.attachEvent) {				el.attachEvent('on' + eventType, callback);			} else { el.addEventListener(eventType, callback); }						return this;		},				/**		 * adds the specified class to the element		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		addClass: function (el, className) {			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }						return this;		},		/**		 * determine whether or not the specified item is needed class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Boolean}		 */		hasClass: function (el, className) {			return el.className.split(' ').indexOf(className) !== -1;		},		/**		 * remove a single class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		removeClass: function (el, className) {			var classes = el.className.split(' '),				newClass = [];						classes.forEach(function (el) {				if (el !== className) { newClass.push(el); }			});						el.className = newClass.join(' ');						return this;		},				// search frameworks		engines: {			// qsa css selector engine			qsa: {				is: function () {					if (typeof qsa !== 'undefined') { return true; }				},				find: function (selector, context) {					return qsa.querySelectorAll(selector, context);				}			},			// sizzle 			sizzle: {				is: function () {					if (typeof Sizzle !== 'undefined') { return true; }				},				find: function (selector, context) {					return Sizzle(selector, context);				}			},			// jQuery 			jQuery: {				is: function () {					if (typeof jQuery !== 'undefined') { return true; }				},				find: function (selector, context) {					return jQuery(selector, context);				},				click: function (el, callback) { $(el).click(callback); },				change: function (el, callback) { $(el).change(callback); }			},			// dojo 			dojo: {				is: function () {					if (typeof dojo !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return dojo.query(selector, context);					} else { return dojo.query(selector); }				},				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }			},			// mootools 			mootools: {				is: function () {					if (typeof MooTools !== 'undefined') { return true; }				},				find: function (selector, context) {					var res;										if (context) {						res = [];												$$(context).getElements(selector).forEach(function (el) {							el.forEach(function (el) { res.push(el); });						});					} else { res = $$(selector); }										return res;				}			},			// prototype 			prototype: {				is: function () {					if (typeof Prototype !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return context.getElementsBySelector(selector);					} else { return $$(selector); }				}			}		}	};		// definition of DOM driver	(function () {		var key, engines = Collection.drivers.dom.engines;		for (key in engines) {			if (!engines.hasOwnProperty(key)) { continue; }								if (engines[key].is()) {				Collection.drivers.dom.lib = key;								return true;			}		}	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};	/////////////////////////////////	//// DOM methods (compiler templates)	/////////////////////////////////		/**	 * compile the template	 * 	 * @this {Collection}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @throw {Error}	 * @return {Function}	 */	Collection.ctplCompile = function (selector) {		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }				var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,			elem = html				.replace(/\/\*.*?\*\//g, '')				.split('?>')				.join('<?js')				.replace(/[\r\t\n]/g, ' ')				.split('<?js'),						resStr = 'var result = ""; ';				elem.forEach(function (el, i) {			if (i === 0 || i % 2 === 0) {				resStr += 'result +="' + el.split('"').join('\\"') + '";';			} else { resStr += el.split('echo').join('result +='); }		});				return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', resStr + ' return result;');	};		/**	 * make templates	 * 	 * @this {Collection Object}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @return {Collection Object}	 */	Collection.prototype.ctplMake = function (selector) {			var dom = Collection.drivers.dom;		Collection.isString(selector) && (selector = dom.find(selector));				Array.prototype.forEach.call(selector, function (el) {			var data = dom.data(el, 'ctpl'), key,				prefix = data.prefix ? data.prefix + '_' : '';						// compile template			this._push('template', prefix + data.name, Collection.ctplCompile(el));			if (data.set && data.set === true) { this._set('template', prefix + data.name); }						// compile			for (key in data) {				if (!data.hasOwnProperty(key)){ continue; }								if (['prefix', 'set', 'print', 'name', 'collection'].indexOf(key) !== -1) { continue; }				if (['target', 'pager'].indexOf(key) !== -1) { data[key] = dom.find(data[key]); }								this._push(key, prefix + data.name, data[key]);				if (data.set && data.set === true) { this._set(key, prefix + data.name); }								if (['filter', 'parser'].indexOf(key) !== -1) { data[key] = prefix + data.name; }			}						// if the target is not defined, then take the parent node			if (!data.target) {				this._push('target', prefix + data.name, [el.parentNode]);				if (data.set && data.set === true) { this._set('target', prefix + data.name); }			}						// print template (if need)			if (data.print && data.print === true) {				data.template = data.name;								this.print(data);			}		}, this);				return this;	};	
+	};	
+	/////////////////////////////////
+	//// drivers for additional functions
+	/////////////////////////////////
+	
+	Collection.prototype.drivers = Collection.drivers = {};	
+	/////////////////////////////////
+	//// DOM methods
+	/////////////////////////////////
+	
+	/** @private */
+	Collection.drivers.dom = {
+		/**
+		 * returns a list of the elements within the document
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas
+		 * @param {DOM node} [context] — context
+		 * @throw {Error}
+		 * @return {mixin}
+		 */
+		find: function (selector, context) {
+			if (!this.lib) { throw new Error('DOM driver is not defined!'); }
+			
+			return this.engines[this.lib].find(selector || '', context || '');
+		},
+		
+		/**
+		 * returns all direct child elements
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [attr] — the properties of a node
+		 * @return {Array}
+		 */
+		children: function (el, prop) {
+			var res = [];
+			Array.prototype.forEach.call(el.childNodes, function (el) {
+				if (el.nodeType === 1) {
+					if (!prop) {
+						res.push(el);
+					} else if (el[prop]) { res.push(el); }
+				}
+			});
+			
+			return res;
+		},
+		
+		/**
+		 * returns the data attributes of the node
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [name] — data name
+		 * @return {Collection DOM Driver}
+		 */
+		data: function (el, name) {
+			var attr = el.attributes, data = {};
+	
+			if (attr && attr.length > 0) {
+				Array.prototype.forEach.call(attr, function (el) {
+					if (el.name.substring(0, 5) === 'data-') {
+						data[el.name.replace('data-', '')] = Collection.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
+					}
+				});
+			}
+			
+			if (name) { return data[name]; }
+			return data;
+		},
+		
+		/**
+		 * returns the text content of the node
+		 * 
+		 * @this {Collection}
+		 * @param {DOM Node} el — DOM node
+		 * @return {String|Boolean}
+		 */
+		text: function (el) {
+			el = el.childNodes;		
+			var str = '';
+			
+			Array.prototype.forEach.call(el, function (el) {
+				if (el.nodeType === 3 && Collection.trim(el.textContent)) { str += el.textContent; }
+			});
+			
+			if (str) { return str; }
+			
+			return false;
+		},
+		
+		/**
+		 * attach event
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} eventType — event type
+		 * @param {Function} callback — callback function
+		 * @return {Collection DOM Driver}
+		 */
+		bind: function (el, eventType, callback) {
+			if (this.engines[this.lib][eventType]) {
+				this.engines[this.lib][eventType](el, callback);
+				
+				return this;
+			}
+			
+			// if old IE
+			if (document.attachEvent) {
+				el.attachEvent('on' + eventType, callback);
+			} else { el.addEventListener(eventType, callback); }
+			
+			return this;
+		},
+		
+		/**
+		 * adds the specified class to the element
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Collection DOM Driver}
+		 */
+		addClass: function (el, className) {
+			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }
+			
+			return this;
+		},
+		/**
+		 * determine whether or not the specified item is needed class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Boolean}
+		 */
+		hasClass: function (el, className) {
+			return el.className.split(' ').indexOf(className) !== -1;
+		},
+		/**
+		 * remove a single class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Collection DOM Driver}
+		 */
+		removeClass: function (el, className) {
+			var classes = el.className.split(' '),
+				newClass = [];
+			
+			classes.forEach(function (el) {
+				if (el !== className) { newClass.push(el); }
+			});
+			
+			el.className = newClass.join(' ');
+			
+			return this;
+		},
+		
+		// search frameworks
+		engines: {
+			// qsa css selector engine
+			qsa: {
+				is: function () {
+					if (typeof qsa !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					return qsa.querySelectorAll(selector, context);
+				}
+			},
+			// sizzle 
+			sizzle: {
+				is: function () {
+					if (typeof Sizzle !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					return Sizzle(selector, context);
+				}
+			},
+			// jQuery 
+			jQuery: {
+				is: function () {
+					if (typeof jQuery !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					return jQuery(selector, context);
+				},
+				click: function (el, callback) { $(el).click(callback); },
+				change: function (el, callback) { $(el).change(callback); }
+			},
+			// dojo 
+			dojo: {
+				is: function () {
+					if (typeof dojo !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					if (context) {
+						return dojo.query(selector, context);
+					} else { return dojo.query(selector); }
+				},
+				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }
+			},
+			// mootools 
+			mootools: {
+				is: function () {
+					if (typeof MooTools !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					var res;
+					
+					if (context) {
+						res = [];
+						
+						$$(context).getElements(selector).forEach(function (el) {
+							el.forEach(function (el) { res.push(el); });
+						});
+					} else { res = $$(selector); }
+					
+					return res;
+				}
+			},
+			// prototype 
+			prototype: {
+				is: function () {
+					if (typeof Prototype !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					if (context) {
+						return context.getElementsBySelector(selector);
+					} else { return $$(selector); }
+				}
+			}
+		}
+	};
+	
+	// definition of DOM driver
+	(function () {
+		var key, engines = Collection.drivers.dom.engines;
+		for (key in engines) {
+			if (!engines.hasOwnProperty(key)) { continue; }
+					
+			if (engines[key].is()) {
+				Collection.drivers.dom.lib = key;
+				
+				return true;
+			}
+		}
+	})();	
+	/////////////////////////////////
+	//// DOM methods (core)
+	/////////////////////////////////
+	
+	/**
+	 * converts one level nodes in the collection
+	 * 
+	 * @this {Collection}
+	 * @param {DOM Nodes} el — DOM node
+	 * @return {Array}
+	 */
+	Collection._inObj = function (el) {
+		var array = [],
+			stat = Collection.fromNode.stat,
+			
+			dom = Collection.drivers.dom;
+				
+		// each node
+		Array.prototype.forEach.call(el, function (el) {
+			// not for text nodes
+			if (el.nodeType === 1) {
+				var data = dom.data(el),
+					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
+					
+					txt = dom.text(el),
+					key,
+					
+					i = array.length;
+				
+				// data
+				array.push({});
+				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }
+				
+				// classes
+				if (classes) {
+					array[i][stat.classes] = {};
+					classes.forEach(function (el) {
+						array[i][stat.classes][el] = el;
+					});
+				}
+				
+				if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }
+				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }
+			}
+		});
+
+		return array;
+	};
+	
+	/**
+	 * create an instance of the Collection on the basis of the DOM node
+	 * 
+	 * @this {Collection}
+	 * @param {String} selector — CSS selector
+	 * @param {Object} prop — user's preferences
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 */
+	Collection.fromNode = function (selector, prop) {
+		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
+		
+		var data = Collection._inObj(Collection.drivers.dom.find(selector));
+		
+		if (prop) { return new Collection(data, prop); }
+		return new Collection(data);
+	};
+	
+	// values by default
+	if (!Collection.fromNode.stat) {
+		Collection.fromNode.stat = {
+			val: 'val',
+			childNodes: 'childNodes',
+			classes: 'classes'
+		};
+	};
+	/////////////////////////////////
+	//// DOM methods (compiler templates)
+	/////////////////////////////////
+	
+	/**
+	 * compile the template
+	 * 
+	 * @this {Collection}
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
+	 * @throw {Error}
+	 * @return {Function}
+	 */
+	Collection.ctplCompile = function (selector) {
+		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));
+		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
+		
+		var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,
+			elem = html
+				.replace(/\/\*.*?\*\//g, '')
+				.split('?>')
+				.join('<?js')
+				.replace(/[\r\t\n]/g, ' ')
+				.split('<?js'),
+			
+			resStr = 'var result = ""; ';
+		
+		elem.forEach(function (el, i) {
+			if (i === 0 || i % 2 === 0) {
+				resStr += 'result +="' + el.split('"').join('\\"') + '";';
+			} else { resStr += el.split('echo').join('result +='); }
+		});
+		
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', resStr + ' return result;');
+	};
+	
+	/**
+	 * make templates
+	 * 
+	 * @this {Collection Object}
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.ctplMake = function (selector) {	
+		var dom = Collection.drivers.dom;
+		Collection.isString(selector) && (selector = dom.find(selector));
+		
+		Array.prototype.forEach.call(selector, function (el) {
+			var data = dom.data(el, 'ctpl'), key,
+				prefix = data.prefix ? data.prefix + '_' : '';
+			
+			// compile template
+			this._push('template', prefix + data.name, Collection.ctplCompile(el));
+			if (data.set && data.set === true) { this._set('template', prefix + data.name); }
+			
+			// compile
+			for (key in data) {
+				if (!data.hasOwnProperty(key)){ continue; }
+				
+				if (['prefix', 'set', 'print', 'name', 'collection'].indexOf(key) !== -1) { continue; }
+				if (['target', 'pager'].indexOf(key) !== -1) { data[key] = dom.find(data[key]); }
+				
+				this._push(key, prefix + data.name, data[key]);
+				if (data.set && data.set === true) { this._set(key, prefix + data.name); }
+				
+				if (['filter', 'parser'].indexOf(key) !== -1) { data[key] = prefix + data.name; }
+			}
+			
+			// if the target is not defined, then take the parent node
+			if (!data.target) {
+				this._push('target', prefix + data.name, [el.parentNode]);
+				if (data.set && data.set === true) { this._set('target', prefix + data.name); }
+			}
+			
+			// print template (if need)
+			if (data.print && data.print === true) {
+				data.template = data.name;
+				
+				this.print(data);
+			}
+		}, this);
+		
+		return this;
+	};	
 	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
@@ -615,7 +1645,606 @@
 				resultNull: ''
 			}
 		}
-	};		/////////////////////////////////	//// public fields (system)	/////////////////////////////////		Collection.fields.dObj.sys = {		// the state of the system flags		flags: {			// the use of the active system flags			use: {				/**				 * use active context in methods				 * 				 * @private				 * @field				 * @type Boolean				 */				context: true,				/**				 * use active filter in methods				 * 				 * @private				 * @field				 * @type Boolean				 */				filter: true,				/**				 * use active parser in methods				 * 				 * @private				 * @field				 * @type Boolean				 */				parser: true,								/**				 * use cache				 * 				 * @private				 * @field				 * @type Boolean				 */				cache: false			}		}	};		// generate system fields	(function (data) {		var upperCase,			sys = Collection.fields.dObj.sys;				data.forEach(function (el) {			upperCase = Collection.toUpperCase(el, 1);						sys["active" + upperCase + "ID"] = null;			sys["tmp" + upperCase] = {};			sys[el + "ChangeControl"] = null;			sys[el + "Back"] = [];		});	}) (Collection.prototype.stack);		/////////////////////////////////	//// stack methods	/////////////////////////////////		/**	 * set new value of the parameter on the stack (no impact on the history of the stack) (has aliases, format: new + StackName)<br/>	 * events: onNew + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {mixed} newVal — new value	 * @return {Colletion Object}	 *	 * @example	 * $C([1, 2, 3, 4, 5]).newCollection([1, 2]).getCollection();	 */	Collection.prototype._new = function (stackName, newVal) {		var active = this.dObj.active,			upperCase = Collection.toUpperCase(stackName, 1), e;				// events		this['onNew' + upperCase] && (e = this['onNew' + upperCase](newVal));		if (e === false) { return this; }				// compile string if need		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {			active[stackName] = this['_compile' + Collection.toUpperCase(stackName, 1)](newVal);				// search the DOM (can take a string selector or an array of nodes)		} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);		} else { active[stackName] = Collection.expr(newVal, active[stackName] || ''); }				// break the link with a stack		this.dObj.sys['active' + upperCase + 'ID'] = null;				return this;	};	/**	 * update the active parameter (if the parameter is in the stack, it will be updated too) (has aliases, format: update + StackName)<br/>	 * events: onUpdate + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {mixed} newVal — new value	 * @return {Colletion Object}	 *	 * @example	 * $C([1, 2, 3, 4, 5]).updateCollection([1, 2]).getCollection();	 * @example	 * $C()	 *	.pushSetCollection('test', [1, 2, 3, 4, 5])	 *	.updateCollection([1, 2])	 *	.getCollection('test');	 */	Collection.prototype._update = function (stackName, newVal) {		var active = this.dObj.active,						upperCase = Collection.toUpperCase(stackName, 1), e,			activeID = this._getActiveID(stackName);				// events		this['onUpdate' + upperCase] && (e = this['onUpdate' + upperCase](newVal));		if (e === false) { return this; }				// compile string if need		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {			active[stackName] = this['_compile' + upperCase](newVal);				// search the DOM (can take a string selector or an array of nodes)		} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);		} else { active[stackName] = Collection.expr(newVal, active[stackName] || ''); }				// update the parameter stack		if (activeID) { this.dObj.sys['tmp' + upperCase][activeID] = active[stackName]; }		return this;	};	/**	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter) (has aliases, format: get + StackName)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} [id=this.ACTIVE] — stack ID	 * @throw {Error}	 * @return {mixed}	 *	 * @example	 * $C([1, 2, 3, 4, 5]).getCollection();	 * @example	 * $C().pushCollection('test', [1, 2]).getCollection('test');	 */	Collection.prototype._get = function (stackName, id) {		if (id && id !== this.ACTIVE) {			// throw an exception if the requested parameter does not exist			if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }						return this.dObj.sys['tmp' + Collection.toUpperCase(stackName, 1)][id];		}				return this.dObj.active[stackName];	};		/**	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method) (if the parameter already exists in the stack, it will be updated) (has aliases, format: push + StackName)<br/>	 * events: onPush + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Plain Object} objID — stack ID or object (ID: value)	 * @param {mixed} [newVal] — value (overload)	 * @return {Colletion Object}	 *	 * @example	 * $C().pushCollection('test', [1, 2, 3]).getCollection('test');	 * @example	 * $C().pushCollection({	 *	test1: [1, 2],	 *	test2: [1, 2, 3, 4]	 * }).getCollection('test2');	 */	Collection.prototype._push = function (stackName, objID, newVal) {		var	upperCase = Collection.toUpperCase(stackName, 1), e,			tmp = this.dObj.sys['tmp' + upperCase],			activeID = this._getActiveID(stackName),			key;				// events		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objID, newVal || ''));		if (e === false) { return this; }				if (Collection.isPlainObject(objID)) {			for (key in objID) {				if (objID.hasOwnProperty(key)) {					// update, if the ID is 'active'					if (key === this.ACTIVE) {						this._update(stackName, objID[key]);					} else {												// update the stack						if (tmp[key] && activeID && activeID === key) {							this._update(stackName, objID[key]);						} else {														// compile string if need							if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(objID[key])) {								tmp[key] = this['_compile' + upperCase](objID[key]);														// search the DOM (can take a string selector or an array of nodes)							} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(objID[key])) {								tmp[key] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(objID[key]) ? objID[key] : [objID[key]]);							} else { tmp[key] = objID[key]; }						}											}				}			}		} else {			// update, if the ID is 'active'			if (objID === this.ACTIVE) {				this._update(stackName, newVal);			} else {								// update the stack				if (tmp[objID] && activeID && activeID === objID) {					this._update(stackName, newVal);				} else {										// compile string if need					if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {						tmp[objID] = this['_compile' + upperCase](newVal);										// search the DOM (can take a string selector or an array of nodes)					} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {						tmp[objID] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);					} else { tmp[objID] = newVal; }				}			}		}		return this;	};	/**	 * set the parameter stack active (affect the story) (has aliases, format: set + StackName)<br/>	 * events: onSet + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} id — stack ID	 * @throw {Error}	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.setCollection('test')	 *	.getCollection();	 */	Collection.prototype._set = function (stackName, id) {		var sys = this.dObj.sys,			upperCase = Collection.toUpperCase(stackName, 1), e,			tmpChangeControlStr = stackName + 'ChangeControl',			tmpActiveIDStr = 'active' + upperCase + 'ID';				// throw an exception if the requested parameter does not exist		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }				// events		this['onSet' + upperCase] && (e = this['onSet' + upperCase](id));		if (e === false) { return this; }				// change the story, if there were changes		if (sys[tmpActiveIDStr] !== id) {			sys[tmpChangeControlStr] = true;			sys[tmpActiveIDStr] = id;		} else { sys[tmpChangeControlStr] = false; }				sys[stackName + 'Back'].push(id);		this.dObj.active[stackName] = sys['tmp' + upperCase][id];		return this;	};	/**	 * back on the history of the stack (has aliases, format: back + StackName)<br/>	 * events: onBack + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {Number} [nmb=1] — number of steps	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.pushSetCollection('test2', [1, 2, 3])	 *	.setCollection('test')	 *	.setCollection('test2')	 *	.setCollection('test')	 *	.backCollection(2)	 *	.activeCollection();	 */	Collection.prototype._back = function (stackName, nmb) {		nmb = nmb || 1;		var sys = this.dObj.sys,						upperCase = Collection.toUpperCase(stackName, 1), e,			propBack = sys[stackName + 'Back'],						pos = propBack.length - (nmb) - 1;				// events		this['onBack' + upperCase] && (e = this['onBack' + upperCase](nmb));		if (e === false) { return this; }				if (pos >= 0 && propBack[pos]) {			if (sys['tmp' + upperCase][propBack[pos]]) {				this._set(stackName, propBack[pos]);				sys[stackName + 'ChangeControl'] = false;				propBack.splice(pos + 1, propBack.length);			}		}		return this;	};	/**	 * back on the history of the stack, if there were changes (changes are set methods and pushSet) (has aliases, format: back + StackName + If)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {Number} [nmb=1] — number of steps	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.pushSetCollection('test2', [1, 2, 3])	 *	.setCollection('test')	 *	.setCollection('test2')	 *	.setCollection('test')	 *	.backCollectionIf()	 *	.backCollectionIf()	 *	.activeCollection();	 * // 'test2' is active, because the method of 'back' does not affect the story //	 */	Collection.prototype._backIf = function (stackName, nmb) {		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }		return this;	};	/**	 * remove the parameter from the stack (can use a constant 'active') (if the parameter is active, then it would still be removed) (has aliases, format: drop + StackName)<br/>	 * events: onDrop + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs	 * @param {mixed} [deleteVal=false] — default value (for active properties)	 * @param {mixed} [resetVal] — reset value (overload)	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.pushSetCollection('test2', [1, 2, 3])	 *	.dropCollection('test', 'active')	 *	.existsCollection('test2'); // removed the 'test' and' test2' //	 */	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;				var active = this.dObj.active,			sys = this.dObj.sys,						upperCase = Collection.toUpperCase(stackName, 1), e,			tmpActiveIDStr = 'active' + upperCase + 'ID',			tmpTmpStr = 'tmp' + upperCase,			activeID = this._getActiveID(stackName),			tmpArray = !objID ? activeID ? [activeID] : [] : Collection.isArray(objID) || Collection.isPlainObject(objID) ? objID : [objID],						key;				// events		if (typeof resetVal === 'undefined') {			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objID, deleteVal));			if (e === false) { return this; }		} else {			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objID, resetVal));			if (e === false) { return this; }		}				if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {			for (key in tmpArray) {				if (tmpArray.hasOwnProperty(key)) {					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {						if (typeof resetVal === 'undefined') {							// if the parameter is on the stack, then remove it too							if (activeID) { delete sys[tmpTmpStr][activeID]; }														// active parameters are set to null							sys[tmpActiveIDStr] = null;							active[stackName] = deleteVal;												// reset (overload)						} else {							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }							active[stackName] = resetVal;						}					} else {						if (typeof resetVal === 'undefined') {							delete sys[tmpTmpStr][tmpArray[key]];														// if the parameter stack is active, it will still be removed							if (activeID && tmpArray[key] === activeID) {								sys[tmpActiveIDStr] = null;								active[stackName] = deleteVal;							}												// reset (overload)						} else {							sys[tmpTmpStr][tmpArray[key]] = resetVal;							if (activeID && tmpArray[key] === activeID) { active[stackName] = resetVal; }						}					}				}			}		} else {			if (typeof resetVal === 'undefined') {				// if the parameter is on the stack, then remove it too				if (activeID) { delete sys[tmpTmpStr][activeID]; }								// active parameters are set to null				sys[tmpActiveIDStr] = null;				active[stackName] = deleteVal;						// reset (overload)			} else {				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }				active[stackName] = resetVal;			}		}		return this;	};	/**	 * reset the parameter stack (can use a constant 'active') (has aliases, format: reset + StackName, only for: filter, parser and context)<br/>	 * events: onReset + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs	 * @param {mixed} [resetVal=false] — reset value	 * @return {Colletion Object}	 *	 * @example	 * $C().newContext('a > 2').resetContext().getContext();	 */	Collection.prototype._reset = function (stackName, objID, resetVal) {		resetVal = typeof resetVal === 'undefined' ? false : resetVal;		return this._drop(stackName, objID || '', '', resetVal);	};	/**	 * reset the value of the parameter stack to another (can use a constant 'active') (has aliases, format: reset + StackName + To)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Array} [objID=active] — stack ID or array of IDs	 * @param {String} [id=this.ACTIVE] — source stack ID (for merge)	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection({test: [1, 2], test2: [1, 2, 3, 4]})	 *	.resetCollectionTo('test', 'test2')	 *	.getCollection('test');	 */	Collection.prototype._resetTo = function (stackName, objID, id) {		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[stackName] : this.dObj.sys['tmp' + Collection.toUpperCase(stackName, 1)][id];				return this._reset(stackName, objID || '', mergeVal);	};	/**	 * verify the existence of a parameter on the stack (has aliases, format: exists + StackName)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} [id=this.ACTIVE] — stack ID	 * @return {Boolean}	 *	 * @example	 * $C().existsCollection('test');	 */	Collection.prototype._exists = function (stackName, id) {		var upperCase = Collection.toUpperCase(stackName, 1);				if ((!id || id === this.ACTIVE) && this._getActiveID(stackName)) { return true; }		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }		return false;	};	/**	 * return the ID of the active parameter (has aliases, format: get + StackName + ActiveID)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @return {String|Null}	 *	 * @example	 * $C().getCollectionActiveID();	 */	Collection.prototype._getActiveID = function (stackName) {		return this.dObj.sys['active' + Collection.toUpperCase(stackName, 1) + 'ID'];	};	/**	 * check the parameter on the activity (has aliases, format: active + StackName) or return the ID of the active parameter (if don't specify input parameters)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} id — stack ID	 * @return {Boolean}	 *	 * @example	 * $C().activeCollection('test');	 * @example	 * $C().pushSetCollection('test', [1, 2]).activeCollection();	 */	Collection.prototype._active = function (stackName, id) {		// overload, returns active ID		if (!id) { return this._getActiveID(stackName); }		if (id === this._getActiveID(stackName)) { return true; }		return false;	};		/////////////////////////////////	//// assembly	/////////////////////////////////				/**	 * use the assembly (makes active the stacking options, if such exist (supports namespaces))	 * 	 * @this {Colletion Object}	 * @param {String} stack ID	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection({	 *		'test': [1, 2],	 *		'test.a': [1, 2, 3]	 *	})	 *	 .pushContext({	 *		'test': '',	 *		'test.a.b': 'eq(-1)'	 *	})	 *	.use('test.a.b').getCollection();	 */	Collection.prototype.use = function (id) {		this.stack.forEach(function (el) {			var nm, tmpNm, i;						if (this._exists(el, id)) {				this._set(el, id);			} else {				nm = id.split(this.NAMESPACE_SEPARATOR);								for (i = nm.length; (i -= 1) > -1;) {					nm.splice(i, 1);					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);										if (this._exists(el, tmpNm)) {						this._set(el, tmpNm);						break;					}				}							}		}, this);						return this;	};	
+	};	
+	/////////////////////////////////
+	//// public fields (system)
+	/////////////////////////////////
+	
+	Collection.fields.dObj.sys = {
+		// the state of the system flags
+		flags: {
+			// the use of the active system flags
+			use: {
+				/**
+				 * use active context in methods
+				 * 
+				 * @private
+				 * @field
+				 * @type Boolean
+				 */
+				context: true,
+				/**
+				 * use active filter in methods
+				 * 
+				 * @private
+				 * @field
+				 * @type Boolean
+				 */
+				filter: true,
+				/**
+				 * use active parser in methods
+				 * 
+				 * @private
+				 * @field
+				 * @type Boolean
+				 */
+				parser: true,
+				
+				/**
+				 * use cache
+				 * 
+				 * @private
+				 * @field
+				 * @type Boolean
+				 */
+				cache: false
+			}
+		}
+	};
+	
+	// generate system fields
+	(function (data) {
+		var upperCase,
+			sys = Collection.fields.dObj.sys;
+		
+		data.forEach(function (el) {
+			upperCase = Collection.toUpperCase(el, 1);
+			
+			sys["active" + upperCase + "ID"] = null;
+			sys["tmp" + upperCase] = {};
+			sys[el + "ChangeControl"] = null;
+			sys[el + "Back"] = [];
+		});
+	}) (Collection.prototype.stack);	
+	/////////////////////////////////
+	//// stack methods
+	/////////////////////////////////
+	
+	/**
+	 * set new value of the parameter on the stack (no impact on the history of the stack) (has aliases, format: new + StackName)<br/>
+	 * events: onNew + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {mixed} newVal — new value
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3, 4, 5]).newCollection([1, 2]).getCollection();
+	 */
+	Collection.prototype._new = function (stackName, newVal) {
+		var active = this.dObj.active,
+			upperCase = Collection.toUpperCase(stackName, 1), e;
+		
+		// events
+		this['onNew' + upperCase] && (e = this['onNew' + upperCase](newVal));
+		if (e === false) { return this; }
+		
+		// compile string if need
+		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
+			active[stackName] = this['_compile' + Collection.toUpperCase(stackName, 1)](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {
+			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);
+		} else { active[stackName] = Collection.expr(newVal, active[stackName] || ''); }
+		
+		// break the link with a stack
+		this.dObj.sys['active' + upperCase + 'ID'] = null;
+		
+		return this;
+	};
+	/**
+	 * update the active parameter (if the parameter is in the stack, it will be updated too) (has aliases, format: update + StackName)<br/>
+	 * events: onUpdate + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {mixed} newVal — new value
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3, 4, 5]).updateCollection([1, 2]).getCollection();
+	 * @example
+	 * $C()
+	 *	.pushSetCollection('test', [1, 2, 3, 4, 5])
+	 *	.updateCollection([1, 2])
+	 *	.getCollection('test');
+	 */
+	Collection.prototype._update = function (stackName, newVal) {
+		var active = this.dObj.active,
+			
+			upperCase = Collection.toUpperCase(stackName, 1), e,
+			activeID = this._getActiveID(stackName);
+		
+		// events
+		this['onUpdate' + upperCase] && (e = this['onUpdate' + upperCase](newVal));
+		if (e === false) { return this; }
+		
+		// compile string if need
+		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
+			active[stackName] = this['_compile' + upperCase](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {
+			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);
+		} else { active[stackName] = Collection.expr(newVal, active[stackName] || ''); }
+		
+		// update the parameter stack
+		if (activeID) { this.dObj.sys['tmp' + upperCase][activeID] = active[stackName]; }
+
+		return this;
+	};
+	/**
+	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter) (has aliases, format: get + StackName)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} [id=this.ACTIVE] — stack ID
+	 * @throw {Error}
+	 * @return {mixed}
+	 *
+	 * @example
+	 * $C([1, 2, 3, 4, 5]).getCollection();
+	 * @example
+	 * $C().pushCollection('test', [1, 2]).getCollection('test');
+	 */
+	Collection.prototype._get = function (stackName, id) {
+		if (id && id !== this.ACTIVE) {
+			// throw an exception if the requested parameter does not exist
+			if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
+			
+			return this.dObj.sys['tmp' + Collection.toUpperCase(stackName, 1)][id];
+		}
+		
+		return this.dObj.active[stackName];
+	};
+	
+	/**
+	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method) (if the parameter already exists in the stack, it will be updated) (has aliases, format: push + StackName)<br/>
+	 * events: onPush + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Plain Object} objID — stack ID or object (ID: value)
+	 * @param {mixed} [newVal] — value (overload)
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C().pushCollection('test', [1, 2, 3]).getCollection('test');
+	 * @example
+	 * $C().pushCollection({
+	 *	test1: [1, 2],
+	 *	test2: [1, 2, 3, 4]
+	 * }).getCollection('test2');
+	 */
+	Collection.prototype._push = function (stackName, objID, newVal) {
+		var	upperCase = Collection.toUpperCase(stackName, 1), e,
+			tmp = this.dObj.sys['tmp' + upperCase],
+			activeID = this._getActiveID(stackName),
+
+			key;
+		
+		// events
+		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objID, newVal || ''));
+		if (e === false) { return this; }
+		
+		if (Collection.isPlainObject(objID)) {
+			for (key in objID) {
+				if (objID.hasOwnProperty(key)) {
+					// update, if the ID is 'active'
+					if (key === this.ACTIVE) {
+						this._update(stackName, objID[key]);
+					} else {
+						
+						// update the stack
+						if (tmp[key] && activeID && activeID === key) {
+							this._update(stackName, objID[key]);
+						} else {
+							
+							// compile string if need
+							if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(objID[key])) {
+								tmp[key] = this['_compile' + upperCase](objID[key]);
+							
+							// search the DOM (can take a string selector or an array of nodes)
+							} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(objID[key])) {
+								tmp[key] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(objID[key]) ? objID[key] : [objID[key]]);
+							} else { tmp[key] = objID[key]; }
+						}
+						
+					}
+				}
+			}
+		} else {
+			// update, if the ID is 'active'
+			if (objID === this.ACTIVE) {
+				this._update(stackName, newVal);
+			} else {
+				
+				// update the stack
+				if (tmp[objID] && activeID && activeID === objID) {
+					this._update(stackName, newVal);
+				} else {
+					
+					// compile string if need
+					if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
+						tmp[objID] = this['_compile' + upperCase](newVal);
+					
+					// search the DOM (can take a string selector or an array of nodes)
+					} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {
+						tmp[objID] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);
+					} else { tmp[objID] = newVal; }
+				}
+			}
+		}
+
+		return this;
+	};
+	/**
+	 * set the parameter stack active (affect the story) (has aliases, format: set + StackName)<br/>
+	 * events: onSet + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} id — stack ID
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.getCollection();
+	 */
+	Collection.prototype._set = function (stackName, id) {
+		var sys = this.dObj.sys,
+
+			upperCase = Collection.toUpperCase(stackName, 1), e,
+			tmpChangeControlStr = stackName + 'ChangeControl',
+			tmpActiveIDStr = 'active' + upperCase + 'ID';
+		
+		// throw an exception if the requested parameter does not exist
+		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
+		
+		// events
+		this['onSet' + upperCase] && (e = this['onSet' + upperCase](id));
+		if (e === false) { return this; }
+		
+		// change the story, if there were changes
+		if (sys[tmpActiveIDStr] !== id) {
+			sys[tmpChangeControlStr] = true;
+			sys[tmpActiveIDStr] = id;
+		} else { sys[tmpChangeControlStr] = false; }
+		
+		sys[stackName + 'Back'].push(id);
+		this.dObj.active[stackName] = sys['tmp' + upperCase][id];
+
+		return this;
+	};
+	/**
+	 * back on the history of the stack (has aliases, format: back + StackName)<br/>
+	 * events: onBack + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {Number} [nmb=1] — number of steps
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.setCollection('test2')
+	 *	.setCollection('test')
+	 *	.backCollection(2)
+	 *	.activeCollection();
+	 */
+	Collection.prototype._back = function (stackName, nmb) {
+		nmb = nmb || 1;
+		var sys = this.dObj.sys,
+			
+			upperCase = Collection.toUpperCase(stackName, 1), e,
+			propBack = sys[stackName + 'Back'],
+			
+			pos = propBack.length - (nmb) - 1;
+		
+		// events
+		this['onBack' + upperCase] && (e = this['onBack' + upperCase](nmb));
+		if (e === false) { return this; }
+		
+		if (pos >= 0 && propBack[pos]) {
+			if (sys['tmp' + upperCase][propBack[pos]]) {
+				this._set(stackName, propBack[pos]);
+				sys[stackName + 'ChangeControl'] = false;
+				propBack.splice(pos + 1, propBack.length);
+			}
+		}
+
+		return this;
+	};
+	/**
+	 * back on the history of the stack, if there were changes (changes are set methods and pushSet) (has aliases, format: back + StackName + If)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {Number} [nmb=1] — number of steps
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.setCollection('test2')
+	 *	.setCollection('test')
+	 *	.backCollectionIf()
+	 *	.backCollectionIf()
+	 *	.activeCollection();
+	 * // 'test2' is active, because the method of 'back' does not affect the story //
+	 */
+	Collection.prototype._backIf = function (stackName, nmb) {
+		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
+
+		return this;
+	};
+	/**
+	 * remove the parameter from the stack (can use a constant 'active') (if the parameter is active, then it would still be removed) (has aliases, format: drop + StackName)<br/>
+	 * events: onDrop + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs
+	 * @param {mixed} [deleteVal=false] — default value (for active properties)
+	 * @param {mixed} [resetVal] — reset value (overload)
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.dropCollection('test', 'active')
+	 *	.existsCollection('test2'); // removed the 'test' and' test2' //
+	 */
+	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
+		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
+		
+		var active = this.dObj.active,
+			sys = this.dObj.sys,
+			
+			upperCase = Collection.toUpperCase(stackName, 1), e,
+			tmpActiveIDStr = 'active' + upperCase + 'ID',
+			tmpTmpStr = 'tmp' + upperCase,
+
+			activeID = this._getActiveID(stackName),
+			tmpArray = !objID ? activeID ? [activeID] : [] : Collection.isArray(objID) || Collection.isPlainObject(objID) ? objID : [objID],
+			
+			key;
+		
+		// events
+		if (typeof resetVal === 'undefined') {
+			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objID, deleteVal));
+			if (e === false) { return this; }
+		} else {
+			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objID, resetVal));
+			if (e === false) { return this; }
+		}
+		
+		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
+						if (typeof resetVal === 'undefined') {
+							// if the parameter is on the stack, then remove it too
+							if (activeID) { delete sys[tmpTmpStr][activeID]; }
+							
+							// active parameters are set to null
+							sys[tmpActiveIDStr] = null;
+							active[stackName] = deleteVal;
+						
+						// reset (overload)
+						} else {
+							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+							active[stackName] = resetVal;
+						}
+					} else {
+						if (typeof resetVal === 'undefined') {
+							delete sys[tmpTmpStr][tmpArray[key]];
+							
+							// if the parameter stack is active, it will still be removed
+							if (activeID && tmpArray[key] === activeID) {
+								sys[tmpActiveIDStr] = null;
+								active[stackName] = deleteVal;
+							}
+						
+						// reset (overload)
+						} else {
+							sys[tmpTmpStr][tmpArray[key]] = resetVal;
+							if (activeID && tmpArray[key] === activeID) { active[stackName] = resetVal; }
+						}
+					}
+				}
+			}
+		} else {
+			if (typeof resetVal === 'undefined') {
+				// if the parameter is on the stack, then remove it too
+				if (activeID) { delete sys[tmpTmpStr][activeID]; }
+				
+				// active parameters are set to null
+				sys[tmpActiveIDStr] = null;
+				active[stackName] = deleteVal;
+			
+			// reset (overload)
+			} else {
+				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+				active[stackName] = resetVal;
+			}
+		}
+
+		return this;
+	};
+	/**
+	 * reset the parameter stack (can use a constant 'active') (has aliases, format: reset + StackName, only for: filter, parser and context)<br/>
+	 * events: onReset + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs
+	 * @param {mixed} [resetVal=false] — reset value
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C().newContext('a > 2').resetContext().getContext();
+	 */
+	Collection.prototype._reset = function (stackName, objID, resetVal) {
+		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
+
+		return this._drop(stackName, objID || '', '', resetVal);
+	};
+	/**
+	 * reset the value of the parameter stack to another (can use a constant 'active') (has aliases, format: reset + StackName + To)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Array} [objID=active] — stack ID or array of IDs
+	 * @param {String} [id=this.ACTIVE] — source stack ID (for merge)
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection({test: [1, 2], test2: [1, 2, 3, 4]})
+	 *	.resetCollectionTo('test', 'test2')
+	 *	.getCollection('test');
+	 */
+	Collection.prototype._resetTo = function (stackName, objID, id) {
+		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[stackName] : this.dObj.sys['tmp' + Collection.toUpperCase(stackName, 1)][id];
+		
+		return this._reset(stackName, objID || '', mergeVal);
+	};
+
+	/**
+	 * verify the existence of a parameter on the stack (has aliases, format: exists + StackName)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} [id=this.ACTIVE] — stack ID
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C().existsCollection('test');
+	 */
+	Collection.prototype._exists = function (stackName, id) {
+		var upperCase = Collection.toUpperCase(stackName, 1);
+		
+		if ((!id || id === this.ACTIVE) && this._getActiveID(stackName)) { return true; }
+		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
+
+		return false;
+	};
+	/**
+	 * return the ID of the active parameter (has aliases, format: get + StackName + ActiveID)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @return {String|Null}
+	 *
+	 * @example
+	 * $C().getCollectionActiveID();
+	 */
+	Collection.prototype._getActiveID = function (stackName) {
+		return this.dObj.sys['active' + Collection.toUpperCase(stackName, 1) + 'ID'];
+	};
+	/**
+	 * check the parameter on the activity (has aliases, format: active + StackName) or return the ID of the active parameter (if don't specify input parameters)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} id — stack ID
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C().activeCollection('test');
+	 * @example
+	 * $C().pushSetCollection('test', [1, 2]).activeCollection();
+	 */
+	Collection.prototype._active = function (stackName, id) {
+		// overload, returns active ID
+		if (!id) { return this._getActiveID(stackName); }
+		if (id === this._getActiveID(stackName)) { return true; }
+
+		return false;
+	};
+	
+	/////////////////////////////////
+	//// assembly
+	/////////////////////////////////
+			
+	/**
+	 * use the assembly (makes active the stacking options, if such exist (supports namespaces))
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} stack ID
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection({
+	 *		'test': [1, 2],
+	 *		'test.a': [1, 2, 3]
+	 *	})
+	 *	 .pushContext({
+	 *		'test': '',
+	 *		'test.a.b': 'eq(-1)'
+	 *	})
+	 *	.use('test.a.b').getCollection();
+	 */
+	Collection.prototype.use = function (id) {
+		this.stack.forEach(function (el) {
+			var nm, tmpNm, i;
+			
+			if (this._exists(el, id)) {
+				this._set(el, id);
+			} else {
+				nm = id.split(this.NAMESPACE_SEPARATOR);
+				
+				for (i = nm.length; (i -= 1) > -1;) {
+					nm.splice(i, 1);
+					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);
+					
+					if (this._exists(el, tmpNm)) {
+						this._set(el, tmpNm);
+						break;
+					}
+				}
+				
+			}
+		}, this);
+				
+		return this;
+	};	
 	/////////////////////////////////
 	//// stack methods (aliases)
 	/////////////////////////////////
@@ -1366,7 +2995,7 @@
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (context + >>> + filter (the record is equivalent to: return + string expression))), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
+	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -1423,7 +3052,7 @@
 	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -2192,7 +3821,160 @@
 		}
 	
 		return result;
-	};			/////////////////////////////////	//// sort method	/////////////////////////////////		/**	 * sort object	 * 	 * @this {Collection}	 * @param {Object} obj — some object	 * @param {Context} field — field name	 * @param {Function} sort — sort function	 * @return {Object}	 */	Collection._sortObject = function (obj, field, sort) {		var sortedValues = [],			sortedObj = {},			key;				for (key in obj) {			if (obj.hasOwnProperty(key)) {				sortedValues.push({					key: key,					value: obj[key]				});			}		}		sortedValues.sort(sort);				for (key in sortedValues) {			if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }		}				return sortedObj;	};		/**	 * sort the object by the key	 * 	 * @this {Collection}	 * @param {Object} obj — some object	 * @param {Function} sort — sort function	 * @return {Object}	 */	Collection._sortObjectByKey = function (obj, sort) {		var sortedKeys = [],			sortedObj = {},			key;				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }		sortedKeys.sort(sort);				for (key in sortedKeys) {			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }		}		return sortedObj;	};		/**	 * sort collection (in context)<br />	 * events: onSort	 * 	 * @this {Colletion Object}	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)	 * @param {String} [id=this.ACTIVE] — collection ID	 * @throw {Error}	 * @return {Colletion Object}	 *	 * @example	 * $C([	 *	{name: 'Andrey', age: 22},	 *	{name: 'John', age: 19},	 *	{name: 'Bon', age: 25},	 *	{name: 'Bill', age: 15}	 * ]).sort('name').getCollection();	 * @example	 * $C([	 *	{name: 'Andrey', age: 22, lvl: 80},	 *	{name: 'John', age: 19, lvl: 95},	 *	{name: 'Bon', age: 25, lvl: 85},	 *	{name: 'Bill', age: 15, lvl: 80}	 * ]).sort(':el.age + el.lvl').getCollection();	 */	Collection.prototype.sort = function (field, rev, fn, id) {		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;		rev = rev || false;		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {			if (Collection.isString(a)) { return a.toUpperCase(); }						return a;		};		fn = this._isStringExpression(fn) ? this._compileFilter(fn) : fn;		id = id || '';				var self = this,			data,						/** @private */			sort = function (a, b) {				var r = rev ? -1 : 1;								// sort by field				if (field) {					if (!Collection.isFunction(field)) {						a = Collection.byLink(a, field);						b = Collection.byLink(b, field);					} else {						a = field(a, id);						b = field(b, id);					}				}				// callback function				if (fn) {					a = fn(a, id);					b = fn(b, id);				}								if (rev !== self.SHUFFLE) {						if (a < b) { return r * -1; }					if (a > b) { return r; }										return 0;								// random sort				} else { return Math.round(Math.random() * 2  - 1); }			}, e;				// events		this.onSort && (e = this.onSort.apply(this, arguments));		if (e === false) { return this; }				// get by link		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));				// throw an exception if the element is not an object		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }		if (Collection.isArray(data)) {			data.sort(sort);		} else {			if (field) {				// change the field to sort the object				field = field === true ? 'value' : 'value' + Collection.CHILDREN + field;				data = Collection._sortObject(data, field, sort);			} else { data = Collection._sortObjectByKey(data, sort); }						this._setOne('', data, id);		}				return this;	};	
+	};		
+	/////////////////////////////////
+	//// sort method
+	/////////////////////////////////
+	
+	/**
+	 * sort object
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @param {Context} field — field name
+	 * @param {Function} sort — sort function
+	 * @return {Object}
+	 */
+	Collection._sortObject = function (obj, field, sort) {
+		var sortedValues = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				sortedValues.push({
+					key: key,
+					value: obj[key]
+				});
+			}
+		}
+		sortedValues.sort(sort);
+		
+		for (key in sortedValues) {
+			if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }
+		}
+		
+		return sortedObj;
+	};
+	
+	/**
+	 * sort the object by the key
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @param {Function} sort — sort function
+	 * @return {Object}
+	 */
+	Collection._sortObjectByKey = function (obj, sort) {
+		var sortedKeys = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
+		sortedKeys.sort(sort);
+		
+		for (key in sortedKeys) {
+			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
+		}
+
+		return sortedObj;
+	};
+	
+	/**
+	 * sort collection (in context)<br />
+	 * events: onSort
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([
+	 *	{name: 'Andrey', age: 22},
+	 *	{name: 'John', age: 19},
+	 *	{name: 'Bon', age: 25},
+	 *	{name: 'Bill', age: 15}
+	 * ]).sort('name').getCollection();
+	 * @example
+	 * $C([
+	 *	{name: 'Andrey', age: 22, lvl: 80},
+	 *	{name: 'John', age: 19, lvl: 95},
+	 *	{name: 'Bon', age: 25, lvl: 85},
+	 *	{name: 'Bill', age: 15, lvl: 80}
+	 * ]).sort(':el.age + el.lvl').getCollection();
+	 */
+	Collection.prototype.sort = function (field, rev, fn, id) {
+		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;
+		rev = rev || false;
+		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
+			if (Collection.isString(a)) { return a.toUpperCase(); }
+			
+			return a;
+		};
+		fn = this._isStringExpression(fn) ? this._compileFilter(fn) : fn;
+		id = id || '';
+		
+		var self = this,
+			data,
+			
+			/** @private */
+			sort = function (a, b) {
+				var r = rev ? -1 : 1;
+				
+				// sort by field
+				if (field) {
+					if (!Collection.isFunction(field)) {
+						a = Collection.byLink(a, field);
+						b = Collection.byLink(b, field);
+					} else {
+						a = field(a, id);
+						b = field(b, id);
+					}
+				}
+				// callback function
+				if (fn) {
+					a = fn(a, id);
+					b = fn(b, id);
+				}
+				
+				if (rev !== self.SHUFFLE) {	
+					if (a < b) { return r * -1; }
+					if (a > b) { return r; }
+					
+					return 0;
+				
+				// random sort
+				} else { return Math.round(Math.random() * 2  - 1); }
+			}, e;
+		
+		// events
+		this.onSort && (e = this.onSort.apply(this, arguments));
+		if (e === false) { return this; }
+		
+		// get by link
+		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
+		// throw an exception if the element is not an object
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
+
+		if (Collection.isArray(data)) {
+			data.sort(sort);
+		} else {
+			if (field) {
+				// change the field to sort the object
+				field = field === true ? 'value' : 'value' + Collection.CHILDREN + field;
+				data = Collection._sortObject(data, field, sort);
+			} else { data = Collection._sortObjectByKey(data, sort); }
+			
+			this._setOne('', data, id);
+		}
+		
+		return this;
+	};	
 	/////////////////////////////////
 	//// sort method
 	/////////////////////////////////
@@ -2808,7 +4590,120 @@
 	Collection.prototype.parent = function (n, id) {
 		if (!id) { return this._update('context', this.parentContext(n)); }
 		return this._push('context', id, this.parentContext(n, id));
-	};		/////////////////////////////////	// additional methods	/////////////////////////////////		/**	 * return to active parameter stack (flags included)	 * 	 * @this {Collection Object}	 * @param {String} name — property name	 * @return {mixed}	 */	Collection.prototype._getActiveParam = function (name) {		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true ? this.dObj.active[name] : false;				if (name === 'context') { return param ? param.toString() : ''; }		return param;	};		/**	 * returns a Boolean indicating whether the string is a filter	 * 	 * @this {Collection Object}	 * @param {String} str — some string	 * @return {Boolean}	 */	Collection.prototype._isFilter = function (str) {		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;	};	/**	 * returns a Boolean indicating whether the object is a string expression	 * 	 * @this {Collection Object}	 * @param {mixed} obj — some object	 * @return {Boolean}	 */	Collection.prototype._isStringExpression = function (obj) {		return Collection.isString(obj) && obj.search(/^:/) !== -1;	};		/**	 * enable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.enable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = true		}, this);				return this;	};	/**	 * disable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.disable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = false		}, this);				return this;	};	/**	 * toggle flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.toggle = function () {		Array.prototype.forEach.call(arguments, function (el) {			if (this.dObj.sys.flags.use[el] === true) {				this.disable(arguments[key]);			} else { this.enable(arguments[key]); }		}, this);	};		// native		/**	 * return JSON string collection (in context)	 * 	 * @this {Colletion Object}	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects	 * @param {Number|String} [space] — indentation of nested structures	 * @return {String}	 */	Collection.prototype.toString = function (objID, replacer, space) {		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }				replacer = replacer || '';		space = space || '';				if (objID && Collection.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }				return JSON.stringify(Collection.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);	};	/**	 * return collection length (only active)	 * 	 * @this {Colletion Object}	 * @return {Number}	 */	Collection.prototype.valueOf = function () {		if (arguments[0] === 'object') { return this; }		return this.length(this.ACTIVE);	};	
+	};	
+	/////////////////////////////////
+	// additional methods
+	/////////////////////////////////
+	
+	/**
+	 * return to active parameter stack (flags included)
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} name — property name
+	 * @return {mixed}
+	 */
+	Collection.prototype._getActiveParam = function (name) {
+		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true ? this.dObj.active[name] : false;
+		
+		if (name === 'context') { return param ? param.toString() : ''; }
+		return param;
+	};
+	
+	/**
+	 * returns a Boolean indicating whether the string is a filter
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} str — some string
+	 * @return {Boolean}
+	 */
+	Collection.prototype._isFilter = function (str) {
+		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;
+	};
+	/**
+	 * returns a Boolean indicating whether the object is a string expression
+	 * 
+	 * @this {Collection Object}
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 */
+	Collection.prototype._isStringExpression = function (obj) {
+		return Collection.isString(obj) && obj.search(/^:/) !== -1;
+	};
+	
+	/**
+	 * enable flag
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} [objectN] — flag name
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.enable = function () {
+		Array.prototype.forEach.call(arguments, function (el) {
+			this.dObj.sys.flags.use[el] = true
+		}, this);
+		
+		return this;
+	};
+	/**
+	 * disable flag
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} [objectN] — flag name
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.disable = function () {
+		Array.prototype.forEach.call(arguments, function (el) {
+			this.dObj.sys.flags.use[el] = false
+		}, this);
+		
+		return this;
+	};
+	/**
+	 * toggle flag
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} [objectN] — flag name
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.toggle = function () {
+		Array.prototype.forEach.call(arguments, function (el) {
+			if (this.dObj.sys.flags.use[el] === true) {
+				this.disable(arguments[key]);
+			} else { this.enable(arguments[key]); }
+		}, this);
+	};
+	
+	// native
+	
+	/**
+	 * return JSON string collection (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection
+	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
+	 * @param {Number|String} [space] — indentation of nested structures
+	 * @return {String}
+	 */
+	Collection.prototype.toString = function (objID, replacer, space) {
+		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
+		
+		replacer = replacer || '';
+		space = space || '';
+		
+		if (objID && Collection.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }
+		
+		return JSON.stringify(Collection.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);
+	};
+	/**
+	 * return collection length (only active)
+	 * 
+	 * @this {Colletion Object}
+	 * @return {Number}
+	 */
+	Collection.prototype.valueOf = function () {
+		if (arguments[0] === 'object') { return this; }
+		return this.length(this.ACTIVE);
+	};	
 	/////////////////////////////////
 	//// design methods (print)
 	/////////////////////////////////
@@ -3208,6 +5103,66 @@
 		});
 		
 		return this;
-	};		/////////////////////////////////	//// design methods (table)	/////////////////////////////////			/**	 * generating the table	 * 	 * @this {Colletion Object}	 * @param {Number} [count=4] — td number to a string	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes	 * @param {Boolean} [empty=true] — display empty cells	 * @return {Colletion Object}	 */	Collection.prototype.genTable = function (target, count, selector, empty) {		// overload		if (Collection.isNumber(target)) {			empty = selector;			selector = count;			count = target;			target = '';		}		count = count || 4;		selector = selector || 'div';		empty = empty === false ? false : true;				var i, table, tr, td, dom = this.drivers.dom;				target = target ? Collection.isString(target) ? dom.find(target) : target : this._get('target');				Array.prototype.forEach.call(target, function (el) {			table = document.createElement('table');			i = 0;						Array.prototype.forEach.call(dom.find(selector, el), function (el) {				if (i === 0) {					tr = document.createElement('tr');					table.appendChild(tr);				}				td = document.createElement('td');				td.appendChild(el);				tr.appendChild(td);								i += 1;				if (i === count) { i = 0; }			});						// add empty cells			if (empty === true) {				i = count - tr.childNodes.length;				while ((i -= 1) > -1) {					tr.appendChild(document.createElement('td'));				}			}						el.appendChild(table);		}, this);				return this;	};	return Collection;
+	};	
+	/////////////////////////////////
+	//// design methods (table)
+	/////////////////////////////////
+		
+	/**
+	 * generating the table
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Number} [count=4] — td number to a string
+	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes
+	 * @param {Boolean} [empty=true] — display empty cells
+	 * @return {Colletion Object}
+	 */
+	Collection.prototype.genTable = function (target, count, selector, empty) {
+		// overload
+		if (Collection.isNumber(target)) {
+			empty = selector;
+			selector = count;
+			count = target;
+			target = '';
+		}
+
+		count = count || 4;
+		selector = selector || 'div';
+		empty = empty === false ? false : true;
+		
+		var i, table, tr, td, dom = this.drivers.dom;
+		
+		target = target ? Collection.isString(target) ? dom.find(target) : target : this._get('target');
+		
+		Array.prototype.forEach.call(target, function (el) {
+			table = document.createElement('table');
+			i = 0;
+			
+			Array.prototype.forEach.call(dom.find(selector, el), function (el) {
+				if (i === 0) {
+					tr = document.createElement('tr');
+					table.appendChild(tr);
+				}
+				td = document.createElement('td');
+				td.appendChild(el);
+				tr.appendChild(td);
+				
+				i += 1;
+				if (i === count) { i = 0; }
+			});
+			
+			// add empty cells
+			if (empty === true) {
+				i = count - tr.childNodes.length;
+				while ((i -= 1) > -1) {
+					tr.appendChild(document.createElement('td'));
+				}
+			}
+			
+			el.appendChild(table);
+		}, this);
+		
+		return this;
+	};	return Collection;
 })();
 if (typeof $C === 'undefined') { var $C = Collection; }//

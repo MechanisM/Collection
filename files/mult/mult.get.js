@@ -7,7 +7,7 @@
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (context + >>> + filter (the record is equivalent to: return + string expression))), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
+	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -36,7 +36,8 @@
 		}
 		
 		mult = mult === false ? false : true;
-		var res = mult === true || Collection.isArray(filter) ? [] : -1, action;
+		var res = mult === true || Collection.isArray(filter) ? [] : -1,
+			action, to;
 		
 		// overload
 		if (Collection.isArray(filter)) {
@@ -46,7 +47,12 @@
 			
 			return res;
 		}
-			
+		
+		if (id.split(this.SPLITTER)) {
+			id[1] && (to = id[0]);
+			id = id[0];
+		}
+		
 		/** @private */
 		action = function (el, key, data) {
 			if (mult === true) {
@@ -57,14 +63,15 @@
 		};
 		
 		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
-	
+		if (to) { return this.push }
+		
 		return res;
 	};
 	/**
 	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or true (if disabled)
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
