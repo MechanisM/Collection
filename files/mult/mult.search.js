@@ -26,16 +26,15 @@
 	 */
 	Collection.prototype.search = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		var res = mult === true ? [] : -1,
+		var res = mult === true ? [] : -1, action;
 			
+		if (mult === true) {
 			/** @private */
-			action = function (el, key) {
-				if (mult === true) {
-					res.push(key);
-				} else { res = key; }
-				
-				return true;
-			};
+			action = function (el, key) { res.push(key); };
+		} else {
+			/** @private */
+			action = function (el, key) { res = key; };
+		}
 		
 		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
 		

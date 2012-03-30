@@ -32,18 +32,49 @@
 		link = link || false;
 		
 		var isString = Collection.isString(field),
-			res = {}, arg,
-			
-			/** @private */
-			action = function (el, key, data, i) {
-				var param = isString ? Collection.byLink(el, field) : field.apply(field, arguments);
-				
-				if (!res[param]) {
-					res[param] = [!link ? el : key];
-				} else { res[param].push(!link ? el : key); }
-	
-				return true;
-			};
+			res = {}, arg, action;
+		
+		if (isString) {
+			if (link) {
+				/** @private */
+				action = function (el, key) {
+					var param = Collection.byLink(el, field);
+					
+					if (!res[param]) {
+						res[param] = [key];
+					} else { res[param].push(key); }
+				};
+			} else {
+				/** @private */
+				action = function (el, key) {
+					var param = Collection.byLink(el, field);
+					
+					if (!res[param]) {
+						res[param] = [el];
+					} else { res[param].push(el); }
+				};
+			}
+		} else {
+			if (link) {
+				/** @private */
+				action = function (el, key) {
+					var param = field.apply(field, arguments);
+					
+					if (!res[param]) {
+						res[param] = [key];
+					} else { res[param].push(key); }
+				};
+			} else {
+				/** @private */
+				action = function (el, key) {
+					var param = field.apply(field, arguments);
+					
+					if (!res[param]) {
+						res[param] = [el];
+					} else { res[param].push(el); }
+				};
+			}
+		}
 		
 		arg = Collection.unshiftArguments(arguments, action);
 		arg.splice(1, 1);

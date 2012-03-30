@@ -54,22 +54,28 @@
 			return this._setOne(filter, replaceObj, id || '');
 		}
 		
+		var e, arg, res, action,
+			isFunc = this._isStringExpression(replaceObj) ? replaceObj.search(/(?:\s+|;)return\s+/) : false;
+		
 		// compile replace object if need
-		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
-		var e, arg, res,
-			isFunc = Collection.isFunction(replaceObj),
-
+		replaceObj = isFunc ? this._compileFunc(replaceObj) : replaceObj;
+		
+		if (isFunc) {
+			if (isFunc !== -1) {
+				/** @private */
+				action = function (el, key, data) {
+					data[key] = replaceObj.apply(replaceObj, arguments);
+				};
+			} else {
+				/** @private */
+				action = function (el, key, data) {
+					replaceObj.apply(replaceObj, arguments);
+				};
+			}
+		} else {
 			/** @private */
-			action = function (el, key, data, i, length, cObj, id) {
-				if (isFunc) {
-					res = replaceObj.apply(replaceObj, arguments);
-					if (typeof res !== 'undefined') { data[key] = res; }
-				} else {
-					data[key] = Collection.expr(replaceObj, data[key]);
-				}
-	
-				return true;
-			};
+			action = function (el, key, data) { data[key] = Collection.expr(replaceObj, data[key]); };
+		}
 		
 		arg = Collection.unshiftArguments(arguments, action);
 		arg.splice(2, 1);

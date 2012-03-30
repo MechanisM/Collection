@@ -53,17 +53,16 @@
 			id = id[0];
 		}
 		
-		/** @private */
-		action = function (el, key, data) {
-			if (mult === true) {
-				res.push(data[key]);
-			} else { res = data[key]; }
-	
-			return true;
-		};
+		if (mult === true) {
+			/** @private */
+			action = function (el, key, data) { res.push(data[key]); };
+		} else {
+			/** @private */
+			action = function (el, key, data) { res = data[key]; };
+		}
 		
 		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
-		if (to) { return this.push }
+		//if (to) { return this.push }
 		
 		return res;
 	};
