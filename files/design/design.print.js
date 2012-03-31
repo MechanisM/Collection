@@ -16,9 +16,9 @@
 	 * @param {Number} [param.navBreaker=this.ACTIVE] — number of displayed pages (navigation, > 2)
 	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression))
+	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression))
 	 * @param {Filter} [param.filter=this.ACTIVE] — function, which is performed every iteration of the template (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (context + >>> + filter (the record is equivalent to: return + string expression))
+	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (context + >> + filter (the record is equivalent to: return + string expression))
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
 	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)

@@ -7,8 +7,8 @@
 	 * group the elements on the field or condition (the method returns a new collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
@@ -28,6 +28,7 @@
 	 */
 	Collection.prototype.group = function (field, filter, id, mult, count, from, indexOf, lastIndexOf, rev, link) {
 		field = this._isStringExpression((field = field || '')) ? this._compileFilter(field) : field;
+		id = id || '';
 		mult = mult === false ? false : true;
 		link = link || false;
 		
@@ -76,6 +77,12 @@
 			}
 		}
 		
+		// overload ID
+		if (id.search(this.SPLITTER) !== -1) {
+			id = id.split(this.SPLITTER);
+			set = true;
+		} else { id = id.split(this.SHORT_SPLITTER); }
+		
 		arg = Collection.unshiftArguments(arguments, action);
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
@@ -86,8 +93,8 @@
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements

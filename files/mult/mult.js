@@ -7,7 +7,7 @@
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -63,7 +63,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -93,7 +93,7 @@
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// values by default
 		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;
-		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SPLITTER) : filter;
+		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SHORT_SPLITTER) : filter;
 		
 		id = id || '';
 
@@ -262,7 +262,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point

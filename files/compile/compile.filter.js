@@ -7,7 +7,7 @@
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {mixed} el — current element
 	 * @param {Number|String} key — key
 	 * @param {Collection} data — link to collection

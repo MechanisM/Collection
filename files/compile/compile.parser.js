@@ -7,7 +7,7 @@
 	 * calculate custom parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|String|Boolean} parser — parser function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Parser|String|Boolean} parser — parser function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} str — source string
 	 * @return {String}
 	 */

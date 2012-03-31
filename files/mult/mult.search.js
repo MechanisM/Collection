@@ -7,8 +7,8 @@
 	 * search for elements using filter (returns a reference to elements) (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -25,9 +25,21 @@
 	 *	.search(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.search = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
+		id = id || '';
 		mult = mult === false ? false : true;
-		var res = mult === true ? [] : -1, action;
-			
+		var res = mult === true ? [] : -1,
+			to, set = false,
+			arg = Collection.toArray(arguments),
+			action;
+		
+		// overload ID
+		if (id.search(this.SPLITTER) !== -1) {
+			id = id.split(this.SPLITTER);
+			set = true;
+		} else { id = id.split(this.SHORT_SPLITTER); }
+		id[1] && (to = Collection.trim(id[1]));
+		id = arg[1] = Collection.trim(id[0]);
+		
 		if (mult === true) {
 			/** @private */
 			action = function (el, key) { res.push(key); };
@@ -36,7 +48,16 @@
 			action = function (el, key) { res = key; };
 		}
 		
-		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
+		arg.unshift(action);
+		this.forEach.apply(this, arg);
+		
+		// save result
+		if (to) {
+			this._push('collection', to, res);
+			
+			if (set == true) { return this._set('collection', to); }
+			return this;
+		}
 		
 		return res;
 	};
@@ -44,8 +65,8 @@
 	 * search for one element using filter (returns a reference to element) (in context)
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point

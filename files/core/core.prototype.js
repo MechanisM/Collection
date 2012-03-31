@@ -31,6 +31,7 @@
 		SHUFFLE: 'shuffle',
 		NAMESPACE_SEPARATOR: '.',
 		SPLITTER: '>>>',
+		SHORT_SPLITTER: '>>',
 		
 		/**
 		 * stack parameters

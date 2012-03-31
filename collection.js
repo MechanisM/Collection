@@ -251,7 +251,21 @@
 			
 			return event.apply(thisObject, param);
 		} else { return event[query[i]].apply(thisObject, param); }
-	};			/////////////////////////////////	//// constants	/////////////////////////////////		Collection.CONTEXT_SEPARATOR =  '__context__';	Collection.QUERY_SEPARATOR = '/';	Collection.SUBQUERY_SEPARATOR = '{';	Collection.METHOD_SEPARATOR = '->';			Collection.CHILDREN = '>';	Collection.ORDER = ['eq(', ')'];			/////////////////////////////////	//// data types	/////////////////////////////////		/**	 * returns the value of the hidden properties of [[CLASS]]	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.toString('test');	 * @example	 * $C.toString(2);	 */	Collection.objToString = function (obj) {		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }		return Object.prototype.toString.call(obj);	};		// the hash-table of types of data	Collection.types = {		'[object Boolean]': 'boolean',		'[object Number]': 'number',		'[object String]': 'string',		'[object Function]': 'function',		'[object Array]': 'array',		'[object Date]': 'date',		'[object RegExp]': 'regexp',		'[object Object]': 'object'	};		/**	 * returns the type of the specified element	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.type('test');	 * @example	 * $C.type(2);	 */	Collection.type = function (obj) {		return obj == null ? String(obj) : Collection.types[Collection.objToString(obj)] || 'object';	};		/**	 * returns true if the specified object is window	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.isWindow(window);	 * @example	 * $C.isWindow(2);	 */	Collection.isWindow = function (obj) {		return obj && typeof obj === 'object' && 'setInterval' in obj;	};	/**	 * returns a Boolean indicating whether the object is a string	 *	 * @param {mixed} obj — object to test whether or not it is a string	 * @return {Boolean}	 *	 * @example	 * $C.isString('test');	 * @example	 * $C.isString(2);	 */	Collection.isString = function (obj) { return Collection.type(obj) === 'string'; };		/**	 * returns a Boolean indicating whether the object is a number	 *	 * @param {mixed} obj — object to test whether or not it is a number	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(2);	 */	Collection.isNumber = function (obj) { return Collection.type(obj) === 'number';  };		/**	 * returns a Boolean indicating whether the object is a boolean	 *	 * @param {mixed} obj — object to test whether or not it is a boolean	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(false);	 */	Collection.isBoolean = function (obj) { return Collection.type(obj) === 'boolean'; };		/**	 * returns a Boolean indicating whether the object is a function	 *	 * @param {mixed} obj — object to test whether or not it is a function	 * @return {Boolean}	 *	 * @example	 * $C.isFunction('test');	 * @example	 * $C.isFunction(function () {});	 */	Collection.isFunction = function (obj) { return Collection.type(obj) === 'function';  };		/**	 * returns a Boolean indicating whether the object is a array (not an array-like object)	 *	 * @param {mixed} obj — object to test whether or not it is a array	 * @return {Boolean}	 *	 * @example	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isArray([1, 2, 3]);	 */	Collection.isArray = function (obj) { return Collection.type(obj) === 'array';  };		/**	 * returns a Boolean indicating whether the object is a plain object	 *	 * @param {mixed} obj — object to test whether or not it is a plain object	 * @return {Boolean}	 *	 * @example	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isPlainObject(new Date);	 * @example	 * $C.isPlainObject(Date);	 */	Collection.isPlainObject = function (obj) {		if (!obj || Collection.type(obj) !== 'object' || obj.nodeType || Collection.isWindow(obj)) {			return false;		}				try {			// not own constructor property must be Object			if (obj.constructor &&				!obj.hasOwnProperty('constructor') &&				!obj.constructor.prototype.hasOwnProperty('isPrototypeOf')) {					return false;				}		} catch (e) {			// IE8,9 will throw exceptions on certain host objects #9897			return false;		}		// own properties are enumerated firstly, so to speed up,		// if last one is own, then all properties are own.		var key;		for (key in obj) {}		return key === undefined || obj.hasOwnProperty(key);	};		/**	 * returns a Boolean indicating whether the object is a collection	 *	 * @param {mixed} obj — object to test whether or not it is a collection	 * @return {Boolean}	 *	 * @example	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isCollection([1, 2, 3]);	 */	Collection.isCollection = function (obj) { return Collection.isArray(obj) || Collection.isPlainObject(obj); };		/**	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)	 *	 * @param {mixed} obj — the object, to test its existence	 * @return {Boolean}	 *	 * @example	 * $C.isExists('');	 * @example	 * $C.isExists(null);	 * @example	 * $C.isExists(false);	 */	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
+	};		
+	/////////////////////////////////
+	//// constants
+	/////////////////////////////////
+	
+	Collection.CONTEXT_SEPARATOR =  '__context__';
+	Collection.QUERY_SEPARATOR = '/';
+	Collection.SUBQUERY_SEPARATOR = '{';
+	Collection.METHOD_SEPARATOR = '->';
+		
+	Collection.CHILDREN = '>';
+	Collection.ORDER = ['eq(', ')'];
+	
+	Collection.DOM_SEPARATOR = ['<?js', '?>'];
+	Collection.ECHO = 'echo';			/////////////////////////////////	//// data types	/////////////////////////////////		/**	 * returns the value of the hidden properties of [[CLASS]]	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.toString('test');	 * @example	 * $C.toString(2);	 */	Collection.objToString = function (obj) {		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }		return Object.prototype.toString.call(obj);	};		// the hash-table of types of data	Collection.types = {		'[object Boolean]': 'boolean',		'[object Number]': 'number',		'[object String]': 'string',		'[object Function]': 'function',		'[object Array]': 'array',		'[object Date]': 'date',		'[object RegExp]': 'regexp',		'[object Object]': 'object'	};		/**	 * returns the type of the specified element	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.type('test');	 * @example	 * $C.type(2);	 */	Collection.type = function (obj) {		return obj == null ? String(obj) : Collection.types[Collection.objToString(obj)] || 'object';	};		/**	 * returns true if the specified object is window	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.isWindow(window);	 * @example	 * $C.isWindow(2);	 */	Collection.isWindow = function (obj) {		return obj && typeof obj === 'object' && 'setInterval' in obj;	};	/**	 * returns a Boolean indicating whether the object is a string	 *	 * @param {mixed} obj — object to test whether or not it is a string	 * @return {Boolean}	 *	 * @example	 * $C.isString('test');	 * @example	 * $C.isString(2);	 */	Collection.isString = function (obj) { return Collection.type(obj) === 'string'; };		/**	 * returns a Boolean indicating whether the object is a number	 *	 * @param {mixed} obj — object to test whether or not it is a number	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(2);	 */	Collection.isNumber = function (obj) { return Collection.type(obj) === 'number';  };		/**	 * returns a Boolean indicating whether the object is a boolean	 *	 * @param {mixed} obj — object to test whether or not it is a boolean	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(false);	 */	Collection.isBoolean = function (obj) { return Collection.type(obj) === 'boolean'; };		/**	 * returns a Boolean indicating whether the object is a function	 *	 * @param {mixed} obj — object to test whether or not it is a function	 * @return {Boolean}	 *	 * @example	 * $C.isFunction('test');	 * @example	 * $C.isFunction(function () {});	 */	Collection.isFunction = function (obj) { return Collection.type(obj) === 'function';  };		/**	 * returns a Boolean indicating whether the object is a array (not an array-like object)	 *	 * @param {mixed} obj — object to test whether or not it is a array	 * @return {Boolean}	 *	 * @example	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isArray([1, 2, 3]);	 */	Collection.isArray = function (obj) { return Collection.type(obj) === 'array';  };		/**	 * returns a Boolean indicating whether the object is a plain object	 *	 * @param {mixed} obj — object to test whether or not it is a plain object	 * @return {Boolean}	 *	 * @example	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isPlainObject(new Date);	 * @example	 * $C.isPlainObject(Date);	 */	Collection.isPlainObject = function (obj) {		if (!obj || Collection.type(obj) !== 'object' || obj.nodeType || Collection.isWindow(obj)) {			return false;		}				try {			// not own constructor property must be Object			if (obj.constructor &&				!obj.hasOwnProperty('constructor') &&				!obj.constructor.prototype.hasOwnProperty('isPrototypeOf')) {					return false;				}		} catch (e) {			// IE8,9 will throw exceptions on certain host objects #9897			return false;		}		// own properties are enumerated firstly, so to speed up,		// if last one is own, then all properties are own.		var key;		for (key in obj) {}		return key === undefined || obj.hasOwnProperty(key);	};		/**	 * returns a Boolean indicating whether the object is a collection	 *	 * @param {mixed} obj — object to test whether or not it is a collection	 * @return {Boolean}	 *	 * @example	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isCollection([1, 2, 3]);	 */	Collection.isCollection = function (obj) { return Collection.isArray(obj) || Collection.isPlainObject(obj); };		/**	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)	 *	 * @param {mixed} obj — the object, to test its existence	 * @return {Boolean}	 *	 * @example	 * $C.isExists('');	 * @example	 * $C.isExists(null);	 * @example	 * $C.isExists(false);	 */	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
 	/////////////////////////////////
 	//// string methods
 	/////////////////////////////////
@@ -371,7 +385,149 @@
 		
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
-			/////////////////////////////////	//// methods of arrays and objects	/////////////////////////////////		/**	 * merge the contents of two or more objects together into the first object	 *	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend	 * @param {Object} [target] — the object to extend	 * @param {Object} [objectN] — additional objects containing properties to merge in	 * @return {Object}	 *	 * @example	 * $C.extend({a: 1}, {a: 2}, {a: 3});	 * @example	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}});	 */	Collection.extend = function () {		var options, name, src, copy, copyIsArray, clone,			target = arguments[0] || {},						i = 0, aLength = arguments.length,						deep = false;				// handle a deep copy situation		if (Collection.isBoolean(target)) {			deep = target;			target = arguments[1] || {};			i = 1;		}			// handle case when target is a string or something (possible in deep copy)		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }			// extend Collection itself if only one argument is passed		if (aLength === i) {			target = Collection;			i -= 1;		}			while ((i += 1) < aLength) {			// only deal with non-null/undefined values			if (Collection.isExists(options = arguments[i])) {				// extend the base object				for (name in options) {					src = target[name];					copy = options[name];						// prevent never-ending loop					if (target === copy) { continue; }										// recurse if we're merging plain objects or arrays					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {						if (copyIsArray) {							copyIsArray = false;							clone = src && Collection.isArray(src) ? src : [];						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }							// never move original objects, clone them						target[name] = Collection.extend(deep, clone, copy);										// don't bring in undefined values					} else if (typeof copy !== 'undefined') { target[name] = copy; }				}			}		}				return target;	};			/**	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)	 *	 * @this {Collection}	 * @param {Plain Object} obj — the object to extend	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)	 * @param {mixed} value — some value	 * @return {Plain Object|Boolean}	 *	 * @example	 * $C.addElementToObject({a: 1}, 'b', 2);	 * @example	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);	 */	Collection.addElementToObject = function (obj, keyName, value) {		keyName = keyName.split(Collection.METHOD_SEPARATOR);		var key, newObj = {};			if (keyName[1] && keyName[1] === 'unshift') {			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;						for (key in obj) {				if (obj.hasOwnProperty(key)) {					newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key];				}			}			obj = newObj;				return obj;		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }			return true;	};		/**	 * unshift for arguments (object)	 * 	 * @param {Object} obj — some object	 * @param {mixed} val — new value	 * @return {Array}	 *	 * @example	 * $C.unshiftArguments({'0': 1, length: 1}, 2);	 */	Collection.unshiftArguments = function (obj, val) {		var newObj = [val], i = -1, oLength = obj.length;		while ((i += 1) < oLength) { newObj.push(obj[i]); }				return newObj;	};		/////////////////////////////////	//// array prototype	/////////////////////////////////	if (!Array.prototype.forEach) {		/**		 * calls a function for each element in the array		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {undefined}		 */		Array.prototype.forEach = function (callback, thisObject) {			var i = -1, aLength = this.length;						while ((i += 1) < aLength) {				if (!thisObject) {					callback(this[i], i, this);				} else { callback.call(thisObject, this[i], i, this); }			}		}	}		if (!Array.prototype.some) {		/**		 * tests whether some element in the array passes the test implemented by the provided function		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {Boolean}		 */		Array.prototype.some = function (callback, thisObject) {			var i = -1, aLength = this.length, res;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }				if (res) { return true; }			}						return false;		}	}		if (!Array.prototype.every) {		/**		 * метод возвращает false, если ли хотя бы один элемент массива не удовлетворит фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Boolean}		 *		 * @example		 * [1, 2, 3, 4, 5].every(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.every = function (callback, thisObject) {			var i = -1, aLength = this.length,				res, fRes = true;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }								if (fRes === true && !res) { fRes = false; }			}						return fRes;		};	}		if (!Array.prototype.filter) {		/**		 * метод возвращает новый массив, из элементов исходного, которые удовлетворили фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение для каждого элемента массива		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].filter(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.filter = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					if (callback(this[i], i, this)) {						res.push(this[i]);					}				} else {					if (callback.call(thisObject, this[i], i, this)) {						res.push(this[i]);					}				}			}						return res;		};	}		if (!Array.prototype.map) {		/**		 * метод возвращает новый массив, из элементов исходного, которые прошли через функцию callback		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать новое значение элемента		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].map(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.map = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					res.push(callback(this[i], i, this));				} else {					res.push(callback.call(thisObject, this[i], i, this));				}			}						return res;		};	}		if (!Array.prototype.indexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает его индекс (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=0] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5].indexOf(4); // 3		 * [1, 2, 3, 4, 5].indexOf(4, 4); // -1		 */		Array.prototype.indexOf = function (searchElement, fromIndex) {			var i = (fromIndex || 0) - 1,				aLength = this.length;						while ((i += 1) < aLength) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.lastIndexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает индекс последнего совпадения (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=Array.length] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4); // 5		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4, 3); // 3		 */		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {			var i = fromIndex || this.length;						while ((i -= 1) > -1) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.reduce) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, слева-направо), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduce(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе первый элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduce = function (callback, initialValue) {			var i = 0, aLength = this.length, res;						if (aLength === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[0]; }						while ((i += 1) < aLength) {				res = callback(res, this[i], i, this);			}						return res;		};	}		if (!Array.prototype.reduceRight) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, справа-налево), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduceRight(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе последний элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduceRight = function (callback, initialValue) {			var i = this.length - 1, res;						if (this.length === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[i]; }						while ((i -= 1) > -1) {				res = callback(res, this[i], i, this);			}						return res;		};	}	
+		
+	/////////////////////////////////
+	//// methods of arrays and objects
+	/////////////////////////////////
+	
+	/**
+	 * merge the contents of two or more objects together into the first object
+	 *
+	 * @param {Boolean|Object} [deep=target] — if true, the merge becomes recursive (overload) or the object to extend
+	 * @param {Object} [target] — the object to extend
+	 * @param {Object} [objectN] — additional objects containing properties to merge in
+	 * @return {Object}
+	 *
+	 * @example
+	 * $C.extend({a: 1}, {a: 2}, {a: 3});
+	 * @example
+	 * $C.extend(true, {a: {c: 1, b: 2}}, {a: {c: 2}}, {a: {c: 3}});
+	 */
+	Collection.extend = function () {
+		var options, name, src, copy, copyIsArray, clone,
+			target = arguments[0] || {},
+			
+			i = 0, aLength = arguments.length,
+			
+			deep = false;
+		
+		// handle a deep copy situation
+		if (Collection.isBoolean(target)) {
+			deep = target;
+			target = arguments[1] || {};
+			i = 1;
+		}
+	
+		// handle case when target is a string or something (possible in deep copy)
+		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }
+	
+		// extend Collection itself if only one argument is passed
+		if (aLength === i) {
+			target = Collection;
+			i -= 1;
+		}
+	
+		while ((i += 1) < aLength) {
+			// only deal with non-null/undefined values
+			if (Collection.isExists(options = arguments[i])) {
+				// extend the base object
+				for (name in options) {
+					src = target[name];
+					copy = options[name];
+	
+					// prevent never-ending loop
+					if (target === copy) { continue; }
+					
+					// recurse if we're merging plain objects or arrays
+					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {
+						if (copyIsArray) {
+							copyIsArray = false;
+							clone = src && Collection.isArray(src) ? src : [];
+						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }
+	
+						// never move original objects, clone them
+						target[name] = Collection.extend(deep, clone, copy);
+					
+					// don't bring in undefined values
+					} else if (typeof copy !== 'undefined') { target[name] = copy; }
+				}
+			}
+		}
+		
+		return target;
+	};
+		
+	/**
+	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)
+	 *
+	 * @this {Collection}
+	 * @param {Plain Object} obj — the object to extend
+	 * @param {String} keyName — key name (can use '->unshift' — the result will be similar to work for an array unshift)
+	 * @param {mixed} value — some value
+	 * @return {Plain Object|Boolean}
+	 *
+	 * @example
+	 * $C.addElementToObject({a: 1}, 'b', 2);
+	 * @example
+	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);
+	 */
+	Collection.addElementToObject = function (obj, keyName, value) {
+		keyName = keyName.split(Collection.METHOD_SEPARATOR);
+		var key, newObj = {};
+	
+		if (keyName[1] && keyName[1] === 'unshift') {
+			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;
+			
+			for (key in obj) {
+				if (obj.hasOwnProperty(key)) {
+					newObj[!isNaN(Number(key)) ? +key + 1 : key] = obj[key];
+				}
+			}
+			obj = newObj;
+	
+			return obj;
+		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }
+	
+		return true;
+	};
+	
+	/**
+	 * unshift for arguments (object)
+	 * 
+	 * @param {Object} obj — some object
+	 * @param {mixed} val — new value
+	 * @return {Array}
+	 *
+	 * @example
+	 * $C.unshiftArguments({0: 1, length: 1}, 2);
+	 */
+	Collection.unshiftArguments = function (obj, val) {
+		var newObj = [val], i = -1, oLength = obj.length;
+		while ((i += 1) < oLength) { newObj.push(obj[i]); }
+		
+		return newObj;
+	};
+	
+	/**
+	 * convert the object into an array
+	 * 
+	 * @param {Object} obj — some object
+	 * @return {Array}
+	 *
+	 * @example
+	 * $C.toArray({0: 1, 1: 2});
+	 */
+	Collection.toArray = function (obj) {
+		var newArray = [], key;
+		
+		for (key in obj) {
+			if (!obj.hasOwnProperty(key)) { continue; }
+			
+			newArray.push(obj[key]);
+		}
+		
+		return newArray;
+	};		/////////////////////////////////	//// array prototype	/////////////////////////////////	if (!Array.prototype.forEach) {		/**		 * calls a function for each element in the array		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {undefined}		 */		Array.prototype.forEach = function (callback, thisObject) {			var i = -1, aLength = this.length;						while ((i += 1) < aLength) {				if (!thisObject) {					callback(this[i], i, this);				} else { callback.call(thisObject, this[i], i, this); }			}		}	}		if (!Array.prototype.some) {		/**		 * tests whether some element in the array passes the test implemented by the provided function		 *		 * @this {Array}		 * @param {Function} callback — function to test each element of the array		 * @param {mixed} [thisObject] — object to use as this when executing callback		 * @return {Boolean}		 */		Array.prototype.some = function (callback, thisObject) {			var i = -1, aLength = this.length, res;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }				if (res) { return true; }			}						return false;		}	}		if (!Array.prototype.every) {		/**		 * метод возвращает false, если ли хотя бы один элемент массива не удовлетворит фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Boolean}		 *		 * @example		 * [1, 2, 3, 4, 5].every(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.every = function (callback, thisObject) {			var i = -1, aLength = this.length,				res, fRes = true;						while ((i += 1) < aLength) {				if (!thisObject) {					res = callback(this[i], i, this);				} else { res = callback.call(thisObject, this[i], i, this); }								if (fRes === true && !res) { fRes = false; }			}						return fRes;		};	}		if (!Array.prototype.filter) {		/**		 * метод возвращает новый массив, из элементов исходного, которые удовлетворили фильтр		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать логическое значение для каждого элемента массива		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].filter(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.filter = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					if (callback(this[i], i, this)) {						res.push(this[i]);					}				} else {					if (callback.call(thisObject, this[i], i, this)) {						res.push(this[i]);					}				}			}						return res;		};	}		if (!Array.prototype.map) {		/**		 * метод возвращает новый массив, из элементов исходного, которые прошли через функцию callback		 *		 * @this {Array}		 * @param {Function} callback — функция обратного вызова, которая выполняется на каждой итерации, должна возвращать новое значение элемента		 * @param {Object} [thisObject] — объект, используемый в качестве this для callback		 * @return {Array}		 *		 * @example		 * [1, 2, 3, 4, 5].map(function (el, i, data) {		 *	el — элемент массива		 *	i — итерация		 *	data — исходный массив		 * });		 */		Array.prototype.map = function (callback, thisObject) {			var i = -1, aLength = this.length, res = [];						while ((i += 1) < aLength) {				if (!thisObject) {					res.push(callback(this[i], i, this));				} else {					res.push(callback.call(thisObject, this[i], i, this));				}			}						return res;		};	}		if (!Array.prototype.indexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает его индекс (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=0] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5].indexOf(4); // 3		 * [1, 2, 3, 4, 5].indexOf(4, 4); // -1		 */		Array.prototype.indexOf = function (searchElement, fromIndex) {			var i = (fromIndex || 0) - 1,				aLength = this.length;						while ((i += 1) < aLength) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.lastIndexOf) {		/**		 * метод обходит массив в поисках элемента, равного указанному, и возвращает индекс последнего совпадения (-1 если ничего не найдено)		 * сравнение идёт строгое (1 != '1')		 *		 * @this {Array}		 * @param {Function} searchElement — искомый элемент		 * @param {Number} [fromIndex=Array.length] — начальная позиция		 * @return {Number}		 *		 * @example		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4); // 5		 * [1, 2, 3, 4, 5, 4].lastIndexOf(4, 3); // 3		 */		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {			var i = fromIndex || this.length;						while ((i -= 1) > -1) {				if (this[i] === searchElement) {					return i;				}			}						return -1;		};	}		if (!Array.prototype.reduce) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, слева-направо), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduce(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе первый элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduce = function (callback, initialValue) {			var i = 0, aLength = this.length, res;						if (aLength === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[0]; }						while ((i += 1) < aLength) {				res = callback(res, this[i], i, this);			}						return res;		};	}		if (!Array.prototype.reduceRight) {		/**		 * метод итеративно применяет 2 значения (значение, возвращемое функцией обратного вызова и элемент массива, справа-налево), для того, чтобы свести массив к одному значению		 *		 * @this {Array}		 * @param {Function} callback — искомый элемент		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)		 * @return {mixed}		 *		 * @example		 * [1, 2, 3, 4, 5].reduceRight(function (a, b, i, data) {		 *	a — для первой итерации, если указан, то initialValue, иначе последний элемент массива, для последующих итераций равна возвращаемому значению прошлого callback		 *	b — элемент массива		 *	i — итерация (начиная с 1)		 *	data - исходный массив		 * });		 */		Array.prototype.reduceRight = function (callback, initialValue) {			var i = this.length - 1, res;						if (this.length === 1) { return this[0]; } 						if (initialValue) {				res = initialValue;			} else { res = this[i]; }						while ((i -= 1) > -1) {				res = callback(res, this[i], i, this);			}						return res;		};	}	
 	/////////////////////////////////
 	//// prototype
 	/////////////////////////////////
@@ -404,6 +560,7 @@
 		SHUFFLE: 'shuffle',
 		NAMESPACE_SEPARATOR: '.',
 		SPLITTER: '>>>',
+		SHORT_SPLITTER: '>>',
 		
 		/**
 		 * stack parameters
@@ -438,7 +595,90 @@
 			
 			'resultNull'
 		]
-	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};		/////////////////////////////////	//// DOM methods	/////////////////////////////////		/** @private */	Collection.drivers.dom = {		/**		 * returns a list of the elements within the document		 * 		 * @this {Collection DOM Driver}		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas		 * @param {DOM node} [context] — context		 * @throw {Error}		 * @return {mixin}		 */		find: function (selector, context) {			if (!this.lib) { throw new Error('DOM driver is not defined!'); }						return this.engines[this.lib].find(selector || '', context || '');		},				/**		 * returns all direct child elements		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [attr] — the properties of a node		 * @return {Array}		 */		children: function (el, prop) {			var res = [];			Array.prototype.forEach.call(el.childNodes, function (el) {				if (el.nodeType === 1) {					if (!prop) {						res.push(el);					} else if (el[prop]) { res.push(el); }				}			});						return res;		},				/**		 * returns the data attributes of the node		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [name] — data name		 * @return {Collection DOM Driver}		 */		data: function (el, name) {			var attr = el.attributes, data = {};				if (attr && attr.length > 0) {				Array.prototype.forEach.call(attr, function (el) {					if (el.name.substring(0, 5) === 'data-') {						data[el.name.replace('data-', '')] = Collection.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;					}				});			}						if (name) { return data[name]; }			return data;		},				/**		 * returns the text content of the node		 * 		 * @this {Collection}		 * @param {DOM Node} el — DOM node		 * @return {String|Boolean}		 */		text: function (el) {			el = el.childNodes;					var str = '';						Array.prototype.forEach.call(el, function (el) {				if (el.nodeType === 3 && Collection.trim(el.textContent)) { str += el.textContent; }			});						if (str) { return str; }						return false;		},				/**		 * attach event		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} eventType — event type		 * @param {Function} callback — callback function		 * @return {Collection DOM Driver}		 */		bind: function (el, eventType, callback) {			if (this.engines[this.lib][eventType]) {				this.engines[this.lib][eventType](el, callback);								return this;			}						// if old IE			if (document.attachEvent) {				el.attachEvent('on' + eventType, callback);			} else { el.addEventListener(eventType, callback); }						return this;		},				/**		 * adds the specified class to the element		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		addClass: function (el, className) {			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }						return this;		},		/**		 * determine whether or not the specified item is needed class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Boolean}		 */		hasClass: function (el, className) {			return el.className.split(' ').indexOf(className) !== -1;		},		/**		 * remove a single class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		removeClass: function (el, className) {			var classes = el.className.split(' '),				newClass = [];						classes.forEach(function (el) {				if (el !== className) { newClass.push(el); }			});						el.className = newClass.join(' ');						return this;		},				// search frameworks		engines: {			// qsa css selector engine			qsa: {				is: function () {					if (typeof qsa !== 'undefined') { return true; }				},				find: function (selector, context) {					return qsa.querySelectorAll(selector, context);				}			},			// sizzle 			sizzle: {				is: function () {					if (typeof Sizzle !== 'undefined') { return true; }				},				find: function (selector, context) {					return Sizzle(selector, context);				}			},			// jQuery 			jQuery: {				is: function () {					if (typeof jQuery !== 'undefined') { return true; }				},				find: function (selector, context) {					return jQuery(selector, context);				},				click: function (el, callback) { $(el).click(callback); },				change: function (el, callback) { $(el).change(callback); }			},			// dojo 			dojo: {				is: function () {					if (typeof dojo !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return dojo.query(selector, context);					} else { return dojo.query(selector); }				},				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }			},			// mootools 			mootools: {				is: function () {					if (typeof MooTools !== 'undefined') { return true; }				},				find: function (selector, context) {					var res;										if (context) {						res = [];												$$(context).getElements(selector).forEach(function (el) {							el.forEach(function (el) { res.push(el); });						});					} else { res = $$(selector); }										return res;				}			},			// prototype 			prototype: {				is: function () {					if (typeof Prototype !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return context.getElementsBySelector(selector);					} else { return $$(selector); }				}			}		}	};		// definition of DOM driver	(function () {		var key, engines = Collection.drivers.dom.engines;		for (key in engines) {			if (!engines.hasOwnProperty(key)) { continue; }								if (engines[key].is()) {				Collection.drivers.dom.lib = key;								return true;			}		}	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};	/////////////////////////////////	//// DOM methods (compiler templates)	/////////////////////////////////		/**	 * compile the template	 * 	 * @this {Collection}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @throw {Error}	 * @return {Function}	 */	Collection.ctplCompile = function (selector) {		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }				var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,			elem = html				.replace(/\/\*.*?\*\//g, '')				.split('?>')				.join('<?js')				.replace(/[\r\t\n]/g, ' ')				.split('<?js'),						resStr = 'var result = ""; ';				elem.forEach(function (el, i) {			if (i === 0 || i % 2 === 0) {				resStr += 'result +="' + el.split('"').join('\\"') + '";';			} else { resStr += el.split('echo').join('result +='); }		});				return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', resStr + ' return result;');	};		/**	 * make templates	 * 	 * @this {Collection Object}	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes	 * @return {Collection Object}	 */	Collection.prototype.ctplMake = function (selector) {			var dom = Collection.drivers.dom;		Collection.isString(selector) && (selector = dom.find(selector));				Array.prototype.forEach.call(selector, function (el) {			var data = dom.data(el, 'ctpl'), key,				prefix = data.prefix ? data.prefix + '_' : '';						// compile template			this._push('template', prefix + data.name, Collection.ctplCompile(el));			if (data.set && data.set === true) { this._set('template', prefix + data.name); }						// compile			for (key in data) {				if (!data.hasOwnProperty(key)){ continue; }								if (['prefix', 'set', 'print', 'name', 'collection'].indexOf(key) !== -1) { continue; }				if (['target', 'pager'].indexOf(key) !== -1) { data[key] = dom.find(data[key]); }								this._push(key, prefix + data.name, data[key]);				if (data.set && data.set === true) { this._set(key, prefix + data.name); }								if (['filter', 'parser'].indexOf(key) !== -1) { data[key] = prefix + data.name; }			}						// if the target is not defined, then take the parent node			if (!data.target) {				this._push('target', prefix + data.name, [el.parentNode]);				if (data.set && data.set === true) { this._set('target', prefix + data.name); }			}						// print template (if need)			if (data.print && data.print === true) {				data.template = data.name;								this.print(data);			}		}, this);				return this;	};	
+	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};		/////////////////////////////////	//// DOM methods	/////////////////////////////////		/** @private */	Collection.drivers.dom = {		/**		 * returns a list of the elements within the document		 * 		 * @this {Collection DOM Driver}		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas		 * @param {DOM node} [context] — context		 * @throw {Error}		 * @return {mixin}		 */		find: function (selector, context) {			if (!this.lib) { throw new Error('DOM driver is not defined!'); }						return this.engines[this.lib].find(selector || '', context || '');		},				/**		 * returns all direct child elements		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [attr] — the properties of a node		 * @return {Array}		 */		children: function (el, prop) {			var res = [];			Array.prototype.forEach.call(el.childNodes, function (el) {				if (el.nodeType === 1) {					if (!prop) {						res.push(el);					} else if (el[prop]) { res.push(el); }				}			});						return res;		},				/**		 * returns the data attributes of the node		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [name] — data name		 * @return {Collection DOM Driver}		 */		data: function (el, name) {			var attr = el.attributes, data = {};				if (attr && attr.length > 0) {				Array.prototype.forEach.call(attr, function (el) {					if (el.name.substring(0, 5) === 'data-') {						data[el.name.replace('data-', '')] = Collection.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;					}				});			}						if (name) { return data[name]; }			return data;		},				/**		 * returns the text content of the node		 * 		 * @this {Collection}		 * @param {DOM Node} el — DOM node		 * @return {String|Boolean}		 */		text: function (el) {			el = el.childNodes;					var str = '';						Array.prototype.forEach.call(el, function (el) {				if (el.nodeType === 3 && Collection.trim(el.textContent)) { str += el.textContent; }			});						if (str) { return str; }						return false;		},				/**		 * attach event		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} eventType — event type		 * @param {Function} callback — callback function		 * @return {Collection DOM Driver}		 */		bind: function (el, eventType, callback) {			if (this.engines[this.lib][eventType]) {				this.engines[this.lib][eventType](el, callback);								return this;			}						// if old IE			if (document.attachEvent) {				el.attachEvent('on' + eventType, callback);			} else { el.addEventListener(eventType, callback); }						return this;		},				/**		 * adds the specified class to the element		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		addClass: function (el, className) {			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }						return this;		},		/**		 * determine whether or not the specified item is needed class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Boolean}		 */		hasClass: function (el, className) {			return el.className.split(' ').indexOf(className) !== -1;		},		/**		 * remove a single class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		removeClass: function (el, className) {			var classes = el.className.split(' '),				newClass = [];						classes.forEach(function (el) {				if (el !== className) { newClass.push(el); }			});						el.className = newClass.join(' ');						return this;		},				// search frameworks		engines: {			// qsa css selector engine			qsa: {				is: function () {					if (typeof qsa !== 'undefined') { return true; }				},				find: function (selector, context) {					return qsa.querySelectorAll(selector, context);				}			},			// sizzle 			sizzle: {				is: function () {					if (typeof Sizzle !== 'undefined') { return true; }				},				find: function (selector, context) {					return Sizzle(selector, context);				}			},			// jQuery 			jQuery: {				is: function () {					if (typeof jQuery !== 'undefined') { return true; }				},				find: function (selector, context) {					return jQuery(selector, context);				},				click: function (el, callback) { $(el).click(callback); },				change: function (el, callback) { $(el).change(callback); }			},			// dojo 			dojo: {				is: function () {					if (typeof dojo !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return dojo.query(selector, context);					} else { return dojo.query(selector); }				},				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }			},			// mootools 			mootools: {				is: function () {					if (typeof MooTools !== 'undefined') { return true; }				},				find: function (selector, context) {					var res;										if (context) {						res = [];												$$(context).getElements(selector).forEach(function (el) {							el.forEach(function (el) { res.push(el); });						});					} else { res = $$(selector); }										return res;				}			},			// prototype 			prototype: {				is: function () {					if (typeof Prototype !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return context.getElementsBySelector(selector);					} else { return $$(selector); }				}			}		}	};		// definition of DOM driver	(function () {		var key, engines = Collection.drivers.dom.engines;		for (key in engines) {			if (!engines.hasOwnProperty(key)) { continue; }								if (engines[key].is()) {				Collection.drivers.dom.lib = key;								return true;			}		}	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};
+	/////////////////////////////////
+	//// DOM methods (compiler templates)
+	/////////////////////////////////
+	
+	/**
+	 * compile the template
+	 * 
+	 * @this {Collection}
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
+	 * @throw {Error}
+	 * @return {Function}
+	 */
+	Collection.ctplCompile = function (selector) {
+		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));
+		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
+		
+		var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,
+			elem = html
+				.replace(/\/\*.*?\*\//g, '')
+				.split(this.DOM_SEPARATOR[1])
+				.join(this.DOM_SEPARATOR[0])
+				.replace(/[\r\t\n]/g, ' ')
+				.split(this.DOM_SEPARATOR[0]),
+			
+			resStr = 'var result = ""; ', echo = new RegExp('\\s+' + this.ECHO + '\\s+');
+		
+		elem.forEach(function (el, i) {
+			if (i === 0 || i % 2 === 0) {
+				resStr += 'result +="' + el.split('"').join('\\"') + '";';
+			} else { resStr += el.split(echo).join('result +='); }
+		});
+		
+		return new Function('el', 'key', 'data', 'i', 'length', 'cObj', 'id', resStr + ' return result;');
+	};
+	
+	/**
+	 * make templates
+	 * 
+	 * @this {Collection Object}
+	 * @param {String|DOM nodes} selector — CSS selector or DOM nodes
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.ctplMake = function (selector) {	
+		var dom = Collection.drivers.dom;
+		Collection.isString(selector) && (selector = dom.find(selector));
+		
+		Array.prototype.forEach.call(selector, function (el) {
+			var data = dom.data(el, 'ctpl'), key,
+				prefix = data.prefix ? data.prefix + '_' : '';
+			
+			// compile template
+			this._push('template', prefix + data.name, Collection.ctplCompile(el));
+			if (data.set && data.set === true) { this._set('template', prefix + data.name); }
+			
+			// compile
+			for (key in data) {
+				if (!data.hasOwnProperty(key)){ continue; }
+				
+				if (['prefix', 'set', 'print', 'name', 'collection'].indexOf(key) !== -1) { continue; }
+				if (['target', 'pager'].indexOf(key) !== -1) { data[key] = dom.find(data[key]); }
+				
+				this._push(key, prefix + data.name, data[key]);
+				if (data.set && data.set === true) { this._set(key, prefix + data.name); }
+				
+				if (['filter', 'parser'].indexOf(key) !== -1) { data[key] = prefix + data.name; }
+			}
+			
+			// if the target is not defined, then take the parent node
+			if (!data.target) {
+				this._push('target', prefix + data.name, [el.parentNode]);
+				if (data.set && data.set === true) { this._set('target', prefix + data.name); }
+			}
+			
+			// print template (if need)
+			if (data.print && data.print === true) {
+				data.template = data.name;
+				
+				this.print(data);
+			}
+		}, this);
+		
+		return this;
+	};	
 	/////////////////////////////////
 	//// public fields (active)
 	/////////////////////////////////
@@ -977,7 +1217,7 @@
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -1033,7 +1273,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -1063,7 +1303,7 @@
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// values by default
 		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;
-		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SPLITTER) : filter;
+		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SHORT_SPLITTER) : filter;
 		
 		id = id || '';
 
@@ -1232,7 +1472,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -1259,7 +1499,7 @@
 	 * search for elements using filter (returns a reference to elements) (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -1296,7 +1536,7 @@
 	 * search for one element using filter (returns a reference to element) (in context)
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -1365,15 +1605,15 @@
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
 	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
-	 * @return {Array|mixed}
+	 * @return {Array|mixed|Colletion Object}
 	 *
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
@@ -1387,40 +1627,53 @@
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		id = id || '';
+		var res,
+			to, set = false,
+			arg = Collection.toArray(arguments),
+			action;
 		
-		// overload
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-			return this._getOne(filter, id);
-		}
-		
-		mult = mult === false ? false : true;
-		var res = mult === true || Collection.isArray(filter) ? [] : -1,
-			action, to;
+		// overload ID
+		if (id.search(this.SPLITTER) !== -1) {
+			id = id.split(this.SPLITTER);
+			set = true;
+		} else { id = id.split(this.SHORT_SPLITTER); }
+		id[1] && (to = Collection.trim(id[1]));
+		id = arg[1] = Collection.trim(id[0]);
 		
 		// overload
 		if (Collection.isArray(filter)) {
+			res = [];
 			filter.forEach(function (el) {
-				res.push(this.get(el, id, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''));
+				res = res.concat(this.get(el, id, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''));
 			}, this);
-			
-			return res;
-		}
-		
-		if (id.split(this.SPLITTER)) {
-			id[1] && (to = id[0]);
-			id = id[0];
-		}
-		
-		if (mult === true) {
-			/** @private */
-			action = function (el, key, data) { res.push(data[key]); };
 		} else {
-			/** @private */
-			action = function (el, key, data) { res = data[key]; };
+			// overload
+			if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+				res = this._getOne(filter, id);
+			} else {
+				mult = mult === false ? false : true;
+				res = mult === true || Collection.isArray(filter) ? [] : -1;
+				
+				if (mult === true) {
+					/** @private */
+					action = function (el, key, data) { res.push(data[key]); };
+				} else {
+					/** @private */
+					action = function (el, key, data) { res = data[key]; };
+				}
+				
+				arg.unshift(action);
+				this.forEach.apply(this, arg);
+			}
 		}
 		
-		this.forEach.apply(this, Collection.unshiftArguments(arguments, action));
-		//if (to) { return this.push }
+		// save result
+		if (to) {
+			this._push('collection', to, res);
+			
+			if (set == true) { return this._set('collection', to); }
+			return this;
+		}
 		
 		return res;
 	};
@@ -1428,8 +1681,8 @@
 	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -1457,7 +1710,7 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
@@ -1503,24 +1756,17 @@
 			return this._setOne(filter, replaceObj, id || '');
 		}
 		
-		var e, arg, res, action,
-			isFunc = this._isStringExpression(replaceObj) ? replaceObj.search(/(?:\s+|;)return\s+/) : false;
-		
 		// compile replace object if need
-		replaceObj = isFunc ? this._compileFunc(replaceObj) : replaceObj;
+		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
+		var e, arg, res, action,
+			isFunc = Collection.isFunction(replaceObj);
 		
 		if (isFunc) {
-			if (isFunc !== -1) {
-				/** @private */
-				action = function (el, key, data) {
-					data[key] = replaceObj.apply(replaceObj, arguments);
-				};
-			} else {
-				/** @private */
-				action = function (el, key, data) {
-					replaceObj.apply(replaceObj, arguments);
-				};
-			}
+			/** @private */
+			action = function (el, key, data) {
+				var res = replaceObj.apply(replaceObj, arguments);
+				if (typeof res !== 'undefined') { data[key] = res; }
+			};
 		} else {
 			/** @private */
 			action = function (el, key, data) { data[key] = Collection.expr(replaceObj, data[key]); };
@@ -1540,7 +1786,7 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
@@ -1577,7 +1823,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
@@ -1649,7 +1895,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} [context] — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1738,7 +1984,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1763,7 +2009,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1791,7 +2037,7 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceID=this.ACTIVE] — source ID
 	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
@@ -1820,7 +2066,7 @@
 	 * events: onRemove
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
@@ -1891,7 +2137,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -1916,7 +2162,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -1943,8 +2189,8 @@
 	 * group the elements on the field or condition (the method returns a new collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
@@ -1964,6 +2210,7 @@
 	 */
 	Collection.prototype.group = function (field, filter, id, mult, count, from, indexOf, lastIndexOf, rev, link) {
 		field = this._isStringExpression((field = field || '')) ? this._compileFilter(field) : field;
+		id = id || '';
 		mult = mult === false ? false : true;
 		link = link || false;
 		
@@ -2012,6 +2259,12 @@
 			}
 		}
 		
+		// overload ID
+		if (id.search(this.SPLITTER) !== -1) {
+			id = id.split(this.SPLITTER);
+			set = true;
+		} else { id = id.split(this.SHORT_SPLITTER); }
+		
 		arg = Collection.unshiftArguments(arguments, action);
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
@@ -2022,8 +2275,8 @@
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -2056,7 +2309,7 @@
 	 * @this {Colletion Object}
 	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -2140,7 +2393,7 @@
 	 * @this {Colletion Object}
 	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -2550,7 +2803,7 @@
 	 * calculate custom filter
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {mixed} el — current element
 	 * @param {Number|String} key — key
 	 * @param {Collection} data — link to collection
@@ -2717,7 +2970,7 @@
 	 * calculate custom parser
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Parser|String|Boolean} parser — parser function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Parser|String|Boolean} parser — parser function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} str — source string
 	 * @return {String}
 	 */
@@ -2868,9 +3121,9 @@
 	 * @param {Number} [param.navBreaker=this.ACTIVE] — number of displayed pages (navigation, > 2)
 	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
 	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression))
+	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression))
 	 * @param {Filter} [param.filter=this.ACTIVE] — function, which is performed every iteration of the template (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (context + >>> + filter (the record is equivalent to: return + string expression))
+	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (context + >> + filter (the record is equivalent to: return + string expression))
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
 	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)

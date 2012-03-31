@@ -8,7 +8,7 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
@@ -54,24 +54,17 @@
 			return this._setOne(filter, replaceObj, id || '');
 		}
 		
-		var e, arg, res, action,
-			isFunc = this._isStringExpression(replaceObj) ? replaceObj.search(/(?:\s+|;)return\s+/) : false;
-		
 		// compile replace object if need
-		replaceObj = isFunc ? this._compileFunc(replaceObj) : replaceObj;
+		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
+		var e, arg, res, action,
+			isFunc = Collection.isFunction(replaceObj);
 		
 		if (isFunc) {
-			if (isFunc !== -1) {
-				/** @private */
-				action = function (el, key, data) {
-					data[key] = replaceObj.apply(replaceObj, arguments);
-				};
-			} else {
-				/** @private */
-				action = function (el, key, data) {
-					replaceObj.apply(replaceObj, arguments);
-				};
-			}
+			/** @private */
+			action = function (el, key, data) {
+				var res = replaceObj.apply(replaceObj, arguments);
+				if (typeof res !== 'undefined') { data[key] = res; }
+			};
 		} else {
 			/** @private */
 			action = function (el, key, data) { data[key] = Collection.expr(replaceObj, data[key]); };
@@ -91,7 +84,7 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >>> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
