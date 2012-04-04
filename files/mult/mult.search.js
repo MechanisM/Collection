@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -53,7 +53,22 @@
 		
 		// save result
 		if (to) {
-			this._push('collection', to, res);
+			to = to.split(this.PLUS);
+			
+			if (to[1]) {
+				to = Collection.trim(to[1]);
+				if (this._exists('collection', to)) {
+					this
+						.disable('context')
+						.concat(res, '', to)
+						.enable('context');
+				} else {
+					this._push('collection', to, res);
+				}
+			} else {
+				to = to[0];
+				this._push('collection', to, res);
+			}
 			
 			if (set == true) { return this._set('collection', to); }
 			return this;
@@ -66,7 +81,7 @@
 	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -90,7 +105,7 @@
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=0] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
 	 * @return {Number|String}
 	 *
 	 * @example
@@ -101,7 +116,6 @@
 	Collection.prototype.indexOf = function (searchElement, fromIndex, id) {
 		id = id || '';
 		fromIndex = fromIndex || '';
-		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex);
 	};
@@ -111,7 +125,7 @@
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=Collection Length] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
 	 * @return {Number|String}
 	 *
 	 * @example
@@ -122,7 +136,6 @@
 	Collection.prototype.lastIndexOf = function (searchElement, fromIndex, id) {
 		id = id || '';
 		fromIndex = fromIndex || '';
-		var data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		return this.searchOne(function (el) { return el === searchElement; }, id, '', fromIndex, '', true);
 	};

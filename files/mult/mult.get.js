@@ -7,8 +7,8 @@
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
+	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -26,6 +26,9 @@
 	 * @example
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.get(function (el, key, data, i) { return i % 3 === 0; });
+	 * @example
+	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
+	 *	.get(':i % 3 === 0', '>>>test').get();
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		id = id || '';
@@ -71,7 +74,22 @@
 		
 		// save result
 		if (to) {
-			this._push('collection', to, res);
+			to = to.split(this.PLUS);
+			
+			if (to[1]) {
+				to = Collection.trim(to[1]);
+				if (this._exists('collection', to)) {
+					this
+						.disable('context')
+						.concat(res, '', to)
+						.enable('context');
+				} else {
+					this._push('collection', to, res);
+				}
+			} else {
+				to = to[0];
+				this._push('collection', to, res);
+			}
 			
 			if (set == true) { return this._set('collection', to); }
 			return this;
@@ -83,8 +101,8 @@
 	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >>> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + ID to be stored in the stack (if >>> ID will become active))
+	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point

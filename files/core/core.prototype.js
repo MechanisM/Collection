@@ -32,6 +32,7 @@
 		NAMESPACE_SEPARATOR: '.',
 		SPLITTER: '>>>',
 		SHORT_SPLITTER: '>>',
+		PLUS: '+',
 		
 		/**
 		 * stack parameters

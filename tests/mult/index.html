@@ -280,6 +280,7 @@
 				
 				equal(db.get(':el % 2 === 0', '>> test').getCollection('test')[0], 2, 'filter -> ":el % 2 === 0", id -> ">> test"');
 				equal(db.get(':el % 2 === 0', '>>> test').get(0), 2, 'filter -> ":el % 2 === 0", id -> ">>> test"');
+				equal(db.get(':el % 2 === 0', '>>>+ test').get().length, 4, 'filter -> ":el % 2 === 0", id -> ">>>+ test"');
 			});
 			
 			module('set methods');
@@ -295,10 +296,12 @@
 			test('map', function () {
 				equal($C([1, 4, 3, 16]).map(Math.sqrt, ':el % 2 === 0')[0], 2, 'simple map (array)');
 				equal($C([1, 4, 3, 16]).map('+=1', ':el % 2 === 0')[0], 5, 'inc (array)');
+				equal($C([1, 4, 3, 16]).map('+=1', ':el % 2 === 0', '>>>test').get(0), 5, 'inc (array), id -> ">>>test"');
 				equal($C([1, 4, 3, 16]).map()[3], 16, 'empty (array)');
 				
 				equal($C({0: 1, 1: 4, 2: 3, 3: 16}).map(Math.sqrt, ':el % 2 === 0')[3], 4, 'simple map (object)');
 				equal($C({0: 1, 1: 4, 2: 3, 3: 16}).map('+=1', ':el % 2 === 0')[1], 5, 'inc (object)');
+				equal($C({0: 1, 1: 4, 2: 3, 3: 16}).map('+=1', ':el % 2 === 0', '>>>test').get('eq(0)'), 5, 'inc (object), id -> ">>>test"');
 				equal($C([1, 4, 3, 16]).map()[3], 16, 'empty (object)');
 			});
 			
