@@ -49,7 +49,7 @@
 		if (e === false) { return this; }
 		
 		// get by link
-		data = Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'));
+		data = this._geOne(this._get('collection', activeID), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object')  { throw new Error('unable to set property!'); }

@@ -42,29 +42,29 @@
 		 * @type Array
 		*/
 		stack: [
-			'namespace',
+			{namespace: ''},
 			
-			'collection',
-			'filter',
-			'context',
-			'cache',
-			'variable',
-			'defer',
+			{collection: ''},
+			{filter: ''},
+			{context: ''},
+			{cache: ''},
+			{variable: ''},
+			{defer: ''},
 	
-			'page',
-			'parser',
+			{page: ''},
+			{parser: ''},
 			
-			'toHTML',
+			{toHTML: ''},
 			
-			'target',
-			'calculator',
-			'pager',
+			{target: ''},
+			{calculator: ''},
+			{pager: ''},
 			
-			'template',
+			{template: ''},
 			
-			'breaker',
-			'navBreaker',
+			{breaker: ''},
+			{navBreaker: ''},
 			
-			'resultNull'
-		]
+			{resultNull: ''}
+		],
 	};

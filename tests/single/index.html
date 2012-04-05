@@ -10,18 +10,18 @@
 	<script type="text/javascript">
 		$(function () {
 			test('core', function () {
-				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
+				var db = $C({first: [[1, 2, {second: 3}], 2, 3]});
 				
-				equal(db.get('first > 0 > eq(-1) > eq(0)'), 3, 'get');
+				equal(db.get('first > 0 > eq(-1) > eq(0)'), 3, 'get, context -> "first > 0 > eq(-1) > eq(0)"');
 				equal(db
 					.set('first > 0 > eq(-1) > eq(0)', 99)
 					.get('first > 0 > eq(-1) > eq(0)'), 99,
-				'set');
+				'set, context -> "first > 0 > eq(-1) > eq(0)"');
 				
 				equal(db
 					.set('', 99)
 					.get(' '), 99,
-				'set - without context');
+				'set — without context');
 			});
 			
 			test('concat', function () {

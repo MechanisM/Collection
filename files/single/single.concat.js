@@ -20,7 +20,6 @@
 	Collection.prototype.concat = function (obj, context, id) {
 		context = Collection.isExists(context) ? context.toString() : '';
 		id = id || '';
-		
 		var data, e;	
 		
 		// events
@@ -28,7 +27,7 @@
 		if (e === false) { return this; }
 		
 		// get by link
-		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context);
+		data = this._getOne(context, id);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!') }
