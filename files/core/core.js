@@ -30,4 +30,9 @@
 		
 		active.collection = collection;
 	};
-	C = Collection;
+	
+	// private variables
+	var C = Collection,
+		active = C.fields.dObj.active,
+		sys = C.fields.dObj.sys,
+		fn = C.prototype;

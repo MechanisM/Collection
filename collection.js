@@ -43,7 +43,7 @@
  * @param {Plain Object} [uProp=Collection.fields.dObj.active] — additional properties
  */
 var Collection;
-(function (C) {
+(function () {
 	'use strict';
 		
 	/////////////////////////////////
@@ -77,7 +77,12 @@ var Collection;
 		
 		active.collection = collection;
 	};
-	C = Collection;	
+	
+	// private variables
+	var C = Collection,
+		active = C.fields.dObj.active,
+		sys = C.fields.dObj.sys,
+		fn = C.prototype;	
 	/**
 	 * set new value of the object by the link, get/remove an element by the link, or return a fragment of the context (overload)
 	 * 
@@ -1408,17 +1413,7 @@ var Collection;
 				resultNull: ''
 			}
 		}
-	};
-	
-	// generate default values
-	Collection.prototype.stack.forEach(function (el) {
-		var key, active = C.fields.dObj.active;
-		for (key in el) {
-			if (!el.hasOwnProperty(key)) { continue; }
-			
-			el[key] = active[key];
-		}
-	});	
+	};	
 	/////////////////////////////////
 	//// public fields (system)
 	/////////////////////////////////
@@ -1466,22 +1461,23 @@ var Collection;
 	};
 	
 	// generate system fields
-	(function (data) {
-		var upperCase,
-			sys = C.fields.dObj.sys;
-		
-		data.forEach(function (el) {
-			for (var key in el) {
-				if (!el.hasOwnProperty(key)) { continue; }
-				upperCase = C.toUpperCase(key, 1);
-				
-				sys["active" + upperCase + "ID"] = null;
-				sys["tmp" + upperCase] = {};
-				sys[key + "ChangeControl"] = null;
-				sys[key + "Back"] = [];
-			}
-		});
-	}) (Collection.prototype.stack);	
+	Collection.prototype.stack.forEach(function (el) {
+		var key, upperCase;
+		for (key in el) {
+			if (!el.hasOwnProperty(key)) { continue; }
+			
+			upperCase = C.toUpperCase(key, 1);
+			
+			// default value
+			el[key] = active[key];
+			
+			// system
+			sys["active" + upperCase + "ID"] = null;
+			sys["tmp" + upperCase] = {};
+			sys[key + "ChangeControl"] = null;
+			sys[key + "Back"] = [];
+		}
+	});	
 	/////////////////////////////////
 	//// stack methods
 	/////////////////////////////////
@@ -2027,77 +2023,75 @@ var Collection;
 	/////////////////////////////////
 		
 	// generate aliases
-	(function (data) {
-		var fn = C.prototype, nm;
+	/*Collection.prototype.stack.forEach(function (el) {
+		var key, nm;
 		
-		data.forEach(function (el) {
-			for (var key in el) {
-				if (!el.hasOwnProperty(key)) { continue; }
-				nm = C.toUpperCase(key, 1);
-				
-				fn['new' + nm] = function (nm) {
-					return function (newParam) { return this._new(nm, newParam); };
+		for (key in el) {
+			if (!el.hasOwnProperty(key)) { continue; }
+			nm = C.toUpperCase(key, 1);
+			
+			fn['new' + nm] = function (nm) {
+				return function (newParam) { return this._new(nm, newParam); };
+			}(key);
+			
+			fn['update' + nm] = function (nm) {
+				return function (newParam) { return this._update(nm, newParam); };
+			}(key);
+			
+			fn['reset' + nm] = function (nm, resetVal) {
+				return function () { return this._reset(nm, arguments, resetVal); };
+			}(key, el[key]);
+			fn['reset' + nm + 'To'] = function (nm) {
+				return function (objID, id) { return this._resetTo(nm, objID, id); };
+			}(key);
+			
+			fn['push' + nm] = function (nm) {
+				return function (objID, newParam) { return this._push.apply(this, C.unshiftArguments(arguments, nm)); }
+			}(key);
+			
+			fn['set' + nm] = function (nm) {
+				return function (id) { return this._set(nm, id); };
+			}(key);
+			
+			fn['pushSet' + nm] = function (nm) {
+				return function (id, newParam) { return this._push(nm, id, newParam)._set(nm, id); };
+			}(key);
+			
+			fn['back' + nm] = function (nm) {
+				return function (nmb) { return this._back(nm, nmb || ''); };
+			}(key);
+			
+			fn['back' + nm + 'If'] = function (nm) {
+				return function (nmb) { return this._backIf(nm, nmb || ''); };
+			}(key);
+			
+			if (key === 'filter' || key === 'parser') {
+				fn['drop' + nm] = function (nm) {
+					return function () { return this._drop(nm, arguments); };
 				}(key);
-				
-				fn['update' + nm] = function (nm) {
-					return function (newParam) { return this._update(nm, newParam); };
-				}(key);
-				
-				fn['reset' + nm] = function (nm, resetVal) {
-					return function () { return this._reset(nm, arguments, resetVal); };
-				}(key, el[key]);
-				fn['reset' + nm + 'To'] = function (nm) {
-					return function (objID, id) { return this._resetTo(nm, objID, id); };
-				}(key);
-				
-				fn['push' + nm] = function (nm) {
-					return function (objID, newParam) { return this._push.apply(this, C.unshiftArguments(arguments, nm)); }
-				}(key);
-				
-				fn['set' + nm] = function (nm) {
-					return function (id) { return this._set(nm, id); };
-				}(key);
-				
-				fn['pushSet' + nm] = function (nm) {
-					return function (id, newParam) { return this._push(nm, id, newParam)._set(nm, id); };
-				}(key);
-				
-				fn['back' + nm] = function (nm) {
-					return function (nmb) { return this._back(nm, nmb || ''); };
-				}(key);
-				
-				fn['back' + nm + 'If'] = function (nm) {
-					return function (nmb) { return this._backIf(nm, nmb || ''); };
-				}(key);
-				
-				if (key === 'filter' || key === 'parser') {
-					fn['drop' + nm] = function (nm) {
-						return function () { return this._drop(nm, arguments); };
-					}(key);
-				} else {
-					fn['drop' + nm] = function (nm) {
-						return function () { return this._drop(nm, arguments, null); };
-					}(key);
-				}
-				
-				fn['active' + nm] = function (nm) {
-					return function (id) { return this._active(nm, id); };
-				}(key);
-				
-				fn['exists' + nm] = function (nm) {
-					return function (id) { return this._exists(nm, id || ''); };
-				}(key);
-				
-				fn['get' + nm + 'ActiveID'] = function (nm) {
-					return function (id) { return this._getActiveID(nm); };
-				}(key);
-				
-				fn['get' + nm] = function (nm) {
-					return function (id) { return this._get(nm, id || ''); };
+			} else {
+				fn['drop' + nm] = function (nm) {
+					return function () { return this._drop(nm, arguments, null); };
 				}(key);
 			}
-		});
-	}) (Collection.prototype.stack);	
+			
+			fn['active' + nm] = function (nm) {
+				return function (id) { return this._active(nm, id); };
+			}(key);
+			
+			fn['exists' + nm] = function (nm) {
+				return function (id) { return this._exists(nm, id || ''); };
+			}(key);
+			
+			fn['get' + nm + 'ActiveID'] = function (nm) {
+				return function (id) { return this._getActiveID(nm); };
+			}(key);
+			
+			fn['get' + nm] = function (nm) {
+				return function (id) { return this._get(nm, id || ''); };
+			}(key);
+		}
+	});*/	
 	/////////////////////////////////
 	//// single methods (core)
 	/////////////////////////////////

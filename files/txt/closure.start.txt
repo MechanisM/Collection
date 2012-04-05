@@ -1,5 +1,5 @@
 
 var Collection;
-(function (C) {
+(function () {
 	'use strict';
 	

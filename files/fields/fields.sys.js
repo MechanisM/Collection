@@ -46,19 +46,20 @@
 	};
 	
 	// generate system fields
-	(function (data) {
-		var upperCase,
-			sys = C.fields.dObj.sys;
-		
-		data.forEach(function (el) {
-			for (var key in el) {
-				if (!el.hasOwnProperty(key)) { continue; }
-				upperCase = C.toUpperCase(key, 1);
-				
-				sys["active" + upperCase + "ID"] = null;
-				sys["tmp" + upperCase] = {};
-				sys[key + "ChangeControl"] = null;
-				sys[key + "Back"] = [];
-			}
-		});
-	}) (Collection.prototype.stack);
+	Collection.prototype.stack.forEach(function (el) {
+		var key, upperCase;
+		for (key in el) {
+			if (!el.hasOwnProperty(key)) { continue; }
+			
+			upperCase = C.toUpperCase(key, 1);
+			
+			// default value
+			el[key] = active[key];
+			
+			// system
+			sys["active" + upperCase + "ID"] = null;
+			sys["tmp" + upperCase] = {};
+			sys[key + "ChangeControl"] = null;
+			sys[key + "Back"] = [];
+		}
+	});

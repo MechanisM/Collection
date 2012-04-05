@@ -176,13 +176,3 @@
 			}
 		}
 	};
-	
-	// generate default values
-	Collection.prototype.stack.forEach(function (el) {
-		var key, active = C.fields.dObj.active;
-		for (key in el) {
-			if (!el.hasOwnProperty(key)) { continue; }
-			
-			el[key] = active[key];
-		}
-	});
