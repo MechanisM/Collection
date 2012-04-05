@@ -25,13 +25,13 @@
 	Collection.byLink = function (obj, context, value, del) {
 		context = context
 					.toString()
-					.replace(new RegExp('\\s*' + Collection.CHILDREN + '\\s*', 'g'), Collection.CONTEXT_SEPARATOR + Collection.CHILDREN + Collection.CONTEXT_SEPARATOR)
-					.split(Collection.CONTEXT_SEPARATOR);
+					.replace(new RegExp('\\s*' + C.CHILDREN + '\\s*', 'g'), C.CONTEXT_SEPARATOR + C.CHILDREN + C.CONTEXT_SEPARATOR)
+					.split(C.CONTEXT_SEPARATOR);
 		
 		del = del || false;
 		
 		var	clone = obj,
-			type = Collection.CHILDREN,
+			type = C.CHILDREN,
 			last = 0, total = 0,
 			
 			key, i = context.length,
@@ -41,11 +41,11 @@
 		
 		// remove dead elements
 		while ((i -= 1) > -1) {
-			context[i] = Collection.trim(context[i]);
+			context[i] = context[i].trim();
 			if (context[i] === '') {
 				context.splice(i, 1);
 				last -= 1;
-			} else if (context[i] !== Collection.CHILDREN) {
+			} else if (context[i] !== C.CHILDREN) {
 				if (i > last) { last = i; }
 				total += 1;
 			}
@@ -57,12 +57,12 @@
 		// returns the fragment of the context
 		if (obj === false) {
 			return context.join('');
-		} else if (Collection.isNumber(obj)) {
+		} else if (C.isNumber(obj)) {
 			if ((obj = +obj) < 0) { obj += total; }
 			
 			if (typeof value === 'undefined') { 
 				for (i = -1, n = 0; (i += 1) < cLength;) {
-					if (context[i] !== Collection.CHILDREN) {
+					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
 							context.splice(i + 1, cLength);
 							return context.join('');
@@ -71,7 +71,7 @@
 				}
 			} else {
 				for (i = cLength, n = 0; (i -= 1) > -1;) {
-					if (context[i] !== Collection.CHILDREN) {
+					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
 							context.splice(0, i);
 							return context.join('');
@@ -83,19 +83,19 @@
 		
 		for (i = -1; (i += 1) < cLength;) {
 			switch (context[i]) {
-				case Collection.CHILDREN : { type = context[i]; } break;
+				case C.CHILDREN : { type = context[i]; } break;
 				
 				default : {
 					// children (>)
-					if (type === Collection.CHILDREN && context[i].substring(0, Collection.ORDER[0].length) !== Collection.ORDER[0]) {
+					if (type === C.CHILDREN && context[i].substring(0, C.ORDER[0].length) !== C.ORDER[0]) {
 						if (i === last && typeof value !== 'undefined') {
 							// set new value
 							if (del === false) {
-								obj[context[i]] = Collection.expr(value, obj[context[i]]);
+								obj[context[i]] = C.expr(value, obj[context[i]]);
 							
 							// remove from object
 							} else {
-								if (Collection.isArray(obj)) {
+								if (C.isArray(obj)) {
 									obj.splice(context[i], 1);
 								} else { delete obj[context[i]]; }
 							}
@@ -105,18 +105,18 @@
 					
 					// order (eq)
 					} else {
-						pos = context[i].substring(Collection.ORDER[0].length);
+						pos = context[i].substring(C.ORDER[0].length);
 						pos = pos.substring(0, (pos.length - 1));
 						pos = +pos;
 						
 						// if array
-						if (Collection.isArray(obj)) {
+						if (C.isArray(obj)) {
 							if (i === last && typeof value !== 'undefined') {
 								// if eq >= 0
 								if (pos >= 0) {
 									// set new value
 									if (del === false) {
-										obj[pos] = Collection.expr(value, obj[pos]);
+										obj[pos] = C.expr(value, obj[pos]);
 									
 									// remove from object
 									} else { obj.splice(pos, 1); }
@@ -125,7 +125,7 @@
 								} else {
 									// set new value
 									if (del === false) {
-										obj[obj.length + pos] = Collection.expr(value, obj[obj.length + pos]);
+										obj[obj.length + pos] = C.expr(value, obj[obj.length + pos]);
 									
 									// remove from object
 									} else { obj.splice(obj.length + pos, 1); }
@@ -156,7 +156,7 @@
 										if (i === last && typeof value !== 'undefined') {
 											// set new value
 											if (del === false) {
-												obj[key] = Collection.expr(value, obj[key]);
+												obj[key] = C.expr(value, obj[key]);
 											
 											// remove from object
 											} else { delete obj[key]; }
@@ -189,9 +189,9 @@
 	 * @return {mixed}
 	 */
 	Collection.execEvent = function (query, event, param, thisObject) {
-		query = query.split(Collection.QUERY_SEPARATOR);
-		param = Collection.isExists(param) ? param : [];
-		param = Collection.isArray(param) ? param : [param];
+		query = query.split(C.QUERY_SEPARATOR);
+		param = C.isExists(param) ? param : [];
+		param = C.isArray(param) ? param : [param];
 		
 		var i = -1,
 			qLength = query.length - 1,
@@ -200,8 +200,8 @@
 		while ((i += 1) < qLength) { event = event[query[i]]; }
 		thisObject = thisObject || event;
 		
-		if (query[i].search(Collection.SUBQUERY_SEPARATOR) !== -1) {
-			spliter = query[i].split(Collection.SUBQUERY_SEPARATOR);
+		if (query[i].search(C.SUBQUERY_SEPARATOR) !== -1) {
+			spliter = query[i].split(C.SUBQUERY_SEPARATOR);
 			event = event[spliter[0]];
 			spliter.splice(0, 1);
 			param = param.concat(spliter);

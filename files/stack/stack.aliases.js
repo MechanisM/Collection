@@ -5,12 +5,12 @@
 		
 	// generate aliases
 	(function (data) {
-		var fn = Collection.prototype, nm;
+		var fn = C.prototype, nm;
 		
 		data.forEach(function (el) {
 			for (var key in el) {
 				if (!el.hasOwnProperty(key)) { continue; }
-				nm = Collection.toUpperCase(el, 1);
+				nm = C.toUpperCase(key, 1);
 				
 				fn['new' + nm] = function (nm) {
 					return function (newParam) { return this._new(nm, newParam); };
@@ -22,13 +22,13 @@
 				
 				fn['reset' + nm] = function (nm, resetVal) {
 					return function () { return this._reset(nm, arguments, resetVal); };
-				}(key, el[value]);
+				}(key, el[key]);
 				fn['reset' + nm + 'To'] = function (nm) {
 					return function (objID, id) { return this._resetTo(nm, objID, id); };
 				}(key);
 				
 				fn['push' + nm] = function (nm) {
-					return function (objID, newParam) { return this._push.apply(this, Collection.unshiftArguments(arguments, nm)); }
+					return function (objID, newParam) { return this._push.apply(this, C.unshiftArguments(arguments, nm)); }
 				}(key);
 				
 				fn['set' + nm] = function (nm) {

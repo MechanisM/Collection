@@ -25,24 +25,24 @@
 			deep = false;
 		
 		// handle a deep copy situation
-		if (Collection.isBoolean(target)) {
+		if (C.isBoolean(target)) {
 			deep = target;
 			target = arguments[1] || {};
 			i = 1;
 		}
 	
 		// handle case when target is a string or something (possible in deep copy)
-		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }
+		if (typeof target !== 'object' && !C.isFunction(target)) { target = {}; }
 	
 		// extend Collection itself if only one argument is passed
 		if (aLength === i) {
-			target = Collection;
+			target = C;
 			i -= 1;
 		}
 	
 		while ((i += 1) < aLength) {
 			// only deal with non-null/undefined values
-			if (Collection.isExists(options = arguments[i])) {
+			if (C.isExists(options = arguments[i])) {
 				// extend the base object
 				for (name in options) {
 					src = target[name];
@@ -52,14 +52,14 @@
 					if (target === copy) { continue; }
 					
 					// recurse if we're merging plain objects or arrays
-					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {
+					if (deep && copy && (C.isPlainObject(copy) || (copyIsArray = C.isArray(copy)))) {
 						if (copyIsArray) {
 							copyIsArray = false;
-							clone = src && Collection.isArray(src) ? src : [];
-						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }
+							clone = src && C.isArray(src) ? src : [];
+						} else { clone = src && C.isPlainObject(src) ? src : {}; }
 	
 						// never move original objects, clone them
-						target[name] = Collection.extend(deep, clone, copy);
+						target[name] = C.extend(deep, clone, copy);
 					
 					// don't bring in undefined values
 					} else if (typeof copy !== 'undefined') { target[name] = copy; }
@@ -85,7 +85,7 @@
 	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);
 	 */
 	Collection.addElementToObject = function (obj, keyName, value) {
-		keyName = keyName.split(Collection.METHOD_SEPARATOR);
+		keyName = keyName.split(C.METHOD_SEPARATOR);
 		var key, newObj = {};
 	
 		if (keyName[1] && keyName[1] === 'unshift') {

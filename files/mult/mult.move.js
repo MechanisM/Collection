@@ -35,7 +35,7 @@
 	 */
 	Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
 		moveFilter = moveFilter || '';
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		
 		sourceID = sourceID || '';
 		activeID = activeID || '';
@@ -46,7 +46,7 @@
 		deleteType = deleteType === false ? false : true;
 		
 		var deleteList = [],
-			isArray = Collection.isArray(Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
+			isArray = C.isArray(C.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
 	
 			elements, e = null;
 		
@@ -58,7 +58,7 @@
 		// search elements
 		this.disable('context');
 		
-		if (Collection.isNumber(moveFilter) || (Collection.isString(moveFilter) && !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
+		if (C.isNumber(moveFilter) || (C.isString(moveFilter) && !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
 			elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
 		
@@ -67,13 +67,13 @@
 		console.log(elements);
 		
 		// move
-		if (mult === true && Collection.isArray(elements)) {
+		if (mult === true && C.isArray(elements)) {
 			elements.forEach(function (el) {
-				this.add(context + Collection.CHILDREN + el, isArray === true ? addType : el + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+				this.add(context + C.CHILDREN + el, isArray === true ? addType : el + C.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
 			}, this);
 		} else {
-			this.add(context + Collection.CHILDREN + elements, isArray === true ? addType : elements + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.add(context + C.CHILDREN + elements, isArray === true ? addType : elements + C.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 		
@@ -115,7 +115,7 @@
 	 * console.log(db.get());
 	 */
 	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
@@ -143,7 +143,7 @@
 	 */
 	Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
 	};
 	/**
 	 * copy one element from one collection to another (in context)<br />
@@ -168,5 +168,5 @@
 	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
 	};

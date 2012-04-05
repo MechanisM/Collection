@@ -30,13 +30,13 @@
 	 */
 	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overloads
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
 			return this._removeOne(filter, id || '');
-		} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
+		} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ''); }
 		
 		var elements = this.search.apply(this, arguments), i = elements.length;
 		
-		if (!Collection.isArray(elements)) {
+		if (!C.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else {
 			if (rev === true) {
@@ -92,7 +92,7 @@
 	Collection.prototype.pop = function (id, filter, from, indexOf, lastIndexOf) {
 		id = id || '';
 		
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
 			return this._removeOne('eq(-1)', id);
 		}
 		
@@ -117,7 +117,7 @@
 	Collection.prototype.shift = function (id, filter, from, indexOf, lastIndexOf) {
 		id = id || '';
 		
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
 			return this._removeOne('eq(0)', id);
 		}
 		

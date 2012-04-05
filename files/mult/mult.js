@@ -30,8 +30,8 @@
 		
 		// overload
 		// if the filter is a collection
-		if (!Collection.isFunction(filter)) {
-			if ((Collection.isString(filter) && !this._isFilter(filter) && !Collection.isExists(id)) || Collection.isCollection(filter)) {
+		if (!C.isFunction(filter)) {
+			if ((C.isString(filter) && !this._isFilter(filter) && !C.isExists(id)) || C.isCollection(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -41,12 +41,12 @@
 		// if the ID is not specified, it is taken active collection
 		if (!id) {
 			data = this._get('collection');
-		} else if (Collection.isString(id)) {
+		} else if (C.isString(id)) {
 			data = this._get('collection', id);
 		} else { data = id; }
 		
 		if (data === null) { return 0; }
-		if (Collection.isString(data)) { return data.length; }
+		if (C.isString(data)) { return data.length; }
 		
 		// if no filter and the original object is an array
 		if ((filter === true || !filter) && !this._getActiveParam('filter') && typeof data.length !== 'undefined') {
@@ -93,7 +93,7 @@
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// values by default
 		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;
-		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SHORT_SPLITTER) : filter;
+		filter = C.isString((filter = filter || '')) ? filter.split(this.SHORT_SPLITTER) : filter;
 		
 		id = id || '';
 
@@ -116,15 +116,15 @@
 			key, i = 0, j = 0,
 			res = false;
 		
-		if (Collection.isArray(filter)) {
+		if (C.isArray(filter)) {
 			if (filter.length === 2) {
-				filter = Collection.trim(filter[1]);
-			} else { filter = Collection.trim(filter[0]); }
+				filter = filter[1].trim();
+			} else { filter = filter[0].trim(); }
 		}
 		
 		// get by link
-		data = !Collection.isCollection(id)
-					? Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context)
+		data = !C.isCollection(id)
+					? C.byLink(this._get('collection', id), this._getActiveParam('context') + C.CHILDREN + context)
 						: id;
 		
 		// throw an exception if the element is not an object
@@ -149,7 +149,7 @@
 			return fLength.val;
 		};
 		
-		if (Collection.isArray(data)) {
+		if (C.isArray(data)) {
 			// cut off the array to indicate the start
 			if (indexOf !== false && !rev) {
 				cloneObj = data.slice(indexOf);

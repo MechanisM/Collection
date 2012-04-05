@@ -31,12 +31,12 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var operType = Collection.isString(oper),
+		var operType = C.isString(oper),
 			result = 0, tmp = 0, key,
 			
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
-				var param = Collection.isString(field) ? Collection.byLink(el, field) : field(el, key, data, i, length, cObj, id);
+				var param = C.isString(field) ? C.byLink(el, field) : field(el, key, data, i, length, cObj, id);
 				
 				switch (oper) {
 					case 'count' : {
@@ -65,7 +65,7 @@
 							if (tmp === 0) {
 								result = param;
 								tmp = 1;
-							} else { result = Collection.expr(oper + '=' + param, result); }
+							} else { result = C.expr(oper + '=' + param, result); }
 						}
 					}
 				}
@@ -78,8 +78,8 @@
 			
 			if (oper === 'avg') { result /= tmp; }
 		} else if (oper === 'first') {
-			result = this._getOne(Collection.ORDER[0] + '0' + Collection.ORDER[1]);
-		} else { result = this._getOne(Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+			result = this._getOne(C.ORDER[0] + '0' + C.ORDER[1]);
+		} else { result = this._getOne(C.ORDER[0] + '-1' + C.ORDER[1]); }
 	
 		return result;
 	};

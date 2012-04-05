@@ -66,5 +66,5 @@
 			{navBreaker: ''},
 			
 			{resultNull: ''}
-		],
+		]
 	};

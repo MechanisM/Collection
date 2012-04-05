@@ -41,7 +41,43 @@
  * @this {Colletion Object}
  * @param {Collection} [collection=null] — collection
  * @param {Plain Object} [uProp=Collection.fields.dObj.active] — additional properties
- */var Collection;(function () {	'use strict';			/////////////////////////////////	//// constructor	/////////////////////////////////		Collection = function (collection, prop) {		collection = collection || null;		prop = prop || '';				// create factory function if need		if (!this || (!this.name || this.name !== 'Collection')) { return new Collection(collection, prop); }				// mixin public fields		Collection.extend(true, this, Collection.fields);				var active = this.dObj.active;				// extend public fields by additional properties if need		if (prop) { Collection.extend(true, active, prop); }				// compile (if need)		if (this._isStringExpression(active.filter)) { active.filter = this._compileFilter(active.filter); }		if (this._isStringExpression(active.parser)) { active.parser = this._compileParser(active.parser); }				// search the DOM		if (Collection.isString(active.target)) { active.target = this.drivers.dom.find(active.target); }		if (Collection.isString(active.pager)) { active.pager = this.drivers.dom.find(active.pager); }				active.collection = collection;	};	
+ */
+var Collection;
+(function (C) {
+	'use strict';
+		
+	/////////////////////////////////
+	//// constructor
+	/////////////////////////////////
+	
+	Collection = function (collection, prop) {
+		collection = collection || null;
+		prop = prop || '';
+		var C = Collection;
+		
+		// create factory function if need
+		if (!this || (!this.name || this.name !== 'Collection')) { return new C(collection, prop); }
+		
+		// mixin public fields
+		C.extend(true, this, C.fields);
+		
+		var active = this.dObj.active,
+			dom = C.drivers.dom;
+		
+		// extend public fields by additional properties if need
+		if (prop) { C.extend(true, active, prop); }
+		
+		// compile (if need)
+		if (this._isStringExpression(active.filter)) { active.filter = this._compileFilter(active.filter); }
+		if (this._isStringExpression(active.parser)) { active.parser = this._compileParser(active.parser); }
+		
+		// search the DOM
+		if (C.isString(active.target)) { active.target = dom.find(active.target); }
+		if (C.isString(active.pager)) { active.pager = dom.find(active.pager); }
+		
+		active.collection = collection;
+	};
+	C = Collection;	
 	/**
 	 * set new value of the object by the link, get/remove an element by the link, or return a fragment of the context (overload)
 	 * 
@@ -68,13 +104,13 @@
 	Collection.byLink = function (obj, context, value, del) {
 		context = context
 					.toString()
-					.replace(new RegExp('\\s*' + Collection.CHILDREN + '\\s*', 'g'), Collection.CONTEXT_SEPARATOR + Collection.CHILDREN + Collection.CONTEXT_SEPARATOR)
-					.split(Collection.CONTEXT_SEPARATOR);
+					.replace(new RegExp('\\s*' + C.CHILDREN + '\\s*', 'g'), C.CONTEXT_SEPARATOR + C.CHILDREN + C.CONTEXT_SEPARATOR)
+					.split(C.CONTEXT_SEPARATOR);
 		
 		del = del || false;
 		
 		var	clone = obj,
-			type = Collection.CHILDREN,
+			type = C.CHILDREN,
 			last = 0, total = 0,
 			
 			key, i = context.length,
@@ -84,11 +120,11 @@
 		
 		// remove dead elements
 		while ((i -= 1) > -1) {
-			context[i] = Collection.trim(context[i]);
+			context[i] = context[i].trim();
 			if (context[i] === '') {
 				context.splice(i, 1);
 				last -= 1;
-			} else if (context[i] !== Collection.CHILDREN) {
+			} else if (context[i] !== C.CHILDREN) {
 				if (i > last) { last = i; }
 				total += 1;
 			}
@@ -100,12 +136,12 @@
 		// returns the fragment of the context
 		if (obj === false) {
 			return context.join('');
-		} else if (Collection.isNumber(obj)) {
+		} else if (C.isNumber(obj)) {
 			if ((obj = +obj) < 0) { obj += total; }
 			
 			if (typeof value === 'undefined') { 
 				for (i = -1, n = 0; (i += 1) < cLength;) {
-					if (context[i] !== Collection.CHILDREN) {
+					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
 							context.splice(i + 1, cLength);
 							return context.join('');
@@ -114,7 +150,7 @@
 				}
 			} else {
 				for (i = cLength, n = 0; (i -= 1) > -1;) {
-					if (context[i] !== Collection.CHILDREN) {
+					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
 							context.splice(0, i);
 							return context.join('');
@@ -126,19 +162,19 @@
 		
 		for (i = -1; (i += 1) < cLength;) {
 			switch (context[i]) {
-				case Collection.CHILDREN : { type = context[i]; } break;
+				case C.CHILDREN : { type = context[i]; } break;
 				
 				default : {
 					// children (>)
-					if (type === Collection.CHILDREN && context[i].substring(0, Collection.ORDER[0].length) !== Collection.ORDER[0]) {
+					if (type === C.CHILDREN && context[i].substring(0, C.ORDER[0].length) !== C.ORDER[0]) {
 						if (i === last && typeof value !== 'undefined') {
 							// set new value
 							if (del === false) {
-								obj[context[i]] = Collection.expr(value, obj[context[i]]);
+								obj[context[i]] = C.expr(value, obj[context[i]]);
 							
 							// remove from object
 							} else {
-								if (Collection.isArray(obj)) {
+								if (C.isArray(obj)) {
 									obj.splice(context[i], 1);
 								} else { delete obj[context[i]]; }
 							}
@@ -148,18 +184,18 @@
 					
 					// order (eq)
 					} else {
-						pos = context[i].substring(Collection.ORDER[0].length);
+						pos = context[i].substring(C.ORDER[0].length);
 						pos = pos.substring(0, (pos.length - 1));
 						pos = +pos;
 						
 						// if array
-						if (Collection.isArray(obj)) {
+						if (C.isArray(obj)) {
 							if (i === last && typeof value !== 'undefined') {
 								// if eq >= 0
 								if (pos >= 0) {
 									// set new value
 									if (del === false) {
-										obj[pos] = Collection.expr(value, obj[pos]);
+										obj[pos] = C.expr(value, obj[pos]);
 									
 									// remove from object
 									} else { obj.splice(pos, 1); }
@@ -168,7 +204,7 @@
 								} else {
 									// set new value
 									if (del === false) {
-										obj[obj.length + pos] = Collection.expr(value, obj[obj.length + pos]);
+										obj[obj.length + pos] = C.expr(value, obj[obj.length + pos]);
 									
 									// remove from object
 									} else { obj.splice(obj.length + pos, 1); }
@@ -199,7 +235,7 @@
 										if (i === last && typeof value !== 'undefined') {
 											// set new value
 											if (del === false) {
-												obj[key] = Collection.expr(value, obj[key]);
+												obj[key] = C.expr(value, obj[key]);
 											
 											// remove from object
 											} else { delete obj[key]; }
@@ -232,9 +268,9 @@
 	 * @return {mixed}
 	 */
 	Collection.execEvent = function (query, event, param, thisObject) {
-		query = query.split(Collection.QUERY_SEPARATOR);
-		param = Collection.isExists(param) ? param : [];
-		param = Collection.isArray(param) ? param : [param];
+		query = query.split(C.QUERY_SEPARATOR);
+		param = C.isExists(param) ? param : [];
+		param = C.isArray(param) ? param : [param];
 		
 		var i = -1,
 			qLength = query.length - 1,
@@ -243,8 +279,8 @@
 		while ((i += 1) < qLength) { event = event[query[i]]; }
 		thisObject = thisObject || event;
 		
-		if (query[i].search(Collection.SUBQUERY_SEPARATOR) !== -1) {
-			spliter = query[i].split(Collection.SUBQUERY_SEPARATOR);
+		if (query[i].search(C.SUBQUERY_SEPARATOR) !== -1) {
+			spliter = query[i].split(C.SUBQUERY_SEPARATOR);
 			event = event[spliter[0]];
 			spliter.splice(0, 1);
 			param = param.concat(spliter);
@@ -265,30 +301,223 @@
 	Collection.ORDER = ['eq(', ')'];
 	
 	Collection.DOM_SEPARATOR = ['<?js', '?>'];
-	Collection.ECHO = 'echo';			/////////////////////////////////	//// data types	/////////////////////////////////		/**	 * returns the value of the hidden properties of [[CLASS]]	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.toString('test');	 * @example	 * $C.toString(2);	 */	Collection.objToString = function (obj) {		if (typeof obj === 'undefined') { return Collection.prototype.collection(); }		return Object.prototype.toString.call(obj);	};		// the hash-table of types of data	Collection.types = {		'[object Boolean]': 'boolean',		'[object Number]': 'number',		'[object String]': 'string',		'[object Function]': 'function',		'[object Array]': 'array',		'[object Date]': 'date',		'[object RegExp]': 'regexp',		'[object Object]': 'object'	};		/**	 * returns the type of the specified element	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.type('test');	 * @example	 * $C.type(2);	 */	Collection.type = function (obj) {		return obj == null ? String(obj) : Collection.types[Collection.objToString(obj)] || 'object';	};		/**	 * returns true if the specified object is window	 *	 * @param {mixed} obj — some object	 * @return {Boolean}	 *	 * @example	 * $C.isWindow(window);	 * @example	 * $C.isWindow(2);	 */	Collection.isWindow = function (obj) {		return obj && typeof obj === 'object' && 'setInterval' in obj;	};	/**	 * returns a Boolean indicating whether the object is a string	 *	 * @param {mixed} obj — object to test whether or not it is a string	 * @return {Boolean}	 *	 * @example	 * $C.isString('test');	 * @example	 * $C.isString(2);	 */	Collection.isString = function (obj) { return Collection.type(obj) === 'string'; };		/**	 * returns a Boolean indicating whether the object is a number	 *	 * @param {mixed} obj — object to test whether or not it is a number	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(2);	 */	Collection.isNumber = function (obj) { return Collection.type(obj) === 'number';  };		/**	 * returns a Boolean indicating whether the object is a boolean	 *	 * @param {mixed} obj — object to test whether or not it is a boolean	 * @return {Boolean}	 *	 * @example	 * $C.isNumber('test');	 * @example	 * $C.isNumber(false);	 */	Collection.isBoolean = function (obj) { return Collection.type(obj) === 'boolean'; };		/**	 * returns a Boolean indicating whether the object is a function	 *	 * @param {mixed} obj — object to test whether or not it is a function	 * @return {Boolean}	 *	 * @example	 * $C.isFunction('test');	 * @example	 * $C.isFunction(function () {});	 */	Collection.isFunction = function (obj) { return Collection.type(obj) === 'function';  };		/**	 * returns a Boolean indicating whether the object is a array (not an array-like object)	 *	 * @param {mixed} obj — object to test whether or not it is a array	 * @return {Boolean}	 *	 * @example	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isArray([1, 2, 3]);	 */	Collection.isArray = function (obj) { return Collection.type(obj) === 'array';  };		/**	 * returns a Boolean indicating whether the object is a plain object	 *	 * @param {mixed} obj — object to test whether or not it is a plain object	 * @return {Boolean}	 *	 * @example	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isPlainObject(new Date);	 * @example	 * $C.isPlainObject(Date);	 */	Collection.isPlainObject = function (obj) {		if (!obj || Collection.type(obj) !== 'object' || obj.nodeType || Collection.isWindow(obj)) {			return false;		}				try {			// not own constructor property must be Object			if (obj.constructor &&				!obj.hasOwnProperty('constructor') &&				!obj.constructor.prototype.hasOwnProperty('isPrototypeOf')) {					return false;				}		} catch (e) {			// IE8,9 will throw exceptions on certain host objects #9897			return false;		}		// own properties are enumerated firstly, so to speed up,		// if last one is own, then all properties are own.		var key;		for (key in obj) {}		return key === undefined || obj.hasOwnProperty(key);	};		/**	 * returns a Boolean indicating whether the object is a collection	 *	 * @param {mixed} obj — object to test whether or not it is a collection	 * @return {Boolean}	 *	 * @example	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3});	 * @example	 * $C.isCollection([1, 2, 3]);	 */	Collection.isCollection = function (obj) { return Collection.isArray(obj) || Collection.isPlainObject(obj); };		/**	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)	 *	 * @param {mixed} obj — the object, to test its existence	 * @return {Boolean}	 *	 * @example	 * $C.isExists('');	 * @example	 * $C.isExists(null);	 * @example	 * $C.isExists(false);	 */	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
+	Collection.ECHO = 'echo';		
+	/////////////////////////////////
+	//// data types
+	/////////////////////////////////
+	
+	/**
+	 * returns the value of the hidden properties of [[CLASS]]
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.toString('test');
+	 * @example
+	 * $C.toString(2);
+	 */
+	Collection.objToString = function (obj) {
+		if (typeof obj === 'undefined') { return C.prototype.collection(); }
+		return Object.prototype.toString.call(obj);
+	};
+	
+	// the hash-table of types of data
+	Collection.types = {
+		'[object Boolean]': 'boolean',
+		'[object Number]': 'number',
+		'[object String]': 'string',
+		'[object Function]': 'function',
+		'[object Array]': 'array',
+		'[object Date]': 'date',
+		'[object RegExp]': 'regexp',
+		'[object Object]': 'object'
+	};
+	
+	/**
+	 * returns the type of the specified element
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.type('test');
+	 * @example
+	 * $C.type(2);
+	 */
+	Collection.type = function (obj) {
+		return obj == null ? String(obj) : C.types[C.objToString(obj)] || 'object';
+	};
+	
+	/**
+	 * returns true if the specified object is window
+	 *
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isWindow(window);
+	 * @example
+	 * $C.isWindow(2);
+	 */
+	Collection.isWindow = function (obj) {
+		return obj && typeof obj === 'object' && 'setInterval' in obj;
+	};
+
+	/**
+	 * returns a Boolean indicating whether the object is a string
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a string
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isString('test');
+	 * @example
+	 * $C.isString(2);
+	 */
+	Collection.isString = function (obj) { return C.type(obj) === 'string'; };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a number
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a number
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isNumber('test');
+	 * @example
+	 * $C.isNumber(2);
+	 */
+	Collection.isNumber = function (obj) { return C.type(obj) === 'number';  };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a boolean
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a boolean
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isNumber('test');
+	 * @example
+	 * $C.isNumber(false);
+	 */
+	Collection.isBoolean = function (obj) { return C.type(obj) === 'boolean'; };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a function
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a function
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isFunction('test');
+	 * @example
+	 * $C.isFunction(function () {});
+	 */
+	Collection.isFunction = function (obj) { return C.type(obj) === 'function';  };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a array (not an array-like object)
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a array
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isArray({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isArray([1, 2, 3]);
+	 */
+	Collection.isArray = function (obj) { return C.type(obj) === 'array';  };
+	
+	/**
+	 * returns a Boolean indicating whether the object is a plain object
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a plain object
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isPlainObject({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isPlainObject(new Date);
+	 * @example
+	 * $C.isPlainObject(Date);
+	 */
+	Collection.isPlainObject = function (obj) {
+		if (!obj || C.type(obj) !== 'object' || obj.nodeType || C.isWindow(obj)) {
+			return false;
+		}
+		
+		try {
+			// not own constructor property must be Object
+			if (obj.constructor &&
+				!obj.hasOwnProperty('constructor') &&
+				!obj.constructor.prototype.hasOwnProperty('isPrototypeOf')) {
+					return false;
+				}
+		} catch (e) {
+			// IE8,9 will throw exceptions on certain host objects #9897
+			return false;
+		}
+
+		// own properties are enumerated firstly, so to speed up,
+		// if last one is own, then all properties are own.
+		var key;
+		for (key in obj) {}
+
+		return key === undefined || obj.hasOwnProperty(key);
+	};
+	
+	/**
+	 * returns a Boolean indicating whether the object is a collection
+	 *
+	 * @param {mixed} obj — object to test whether or not it is a collection
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isCollection({'0': 1, '1': 2, '2': 3, 'length': 3});
+	 * @example
+	 * $C.isCollection([1, 2, 3]);
+	 */
+	Collection.isCollection = function (obj) { return C.isArray(obj) || C.isPlainObject(obj); };
+	
+	/**
+	 * returns a Boolean value indicating that the object is not equal to: undefined, null, or '' (empty string)
+	 *
+	 * @param {mixed} obj — the object, to test its existence
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C.isExists('');
+	 * @example
+	 * $C.isExists(null);
+	 * @example
+	 * $C.isExists(false);
+	 */
+	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
 	/////////////////////////////////
 	//// string methods
 	/////////////////////////////////
 	
-	/**
-	 * removes all leading and trailing whitespace characters
-	 *
-	 * @param {String} str — the source string
-	 * @return {String}
-	 *
-	 * @example
-	 * $C.trim(' test');
-	 * @example
-	 * $C.trim(' test ');
-	 */
-	Collection.trim = function (str) {
-		var str = str.replace(/^\s\s*/, ''),
-			ws = /\s/,
-			i = str.length;
+	if (!String.prototype.trim) {
+		/**
+		 * removes all leading and trailing whitespace characters
+		 *
+		 * @param {String} str — the source string
+		 * @return {String}
+		 *
+		 * @example
+		 * ' test'.trim();
+		 * @example
+		 * ' test '.trim();
+		 */
+		String.prototype.trim = function () {
+			var str = this.replace(/^\s\s*/, ''),
+				i = str.length;
 		
-		while (ws.test(str.charAt((i -= 1)))) {};
-		return str.substring(0, i + 1);
-	};
+			while (/\s/.test(str.charAt((i -= 1)))) {};
+			return str.substring(0, i + 1);
+		};
+	}
 	
 	/**
 	 * toUpperCase function
@@ -307,7 +536,7 @@
 	 */
 	Collection.toUpperCase = function (str, max, from) {
 		from = from || 0;
-		max = Collection.isExists(max) ? from + max : str.length;
+		max = C.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
 	};
@@ -328,7 +557,7 @@
 	 */
 	Collection.toLowerCase = function (str, max, from) {
 		from = from || 0;
-		max = Collection.isExists(max) ? from + max : str.length;
+		max = C.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
 	};		
@@ -351,9 +580,9 @@
 	 * $C.expr('+=2', 'test');
 	 */
 	Collection.expr = function (val, old) {
-		old = Collection.isExists(old) ? old : '';
+		old = C.isExists(old) ? old : '';
 		
-		if (Collection.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
+		if (C.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
 			val = val.split('=');
 			if (!isNaN(val[1])) { val[1] = +val[1]; }
 			
@@ -412,24 +641,24 @@
 			deep = false;
 		
 		// handle a deep copy situation
-		if (Collection.isBoolean(target)) {
+		if (C.isBoolean(target)) {
 			deep = target;
 			target = arguments[1] || {};
 			i = 1;
 		}
 	
 		// handle case when target is a string or something (possible in deep copy)
-		if (typeof target !== 'object' && !Collection.isFunction(target)) { target = {}; }
+		if (typeof target !== 'object' && !C.isFunction(target)) { target = {}; }
 	
 		// extend Collection itself if only one argument is passed
 		if (aLength === i) {
-			target = Collection;
+			target = C;
 			i -= 1;
 		}
 	
 		while ((i += 1) < aLength) {
 			// only deal with non-null/undefined values
-			if (Collection.isExists(options = arguments[i])) {
+			if (C.isExists(options = arguments[i])) {
 				// extend the base object
 				for (name in options) {
 					src = target[name];
@@ -439,14 +668,14 @@
 					if (target === copy) { continue; }
 					
 					// recurse if we're merging plain objects or arrays
-					if (deep && copy && (Collection.isPlainObject(copy) || (copyIsArray = Collection.isArray(copy)))) {
+					if (deep && copy && (C.isPlainObject(copy) || (copyIsArray = C.isArray(copy)))) {
 						if (copyIsArray) {
 							copyIsArray = false;
-							clone = src && Collection.isArray(src) ? src : [];
-						} else { clone = src && Collection.isPlainObject(src) ? src : {}; }
+							clone = src && C.isArray(src) ? src : [];
+						} else { clone = src && C.isPlainObject(src) ? src : {}; }
 	
 						// never move original objects, clone them
-						target[name] = Collection.extend(deep, clone, copy);
+						target[name] = C.extend(deep, clone, copy);
 					
 					// don't bring in undefined values
 					} else if (typeof copy !== 'undefined') { target[name] = copy; }
@@ -472,7 +701,7 @@
 	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);
 	 */
 	Collection.addElementToObject = function (obj, keyName, value) {
-		keyName = keyName.split(Collection.METHOD_SEPARATOR);
+		keyName = keyName.split(C.METHOD_SEPARATOR);
 		var key, newObj = {};
 	
 		if (keyName[1] && keyName[1] === 'unshift') {
@@ -595,8 +824,331 @@
 			{navBreaker: ''},
 			
 			{resultNull: ''}
-		],
-	};		/////////////////////////////////	//// drivers for additional functions	/////////////////////////////////		Collection.prototype.drivers = Collection.drivers = {};		/////////////////////////////////	//// DOM methods	/////////////////////////////////		/** @private */	Collection.drivers.dom = {		/**		 * returns a list of the elements within the document		 * 		 * @this {Collection DOM Driver}		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas		 * @param {DOM node} [context] — context		 * @throw {Error}		 * @return {mixin}		 */		find: function (selector, context) {			if (!this.lib) { throw new Error('DOM driver is not defined!'); }						return this.engines[this.lib].find(selector || '', context || '');		},				/**		 * returns all direct child elements		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [attr] — the properties of a node		 * @return {Array}		 */		children: function (el, prop) {			var res = [];			Array.prototype.forEach.call(el.childNodes, function (el) {				if (el.nodeType === 1) {					if (!prop) {						res.push(el);					} else if (el[prop]) { res.push(el); }				}			});						return res;		},				/**		 * returns the data attributes of the node		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} [name] — data name		 * @return {Collection DOM Driver}		 */		data: function (el, name) {			var attr = el.attributes, data = {};				if (attr && attr.length > 0) {				Array.prototype.forEach.call(attr, function (el) {					if (el.name.substring(0, 5) === 'data-') {						data[el.name.replace('data-', '')] = Collection.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;					}				});			}						if (name) { return data[name]; }			return data;		},				/**		 * returns the text content of the node		 * 		 * @this {Collection}		 * @param {DOM Node} el — DOM node		 * @return {String|Boolean}		 */		text: function (el) {			el = el.childNodes;					var str = '';						Array.prototype.forEach.call(el, function (el) {				if (el.nodeType === 3 && Collection.trim(el.textContent)) { str += el.textContent; }			});						if (str) { return str; }						return false;		},				/**		 * attach event		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} eventType — event type		 * @param {Function} callback — callback function		 * @return {Collection DOM Driver}		 */		bind: function (el, eventType, callback) {			if (this.engines[this.lib][eventType]) {				this.engines[this.lib][eventType](el, callback);								return this;			}						// if old IE			if (document.attachEvent) {				el.attachEvent('on' + eventType, callback);			} else { el.addEventListener(eventType, callback); }						return this;		},				/**		 * adds the specified class to the element		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		addClass: function (el, className) {			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }						return this;		},		/**		 * determine whether or not the specified item is needed class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Boolean}		 */		hasClass: function (el, className) {			return el.className.split(' ').indexOf(className) !== -1;		},		/**		 * remove a single class		 * 		 * @this {Collection DOM Driver}		 * @param {DOM Node} el — DOM node		 * @param {String} className — class name		 * @return {Collection DOM Driver}		 */		removeClass: function (el, className) {			var classes = el.className.split(' '),				newClass = [];						classes.forEach(function (el) {				if (el !== className) { newClass.push(el); }			});						el.className = newClass.join(' ');						return this;		},				// search frameworks		engines: {			// qsa css selector engine			qsa: {				is: function () {					if (typeof qsa !== 'undefined') { return true; }				},				find: function (selector, context) {					return qsa.querySelectorAll(selector, context);				}			},			// sizzle 			sizzle: {				is: function () {					if (typeof Sizzle !== 'undefined') { return true; }				},				find: function (selector, context) {					return Sizzle(selector, context);				}			},			// jQuery 			jQuery: {				is: function () {					if (typeof jQuery !== 'undefined') { return true; }				},				find: function (selector, context) {					return jQuery(selector, context);				},				click: function (el, callback) { $(el).click(callback); },				change: function (el, callback) { $(el).change(callback); }			},			// dojo 			dojo: {				is: function () {					if (typeof dojo !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return dojo.query(selector, context);					} else { return dojo.query(selector); }				},				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }			},			// mootools 			mootools: {				is: function () {					if (typeof MooTools !== 'undefined') { return true; }				},				find: function (selector, context) {					var res;										if (context) {						res = [];												$$(context).getElements(selector).forEach(function (el) {							el.forEach(function (el) { res.push(el); });						});					} else { res = $$(selector); }										return res;				}			},			// prototype 			prototype: {				is: function () {					if (typeof Prototype !== 'undefined') { return true; }				},				find: function (selector, context) {					if (context) {						return context.getElementsBySelector(selector);					} else { return $$(selector); }				}			}		}	};		// definition of DOM driver	(function () {		var key, engines = Collection.drivers.dom.engines;		for (key in engines) {			if (!engines.hasOwnProperty(key)) { continue; }								if (engines[key].is()) {				Collection.drivers.dom.lib = key;								return true;			}		}	})();		/////////////////////////////////	//// DOM methods (core)	/////////////////////////////////		/**	 * converts one level nodes in the collection	 * 	 * @this {Collection}	 * @param {DOM Nodes} el — DOM node	 * @return {Array}	 */	Collection._inObj = function (el) {		var array = [],			stat = Collection.fromNode.stat,						dom = Collection.drivers.dom;						// each node		Array.prototype.forEach.call(el, function (el) {			// not for text nodes			if (el.nodeType === 1) {				var data = dom.data(el),					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',										txt = dom.text(el),					key,										i = array.length;								// data				array.push({});				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }								// classes				if (classes) {					array[i][stat.classes] = {};					classes.forEach(function (el) {						array[i][stat.classes][el] = el;					});				}								if (el.childNodes.length !== 0) { array[i][stat.childNodes] = Collection._inObj(el.childNodes); }				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }			}		});		return array;	};		/**	 * create an instance of the Collection on the basis of the DOM node	 * 	 * @this {Collection}	 * @param {String} selector — CSS selector	 * @param {Object} prop — user's preferences	 * @throw {Error}	 * @return {Colletion Object}	 */	Collection.fromNode = function (selector, prop) {		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }				var data = Collection._inObj(Collection.drivers.dom.find(selector));				if (prop) { return new Collection(data, prop); }		return new Collection(data);	};		// values by default	if (!Collection.fromNode.stat) {		Collection.fromNode.stat = {			val: 'val',			childNodes: 'childNodes',			classes: 'classes'		};	};
+		]
+	};	
+	/////////////////////////////////
+	//// drivers for additional functions
+	/////////////////////////////////
+	
+	Collection.drivers = {};	
+	/////////////////////////////////
+	//// DOM methods
+	/////////////////////////////////
+	
+	/** @private */
+	Collection.drivers.dom = {
+		/**
+		 * returns a list of the elements within the document
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {String} selector — is a string containing one or more CSS selectors separated by commas
+		 * @param {DOM node} [context] — context
+		 * @throw {Error}
+		 * @return {mixin}
+		 */
+		find: function (selector, context) {
+			if (!this.lib) { throw new Error('DOM driver is not defined!'); }
+			
+			return this.engines[this.lib].find(selector || '', context || '');
+		},
+		
+		/**
+		 * returns all direct child elements
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [attr] — the properties of a node
+		 * @return {Array}
+		 */
+		children: function (el, prop) {
+			var res = [];
+			Array.prototype.forEach.call(el.childNodes, function (el) {
+				if (el.nodeType === 1) {
+					if (!prop) {
+						res.push(el);
+					} else if (el[prop]) { res.push(el); }
+				}
+			});
+			
+			return res;
+		},
+		
+		/**
+		 * returns the data attributes of the node
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} [name] — data name
+		 * @return {Collection DOM Driver}
+		 */
+		data: function (el, name) {
+			var attr = el.attributes, data = {};
+	
+			if (attr && attr.length > 0) {
+				Array.prototype.forEach.call(attr, function (el) {
+					if (el.name.substring(0, 5) === 'data-') {
+						data[el.name.replace('data-', '')] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
+					}
+				});
+			}
+			
+			if (name) { return data[name]; }
+			return data;
+		},
+		
+		/**
+		 * returns the text content of the node
+		 * 
+		 * @this {Collection}
+		 * @param {DOM Node} el — DOM node
+		 * @return {String|Boolean}
+		 */
+		text: function (el) {
+			el = el.childNodes;		
+			var str = '';
+			
+			Array.prototype.forEach.call(el, function (el) {
+				if (el.nodeType === 3 && el.textContent.trim()) { str += el.textContent; }
+			});
+			
+			if (str) { return str; }
+			
+			return false;
+		},
+		
+		/**
+		 * attach event
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} eventType — event type
+		 * @param {Function} callback — callback function
+		 * @return {Collection DOM Driver}
+		 */
+		bind: function (el, eventType, callback) {
+			if (this.engines[this.lib][eventType]) {
+				this.engines[this.lib][eventType](el, callback);
+				
+				return this;
+			}
+			
+			// if old IE
+			if (document.attachEvent) {
+				el.attachEvent('on' + eventType, callback);
+			} else { el.addEventListener(eventType, callback); }
+			
+			return this;
+		},
+		
+		/**
+		 * adds the specified class to the element
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Collection DOM Driver}
+		 */
+		addClass: function (el, className) {
+			if (el.className.split(' ').indexOf(className) === -1) { el.className += ' ' + className; }
+			
+			return this;
+		},
+		/**
+		 * determine whether or not the specified item is needed class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Boolean}
+		 */
+		hasClass: function (el, className) {
+			return el.className.split(' ').indexOf(className) !== -1;
+		},
+		/**
+		 * remove a single class
+		 * 
+		 * @this {Collection DOM Driver}
+		 * @param {DOM Node} el — DOM node
+		 * @param {String} className — class name
+		 * @return {Collection DOM Driver}
+		 */
+		removeClass: function (el, className) {
+			var classes = el.className.split(' '),
+				newClass = [];
+			
+			classes.forEach(function (el) {
+				if (el !== className) { newClass.push(el); }
+			});
+			
+			el.className = newClass.join(' ');
+			
+			return this;
+		},
+		
+		// search frameworks
+		engines: {
+			// qsa css selector engine
+			qsa: {
+				is: function () {
+					if (typeof qsa !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					return qsa.querySelectorAll(selector, context);
+				}
+			},
+			// sizzle 
+			sizzle: {
+				is: function () {
+					if (typeof Sizzle !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					return Sizzle(selector, context);
+				}
+			},
+			// jQuery 
+			jQuery: {
+				is: function () {
+					if (typeof jQuery !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					return jQuery(selector, context);
+				},
+				click: function (el, callback) { $(el).click(callback); },
+				change: function (el, callback) { $(el).change(callback); }
+			},
+			// dojo 
+			dojo: {
+				is: function () {
+					if (typeof dojo !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					if (context) {
+						return dojo.query(selector, context);
+					} else { return dojo.query(selector); }
+				},
+				click: function (el, callback) { dojo.connect(el, 'onclick', callback); }
+			},
+			// mootools 
+			mootools: {
+				is: function () {
+					if (typeof MooTools !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					var res;
+					
+					if (context) {
+						res = [];
+						
+						$$(context).getElements(selector).forEach(function (el) {
+							el.forEach(function (el) { res.push(el); });
+						});
+					} else { res = $$(selector); }
+					
+					return res;
+				}
+			},
+			// prototype 
+			prototype: {
+				is: function () {
+					if (typeof Prototype !== 'undefined') { return true; }
+				},
+				find: function (selector, context) {
+					if (context) {
+						return context.getElementsBySelector(selector);
+					} else { return $$(selector); }
+				}
+			}
+		}
+	};
+	
+	// definition of DOM driver
+	(function () {
+		var key, engines = C.drivers.dom.engines;
+		for (key in engines) {
+			if (!engines.hasOwnProperty(key)) { continue; }
+					
+			if (engines[key].is()) {
+				C.drivers.dom.lib = key;
+				
+				return true;
+			}
+		}
+	})();	
+	/////////////////////////////////
+	//// DOM methods (core)
+	/////////////////////////////////
+	
+	/**
+	 * converts one level nodes in the collection
+	 * 
+	 * @this {Collection}
+	 * @param {DOM Nodes} el — DOM node
+	 * @return {Array}
+	 */
+	Collection._inObj = function (el) {
+		var array = [],
+			stat = C.fromNode.stat,
+			
+			dom = C.drivers.dom;
+				
+		// each node
+		Array.prototype.forEach.call(el, function (el) {
+			// not for text nodes
+			if (el.nodeType === 1) {
+				var data = dom.data(el),
+					classes = el.hasAttribute('class') ? el.getAttribute('class').split(' ') : '',
+					
+					txt = dom.text(el),
+					key,
+					
+					i = array.length;
+				
+				// data
+				array.push({});
+				for (key in data) { if (data.hasOwnProperty(key)) { array[i][key] = data[key]; } }
+				
+				// classes
+				if (classes) {
+					array[i][stat.classes] = {};
+					classes.forEach(function (el) {
+						array[i][stat.classes][el] = el;
+					});
+				}
+				
+				if (el.childNodes.length !== 0) { array[i][stat.childNodes] = C._inObj(el.childNodes); }
+				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }
+			}
+		});
+
+		return array;
+	};
+	
+	/**
+	 * create an instance of the Collection on the basis of the DOM node
+	 * 
+	 * @this {Collection}
+	 * @param {String} selector — CSS selector
+	 * @param {Object} prop — user's preferences
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 */
+	Collection.fromNode = function (selector, prop) {
+		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
+		
+		var data = C._inObj(C.drivers.dom.find(selector));
+		
+		if (prop) { return new C(data, prop); }
+		return new C(data);
+	};
+	
+	// values by default
+	if (!C.fromNode.stat) {
+		C.fromNode.stat = {
+			val: 'val',
+			childNodes: 'childNodes',
+			classes: 'classes'
+		};
+	};
 	/////////////////////////////////
 	//// DOM methods (compiler templates)
 	/////////////////////////////////
@@ -610,7 +1162,7 @@
 	 * @return {Function}
 	 */
 	Collection.ctplCompile = function (selector) {
-		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));
+		C.isString(selector) && (selector = C.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
 		var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,
@@ -640,15 +1192,15 @@
 	 * @return {Collection Object}
 	 */
 	Collection.prototype.ctplMake = function (selector) {	
-		var dom = Collection.drivers.dom;
-		Collection.isString(selector) && (selector = dom.find(selector));
+		var dom = C.drivers.dom;
+		C.isString(selector) && (selector = dom.find(selector));
 		
 		Array.prototype.forEach.call(selector, function (el) {
 			var data = dom.data(el, 'ctpl'), key,
 				prefix = data.prefix ? data.prefix + '_' : '';
 			
 			// compile template
-			this._push('template', prefix + data.name, Collection.ctplCompile(el));
+			this._push('template', prefix + data.name, C.ctplCompile(el));
 			if (data.set && data.set === true) { this._set('template', prefix + data.name); }
 			
 			// compile
@@ -860,14 +1412,13 @@
 	
 	// generate default values
 	Collection.prototype.stack.forEach(function (el) {
-		var key, active = Collection.fields.dObj.active;
+		var key, active = C.fields.dObj.active;
 		for (key in el) {
 			if (!el.hasOwnProperty(key)) { continue; }
 			
 			el[key] = active[key];
 		}
-	});
-	console.dir(Collection.prototype.stack);	
+	});	
 	/////////////////////////////////
 	//// public fields (system)
 	/////////////////////////////////
@@ -917,12 +1468,12 @@
 	// generate system fields
 	(function (data) {
 		var upperCase,
-			sys = Collection.fields.dObj.sys;
+			sys = C.fields.dObj.sys;
 		
 		data.forEach(function (el) {
 			for (var key in el) {
 				if (!el.hasOwnProperty(key)) { continue; }
-				upperCase = Collection.toUpperCase(key, 1);
+				upperCase = C.toUpperCase(key, 1);
 				
 				sys["active" + upperCase + "ID"] = null;
 				sys["tmp" + upperCase] = {};
@@ -930,19 +1481,559 @@
 				sys[key + "Back"] = [];
 			}
 		});
-	}) (Collection.prototype.stack);		/////////////////////////////////	//// stack methods	/////////////////////////////////		/**	 * set new value of the parameter on the stack (no impact on the history of the stack) (has aliases, format: new + StackName)<br/>	 * events: onNew + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {mixed} newVal — new value	 * @return {Colletion Object}	 *	 * @example	 * $C([1, 2, 3, 4, 5]).newCollection([1, 2]).getCollection();	 */	Collection.prototype._new = function (stackName, newVal) {		var active = this.dObj.active,			upperCase = Collection.toUpperCase(stackName, 1), e;				// events		this['onNew' + upperCase] && (e = this['onNew' + upperCase](newVal));		if (e === false) { return this; }				// compile string if need		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {			active[stackName] = this['_compile' + Collection.toUpperCase(stackName, 1)](newVal);				// search the DOM (can take a string selector or an array of nodes)		} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);		} else { active[stackName] = Collection.expr(newVal, active[stackName] || ''); }				// break the link with a stack		this.dObj.sys['active' + upperCase + 'ID'] = null;				return this;	};	/**	 * update the active parameter (if the parameter is in the stack, it will be updated too) (has aliases, format: update + StackName)<br/>	 * events: onUpdate + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {mixed} newVal — new value	 * @return {Colletion Object}	 *	 * @example	 * $C([1, 2, 3, 4, 5]).updateCollection([1, 2]).getCollection();	 * @example	 * $C()	 *	.pushSetCollection('test', [1, 2, 3, 4, 5])	 *	.updateCollection([1, 2])	 *	.getCollection('test');	 */	Collection.prototype._update = function (stackName, newVal) {		var active = this.dObj.active,						upperCase = Collection.toUpperCase(stackName, 1), e,			activeID = this._getActiveID(stackName);				// events		this['onUpdate' + upperCase] && (e = this['onUpdate' + upperCase](newVal));		if (e === false) { return this; }				// compile string if need		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {			active[stackName] = this['_compile' + upperCase](newVal);				// search the DOM (can take a string selector or an array of nodes)		} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {			active[stackName] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);		} else { active[stackName] = Collection.expr(newVal, active[stackName] || ''); }				// update the parameter stack		if (activeID) { this.dObj.sys['tmp' + upperCase][activeID] = active[stackName]; }		return this;	};	/**	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter) (has aliases, format: get + StackName)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} [id=this.ACTIVE] — stack ID	 * @throw {Error}	 * @return {mixed}	 *	 * @example	 * $C([1, 2, 3, 4, 5]).getCollection();	 * @example	 * $C().pushCollection('test', [1, 2]).getCollection('test');	 */	Collection.prototype._get = function (stackName, id) {		if (id && id !== this.ACTIVE) {			// throw an exception if the requested parameter does not exist			if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }						return this.dObj.sys['tmp' + Collection.toUpperCase(stackName, 1)][id];		}				return this.dObj.active[stackName];	};		/**	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method) (if the parameter already exists in the stack, it will be updated) (has aliases, format: push + StackName)<br/>	 * events: onPush + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Plain Object} objID — stack ID or object (ID: value)	 * @param {mixed} [newVal] — value (overload)	 * @return {Colletion Object}	 *	 * @example	 * $C().pushCollection('test', [1, 2, 3]).getCollection('test');	 * @example	 * $C().pushCollection({	 *	test1: [1, 2],	 *	test2: [1, 2, 3, 4]	 * }).getCollection('test2');	 */	Collection.prototype._push = function (stackName, objID, newVal) {		var	upperCase = Collection.toUpperCase(stackName, 1), e,			tmp = this.dObj.sys['tmp' + upperCase],			activeID = this._getActiveID(stackName),			key;				// events		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objID, newVal || ''));		if (e === false) { return this; }				if (Collection.isPlainObject(objID)) {			for (key in objID) {				if (objID.hasOwnProperty(key)) {					// update, if the ID is 'active'					if (key === this.ACTIVE) {						this._update(stackName, objID[key]);					} else {												// update the stack						if (tmp[key] && activeID && activeID === key) {							this._update(stackName, objID[key]);						} else {														// compile string if need							if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(objID[key])) {								tmp[key] = this['_compile' + upperCase](objID[key]);														// search the DOM (can take a string selector or an array of nodes)							} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(objID[key])) {								tmp[key] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(objID[key]) ? objID[key] : [objID[key]]);							} else { tmp[key] = objID[key]; }						}											}				}			}		} else {			// update, if the ID is 'active'			if (objID === this.ACTIVE) {				this._update(stackName, newVal);			} else {								// update the stack				if (tmp[objID] && activeID && activeID === objID) {					this._update(stackName, newVal);				} else {										// compile string if need					if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {						tmp[objID] = this['_compile' + upperCase](newVal);										// search the DOM (can take a string selector or an array of nodes)					} else if (['target', 'pager'].indexOf(stackName) !== -1 && Collection.isString(newVal)) {						tmp[objID] = this.drivers.dom.find.apply(this.drivers.dom, Collection.isArray(newVal) ? newVal : [newVal]);					} else { tmp[objID] = newVal; }				}			}		}		return this;	};	/**	 * set the parameter stack active (affect the story) (has aliases, format: set + StackName)<br/>	 * events: onSet + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} id — stack ID	 * @throw {Error}	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.setCollection('test')	 *	.getCollection();	 */	Collection.prototype._set = function (stackName, id) {		var sys = this.dObj.sys,			upperCase = Collection.toUpperCase(stackName, 1), e,			tmpChangeControlStr = stackName + 'ChangeControl',			tmpActiveIDStr = 'active' + upperCase + 'ID';				// throw an exception if the requested parameter does not exist		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }				// events		this['onSet' + upperCase] && (e = this['onSet' + upperCase](id));		if (e === false) { return this; }				// change the story, if there were changes		if (sys[tmpActiveIDStr] !== id) {			sys[tmpChangeControlStr] = true;			sys[tmpActiveIDStr] = id;		} else { sys[tmpChangeControlStr] = false; }				sys[stackName + 'Back'].push(id);		this.dObj.active[stackName] = sys['tmp' + upperCase][id];		return this;	};	/**	 * back on the history of the stack (has aliases, format: back + StackName)<br/>	 * events: onBack + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {Number} [nmb=1] — number of steps	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.pushSetCollection('test2', [1, 2, 3])	 *	.setCollection('test')	 *	.setCollection('test2')	 *	.setCollection('test')	 *	.backCollection(2)	 *	.activeCollection();	 */	Collection.prototype._back = function (stackName, nmb) {		nmb = nmb || 1;		var sys = this.dObj.sys,						upperCase = Collection.toUpperCase(stackName, 1), e,			propBack = sys[stackName + 'Back'],						pos = propBack.length - (nmb) - 1;				// events		this['onBack' + upperCase] && (e = this['onBack' + upperCase](nmb));		if (e === false) { return this; }				if (pos >= 0 && propBack[pos]) {			if (sys['tmp' + upperCase][propBack[pos]]) {				this._set(stackName, propBack[pos]);				sys[stackName + 'ChangeControl'] = false;				propBack.splice(pos + 1, propBack.length);			}		}		return this;	};	/**	 * back on the history of the stack, if there were changes (changes are set methods and pushSet) (has aliases, format: back + StackName + If)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {Number} [nmb=1] — number of steps	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.pushSetCollection('test2', [1, 2, 3])	 *	.setCollection('test')	 *	.setCollection('test2')	 *	.setCollection('test')	 *	.backCollectionIf()	 *	.backCollectionIf()	 *	.activeCollection();	 * // 'test2' is active, because the method of 'back' does not affect the story //	 */	Collection.prototype._backIf = function (stackName, nmb) {		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }		return this;	};	/**	 * remove the parameter from the stack (can use a constant 'active') (if the parameter is active, then it would still be removed) (has aliases, format: drop + StackName)<br/>	 * events: onDrop + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs	 * @param {mixed} [deleteVal=false] — default value (for active properties)	 * @param {mixed} [resetVal] — reset value (overload)	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection('test', [1, 2, 3])	 *	.pushSetCollection('test2', [1, 2, 3])	 *	.dropCollection('test', 'active')	 *	.existsCollection('test2'); // removed the 'test' and' test2' //	 */	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;				var active = this.dObj.active,			sys = this.dObj.sys,						upperCase = Collection.toUpperCase(stackName, 1), e,			tmpActiveIDStr = 'active' + upperCase + 'ID',			tmpTmpStr = 'tmp' + upperCase,			activeID = this._getActiveID(stackName),			tmpArray = !objID ? activeID ? [activeID] : [] : Collection.isArray(objID) || Collection.isPlainObject(objID) ? objID : [objID],						key;				// events		if (typeof resetVal === 'undefined') {			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objID, deleteVal));			if (e === false) { return this; }		} else {			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objID, resetVal));			if (e === false) { return this; }		}				if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {			for (key in tmpArray) {				if (tmpArray.hasOwnProperty(key)) {					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {						if (typeof resetVal === 'undefined') {							// if the parameter is on the stack, then remove it too							if (activeID) { delete sys[tmpTmpStr][activeID]; }														// active parameters are set to null							sys[tmpActiveIDStr] = null;							active[stackName] = deleteVal;												// reset (overload)						} else {							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }							active[stackName] = resetVal;						}					} else {						if (typeof resetVal === 'undefined') {							delete sys[tmpTmpStr][tmpArray[key]];														// if the parameter stack is active, it will still be removed							if (activeID && tmpArray[key] === activeID) {								sys[tmpActiveIDStr] = null;								active[stackName] = deleteVal;							}												// reset (overload)						} else {							sys[tmpTmpStr][tmpArray[key]] = resetVal;							if (activeID && tmpArray[key] === activeID) { active[stackName] = resetVal; }						}					}				}			}		} else {			if (typeof resetVal === 'undefined') {				// if the parameter is on the stack, then remove it too				if (activeID) { delete sys[tmpTmpStr][activeID]; }								// active parameters are set to null				sys[tmpActiveIDStr] = null;				active[stackName] = deleteVal;						// reset (overload)			} else {				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }				active[stackName] = resetVal;			}		}		return this;	};	/**	 * reset the parameter stack (can use a constant 'active') (has aliases, format: reset + StackName, only for: filter, parser and context)<br/>	 * events: onReset + stackName	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs	 * @param {mixed} [resetVal=false] — reset value	 * @return {Colletion Object}	 *	 * @example	 * $C().newContext('a > 2').resetContext().getContext();	 */	Collection.prototype._reset = function (stackName, objID, resetVal) {		resetVal = typeof resetVal === 'undefined' ? false : resetVal;		return this._drop(stackName, objID || '', '', resetVal);	};	/**	 * reset the value of the parameter stack to another (can use a constant 'active') (has aliases, format: reset + StackName + To)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String|Array} [objID=active] — stack ID or array of IDs	 * @param {String} [id=this.ACTIVE] — source stack ID (for merge)	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection({test: [1, 2], test2: [1, 2, 3, 4]})	 *	.resetCollectionTo('test', 'test2')	 *	.getCollection('test');	 */	Collection.prototype._resetTo = function (stackName, objID, id) {		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[stackName] : this.dObj.sys['tmp' + Collection.toUpperCase(stackName, 1)][id];				return this._reset(stackName, objID || '', mergeVal);	};	/**	 * verify the existence of a parameter on the stack (has aliases, format: exists + StackName)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} [id=this.ACTIVE] — stack ID	 * @return {Boolean}	 *	 * @example	 * $C().existsCollection('test');	 */	Collection.prototype._exists = function (stackName, id) {		var upperCase = Collection.toUpperCase(stackName, 1);				if ((!id || id === this.ACTIVE) && this._getActiveID(stackName)) { return true; }		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }		return false;	};	/**	 * return the ID of the active parameter (has aliases, format: get + StackName + ActiveID)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @return {String|Null}	 *	 * @example	 * $C().getCollectionActiveID();	 */	Collection.prototype._getActiveID = function (stackName) {		return this.dObj.sys['active' + Collection.toUpperCase(stackName, 1) + 'ID'];	};	/**	 * check the parameter on the activity (has aliases, format: active + StackName) or return the ID of the active parameter (if don't specify input parameters)	 * 	 * @public	 * @this {Colletion Object}	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)	 * @param {String} id — stack ID	 * @return {Boolean}	 *	 * @example	 * $C().activeCollection('test');	 * @example	 * $C().pushSetCollection('test', [1, 2]).activeCollection();	 */	Collection.prototype._active = function (stackName, id) {		// overload, returns active ID		if (!id) { return this._getActiveID(stackName); }		if (id === this._getActiveID(stackName)) { return true; }		return false;	};		/////////////////////////////////	//// assembly	/////////////////////////////////				/**	 * use the assembly (makes active the stacking options, if such exist (supports namespaces))	 * 	 * @this {Colletion Object}	 * @param {String} stack ID	 * @return {Colletion Object}	 *	 * @example	 * $C()	 *	.pushCollection({	 *		'test': [1, 2],	 *		'test.a': [1, 2, 3]	 *	})	 *	 .pushContext({	 *		'test': '',	 *		'test.a.b': 'eq(-1)'	 *	})	 *	.use('test.a.b').getCollection();	 */	Collection.prototype.use = function (id) {		this.stack.forEach(function (el) {			var nm, tmpNm, i;						if (this._exists(el, id)) {				this._set(el, id);			} else {				nm = id.split(this.NAMESPACE_SEPARATOR);								for (i = nm.length; (i -= 1) > -1;) {					nm.splice(i, 1);					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);										if (this._exists(el, tmpNm)) {						this._set(el, tmpNm);						break;					}				}							}		}, this);						return this;	};	
+	}) (Collection.prototype.stack);	
+	/////////////////////////////////
+	//// stack methods
+	/////////////////////////////////
+	
+	/**
+	 * set new value of the parameter on the stack (no impact on the history of the stack) (has aliases, format: new + StackName)<br/>
+	 * events: onNew + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {mixed} newVal — new value
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3, 4, 5]).newCollection([1, 2]).getCollection();
+	 */
+	Collection.prototype._new = function (stackName, newVal) {
+		var active = this.dObj.active,
+			upperCase = C.toUpperCase(stackName, 1), e,
+			dom = C.drivers.dom;
+		
+		// events
+		this['onNew' + upperCase] && (e = this['onNew' + upperCase](newVal));
+		if (e === false) { return this; }
+		
+		// compile string if need
+		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
+			active[stackName] = this['_compile' + C.toUpperCase(stackName, 1)](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (['target', 'pager'].indexOf(stackName) !== -1 && C.isString(newVal)) {
+			active[stackName] = dom.find.apply(dom, C.isArray(newVal) ? newVal : [newVal]);
+		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
+		
+		// break the link with a stack
+		this.dObj.sys['active' + upperCase + 'ID'] = null;
+		
+		return this;
+	};
+	/**
+	 * update the active parameter (if the parameter is in the stack, it will be updated too) (has aliases, format: update + StackName)<br/>
+	 * events: onUpdate + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {mixed} newVal — new value
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([1, 2, 3, 4, 5]).updateCollection([1, 2]).getCollection();
+	 * @example
+	 * $C()
+	 *	.pushSetCollection('test', [1, 2, 3, 4, 5])
+	 *	.updateCollection([1, 2])
+	 *	.getCollection('test');
+	 */
+	Collection.prototype._update = function (stackName, newVal) {
+		var active = this.dObj.active,
+			upperCase = C.toUpperCase(stackName, 1), e,
+			activeID = this._getActiveID(stackName),
+			dom = C.drivers.dom;
+		
+		// events
+		this['onUpdate' + upperCase] && (e = this['onUpdate' + upperCase](newVal));
+		if (e === false) { return this; }
+		
+		// compile string if need
+		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
+			active[stackName] = this['_compile' + upperCase](newVal);
+		
+		// search the DOM (can take a string selector or an array of nodes)
+		} else if (['target', 'pager'].indexOf(stackName) !== -1 && C.isString(newVal)) {
+			active[stackName] = dom.find.apply(dom, C.isArray(newVal) ? newVal : [newVal]);
+		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
+		
+		// update the parameter stack
+		if (activeID) { this.dObj.sys['tmp' + upperCase][activeID] = active[stackName]; }
+
+		return this;
+	};
+	/**
+	 * get the parameter from the stack (if you specify a constant to 'active ', then returns the active parameter) (has aliases, format: get + StackName)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} [id=this.ACTIVE] — stack ID
+	 * @throw {Error}
+	 * @return {mixed}
+	 *
+	 * @example
+	 * $C([1, 2, 3, 4, 5]).getCollection();
+	 * @example
+	 * $C().pushCollection('test', [1, 2]).getCollection('test');
+	 */
+	Collection.prototype._get = function (stackName, id) {
+		if (id && id !== this.ACTIVE) {
+			// throw an exception if the requested parameter does not exist
+			if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
+			
+			return this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)][id];
+		}
+		
+		return this.dObj.active[stackName];
+	};
+	
+	/**
+	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method) (if the parameter already exists in the stack, it will be updated) (has aliases, format: push + StackName)<br/>
+	 * events: onPush + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Plain Object} objID — stack ID or object (ID: value)
+	 * @param {mixed} [newVal] — value (overload)
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C().pushCollection('test', [1, 2, 3]).getCollection('test');
+	 * @example
+	 * $C().pushCollection({
+	 *	test1: [1, 2],
+	 *	test2: [1, 2, 3, 4]
+	 * }).getCollection('test2');
+	 */
+	Collection.prototype._push = function (stackName, objID, newVal) {
+		var	upperCase = C.toUpperCase(stackName, 1), e,
+			tmp = this.dObj.sys['tmp' + upperCase],
+			activeID = this._getActiveID(stackName),
+
+			key, dom = C.drivers.dom;
+		
+		// events
+		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objID, newVal || ''));
+		if (e === false) { return this; }
+		
+		if (C.isPlainObject(objID)) {
+			for (key in objID) {
+				if (objID.hasOwnProperty(key)) {
+					// update, if the ID is 'active'
+					if (key === this.ACTIVE) {
+						this._update(stackName, objID[key]);
+					} else {
+						
+						// update the stack
+						if (tmp[key] && activeID && activeID === key) {
+							this._update(stackName, objID[key]);
+						} else {
+							
+							// compile string if need
+							if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(objID[key])) {
+								tmp[key] = this['_compile' + upperCase](objID[key]);
+							
+							// search the DOM (can take a string selector or an array of nodes)
+							} else if (['target', 'pager'].indexOf(stackName) !== -1 && C.isString(objID[key])) {
+								tmp[key] = dom.find.apply(dom, C.isArray(objID[key]) ? objID[key] : [objID[key]]);
+							} else { tmp[key] = objID[key]; }
+						}
+						
+					}
+				}
+			}
+		} else {
+			// update, if the ID is 'active'
+			if (objID === this.ACTIVE) {
+				this._update(stackName, newVal);
+			} else {
+				
+				// update the stack
+				if (tmp[objID] && activeID && activeID === objID) {
+					this._update(stackName, newVal);
+				} else {
+					
+					// compile string if need
+					if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
+						tmp[objID] = this['_compile' + upperCase](newVal);
+					
+					// search the DOM (can take a string selector or an array of nodes)
+					} else if (['target', 'pager'].indexOf(stackName) !== -1 && C.isString(newVal)) {
+						tmp[objID] = dom.find.apply(dom, C.isArray(newVal) ? newVal : [newVal]);
+					} else { tmp[objID] = newVal; }
+				}
+			}
+		}
+
+		return this;
+	};
+	/**
+	 * set the parameter stack active (affect the story) (has aliases, format: set + StackName)<br/>
+	 * events: onSet + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} id — stack ID
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.getCollection();
+	 */
+	Collection.prototype._set = function (stackName, id) {
+		var sys = this.dObj.sys,
+
+			upperCase = C.toUpperCase(stackName, 1), e,
+			tmpChangeControlStr = stackName + 'ChangeControl',
+			tmpActiveIDStr = 'active' + upperCase + 'ID';
+		
+		// throw an exception if the requested parameter does not exist
+		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
+		
+		// events
+		this['onSet' + upperCase] && (e = this['onSet' + upperCase](id));
+		if (e === false) { return this; }
+		
+		// change the story, if there were changes
+		if (sys[tmpActiveIDStr] !== id) {
+			sys[tmpChangeControlStr] = true;
+			sys[tmpActiveIDStr] = id;
+		} else { sys[tmpChangeControlStr] = false; }
+		
+		sys[stackName + 'Back'].push(id);
+		this.dObj.active[stackName] = sys['tmp' + upperCase][id];
+
+		return this;
+	};
+	/**
+	 * back on the history of the stack (has aliases, format: back + StackName)<br/>
+	 * events: onBack + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {Number} [nmb=1] — number of steps
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.setCollection('test2')
+	 *	.setCollection('test')
+	 *	.backCollection(2)
+	 *	.activeCollection();
+	 */
+	Collection.prototype._back = function (stackName, nmb) {
+		nmb = nmb || 1;
+		var sys = this.dObj.sys,
+			
+			upperCase = C.toUpperCase(stackName, 1), e,
+			propBack = sys[stackName + 'Back'],
+			
+			pos = propBack.length - (nmb) - 1;
+		
+		// events
+		this['onBack' + upperCase] && (e = this['onBack' + upperCase](nmb));
+		if (e === false) { return this; }
+		
+		if (pos >= 0 && propBack[pos]) {
+			if (sys['tmp' + upperCase][propBack[pos]]) {
+				this._set(stackName, propBack[pos]);
+				sys[stackName + 'ChangeControl'] = false;
+				propBack.splice(pos + 1, propBack.length);
+			}
+		}
+
+		return this;
+	};
+	/**
+	 * back on the history of the stack, if there were changes (changes are set methods and pushSet) (has aliases, format: back + StackName + If)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {Number} [nmb=1] — number of steps
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.setCollection('test')
+	 *	.setCollection('test2')
+	 *	.setCollection('test')
+	 *	.backCollectionIf()
+	 *	.backCollectionIf()
+	 *	.activeCollection();
+	 * // 'test2' is active, because the method of 'back' does not affect the story //
+	 */
+	Collection.prototype._backIf = function (stackName, nmb) {
+		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
+
+		return this;
+	};
+	/**
+	 * remove the parameter from the stack (can use a constant 'active') (if the parameter is active, then it would still be removed) (has aliases, format: drop + StackName)<br/>
+	 * events: onDrop + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs
+	 * @param {mixed} [deleteVal=false] — default value (for active properties)
+	 * @param {mixed} [resetVal] — reset value (overload)
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection('test', [1, 2, 3])
+	 *	.pushSetCollection('test2', [1, 2, 3])
+	 *	.dropCollection('test', 'active')
+	 *	.existsCollection('test2'); // removed the 'test' and' test2' //
+	 */
+	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
+		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
+		
+		var active = this.dObj.active,
+			sys = this.dObj.sys,
+			
+			upperCase = C.toUpperCase(stackName, 1), e,
+			tmpActiveIDStr = 'active' + upperCase + 'ID',
+			tmpTmpStr = 'tmp' + upperCase,
+
+			activeID = this._getActiveID(stackName),
+			tmpArray = !objID ? activeID ? [activeID] : [] : C.isArray(objID) || C.isPlainObject(objID) ? objID : [objID],
+			
+			key;
+		
+		// events
+		if (typeof resetVal === 'undefined') {
+			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objID, deleteVal));
+			if (e === false) { return this; }
+		} else {
+			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objID, resetVal));
+			if (e === false) { return this; }
+		}
+		
+		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
+			for (key in tmpArray) {
+				if (tmpArray.hasOwnProperty(key)) {
+					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
+						if (typeof resetVal === 'undefined') {
+							// if the parameter is on the stack, then remove it too
+							if (activeID) { delete sys[tmpTmpStr][activeID]; }
+							
+							// active parameters are set to null
+							sys[tmpActiveIDStr] = null;
+							active[stackName] = deleteVal;
+						
+						// reset (overload)
+						} else {
+							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+							active[stackName] = resetVal;
+						}
+					} else {
+						if (typeof resetVal === 'undefined') {
+							delete sys[tmpTmpStr][tmpArray[key]];
+							
+							// if the parameter stack is active, it will still be removed
+							if (activeID && tmpArray[key] === activeID) {
+								sys[tmpActiveIDStr] = null;
+								active[stackName] = deleteVal;
+							}
+						
+						// reset (overload)
+						} else {
+							sys[tmpTmpStr][tmpArray[key]] = resetVal;
+							if (activeID && tmpArray[key] === activeID) { active[stackName] = resetVal; }
+						}
+					}
+				}
+			}
+		} else {
+			if (typeof resetVal === 'undefined') {
+				// if the parameter is on the stack, then remove it too
+				if (activeID) { delete sys[tmpTmpStr][activeID]; }
+				
+				// active parameters are set to null
+				sys[tmpActiveIDStr] = null;
+				active[stackName] = deleteVal;
+			
+			// reset (overload)
+			} else {
+				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+				active[stackName] = resetVal;
+			}
+		}
+
+		return this;
+	};
+	/**
+	 * reset the parameter stack (can use a constant 'active') (has aliases, format: reset + StackName, only for: filter, parser and context)<br/>
+	 * events: onReset + stackName
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs
+	 * @param {mixed} [resetVal=false] — reset value
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C().newContext('a > 2').resetContext().getContext();
+	 */
+	Collection.prototype._reset = function (stackName, objID, resetVal) {
+		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
+
+		return this._drop(stackName, objID || '', '', resetVal);
+	};
+	/**
+	 * reset the value of the parameter stack to another (can use a constant 'active') (has aliases, format: reset + StackName + To)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String|Array} [objID=active] — stack ID or array of IDs
+	 * @param {String} [id=this.ACTIVE] — source stack ID (for merge)
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection({test: [1, 2], test2: [1, 2, 3, 4]})
+	 *	.resetCollectionTo('test', 'test2')
+	 *	.getCollection('test');
+	 */
+	Collection.prototype._resetTo = function (stackName, objID, id) {
+		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[stackName] : this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)][id];
+		
+		return this._reset(stackName, objID || '', mergeVal);
+	};
+
+	/**
+	 * verify the existence of a parameter on the stack (has aliases, format: exists + StackName)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} [id=this.ACTIVE] — stack ID
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C().existsCollection('test');
+	 */
+	Collection.prototype._exists = function (stackName, id) {
+		var upperCase = C.toUpperCase(stackName, 1);
+		
+		if ((!id || id === this.ACTIVE) && this._getActiveID(stackName)) { return true; }
+		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
+
+		return false;
+	};
+	/**
+	 * return the ID of the active parameter (has aliases, format: get + StackName + ActiveID)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @return {String|Null}
+	 *
+	 * @example
+	 * $C().getCollectionActiveID();
+	 */
+	Collection.prototype._getActiveID = function (stackName) {
+		return this.dObj.sys['active' + C.toUpperCase(stackName, 1) + 'ID'];
+	};
+	/**
+	 * check the parameter on the activity (has aliases, format: active + StackName) or return the ID of the active parameter (if don't specify input parameters)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} id — stack ID
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C().activeCollection('test');
+	 * @example
+	 * $C().pushSetCollection('test', [1, 2]).activeCollection();
+	 */
+	Collection.prototype._active = function (stackName, id) {
+		// overload, returns active ID
+		if (!id) { return this._getActiveID(stackName); }
+		if (id === this._getActiveID(stackName)) { return true; }
+
+		return false;
+	};
+	
+	/////////////////////////////////
+	//// assembly
+	/////////////////////////////////
+			
+	/**
+	 * use the assembly (makes active the stacking options, if such exist (supports namespaces))
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String} stack ID
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C()
+	 *	.pushCollection({
+	 *		'test': [1, 2],
+	 *		'test.a': [1, 2, 3]
+	 *	})
+	 *	 .pushContext({
+	 *		'test': '',
+	 *		'test.a.b': 'eq(-1)'
+	 *	})
+	 *	.use('test.a.b').getCollection();
+	 */
+	Collection.prototype.use = function (id) {
+		this.stack.forEach(function (el) {
+			var nm, tmpNm, i;
+			
+			if (this._exists(el, id)) {
+				this._set(el, id);
+			} else {
+				nm = id.split(this.NAMESPACE_SEPARATOR);
+				
+				for (i = nm.length; (i -= 1) > -1;) {
+					nm.splice(i, 1);
+					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);
+					
+					if (this._exists(el, tmpNm)) {
+						this._set(el, tmpNm);
+						break;
+					}
+				}
+				
+			}
+		}, this);
+				
+		return this;
+	};	
 	/////////////////////////////////
 	//// stack methods (aliases)
 	/////////////////////////////////
 		
 	// generate aliases
 	(function (data) {
-		var fn = Collection.prototype, nm;
+		var fn = C.prototype, nm;
 		
 		data.forEach(function (el) {
 			for (var key in el) {
 				if (!el.hasOwnProperty(key)) { continue; }
-				nm = Collection.toUpperCase(el, 1);
+				nm = C.toUpperCase(key, 1);
 				
 				fn['new' + nm] = function (nm) {
 					return function (newParam) { return this._new(nm, newParam); };
@@ -952,12 +2043,15 @@
 					return function (newParam) { return this._update(nm, newParam); };
 				}(key);
 				
+				fn['reset' + nm] = function (nm, resetVal) {
+					return function () { return this._reset(nm, arguments, resetVal); };
+				}(key, el[key]);
 				fn['reset' + nm + 'To'] = function (nm) {
 					return function (objID, id) { return this._resetTo(nm, objID, id); };
 				}(key);
 				
 				fn['push' + nm] = function (nm) {
-					return function (objID, newParam) { return this._push.apply(this, Collection.unshiftArguments(arguments, nm)); }
+					return function (objID, newParam) { return this._push.apply(this, C.unshiftArguments(arguments, nm)); }
 				}(key);
 				
 				fn['set' + nm] = function (nm) {
@@ -970,34 +2064,20 @@
 				
 				fn['back' + nm] = function (nm) {
 					return function (nmb) { return this._back(nm, nmb || ''); };
-				}(key);	
+				}(key);
 				
 				fn['back' + nm + 'If'] = function (nm) {
 					return function (nmb) { return this._backIf(nm, nmb || ''); };
-				}(key);	
+				}(key);
 				
 				if (key === 'filter' || key === 'parser') {
 					fn['drop' + nm] = function (nm) {
 						return function () { return this._drop(nm, arguments); };
-					}(key);	
+					}(key);
 				} else {
 					fn['drop' + nm] = function (nm) {
 						return function () { return this._drop(nm, arguments, null); };
-					}(key);	
-				}
-				
-				if (key === 'filter' || key === 'parser') {
-					fn['reset' + nm] = function (nm) {
-						return function () { return this._reset(nm, arguments); };
-					}(key);	
-				} else if (key === 'page') {
-					fn['reset' + nm] = function (nm) {
-						return function () { return this._reset(nm, arguments, 1); };
-					}(key);	
-				} else if (key === 'context') {
-					fn['reset' + nm] = function (nm) {
-						return function () { return this._reset(nm, arguments, ''); };
-					}(key);	
+					}(key);
 				}
 				
 				fn['active' + nm] = function (nm) {
@@ -1033,7 +2113,7 @@
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._setOne = function (context, value, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		value = typeof value === 'undefined' ? '' : value;
 		id = id || '';
 
@@ -1050,7 +2130,7 @@
 			} else { return this._update('collection', value); }
 		}
 		
-		Collection.byLink(this._get('collection', id), activeContext + Collection.CHILDREN + context, value);
+		C.byLink(this._get('collection', id), activeContext + C.CHILDREN + context, value);
 	
 		return this;
 	};
@@ -1064,8 +2144,8 @@
 	 * @return {mixed}
 	 */
 	Collection.prototype._getOne = function (context, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
-		return Collection.byLink(this._get('collection', id || ''), this._getActiveParam('context') + Collection.CHILDREN + context);
+		context = C.isExists(context) ? context.toString() : '';
+		return C.byLink(this._get('collection', id || ''), this._getActiveParam('context') + C.CHILDREN + context);
 	};	
 	/////////////////////////////////
 	//// single methods (add)
@@ -1125,9 +2205,9 @@
 		// simple add
 		if (!sourceID) {
 			// add type
-			if (Collection.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(data, propType.toString(), cValue);
+			if (C.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = C.addElementToObject(data, propType.toString(), cValue);
 			} else {
 				lCheck = true;
 				data[propType](cValue);
@@ -1135,13 +2215,13 @@
 		
 		// move
 		} else {
-			cValue = Collection.isExists(cValue) ? cValue.toString() : '';
-			sObj = Collection.byLink(this._get('collection', sourceID || ''), cValue);
+			cValue = C.isExists(cValue) ? cValue.toString() : '';
+			sObj = C.byLink(this._get('collection', sourceID || ''), cValue);
 			
 			// add type
-			if (Collection.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(data, propType.toString(), sObj);
+			if (C.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = C.addElementToObject(data, propType.toString(), sObj);
 			} else {
 				lCheck = true;
 				data[propType](sObj);
@@ -1200,7 +2280,7 @@
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._removeOne = function (context, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		var activeContext = this._getActiveParam('context'), e;
 		
 		// events
@@ -1210,7 +2290,7 @@
 		// if no context
 		if (!context && !activeContext) {
 			this._setOne('', null);
-		} else { Collection.byLink(this._get('collection', id || ''), activeContext + Collection.CHILDREN + context, '', true); }
+		} else { C.byLink(this._get('collection', id || ''), activeContext + C.CHILDREN + context, '', true); }
 	
 		return this;
 	};
@@ -1226,17 +2306,17 @@
 		id = id || '';
 		var key, i;
 		
-		if (Collection.isPlainObject(objContext)) {
+		if (C.isPlainObject(objContext)) {
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
-					if (Collection.isArray(objContext[key])) {
+					if (C.isArray(objContext[key])) {
 						for (i = objContext[key].length; (i -= 1) > -1;) {
 							this._removeOne(objContext[key][i], key);
 						}
 					} else { this._removeOne(objContext[key], key); }
 				}
 			}
-		} else if (Collection.isArray(objContext)) {
+		} else if (C.isArray(objContext)) {
 			for (i = objContext.length; (i -= 1) > -1;) { this._removeOne(objContext[i], id); }
 		} else { this._removeOne(objContext, id); }
 	
@@ -1261,7 +2341,7 @@
 	 * $C([1, 2, 3]).concat([4, 5, 6]).getCollection();
 	 */
 	Collection.prototype.concat = function (obj, context, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		id = id || '';
 		var data, e;	
 		
@@ -1275,10 +2355,10 @@
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!') }
 		
-		if (Collection.isPlainObject(data)) {
-			Collection.extend(true, data, obj)
-		} else if (Collection.isArray(data)) {
-			if (Collection.isArray(obj)) {
+		if (C.isPlainObject(data)) {
+			C.extend(true, data, obj)
+		} else if (C.isArray(data)) {
+			if (C.isArray(obj)) {
 				data = Array.prototype.concat(data, obj);
 				this._setOne(context, data, id);
 			} else { this.add(obj, 'push', id); }
@@ -1317,8 +2397,8 @@
 		
 		// overload
 		// if the filter is a collection
-		if (!Collection.isFunction(filter)) {
-			if ((Collection.isString(filter) && !this._isFilter(filter) && !Collection.isExists(id)) || Collection.isCollection(filter)) {
+		if (!C.isFunction(filter)) {
+			if ((C.isString(filter) && !this._isFilter(filter) && !C.isExists(id)) || C.isCollection(filter)) {
 				id = filter;
 				filter = false;
 			}
@@ -1328,12 +2408,12 @@
 		// if the ID is not specified, it is taken active collection
 		if (!id) {
 			data = this._get('collection');
-		} else if (Collection.isString(id)) {
+		} else if (C.isString(id)) {
 			data = this._get('collection', id);
 		} else { data = id; }
 		
 		if (data === null) { return 0; }
-		if (Collection.isString(data)) { return data.length; }
+		if (C.isString(data)) { return data.length; }
 		
 		// if no filter and the original object is an array
 		if ((filter === true || !filter) && !this._getActiveParam('filter') && typeof data.length !== 'undefined') {
@@ -1380,7 +2460,7 @@
 	Collection.prototype.forEach = function (callback, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// values by default
 		callback = this._isStringExpression(callback) ? this._compileFunc(callback) : callback;
-		filter = Collection.isString((filter = filter || '')) ? filter.split(this.SHORT_SPLITTER) : filter;
+		filter = C.isString((filter = filter || '')) ? filter.split(this.SHORT_SPLITTER) : filter;
 		
 		id = id || '';
 
@@ -1403,15 +2483,15 @@
 			key, i = 0, j = 0,
 			res = false;
 		
-		if (Collection.isArray(filter)) {
+		if (C.isArray(filter)) {
 			if (filter.length === 2) {
-				filter = Collection.trim(filter[1]);
-			} else { filter = Collection.trim(filter[0]); }
+				filter = filter[1].trim();
+			} else { filter = filter[0].trim(); }
 		}
 		
 		// get by link
-		data = !Collection.isCollection(id)
-					? Collection.byLink(this._get('collection', id), this._getActiveParam('context') + Collection.CHILDREN + context)
+		data = !C.isCollection(id)
+					? C.byLink(this._get('collection', id), this._getActiveParam('context') + C.CHILDREN + context)
 						: id;
 		
 		// throw an exception if the element is not an object
@@ -1436,7 +2516,7 @@
 			return fLength.val;
 		};
 		
-		if (Collection.isArray(data)) {
+		if (C.isArray(data)) {
 			// cut off the array to indicate the start
 			if (indexOf !== false && !rev) {
 				cloneObj = data.slice(indexOf);
@@ -1598,7 +2678,7 @@
 		mult = mult === false ? false : true;
 		var res = mult === true ? [] : -1,
 			to, set = false,
-			arg = Collection.toArray(arguments),
+			arg = C.toArray(arguments),
 			action;
 		
 		// overload ID
@@ -1606,8 +2686,8 @@
 			id = id.split(this.SPLITTER);
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = Collection.trim(id[1]));
-		id = arg[1] = Collection.trim(id[0]);
+		id[1] && (to = id[1].trim());
+		id = arg[1] = id[0].trim();
 		
 		if (mult === true) {
 			/** @private */
@@ -1625,7 +2705,7 @@
 			to = to.split(this.PLUS);
 			
 			if (to[1]) {
-				to = Collection.trim(to[1]);
+				to = to[1].trim();
 				if (this._exists('collection', to)) {
 					this
 						.disable('context')
@@ -1743,7 +2823,7 @@
 		id = id || '';
 		var res,
 			to, set = false,
-			arg = Collection.toArray(arguments),
+			arg = C.toArray(arguments),
 			action;
 		
 		// overload ID
@@ -1751,22 +2831,22 @@
 			id = id.split(this.SPLITTER);
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = Collection.trim(id[1]));
-		id = arg[1] = Collection.trim(id[0]);
+		id[1] && (to = id[1].trim());
+		id = arg[1] = id[0].trim();
 		
 		// overload
-		if (Collection.isArray(filter)) {
+		if (C.isArray(filter)) {
 			res = [];
 			filter.forEach(function (el) {
 				res = res.concat(this.get(el, id, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''));
 			}, this);
 		} else {
 			// overload
-			if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
 				res = this._getOne(filter, id);
 			} else {
 				mult = mult === false ? false : true;
-				res = mult === true || Collection.isArray(filter) ? [] : -1;
+				res = mult === true || C.isArray(filter) ? [] : -1;
 				
 				if (mult === true) {
 					/** @private */
@@ -1786,7 +2866,7 @@
 			to = to.split(this.PLUS);
 			
 			if (to[1]) {
-				to = Collection.trim(to[1]);
+				to = to[1].trim();
 				if (this._exists('collection', to)) {
 					this
 						.disable('context')
@@ -1881,14 +2961,14 @@
 	 */
 	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overload
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
 			return this._setOne(filter, replaceObj, id || '');
 		}
 		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
 		var e, arg, res, action,
-			isFunc = Collection.isFunction(replaceObj);
+			isFunc = C.isFunction(replaceObj);
 		
 		if (isFunc) {
 			/** @private */
@@ -1898,10 +2978,10 @@
 			};
 		} else {
 			/** @private */
-			action = function (el, key, data) { data[key] = Collection.expr(replaceObj, data[key]); };
+			action = function (el, key, data) { data[key] = C.expr(replaceObj, data[key]); };
 		}
 		
-		arg = Collection.unshiftArguments(arguments, action);
+		arg = C.unshiftArguments(arguments, action);
 		arg.splice(2, 1);
 		
 		// events
@@ -1970,7 +3050,7 @@
 		id = id || '';
 		var res,
 			to, set = false,
-			arg = Collection.toArray(arguments),
+			arg = C.toArray(arguments),
 			isFunc, isExists, isArray,
 			action;
 		
@@ -1979,15 +3059,15 @@
 			id = id.split(this.SPLITTER);
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = Collection.trim(id[1]));
-		id = arg[2] = Collection.trim(id[0]);
+		id[1] && (to = id[1].trim());
+		id = arg[2] = id[0].trim();
 		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFilter(replaceObj) : replaceObj || '';
 		
-		isFunc = Collection.isFunction(replaceObj);
-		isExists = !isFunc && Collection.isExists(replaceObj);
-		isArray = Collection.isArray(this._getOne('', id));
+		isFunc = C.isFunction(replaceObj);
+		isExists = !isFunc && C.isExists(replaceObj);
+		isArray = C.isArray(this._getOne('', id));
 		
 		if (isArray) {
 			res = [];
@@ -2010,12 +3090,12 @@
 				if (isArray) {
 					/** @private */
 					action = function (el, key, data) {
-						res.push(Collection.expr(replaceObj, data[key]));
+						res.push(C.expr(replaceObj, data[key]));
 					};
 				} else {
 					/** @private */
 					action = function (el, key, data) {
-						res[key] = Collection.expr(replaceObj, data[key]);
+						res[key] = C.expr(replaceObj, data[key]);
 					};
 				}
 			} else {
@@ -2042,7 +3122,7 @@
 			to = to.split(this.PLUS);
 			
 			if (to[1]) {
-				to = Collection.trim(to[1]);
+				to = to[1].trim();
 				if (this._exists('collection', to)) {
 					this
 						.disable('context')
@@ -2098,7 +3178,7 @@
 	 */
 	Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
 		moveFilter = moveFilter || '';
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		
 		sourceID = sourceID || '';
 		activeID = activeID || '';
@@ -2109,7 +3189,7 @@
 		deleteType = deleteType === false ? false : true;
 		
 		var deleteList = [],
-			isArray = Collection.isArray(Collection.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
+			isArray = C.isArray(C.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
 	
 			elements, e = null;
 		
@@ -2121,7 +3201,7 @@
 		// search elements
 		this.disable('context');
 		
-		if (Collection.isNumber(moveFilter) || (Collection.isString(moveFilter) && !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
+		if (C.isNumber(moveFilter) || (C.isString(moveFilter) && !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
 			elements = moveFilter;
 		} else { elements = this.search(moveFilter, sourceID, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
 		
@@ -2130,13 +3210,13 @@
 		console.log(elements);
 		
 		// move
-		if (mult === true && Collection.isArray(elements)) {
+		if (mult === true && C.isArray(elements)) {
 			elements.forEach(function (el) {
-				this.add(context + Collection.CHILDREN + el, isArray === true ? addType : el + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+				this.add(context + C.CHILDREN + el, isArray === true ? addType : el + C.METHOD_SEPARATOR + addType, activeID, sourceID);
 				deleteType === true && deleteList.push(el);
 			}, this);
 		} else {
-			this.add(context + Collection.CHILDREN + elements, isArray === true ? addType : elements + Collection.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.add(context + C.CHILDREN + elements, isArray === true ? addType : elements + C.METHOD_SEPARATOR + addType, activeID, sourceID);
 			deleteType === true && deleteList.push(elements);
 		}
 		
@@ -2178,7 +3258,7 @@
 	 * console.log(db.get());
 	 */
 	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
@@ -2206,7 +3286,7 @@
 	 */
 	Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
 	};
 	/**
 	 * copy one element from one collection to another (in context)<br />
@@ -2231,7 +3311,7 @@
 	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', Collection.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -2264,13 +3344,13 @@
 	 */
 	Collection.prototype.remove = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overloads
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
 			return this._removeOne(filter, id || '');
-		} else if (Collection.isArray(filter) || Collection.isPlainObject(filter)) { return this._remove(filter, id || ''); }
+		} else if (C.isArray(filter) || C.isPlainObject(filter)) { return this._remove(filter, id || ''); }
 		
 		var elements = this.search.apply(this, arguments), i = elements.length;
 		
-		if (!Collection.isArray(elements)) {
+		if (!C.isArray(elements)) {
 			this._removeOne(elements, id);
 		} else {
 			if (rev === true) {
@@ -2326,7 +3406,7 @@
 	Collection.prototype.pop = function (id, filter, from, indexOf, lastIndexOf) {
 		id = id || '';
 		
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
 			return this._removeOne('eq(-1)', id);
 		}
 		
@@ -2351,7 +3431,7 @@
 	Collection.prototype.shift = function (id, filter, from, indexOf, lastIndexOf) {
 		id = id || '';
 		
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length < 2 || filter === false) {
 			return this._removeOne('eq(0)', id);
 		}
 		
@@ -2390,14 +3470,14 @@
 		mult = mult === false ? false : true;
 		link = link || false;
 		
-		var isString = Collection.isString(field),
+		var isString = C.isString(field),
 			res = {}, arg, action;
 		
 		if (isString) {
 			if (link) {
 				/** @private */
 				action = function (el, key) {
-					var param = Collection.byLink(el, field);
+					var param = C.byLink(el, field);
 					
 					if (!res[param]) {
 						res[param] = [key];
@@ -2406,7 +3486,7 @@
 			} else {
 				/** @private */
 				action = function (el, key) {
-					var param = Collection.byLink(el, field);
+					var param = C.byLink(el, field);
 					
 					if (!res[param]) {
 						res[param] = [el];
@@ -2441,7 +3521,7 @@
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
 		
-		arg = Collection.unshiftArguments(arguments, action);
+		arg = C.unshiftArguments(arguments, action);
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
 	
@@ -2507,12 +3587,12 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var operType = Collection.isString(oper),
+		var operType = C.isString(oper),
 			result = 0, tmp = 0, key,
 			
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
-				var param = Collection.isString(field) ? Collection.byLink(el, field) : field(el, key, data, i, length, cObj, id);
+				var param = C.isString(field) ? C.byLink(el, field) : field(el, key, data, i, length, cObj, id);
 				
 				switch (oper) {
 					case 'count' : {
@@ -2541,7 +3621,7 @@
 							if (tmp === 0) {
 								result = param;
 								tmp = 1;
-							} else { result = Collection.expr(oper + '=' + param, result); }
+							} else { result = C.expr(oper + '=' + param, result); }
 						}
 					}
 				}
@@ -2554,8 +3634,8 @@
 			
 			if (oper === 'avg') { result /= tmp; }
 		} else if (oper === 'first') {
-			result = this._getOne(Collection.ORDER[0] + '0' + Collection.ORDER[1]);
-		} else { result = this._getOne(Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+			result = this._getOne(C.ORDER[0] + '0' + C.ORDER[1]);
+		} else { result = this._getOne(C.ORDER[0] + '-1' + C.ORDER[1]); }
 	
 		return result;
 	};	
@@ -2595,12 +3675,12 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var operType = Collection.isString(oper),
+		var operType = C.isString(oper),
 			result = {}, tmp = {}, key,
 			
 			/** @private */
 			deepAction = function (el, key, data, i, length, cObj, id) {
-				var param = Collection.isString(field) ? Collection.byLink(el, field) : field(el, key, data, i, length, cObj, id);
+				var param = C.isString(field) ? C.byLink(el, field) : field(el, key, data, i, length, cObj, id);
 				
 				switch (oper) {
 					case 'count' : {
@@ -2629,7 +3709,7 @@
 							if (tmp[this.key] === 0) {
 								result[this.key] = param;
 								tmp[this.key] = 1;
-							} else { result[this.key] = Collection.expr(oper + '=' + param, result[this.key]); }
+							} else { result[this.key] = C.expr(oper + '=' + param, result[this.key]); }
 						}
 					}
 				}
@@ -2643,12 +3723,12 @@
 				
 				if (oper !== 'first' && oper !== 'last') {
 					cObj
-						._update('context', '+=' + Collection.CHILDREN + (deepAction.key = key))
+						._update('context', '+=' + C.CHILDREN + (deepAction.key = key))
 						.forEach(deepAction, filter || '', id, '', count, from, indexOf)
 						.parent();
 				} else if (oper === 'first') {
-					result[key] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);
-				} else { result[key] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+					result[key] = C.byLink(el, C.ORDER[0] + '0' + C.ORDER[1]);
+				} else { result[key] = C.byLink(el, C.ORDER[0] + '-1' + C.ORDER[1]); }
 					
 				return true;
 			};
@@ -2663,7 +3743,160 @@
 		}
 	
 		return result;
-	};			/////////////////////////////////	//// sort method	/////////////////////////////////		/**	 * sort object	 * 	 * @this {Collection}	 * @param {Object} obj — some object	 * @param {Context} field — field name	 * @param {Function} sort — sort function	 * @return {Object}	 */	Collection._sortObject = function (obj, field, sort) {		var sortedValues = [],			sortedObj = {},			key;				for (key in obj) {			if (obj.hasOwnProperty(key)) {				sortedValues.push({					key: key,					value: obj[key]				});			}		}		sortedValues.sort(sort);				for (key in sortedValues) {			if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }		}				return sortedObj;	};		/**	 * sort the object by the key	 * 	 * @this {Collection}	 * @param {Object} obj — some object	 * @param {Function} sort — sort function	 * @return {Object}	 */	Collection._sortObjectByKey = function (obj, sort) {		var sortedKeys = [],			sortedObj = {},			key;				for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }		sortedKeys.sort(sort);				for (key in sortedKeys) {			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }		}		return sortedObj;	};		/**	 * sort collection (in context)<br />	 * events: onSort	 * 	 * @this {Colletion Object}	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)	 * @param {String} [id=this.ACTIVE] — collection ID	 * @throw {Error}	 * @return {Colletion Object}	 *	 * @example	 * $C([	 *	{name: 'Andrey', age: 22},	 *	{name: 'John', age: 19},	 *	{name: 'Bon', age: 25},	 *	{name: 'Bill', age: 15}	 * ]).sort('name').getCollection();	 * @example	 * $C([	 *	{name: 'Andrey', age: 22, lvl: 80},	 *	{name: 'John', age: 19, lvl: 95},	 *	{name: 'Bon', age: 25, lvl: 85},	 *	{name: 'Bill', age: 15, lvl: 80}	 * ]).sort(':el.age + el.lvl').getCollection();	 */	Collection.prototype.sort = function (field, rev, fn, id) {		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;		rev = rev || false;		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {			if (Collection.isString(a)) { return a.toUpperCase(); }						return a;		};		fn = this._isStringExpression(fn) ? this._compileFilter(fn) : fn;		id = id || '';				var self = this,			data,						/** @private */			sort = function (a, b) {				var r = rev ? -1 : 1;								// sort by field				if (field) {					if (!Collection.isFunction(field)) {						a = Collection.byLink(a, field);						b = Collection.byLink(b, field);					} else {						a = field(a, id);						b = field(b, id);					}				}				// callback function				if (fn) {					a = fn(a, id);					b = fn(b, id);				}								if (rev !== self.SHUFFLE) {						if (a < b) { return r * -1; }					if (a > b) { return r; }										return 0;								// random sort				} else { return Math.round(Math.random() * 2  - 1); }			}, e;				// events		this.onSort && (e = this.onSort.apply(this, arguments));		if (e === false) { return this; }				// get by link		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));				// throw an exception if the element is not an object		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }		if (Collection.isArray(data)) {			data.sort(sort);		} else {			if (field) {				// change the field to sort the object				field = field === true ? 'value' : 'value' + Collection.CHILDREN + field;				data = Collection._sortObject(data, field, sort);			} else { data = Collection._sortObjectByKey(data, sort); }						this._setOne('', data, id);		}				return this;	};	
+	};		
+	/////////////////////////////////
+	//// sort method
+	/////////////////////////////////
+	
+	/**
+	 * sort object
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @param {Context} field — field name
+	 * @param {Function} sort — sort function
+	 * @return {Object}
+	 */
+	Collection._sortObject = function (obj, field, sort) {
+		var sortedValues = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) {
+			if (obj.hasOwnProperty(key)) {
+				sortedValues.push({
+					key: key,
+					value: obj[key]
+				});
+			}
+		}
+		sortedValues.sort(sort);
+		
+		for (key in sortedValues) {
+			if (sortedValues.hasOwnProperty(key)) { sortedObj[sortedValues[key].key] = sortedValues[key].value; }
+		}
+		
+		return sortedObj;
+	};
+	
+	/**
+	 * sort the object by the key
+	 * 
+	 * @this {Collection}
+	 * @param {Object} obj — some object
+	 * @param {Function} sort — sort function
+	 * @return {Object}
+	 */
+	Collection._sortObjectByKey = function (obj, sort) {
+		var sortedKeys = [],
+			sortedObj = {},
+			key;
+		
+		for (key in obj) { if (obj.hasOwnProperty(key)) { sortedKeys.push(key); } }
+		sortedKeys.sort(sort);
+		
+		for (key in sortedKeys) {
+			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
+		}
+
+		return sortedObj;
+	};
+	
+	/**
+	 * sort collection (in context)<br />
+	 * events: onSort
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @throw {Error}
+	 * @return {Colletion Object}
+	 *
+	 * @example
+	 * $C([
+	 *	{name: 'Andrey', age: 22},
+	 *	{name: 'John', age: 19},
+	 *	{name: 'Bon', age: 25},
+	 *	{name: 'Bill', age: 15}
+	 * ]).sort('name').getCollection();
+	 * @example
+	 * $C([
+	 *	{name: 'Andrey', age: 22, lvl: 80},
+	 *	{name: 'John', age: 19, lvl: 95},
+	 *	{name: 'Bon', age: 25, lvl: 85},
+	 *	{name: 'Bill', age: 15, lvl: 80}
+	 * ]).sort(':el.age + el.lvl').getCollection();
+	 */
+	Collection.prototype.sort = function (field, rev, fn, id) {
+		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;
+		rev = rev || false;
+		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
+			if (C.isString(a)) { return a.toUpperCase(); }
+			
+			return a;
+		};
+		fn = this._isStringExpression(fn) ? this._compileFilter(fn) : fn;
+		id = id || '';
+		
+		var self = this,
+			data,
+			
+			/** @private */
+			sort = function (a, b) {
+				var r = rev ? -1 : 1;
+				
+				// sort by field
+				if (field) {
+					if (!C.isFunction(field)) {
+						a = C.byLink(a, field);
+						b = C.byLink(b, field);
+					} else {
+						a = field(a, id);
+						b = field(b, id);
+					}
+				}
+				// callback function
+				if (fn) {
+					a = fn(a, id);
+					b = fn(b, id);
+				}
+				
+				if (rev !== self.SHUFFLE) {	
+					if (a < b) { return r * -1; }
+					if (a > b) { return r; }
+					
+					return 0;
+				
+				// random sort
+				} else { return Math.round(Math.random() * 2  - 1); }
+			}, e;
+		
+		// events
+		this.onSort && (e = this.onSort.apply(this, arguments));
+		if (e === false) { return this; }
+		
+		// get by link
+		data = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		
+		// throw an exception if the element is not an object
+		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
+
+		if (Collection.isArray(data)) {
+			data.sort(sort);
+		} else {
+			if (field) {
+				// change the field to sort the object
+				field = field === true ? 'value' : 'value' + C.CHILDREN + field;
+				data = C._sortObject(data, field, sort);
+			} else { data = C._sortObjectByKey(data, sort); }
+			
+			this._setOne('', data, id);
+		}
+		
+		return this;
+	};	
 	/////////////////////////////////
 	//// sort method
 	/////////////////////////////////
@@ -2712,14 +3945,14 @@
 		if (e === false) { return this; }
 		
 		// get by link
-		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = C.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
-		if (Collection.isArray(data)) {
+		if (C.isArray(data)) {
 			data.reverse();
-		} else { this._setOne('', Collection._reverseObject(data), id); }
+		} else { this._setOne('', C._reverseObject(data), id); }
 		
 		return this;
 	};	
@@ -3010,13 +4243,13 @@
 		}
 
 		// if filter is function
-		if (Collection.isFunction(filter)) {
+		if (C.isFunction(filter)) {
 			if (!this._getActiveParam('filter') || !_tmpFilter) {
 				return filter.call(filter, el, key, data, i, length, cObj, id);
 			} else {
 				if (!_tmpFilter.name) {
-					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {
-						_tmpFilter.name = Collection.getRandomInt(0, 10000);
+					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = C.getRandomInt(0, 10000)))) {
+						_tmpFilter.name = C.getRandomInt(0, 10000);
 					}
 					this._push('filter', '__tmp:' + _tmpFilter.name, filter);
 				}
@@ -3026,13 +4259,13 @@
 		}
 		
 		// if filter is string
-		if (!Collection.isArray(filter)) {
+		if (!C.isArray(filter)) {
 			if (this._getActiveParam('filter') && _tmpFilter) {
 				filter = this.ACTIVE + ' && (' + filter + ')';
 			}
 			
 			// if need to compile filter
-			if (this._isStringExpression(filter = Collection.trim(filter))) {
+			if (this._isStringExpression(filter = filter.trim())) {
 				if (!this._exists('filter', '__tmp:' + filter)) {
 					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
 				}
@@ -3041,7 +4274,7 @@
 			}
 			
 			// prepare string
-			filter = Collection.trim(
+			filter = C.trim(
 						filter
 							.toString()
 							.replace(/\s*(\(|\))\s*/g, ' $1 ')
@@ -3163,13 +4396,13 @@
 		}
 		
 		// if parser is function
-		if (Collection.isFunction(parser)) {
+		if (C.isFunction(parser)) {
 			if (!this._getActiveParam('parser') || !_tmpParser) {
 				return parser.call(parser, str, this);
 			} else {
 				if (!_tmpParser.name) {
-					while (this._exists('parser', '__tmp:' + (_tmpParser.name = Collection.getRandomInt(0, 10000)))) {
-						_tmpParser.name = Collection.getRandomInt(0, 10000);
+					while (this._exists('parser', '__tmp:' + (_tmpParser.name = C.getRandomInt(0, 10000)))) {
+						_tmpParser.name = C.getRandomInt(0, 10000);
 					}
 					this._push('parser', '__tmp:' + _tmpParser.name, parser);
 				}
@@ -3179,13 +4412,13 @@
 		}
 		
 		// if parser is string
-		if (Collection.isString(parser)) {
+		if (C.isString(parser)) {
 			if (this._getActiveParam('parser') && _tmpParser) {
 				parser = this.ACTIVE + ' && ' + parser;
 			}
 			
 			// if need to compile parser
-			if (this._isStringExpression(parser = Collection.trim(parser))) {
+			if (this._isStringExpression(parser = parser.trim())) {
 				if (!this._exists('parser', '__tmp:' + parser)) {
 					this._push('parser', '__tmp:' + parser, this._compileParser(parser));
 				}
@@ -3199,7 +4432,7 @@
 		
 		// calculate
 		parser.forEach(function (el) {
-			str = this._customParser((el = Collection.trim(el)), str);
+			str = this._customParser((el = el.trim()), str);
 		}, this);
 
 		return str;
@@ -3256,12 +4489,12 @@
 	 * $C('', {context: 'a > b > c'}).parentContext(2);
 	 */
 	Collection.prototype.parentContext = function (n, id) {
-		var context = this._get('context', id || '').split(Collection.CHILDREN),
+		var context = this._get('context', id || '').split(C.CHILDREN),
 			i = n || 1;
 		
 		while ((i -= 1) > -1) { context.splice(-1, 1); }
 		
-		return context.join(Collection.CHILDREN);
+		return context.join(C.CHILDREN);
 	};
 	/**
 	 * change the context (the parent element)
@@ -3279,7 +4512,120 @@
 	Collection.prototype.parent = function (n, id) {
 		if (!id) { return this._update('context', this.parentContext(n)); }
 		return this._push('context', id, this.parentContext(n, id));
-	};		/////////////////////////////////	// additional methods	/////////////////////////////////		/**	 * return to active parameter stack (flags included)	 * 	 * @this {Collection Object}	 * @param {String} name — property name	 * @return {mixed}	 */	Collection.prototype._getActiveParam = function (name) {		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true ? this.dObj.active[name] : false;				if (name === 'context') { return param ? param.toString() : ''; }		return param;	};		/**	 * returns a Boolean indicating whether the string is a filter	 * 	 * @this {Collection Object}	 * @param {String} str — some string	 * @return {Boolean}	 */	Collection.prototype._isFilter = function (str) {		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;	};	/**	 * returns a Boolean indicating whether the object is a string expression	 * 	 * @this {Collection Object}	 * @param {mixed} obj — some object	 * @return {Boolean}	 */	Collection.prototype._isStringExpression = function (obj) {		return Collection.isString(obj) && obj.search(/^:/) !== -1;	};		/**	 * enable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.enable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = true		}, this);				return this;	};	/**	 * disable flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.disable = function () {		Array.prototype.forEach.call(arguments, function (el) {			this.dObj.sys.flags.use[el] = false		}, this);				return this;	};	/**	 * toggle flag	 * 	 * @this {Collection Object}	 * @param {String} [objectN] — flag name	 * @return {Collection Object}	 */	Collection.prototype.toggle = function () {		Array.prototype.forEach.call(arguments, function (el) {			if (this.dObj.sys.flags.use[el] === true) {				this.disable(arguments[key]);			} else { this.enable(arguments[key]); }		}, this);	};		// native		/**	 * return JSON string collection (in context)	 * 	 * @this {Colletion Object}	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects	 * @param {Number|String} [space] — indentation of nested structures	 * @return {String}	 */	Collection.prototype.toString = function (objID, replacer, space) {		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }				replacer = replacer || '';		space = space || '';				if (objID && Collection.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }				return JSON.stringify(Collection.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);	};	/**	 * return collection length (only active)	 * 	 * @this {Colletion Object}	 * @return {Number}	 */	Collection.prototype.valueOf = function () {		if (arguments[0] === 'object') { return this; }		return this.length(this.ACTIVE);	};	
+	};	
+	/////////////////////////////////
+	// additional methods
+	/////////////////////////////////
+	
+	/**
+	 * return to active parameter stack (flags included)
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} name — property name
+	 * @return {mixed}
+	 */
+	Collection.prototype._getActiveParam = function (name) {
+		var param = typeof this.dObj.sys.flags.use[name] === 'undefined' || this.dObj.sys.flags.use[name] === true ? this.dObj.active[name] : false;
+		
+		if (name === 'context') { return param ? param.toString() : ''; }
+		return param;
+	};
+	
+	/**
+	 * returns a Boolean indicating whether the string is a filter
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} str — some string
+	 * @return {Boolean}
+	 */
+	Collection.prototype._isFilter = function (str) {
+		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;
+	};
+	/**
+	 * returns a Boolean indicating whether the object is a string expression
+	 * 
+	 * @this {Collection Object}
+	 * @param {mixed} obj — some object
+	 * @return {Boolean}
+	 */
+	Collection.prototype._isStringExpression = function (obj) {
+		return C.isString(obj) && obj.search(/^:/) !== -1;
+	};
+	
+	/**
+	 * enable flag
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} [objectN] — flag name
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.enable = function () {
+		Array.prototype.forEach.call(arguments, function (el) {
+			this.dObj.sys.flags.use[el] = true
+		}, this);
+		
+		return this;
+	};
+	/**
+	 * disable flag
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} [objectN] — flag name
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.disable = function () {
+		Array.prototype.forEach.call(arguments, function (el) {
+			this.dObj.sys.flags.use[el] = false
+		}, this);
+		
+		return this;
+	};
+	/**
+	 * toggle flag
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} [objectN] — flag name
+	 * @return {Collection Object}
+	 */
+	Collection.prototype.toggle = function () {
+		Array.prototype.forEach.call(arguments, function (el) {
+			if (this.dObj.sys.flags.use[el] === true) {
+				this.disable(arguments[key]);
+			} else { this.enable(arguments[key]); }
+		}, this);
+	};
+	
+	// native
+	
+	/**
+	 * return JSON string collection (in context)
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection
+	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
+	 * @param {Number|String} [space] — indentation of nested structures
+	 * @return {String}
+	 */
+	Collection.prototype.toString = function (objID, replacer, space) {
+		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
+		
+		replacer = replacer || '';
+		space = space || '';
+		
+		if (objID && C.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }
+		
+		return JSON.stringify(C.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);
+	};
+	/**
+	 * return collection length (only active)
+	 * 
+	 * @this {Colletion Object}
+	 * @return {Number}
+	 */
+	Collection.prototype.valueOf = function () {
+		if (arguments[0] === 'object') { return this; }
+		return this.length(this.ACTIVE);
+	};	
 	/////////////////////////////////
 	//// design methods (print)
 	/////////////////////////////////
@@ -3323,24 +4669,24 @@
 			
 			result = '', action, e,
 			
-			dom = this.drivers.dom;
+			dom = C.drivers.dom;
 		
 		// easy implementation
-		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {
+		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
 			param = {page: param};
-		} else if (!Collection.isExists(param)) { param = {page: this._get('page')}; }
+		} else if (!C.isExists(param)) { param = {page: this._get('page')}; }
 		
 		// the expansion of input parameters
-		Collection.extend(true, opt, this.dObj.active, param);
-		if (param) { opt.page = Collection.expr(opt.page, this._get('page')); }
+		C.extend(true, opt, this.dObj.active, param);
+		if (param) { opt.page = C.expr(opt.page, this._get('page')); }
 		if (opt.page < 1) { opt.page = 1; }
 		
-		opt.collection = Collection.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
-		opt.template = Collection.isString(opt.template) ? this._get('template', opt.template) : opt.template;
-		opt.cache = Collection.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
+		opt.collection = C.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
+		opt.template = C.isString(opt.template) ? this._get('template', opt.template) : opt.template;
+		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
 		
-		opt.target = Collection.isString(opt.target) ? dom.find(opt.target) : opt.target;
-		opt.pager = Collection.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
+		opt.target = C.isString(opt.target) ? dom.find(opt.target) : opt.target;
+		opt.pager = C.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
 		
 		opt.filter = this._isStringExpression(opt.filter) ? this._compileFilter(opt.filter) : opt.filter;
 		opt.parser = this._isStringExpression(opt.parser) ? this._compileParser(opt.parser) : opt.parser;
@@ -3366,7 +4712,7 @@
 		};
 		
 		// get collection
-		data = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));
+		data = C.byLink(opt.collection, this._getActiveParam('context') + C.CHILDREN + ((param && param.context) || ''));
 		length = this.length(opt.collection);
 		
 		// filter length
@@ -3384,14 +4730,14 @@
 		opt.breaker = opt.breaker || length;
 		
 		// without cache
-		if (Collection.isPlainObject(data) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+		if (C.isPlainObject(data) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !opt.breaker || opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker;
 			
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.breaker, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		
 		// with cache
-		} else if (Collection.isArray(data) && opt.cache.iteration === true) {
+		} else if (C.isArray(data) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !breaker ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker :
@@ -3517,7 +4863,7 @@
 			},
 			
 			
-			i, j = 0, from, to, dom = this.drivers.dom;
+			i, j = 0, from, to, dom = C.drivers.dom;
 		
 		// for each node
 		Array.prototype.forEach.call(param.pager, function (el) {
@@ -3679,6 +5025,65 @@
 		});
 		
 		return this;
-	};		/////////////////////////////////	//// design methods (table)	/////////////////////////////////			/**	 * generating the table	 * 	 * @this {Colletion Object}	 * @param {Number} [count=4] — td number to a string	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes	 * @param {Boolean} [empty=true] — display empty cells	 * @return {Colletion Object}	 */	Collection.prototype.genTable = function (target, count, selector, empty) {		// overload		if (Collection.isNumber(target)) {			empty = selector;			selector = count;			count = target;			target = '';		}		count = count || 4;		selector = selector || 'div';		empty = empty === false ? false : true;				var i, table, tr, td, dom = this.drivers.dom;				target = target ? Collection.isString(target) ? dom.find(target) : target : this._get('target');				Array.prototype.forEach.call(target, function (el) {			table = document.createElement('table');			i = 0;						Array.prototype.forEach.call(dom.find(selector, el), function (el) {				if (i === 0) {					tr = document.createElement('tr');					table.appendChild(tr);				}				td = document.createElement('td');				td.appendChild(el);				tr.appendChild(td);								i += 1;				if (i === count) { i = 0; }			});						// add empty cells			if (empty === true) {				i = count - tr.childNodes.length;				while ((i -= 1) > -1) {					tr.appendChild(document.createElement('td'));				}			}						el.appendChild(table);		}, this);				return this;	};	return Collection;
-})();
+	};	
+	/////////////////////////////////
+	//// design methods (table)
+	/////////////////////////////////
+		
+	/**
+	 * generating the table
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Number} [count=4] — td number to a string
+	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes
+	 * @param {Boolean} [empty=true] — display empty cells
+	 * @return {Colletion Object}
+	 */
+	Collection.prototype.genTable = function (target, count, selector, empty) {
+		// overload
+		if (C.isNumber(target)) {
+			empty = selector;
+			selector = count;
+			count = target;
+			target = '';
+		}
+
+		count = count || 4;
+		selector = selector || 'div';
+		empty = empty === false ? false : true;
+		
+		var i, table, tr, td, dom = C.drivers.dom;
+		
+		target = target ? C.isString(target) ? dom.find(target) : target : this._get('target');
+		
+		Array.prototype.forEach.call(target, function (el) {
+			table = document.createElement('table');
+			i = 0;
+			
+			Array.prototype.forEach.call(dom.find(selector, el), function (el) {
+				if (i === 0) {
+					tr = document.createElement('tr');
+					table.appendChild(tr);
+				}
+				td = document.createElement('td');
+				td.appendChild(el);
+				tr.appendChild(td);
+				
+				i += 1;
+				if (i === count) { i = 0; }
+			});
+			
+			// add empty cells
+			if (empty === true) {
+				i = count - tr.childNodes.length;
+				while ((i -= 1) > -1) {
+					tr.appendChild(document.createElement('td'));
+				}
+			}
+			
+			el.appendChild(table);
+		}, this);
+		
+		return this;
+	};})();
 if (typeof $C === 'undefined') { var $C = Collection; }//

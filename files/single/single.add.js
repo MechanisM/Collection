@@ -57,9 +57,9 @@
 		// simple add
 		if (!sourceID) {
 			// add type
-			if (Collection.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(data, propType.toString(), cValue);
+			if (C.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = C.addElementToObject(data, propType.toString(), cValue);
 			} else {
 				lCheck = true;
 				data[propType](cValue);
@@ -67,13 +67,13 @@
 		
 		// move
 		} else {
-			cValue = Collection.isExists(cValue) ? cValue.toString() : '';
-			sObj = Collection.byLink(this._get('collection', sourceID || ''), cValue);
+			cValue = C.isExists(cValue) ? cValue.toString() : '';
+			sObj = C.byLink(this._get('collection', sourceID || ''), cValue);
 			
 			// add type
-			if (Collection.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + Collection.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = Collection.addElementToObject(data, propType.toString(), sObj);
+			if (C.isPlainObject(data)) {
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
+				lCheck = C.addElementToObject(data, propType.toString(), sObj);
 			} else {
 				lCheck = true;
 				data[propType](sObj);

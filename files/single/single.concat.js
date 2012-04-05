@@ -18,7 +18,7 @@
 	 * $C([1, 2, 3]).concat([4, 5, 6]).getCollection();
 	 */
 	Collection.prototype.concat = function (obj, context, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		id = id || '';
 		var data, e;	
 		
@@ -32,10 +32,10 @@
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!') }
 		
-		if (Collection.isPlainObject(data)) {
-			Collection.extend(true, data, obj)
-		} else if (Collection.isArray(data)) {
-			if (Collection.isArray(obj)) {
+		if (C.isPlainObject(data)) {
+			C.extend(true, data, obj)
+		} else if (C.isArray(data)) {
+			if (C.isArray(obj)) {
 				data = Array.prototype.concat(data, obj);
 				this._setOne(context, data, id);
 			} else { this.add(obj, 'push', id); }

@@ -18,9 +18,9 @@
 	 * $C.expr('+=2', 'test');
 	 */
 	Collection.expr = function (val, old) {
-		old = Collection.isExists(old) ? old : '';
+		old = C.isExists(old) ? old : '';
 		
-		if (Collection.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
+		if (C.isString(val) && val.search(/^[+-\\*\/]{1}=/) !== -1) {
 			val = val.split('=');
 			if (!isNaN(val[1])) { val[1] = +val[1]; }
 			

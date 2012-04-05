@@ -29,7 +29,7 @@
 		mult = mult === false ? false : true;
 		var res = mult === true ? [] : -1,
 			to, set = false,
-			arg = Collection.toArray(arguments),
+			arg = C.toArray(arguments),
 			action;
 		
 		// overload ID
@@ -37,8 +37,8 @@
 			id = id.split(this.SPLITTER);
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = Collection.trim(id[1]));
-		id = arg[1] = Collection.trim(id[0]);
+		id[1] && (to = id[1].trim());
+		id = arg[1] = id[0].trim();
 		
 		if (mult === true) {
 			/** @private */
@@ -56,7 +56,7 @@
 			to = to.split(this.PLUS);
 			
 			if (to[1]) {
-				to = Collection.trim(to[1]);
+				to = to[1].trim();
 				if (this._exists('collection', to)) {
 					this
 						.disable('context')

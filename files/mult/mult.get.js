@@ -34,7 +34,7 @@
 		id = id || '';
 		var res,
 			to, set = false,
-			arg = Collection.toArray(arguments),
+			arg = C.toArray(arguments),
 			action;
 		
 		// overload ID
@@ -42,22 +42,22 @@
 			id = id.split(this.SPLITTER);
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = Collection.trim(id[1]));
-		id = arg[1] = Collection.trim(id[0]);
+		id[1] && (to = id[1].trim());
+		id = arg[1] = id[0].trim();
 		
 		// overload
-		if (Collection.isArray(filter)) {
+		if (C.isArray(filter)) {
 			res = [];
 			filter.forEach(function (el) {
 				res = res.concat(this.get(el, id, mult || '', count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''));
 			}, this);
 		} else {
 			// overload
-			if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
 				res = this._getOne(filter, id);
 			} else {
 				mult = mult === false ? false : true;
-				res = mult === true || Collection.isArray(filter) ? [] : -1;
+				res = mult === true || C.isArray(filter) ? [] : -1;
 				
 				if (mult === true) {
 					/** @private */
@@ -77,7 +77,7 @@
 			to = to.split(this.PLUS);
 			
 			if (to[1]) {
-				to = Collection.trim(to[1]);
+				to = to[1].trim();
 				if (this._exists('collection', to)) {
 					this
 						.disable('context')

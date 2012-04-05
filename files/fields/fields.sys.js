@@ -48,12 +48,12 @@
 	// generate system fields
 	(function (data) {
 		var upperCase,
-			sys = Collection.fields.dObj.sys;
+			sys = C.fields.dObj.sys;
 		
 		data.forEach(function (el) {
 			for (var key in el) {
 				if (!el.hasOwnProperty(key)) { continue; }
-				upperCase = Collection.toUpperCase(key, 1);
+				upperCase = C.toUpperCase(key, 1);
 				
 				sys["active" + upperCase + "ID"] = null;
 				sys["tmp" + upperCase] = {};

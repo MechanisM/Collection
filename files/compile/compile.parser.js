@@ -24,13 +24,13 @@
 		}
 		
 		// if parser is function
-		if (Collection.isFunction(parser)) {
+		if (C.isFunction(parser)) {
 			if (!this._getActiveParam('parser') || !_tmpParser) {
 				return parser.call(parser, str, this);
 			} else {
 				if (!_tmpParser.name) {
-					while (this._exists('parser', '__tmp:' + (_tmpParser.name = Collection.getRandomInt(0, 10000)))) {
-						_tmpParser.name = Collection.getRandomInt(0, 10000);
+					while (this._exists('parser', '__tmp:' + (_tmpParser.name = C.getRandomInt(0, 10000)))) {
+						_tmpParser.name = C.getRandomInt(0, 10000);
 					}
 					this._push('parser', '__tmp:' + _tmpParser.name, parser);
 				}
@@ -40,13 +40,13 @@
 		}
 		
 		// if parser is string
-		if (Collection.isString(parser)) {
+		if (C.isString(parser)) {
 			if (this._getActiveParam('parser') && _tmpParser) {
 				parser = this.ACTIVE + ' && ' + parser;
 			}
 			
 			// if need to compile parser
-			if (this._isStringExpression(parser = Collection.trim(parser))) {
+			if (this._isStringExpression(parser = parser.trim())) {
 				if (!this._exists('parser', '__tmp:' + parser)) {
 					this._push('parser', '__tmp:' + parser, this._compileParser(parser));
 				}
@@ -60,7 +60,7 @@
 		
 		// calculate
 		parser.forEach(function (el) {
-			str = this._customParser((el = Collection.trim(el)), str);
+			str = this._customParser((el = el.trim()), str);
 		}, this);
 
 		return str;

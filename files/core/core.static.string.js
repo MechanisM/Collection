@@ -41,7 +41,7 @@
 	 */
 	Collection.toUpperCase = function (str, max, from) {
 		from = from || 0;
-		max = Collection.isExists(max) ? from + max : str.length;
+		max = C.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toUpperCase() + str.substring(max);
 	};
@@ -62,7 +62,7 @@
 	 */
 	Collection.toLowerCase = function (str, max, from) {
 		from = from || 0;
-		max = Collection.isExists(max) ? from + max : str.length;
+		max = C.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
 	};

@@ -179,7 +179,7 @@
 	
 	// generate default values
 	Collection.prototype.stack.forEach(function (el) {
-		var key, active = Collection.fields.dObj.active;
+		var key, active = C.fields.dObj.active;
 		for (key in el) {
 			if (!el.hasOwnProperty(key)) { continue; }
 			

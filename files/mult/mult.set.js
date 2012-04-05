@@ -50,14 +50,14 @@
 	 */
 	Collection.prototype.set = function (filter, replaceObj, id, mult, count, from, indexOf, lastIndexOf, rev) {
 		// overload
-		if (Collection.isNumber(filter) || (Collection.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
 			return this._setOne(filter, replaceObj, id || '');
 		}
 		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
 		var e, arg, res, action,
-			isFunc = Collection.isFunction(replaceObj);
+			isFunc = C.isFunction(replaceObj);
 		
 		if (isFunc) {
 			/** @private */
@@ -67,10 +67,10 @@
 			};
 		} else {
 			/** @private */
-			action = function (el, key, data) { data[key] = Collection.expr(replaceObj, data[key]); };
+			action = function (el, key, data) { data[key] = C.expr(replaceObj, data[key]); };
 		}
 		
-		arg = Collection.unshiftArguments(arguments, action);
+		arg = C.unshiftArguments(arguments, action);
 		arg.splice(2, 1);
 		
 		// events

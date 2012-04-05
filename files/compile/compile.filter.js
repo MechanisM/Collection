@@ -38,13 +38,13 @@
 		}
 
 		// if filter is function
-		if (Collection.isFunction(filter)) {
+		if (C.isFunction(filter)) {
 			if (!this._getActiveParam('filter') || !_tmpFilter) {
 				return filter.call(filter, el, key, data, i, length, cObj, id);
 			} else {
 				if (!_tmpFilter.name) {
-					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = Collection.getRandomInt(0, 10000)))) {
-						_tmpFilter.name = Collection.getRandomInt(0, 10000);
+					while (this._exists('filter', '__tmp:' + (_tmpFilter.name = C.getRandomInt(0, 10000)))) {
+						_tmpFilter.name = C.getRandomInt(0, 10000);
 					}
 					this._push('filter', '__tmp:' + _tmpFilter.name, filter);
 				}
@@ -54,13 +54,13 @@
 		}
 		
 		// if filter is string
-		if (!Collection.isArray(filter)) {
+		if (!C.isArray(filter)) {
 			if (this._getActiveParam('filter') && _tmpFilter) {
 				filter = this.ACTIVE + ' && (' + filter + ')';
 			}
 			
 			// if need to compile filter
-			if (this._isStringExpression(filter = Collection.trim(filter))) {
+			if (this._isStringExpression(filter = filter.trim())) {
 				if (!this._exists('filter', '__tmp:' + filter)) {
 					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
 				}
@@ -69,7 +69,7 @@
 			}
 			
 			// prepare string
-			filter = Collection.trim(
+			filter = C.trim(
 						filter
 							.toString()
 							.replace(/\s*(\(|\))\s*/g, ' $1 ')

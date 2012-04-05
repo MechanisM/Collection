@@ -14,7 +14,7 @@
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._setOne = function (context, value, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		value = typeof value === 'undefined' ? '' : value;
 		id = id || '';
 
@@ -31,7 +31,7 @@
 			} else { return this._update('collection', value); }
 		}
 		
-		Collection.byLink(this._get('collection', id), activeContext + Collection.CHILDREN + context, value);
+		C.byLink(this._get('collection', id), activeContext + C.CHILDREN + context, value);
 	
 		return this;
 	};
@@ -45,6 +45,6 @@
 	 * @return {mixed}
 	 */
 	Collection.prototype._getOne = function (context, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
-		return Collection.byLink(this._get('collection', id || ''), this._getActiveParam('context') + Collection.CHILDREN + context);
+		context = C.isExists(context) ? context.toString() : '';
+		return C.byLink(this._get('collection', id || ''), this._getActiveParam('context') + C.CHILDREN + context);
 	};

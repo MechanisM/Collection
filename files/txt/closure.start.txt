@@ -1,1 +1,5 @@
-var Collection;(function () {	'use strict';	
+
+var Collection;
+(function (C) {
+	'use strict';
+	

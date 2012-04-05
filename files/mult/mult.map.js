@@ -26,7 +26,7 @@
 		id = id || '';
 		var res,
 			to, set = false,
-			arg = Collection.toArray(arguments),
+			arg = C.toArray(arguments),
 			isFunc, isExists, isArray,
 			action;
 		
@@ -35,15 +35,15 @@
 			id = id.split(this.SPLITTER);
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = Collection.trim(id[1]));
-		id = arg[2] = Collection.trim(id[0]);
+		id[1] && (to = id[1].trim());
+		id = arg[2] = id[0].trim();
 		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFilter(replaceObj) : replaceObj || '';
 		
-		isFunc = Collection.isFunction(replaceObj);
-		isExists = !isFunc && Collection.isExists(replaceObj);
-		isArray = Collection.isArray(this._getOne('', id));
+		isFunc = C.isFunction(replaceObj);
+		isExists = !isFunc && C.isExists(replaceObj);
+		isArray = C.isArray(this._getOne('', id));
 		
 		if (isArray) {
 			res = [];
@@ -66,12 +66,12 @@
 				if (isArray) {
 					/** @private */
 					action = function (el, key, data) {
-						res.push(Collection.expr(replaceObj, data[key]));
+						res.push(C.expr(replaceObj, data[key]));
 					};
 				} else {
 					/** @private */
 					action = function (el, key, data) {
-						res[key] = Collection.expr(replaceObj, data[key]);
+						res[key] = C.expr(replaceObj, data[key]);
 					};
 				}
 			} else {
@@ -98,7 +98,7 @@
 			to = to.split(this.PLUS);
 			
 			if (to[1]) {
-				to = Collection.trim(to[1]);
+				to = to[1].trim();
 				if (this._exists('collection', to)) {
 					this
 						.disable('context')

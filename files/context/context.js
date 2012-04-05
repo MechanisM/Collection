@@ -17,12 +17,12 @@
 	 * $C('', {context: 'a > b > c'}).parentContext(2);
 	 */
 	Collection.prototype.parentContext = function (n, id) {
-		var context = this._get('context', id || '').split(Collection.CHILDREN),
+		var context = this._get('context', id || '').split(C.CHILDREN),
 			i = n || 1;
 		
 		while ((i -= 1) > -1) { context.splice(-1, 1); }
 		
-		return context.join(Collection.CHILDREN);
+		return context.join(C.CHILDREN);
 	};
 	/**
 	 * change the context (the parent element)

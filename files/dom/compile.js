@@ -12,7 +12,7 @@
 	 * @return {Function}
 	 */
 	Collection.ctplCompile = function (selector) {
-		Collection.isString(selector) && (selector = Collection.drivers.dom.find(selector));
+		C.isString(selector) && (selector = C.drivers.dom.find(selector));
 		if (selector.length === 0) { throw new Error('DOM element does\'t exist!'); }
 		
 		var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,
@@ -42,15 +42,15 @@
 	 * @return {Collection Object}
 	 */
 	Collection.prototype.ctplMake = function (selector) {	
-		var dom = Collection.drivers.dom;
-		Collection.isString(selector) && (selector = dom.find(selector));
+		var dom = C.drivers.dom;
+		C.isString(selector) && (selector = dom.find(selector));
 		
 		Array.prototype.forEach.call(selector, function (el) {
 			var data = dom.data(el, 'ctpl'), key,
 				prefix = data.prefix ? data.prefix + '_' : '';
 			
 			// compile template
-			this._push('template', prefix + data.name, Collection.ctplCompile(el));
+			this._push('template', prefix + data.name, C.ctplCompile(el));
 			if (data.set && data.set === true) { this._set('template', prefix + data.name); }
 			
 			// compile

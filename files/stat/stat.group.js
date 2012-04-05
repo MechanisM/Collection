@@ -35,12 +35,12 @@
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
 		
-		var operType = Collection.isString(oper),
+		var operType = C.isString(oper),
 			result = {}, tmp = {}, key,
 			
 			/** @private */
 			deepAction = function (el, key, data, i, length, cObj, id) {
-				var param = Collection.isString(field) ? Collection.byLink(el, field) : field(el, key, data, i, length, cObj, id);
+				var param = C.isString(field) ? C.byLink(el, field) : field(el, key, data, i, length, cObj, id);
 				
 				switch (oper) {
 					case 'count' : {
@@ -69,7 +69,7 @@
 							if (tmp[this.key] === 0) {
 								result[this.key] = param;
 								tmp[this.key] = 1;
-							} else { result[this.key] = Collection.expr(oper + '=' + param, result[this.key]); }
+							} else { result[this.key] = C.expr(oper + '=' + param, result[this.key]); }
 						}
 					}
 				}
@@ -83,12 +83,12 @@
 				
 				if (oper !== 'first' && oper !== 'last') {
 					cObj
-						._update('context', '+=' + Collection.CHILDREN + (deepAction.key = key))
+						._update('context', '+=' + C.CHILDREN + (deepAction.key = key))
 						.forEach(deepAction, filter || '', id, '', count, from, indexOf)
 						.parent();
 				} else if (oper === 'first') {
-					result[key] = Collection.byLink(el, Collection.ORDER[0] + '0' + Collection.ORDER[1]);
-				} else { result[key] = Collection.byLink(el, Collection.ORDER[0] + '-1' + Collection.ORDER[1]); }
+					result[key] = C.byLink(el, C.ORDER[0] + '0' + C.ORDER[1]);
+				} else { result[key] = C.byLink(el, C.ORDER[0] + '-1' + C.ORDER[1]); }
 					
 				return true;
 			};

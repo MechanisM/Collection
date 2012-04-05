@@ -32,14 +32,14 @@
 		mult = mult === false ? false : true;
 		link = link || false;
 		
-		var isString = Collection.isString(field),
+		var isString = C.isString(field),
 			res = {}, arg, action;
 		
 		if (isString) {
 			if (link) {
 				/** @private */
 				action = function (el, key) {
-					var param = Collection.byLink(el, field);
+					var param = C.byLink(el, field);
 					
 					if (!res[param]) {
 						res[param] = [key];
@@ -48,7 +48,7 @@
 			} else {
 				/** @private */
 				action = function (el, key) {
-					var param = Collection.byLink(el, field);
+					var param = C.byLink(el, field);
 					
 					if (!res[param]) {
 						res[param] = [el];
@@ -83,7 +83,7 @@
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
 		
-		arg = Collection.unshiftArguments(arguments, action);
+		arg = C.unshiftArguments(arguments, action);
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
 	

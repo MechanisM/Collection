@@ -42,24 +42,24 @@
 			
 			result = '', action, e,
 			
-			dom = this.drivers.dom;
+			dom = C.drivers.dom;
 		
 		// easy implementation
-		if (Collection.isExists(param) && (Collection.isString(param) || Collection.isNumber(param))) {
+		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
 			param = {page: param};
-		} else if (!Collection.isExists(param)) { param = {page: this._get('page')}; }
+		} else if (!C.isExists(param)) { param = {page: this._get('page')}; }
 		
 		// the expansion of input parameters
-		Collection.extend(true, opt, this.dObj.active, param);
-		if (param) { opt.page = Collection.expr(opt.page, this._get('page')); }
+		C.extend(true, opt, this.dObj.active, param);
+		if (param) { opt.page = C.expr(opt.page, this._get('page')); }
 		if (opt.page < 1) { opt.page = 1; }
 		
-		opt.collection = Collection.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
-		opt.template = Collection.isString(opt.template) ? this._get('template', opt.template) : opt.template;
-		opt.cache = Collection.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
+		opt.collection = C.isString(opt.collection) ? this._get('collection', opt.collection) : opt.collection;
+		opt.template = C.isString(opt.template) ? this._get('template', opt.template) : opt.template;
+		opt.cache = C.isExists(param.cache) ? param.cache : this._getActiveParam('cache');
 		
-		opt.target = Collection.isString(opt.target) ? dom.find(opt.target) : opt.target;
-		opt.pager = Collection.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
+		opt.target = C.isString(opt.target) ? dom.find(opt.target) : opt.target;
+		opt.pager = C.isString(opt.pager) ? dom.find(opt.pager) : opt.pager;
 		
 		opt.filter = this._isStringExpression(opt.filter) ? this._compileFilter(opt.filter) : opt.filter;
 		opt.parser = this._isStringExpression(opt.parser) ? this._compileParser(opt.parser) : opt.parser;
@@ -85,7 +85,7 @@
 		};
 		
 		// get collection
-		data = Collection.byLink(opt.collection, this._getActiveParam('context') + Collection.CHILDREN + ((param && param.context) || ''));
+		data = C.byLink(opt.collection, this._getActiveParam('context') + C.CHILDREN + ((param && param.context) || ''));
 		length = this.length(opt.collection);
 		
 		// filter length
@@ -103,14 +103,14 @@
 		opt.breaker = opt.breaker || length;
 		
 		// without cache
-		if (Collection.isPlainObject(data) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
+		if (C.isPlainObject(data) || !opt.cache || opt.cache.iteration === false || opt.cache.firstIteration === false || opt.cache.lastIteration === false) {
 			start = !opt.breaker || opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker;
 			
 			this.forEach(action, opt.filter, this.ACTIVE, true, opt.breaker, start);
 			if (opt.cache && opt.cache.iteration === false) { opt.cache.lastIteration = false; }
 		
 		// with cache
-		} else if (Collection.isArray(data) && opt.cache.iteration === true) {
+		} else if (C.isArray(data) && opt.cache.iteration === true) {
 			// calculate the starting position
 			start = !breaker ?
 						opt.page === 1 ? 0 : (opt.page - 1) * opt.breaker :
@@ -236,7 +236,7 @@
 			},
 			
 			
-			i, j = 0, from, to, dom = this.drivers.dom;
+			i, j = 0, from, to, dom = C.drivers.dom;
 		
 		// for each node
 		Array.prototype.forEach.call(param.pager, function (el) {

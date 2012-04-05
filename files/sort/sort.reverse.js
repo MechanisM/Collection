@@ -47,14 +47,14 @@
 		if (e === false) { return this; }
 		
 		// get by link
-		data = Collection.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = C.byLink(this._get('collection', id), this._getActiveParam('context'));
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
 		
-		if (Collection.isArray(data)) {
+		if (C.isArray(data)) {
 			data.reverse();
-		} else { this._setOne('', Collection._reverseObject(data), id); }
+		} else { this._setOne('', C._reverseObject(data), id); }
 		
 		return this;
 	};

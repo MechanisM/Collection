@@ -12,7 +12,7 @@
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._removeOne = function (context, id) {
-		context = Collection.isExists(context) ? context.toString() : '';
+		context = C.isExists(context) ? context.toString() : '';
 		var activeContext = this._getActiveParam('context'), e;
 		
 		// events
@@ -22,7 +22,7 @@
 		// if no context
 		if (!context && !activeContext) {
 			this._setOne('', null);
-		} else { Collection.byLink(this._get('collection', id || ''), activeContext + Collection.CHILDREN + context, '', true); }
+		} else { C.byLink(this._get('collection', id || ''), activeContext + C.CHILDREN + context, '', true); }
 	
 		return this;
 	};
@@ -38,17 +38,17 @@
 		id = id || '';
 		var key, i;
 		
-		if (Collection.isPlainObject(objContext)) {
+		if (C.isPlainObject(objContext)) {
 			for (key in objContext) {
 				if (objContext.hasOwnProperty(key)) {
-					if (Collection.isArray(objContext[key])) {
+					if (C.isArray(objContext[key])) {
 						for (i = objContext[key].length; (i -= 1) > -1;) {
 							this._removeOne(objContext[key][i], key);
 						}
 					} else { this._removeOne(objContext[key], key); }
 				}
 			}
-		} else if (Collection.isArray(objContext)) {
+		} else if (C.isArray(objContext)) {
 			for (i = objContext.length; (i -= 1) > -1;) { this._removeOne(objContext[i], id); }
 		} else { this._removeOne(objContext, id); }
 	
