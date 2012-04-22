@@ -68,3 +68,6 @@
 			{resultNull: ''}
 		]
 	};
+	
+	// private variables
+	var fn = Collection.prototype;

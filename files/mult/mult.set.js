@@ -70,7 +70,7 @@
 			action = function (el, key, data) { data[key] = C.expr(replaceObj, data[key]); };
 		}
 		
-		arg = C.unshiftArguments(arguments, action);
+		arg = C.unshift(arguments, action);
 		arg.splice(2, 1);
 		
 		// events

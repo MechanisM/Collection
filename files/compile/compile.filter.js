@@ -69,13 +69,13 @@
 			}
 			
 			// prepare string
-			filter = C.trim(
-						filter
-							.toString()
-							.replace(/\s*(\(|\))\s*/g, ' $1 ')
-							.replace(/\s*(\|\||&&)\s*/g, ' $1 ')
-							.replace(/(!)\s*/g, '$1')
-					).split(' ');
+			filter = filter
+				.toString()
+				.replace(/\s*(\(|\))\s*/g, ' $1 ')
+				.replace(/\s*(\|\||&&)\s*/g, ' $1 ')
+				.replace(/(!)\s*/g, '$1')
+				.trim()
+				.split(' ');
 			
 			// remove 'dead' elements		
 			for (j = filter.length; (j -= 1) > -1;) {

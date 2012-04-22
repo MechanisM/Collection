@@ -85,7 +85,7 @@
 	 * @example
 	 * $C.isNumber(2);
 	 */
-	Collection.isNumber = function (obj) { return C.type(obj) === 'number';  };
+	Collection.isNumber = function (obj) { return C.type(obj) === 'number'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a boolean
@@ -111,7 +111,7 @@
 	 * @example
 	 * $C.isFunction(function () {});
 	 */
-	Collection.isFunction = function (obj) { return C.type(obj) === 'function';  };
+	Collection.isFunction = function (obj) { return C.type(obj) === 'function'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a array (not an array-like object)
@@ -124,7 +124,7 @@
 	 * @example
 	 * $C.isArray([1, 2, 3]);
 	 */
-	Collection.isArray = function (obj) { return C.type(obj) === 'array';  };
+	Collection.isArray = function (obj) { return C.type(obj) === 'array'; };
 	
 	/**
 	 * returns a Boolean indicating whether the object is a plain object
@@ -165,7 +165,7 @@
 	};
 	
 	/**
-	 * returns a Boolean indicating whether the object is a collection
+	 * returns a Boolean indicating whether the object is a collection (hash table or array)
 	 *
 	 * @param {mixed} obj — object to test whether or not it is a collection
 	 * @return {Boolean}

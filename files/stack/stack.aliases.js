@@ -4,7 +4,7 @@
 	/////////////////////////////////
 		
 	// generate aliases
-	/*Collection.prototype.stack.forEach(function (el) {
+	Collection.prototype.stack.forEach(function (el) {
 		var key, nm;
 		
 		for (key in el) {
@@ -27,7 +27,7 @@
 			}(key);
 			
 			fn['push' + nm] = function (nm) {
-				return function (objID, newParam) { return this._push.apply(this, C.unshiftArguments(arguments, nm)); }
+				return function (objID, newParam) { return this._push.apply(this, C.unshift(arguments, nm)); }
 			}(key);
 			
 			fn['set' + nm] = function (nm) {
@@ -72,4 +72,4 @@
 				return function (id) { return this._get(nm, id || ''); };
 			}(key);
 		}
-	});*/
+	});

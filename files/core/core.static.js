@@ -23,6 +23,7 @@
 	 * $C.byLink(-1, 'a > b > eq(5) > 1');
 	 */
 	Collection.byLink = function (obj, context, value, del) {
+		// prepare context
 		context = context
 					.toString()
 					.replace(new RegExp('\\s*' + C.CHILDREN + '\\s*', 'g'), C.CONTEXT_SEPARATOR + C.CHILDREN + C.CONTEXT_SEPARATOR)

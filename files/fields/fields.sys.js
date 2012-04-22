@@ -45,12 +45,14 @@
 		}
 	};
 	
+	var sys = C.fields.dObj.sys;
+	
 	// generate system fields
 	Collection.prototype.stack.forEach(function (el) {
 		var key, upperCase;
+		
 		for (key in el) {
 			if (!el.hasOwnProperty(key)) { continue; }
-			
 			upperCase = C.toUpperCase(key, 1);
 			
 			// default value

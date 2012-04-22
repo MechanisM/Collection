@@ -31,8 +31,8 @@
 		active.collection = collection;
 	};
 	
-	// private variables
-	var C = Collection,
-		active = C.fields.dObj.active,
-		sys = C.fields.dObj.sys,
-		fn = C.prototype;
+	var // local variable for quick access
+		C = Collection,
+		
+		debug = typeof window.debug !== 'undefined' && window.debug === true,
+		key;

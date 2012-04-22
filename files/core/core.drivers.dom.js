@@ -55,6 +55,7 @@
 			if (attr && attr.length > 0) {
 				Array.prototype.forEach.call(attr, function (el) {
 					if (el.name.substring(0, 5) === 'data-') {
+						// parsing JSON if need
 						data[el.name.replace('data-', '')] = C.isString(el.value) && el.value.search(/^\{|\[/) !== -1 ? JSON.parse(el.value) : el.value;
 					}
 				});
@@ -229,16 +230,14 @@
 		}
 	};
 	
-	// definition of DOM driver
-	(function () {
-		var key, engines = C.drivers.dom.engines;
-		for (key in engines) {
-			if (!engines.hasOwnProperty(key)) { continue; }
-					
-			if (engines[key].is()) {
-				C.drivers.dom.lib = key;
+	// definition version of the DOM framework
+	var dom = C.drivers.dom;
+	for (key in dom.engines) {
+		if (!dom.engines.hasOwnProperty(key)) { continue; }
 				
-				return true;
-			}
+		if (dom.engines[key].is()) {
+			dom.lib = key;
+			
+			break;
 		}
-	})();
+	}

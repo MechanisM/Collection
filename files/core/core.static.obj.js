@@ -105,20 +105,25 @@
 	};
 	
 	/**
-	 * unshift for arguments (object)
+	 * unshift for object
 	 * 
 	 * @param {Object} obj — some object
 	 * @param {mixed} val — new value
 	 * @return {Array}
 	 *
 	 * @example
-	 * $C.unshiftArguments({0: 1, length: 1}, 2);
+	 * $C.unshift({0: 1, length: 1}, 2);
 	 */
-	Collection.unshiftArguments = function (obj, val) {
-		var newObj = [val], i = -1, oLength = obj.length;
-		while ((i += 1) < oLength) { newObj.push(obj[i]); }
+	Collection.unshift = function (obj, val) {
+		var newArray = [val], key;
 		
-		return newObj;
+		for (key in obj) {
+			if (!obj.hasOwnProperty(key)) { continue; }
+			
+			newArray.push(obj[key]);
+		}
+		
+		return newArray;
 	};
 	
 	/**

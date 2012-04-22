@@ -83,7 +83,7 @@
 			set = true;
 		} else { id = id.split(this.SHORT_SPLITTER); }
 		
-		arg = C.unshiftArguments(arguments, action);
+		arg = C.unshift(arguments, action);
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
 	
@@ -112,7 +112,7 @@
 	 *	.groupLinks(':el % 2 === 0');
 	 */
 	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf, lastIndexOf, rev) {
-		var arg = Collection.unshiftArguments(arguments, action);
+		var arg = Collection.unshift(arguments, action);
 		arg.push(true);
 		
 		return this.group.apply(this, arg);
