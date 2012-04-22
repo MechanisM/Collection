@@ -139,12 +139,12 @@
 				equal(db._exists('collection'), true, 'with active parameter');
 			});
 			
-			test('_getActiveID', function () {
+			test('_getActiveId', function () {
 				var db = new Collection()
 					._push('collection', {table1: [1, 2], table2: [1]})
 					._set('collection', 'table1');
 
-				equal(db._getActiveID('collection'), 'table1', 'simple test');
+				equal(db._getActiveId('collection'), 'table1', 'simple test');
 			});
 			
 			test('_active', function () {

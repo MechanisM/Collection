@@ -1183,12 +1183,12 @@ function $exec(text){
 	return text;
 };
 
-Native.UID = 1;
+Native.UId = 1;
 
 var $uid = (Browser.Engine.trident) ? function(item){
-	return (item.uid || (item.uid = [Native.UID++]))[0];
+	return (item.uid || (item.uid = [Native.UId++]))[0];
 } : function(item){
-	return item.uid || (item.uid = Native.UID++);
+	return item.uid || (item.uid = Native.UId++);
 };
 
 var Window = new Native({
@@ -3836,9 +3836,9 @@ Element.implement({
 
 	match: function(selector){
 		if (!selector || (selector == this)) return true;
-		var tagid = Selectors.Utils.parseTagAndID(selector);
+		var tagid = Selectors.Utils.parseTagAndId(selector);
 		var tag = tagid[0], id = tagid[1];
-		if (!Selectors.Filters.byID(this, id) || !Selectors.Filters.byTag(this, tag)) return false;
+		if (!Selectors.Filters.byId(this, id) || !Selectors.Filters.byTag(this, tag)) return false;
 		var parsed = Selectors.Utils.parseSelector(selector);
 		return (parsed) ? Selectors.Utils.filter(this, parsed, {}) : true;
 	}
@@ -3915,7 +3915,7 @@ Selectors.Utils = {
 		return Selectors.Cache.parsed[selector] = parsed;
 	},
 
-	parseTagAndID: function(selector){
+	parseTagAndId: function(selector){
 		var tag = selector.match(Selectors.RegExps.tag);
 		var id = selector.match(Selectors.RegExps.id);
 		return [(tag) ? tag[1] : '*', (id) ? id[1] : false];
@@ -3944,7 +3944,7 @@ Selectors.Utils = {
 		return true;
 	},
 
-	getByTagAndID: function(ctx, tag, id){
+	getByTagAndId: function(ctx, tag, id){
 		if (id){
 			var item = (ctx.getElementById) ? ctx.getElementById(id, true) : Element.getElementById(ctx, id, true);
 			return (item && Selectors.Filters.byTag(item, tag)) ? [item] : [];
@@ -3974,11 +3974,11 @@ Selectors.Utils = {
 
 			var splitter = splitters[i - 1];
 
-			var tagid = Selectors.Utils.parseTagAndID(selector);
+			var tagid = Selectors.Utils.parseTagAndId(selector);
 			var tag = tagid[0], id = tagid[1];
 
 			if (i == 0){
-				items = Selectors.Utils.getByTagAndID(self, tag, id);
+				items = Selectors.Utils.getByTagAndId(self, tag, id);
 			} else {
 				var uniques = {}, found = [];
 				for (var j = 0, k = items.length; j < k; j++) found = Selectors.Getters[splitter](found, items[j], tag, id, uniques);
@@ -4007,7 +4007,7 @@ Selectors.Utils = {
 Selectors.Getters = {
 
 	' ': function(found, self, tag, id, uniques){
-		var items = Selectors.Utils.getByTagAndID(self, tag, id);
+		var items = Selectors.Utils.getByTagAndId(self, tag, id);
 		for (var i = 0, l = items.length; i < l; i++){
 			var item = items[i];
 			if (Selectors.Utils.chk(item, uniques)) found.push(item);
@@ -4016,7 +4016,7 @@ Selectors.Getters = {
 	},
 
 	'>': function(found, self, tag, id, uniques){
-		var children = Selectors.Utils.getByTagAndID(self, tag, id);
+		var children = Selectors.Utils.getByTagAndId(self, tag, id);
 		for (var i = 0, l = children.length; i < l; i++){
 			var child = children[i];
 			if (child.parentNode == self && Selectors.Utils.chk(child, uniques)) found.push(child);
@@ -4027,7 +4027,7 @@ Selectors.Getters = {
 	'+': function(found, self, tag, id, uniques){
 		while ((self = self.nextSibling)){
 			if (self.nodeType == 1){
-				if (Selectors.Utils.chk(self, uniques) && Selectors.Filters.byTag(self, tag) && Selectors.Filters.byID(self, id)) found.push(self);
+				if (Selectors.Utils.chk(self, uniques) && Selectors.Filters.byTag(self, tag) && Selectors.Filters.byId(self, id)) found.push(self);
 				break;
 			}
 		}
@@ -4038,7 +4038,7 @@ Selectors.Getters = {
 		while ((self = self.nextSibling)){
 			if (self.nodeType == 1){
 				if (!Selectors.Utils.chk(self, uniques)) break;
-				if (Selectors.Filters.byTag(self, tag) && Selectors.Filters.byID(self, id)) found.push(self);
+				if (Selectors.Filters.byTag(self, tag) && Selectors.Filters.byId(self, id)) found.push(self);
 			}
 		}
 		return found;
@@ -4052,7 +4052,7 @@ Selectors.Filters = {
 		return (tag == '*' || (self.tagName && self.tagName.toLowerCase() == tag));
 	},
 
-	byID: function(self, id){
+	byId: function(self, id){
 		return (!id || (self.id && self.id == id));
 	},
 

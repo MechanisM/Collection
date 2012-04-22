@@ -59,7 +59,7 @@
 			el[key] = active[key];
 			
 			// system
-			sys["active" + upperCase + "ID"] = null;
+			sys["active" + upperCase + "Id"] = null;
 			sys["tmp" + upperCase] = {};
 			sys[key + "ChangeControl"] = null;
 			sys[key + "Back"] = [];

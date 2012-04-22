@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -31,19 +31,17 @@
 	 *	.get(':i % 3 === 0', '>>>test').get();
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		id = id || '';
+		// overload Id
+		id = this._splitId(id);
+		
 		var res,
-			to, set = false,
+			to = id.to,
+			set = id.set,
+			
 			arg = C.toArray(arguments),
 			action;
 		
-		// overload ID
-		if (id.search(this.SPLITTER) !== -1) {
-			id = id.split(this.SPLITTER);
-			set = true;
-		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = id[1].trim());
-		id = arg[1] = id[0].trim();
+		id = arg[1] = id.id;
 		
 		// overload
 		if (C.isArray(filter)) {
@@ -72,28 +70,8 @@
 			}
 		}
 		
-		// save result
-		if (to) {
-			to = to.split(this.PLUS);
-			
-			if (to[1]) {
-				to = to[1].trim();
-				if (this._exists('collection', to)) {
-					this
-						.disable('context')
-						.concat(res, '', to)
-						.enable('context');
-				} else {
-					this._push('collection', to, res);
-				}
-			} else {
-				to = to[0];
-				this._push('collection', to, res);
-			}
-			
-			if (set == true) { return this._set('collection', to); }
-			return this;
-		}
+		// save result if need
+		if (to) { return this._saveResult(to, set, res); }
 		
 		return res;
 	};
@@ -102,7 +80,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point

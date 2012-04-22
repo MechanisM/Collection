@@ -77,7 +77,7 @@
 			}
 		}
 		
-		// overload ID
+		// overload Id
 		if (id.search(this.SPLITTER) !== -1) {
 			id = id.split(this.SPLITTER);
 			set = true;

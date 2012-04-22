@@ -20,7 +20,7 @@
 	Collection.prototype.concat = function (obj, context, id) {
 		context = C.isExists(context) ? context.toString() : '';
 		id = id || '';
-		var data, e;	
+		var data, e;
 		
 		// events
 		this.onConcat && (e = this.onConcat.apply(this, arguments));

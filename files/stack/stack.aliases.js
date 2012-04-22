@@ -23,11 +23,11 @@
 				return function () { return this._reset(nm, arguments, resetVal); };
 			}(key, el[key]);
 			fn['reset' + nm + 'To'] = function (nm) {
-				return function (objID, id) { return this._resetTo(nm, objID, id); };
+				return function (objId, id) { return this._resetTo(nm, objId, id); };
 			}(key);
 			
 			fn['push' + nm] = function (nm) {
-				return function (objID, newParam) { return this._push.apply(this, C.unshift(arguments, nm)); }
+				return function (objId, newParam) { return this._push.apply(this, C.unshift(arguments, nm)); }
 			}(key);
 			
 			fn['set' + nm] = function (nm) {
@@ -64,8 +64,8 @@
 				return function (id) { return this._exists(nm, id || ''); };
 			}(key);
 			
-			fn['get' + nm + 'ActiveID'] = function (nm) {
-				return function (id) { return this._getActiveID(nm); };
+			fn['get' + nm + 'ActiveId'] = function (nm) {
+				return function (id) { return this._getActiveId(nm); };
 			}(key);
 			
 			fn['get' + nm] = function (nm) {

@@ -23,7 +23,7 @@
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
 			
-			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveID('collection') : '' : this._active('collection', id) ? 'active' : '',
+			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveId('collection') : '' : this._active('collection', id) ? 'active' : '',
 			storage = local === false ? sessionStorage : localStorage,
 			e = null;
 		

@@ -877,7 +877,7 @@ var Collection;
 		 * creates a new array with the results of calling a provided function on every element in this array
 		 *
 		 * @this {Array}
-		 * @param {Function} callback — function to test each element of the array
+		 * @param {Function} callback — function that produces an element of the new Array from an element of the current one
 		 * @param {mixed} [thisObject] — object to use as this when executing callback
 		 * @return {Array}
 		 */
@@ -930,6 +930,7 @@ var Collection;
 		 */
 		Array.prototype.lastIndexOf = function (searchElement, fromIndex) {
 			var i = fromIndex || this.length;
+			if (i < 0) { i = this.length + i; }
 			
 			while ((i -= 1) > -1) {
 				if (this[i] === searchElement) {
@@ -946,8 +947,8 @@ var Collection;
 		 * apply a function simultaneously against two values of the array (from left-to-right) as to reduce it to a single value
 		 *
 		 * @this {Array}
-		 * @param {Function} callback — искомый элемент
-		 * @param {mixed} [initialValue=Array[0]] — значение первого параметра callback при первой итерации (по умолчанию: первый элемент массива)
+		 * @param {Function} callback — function to execute on each value in the array
+		 * @param {mixed} [initialValue=Array[0]] — object to use as the first argument to the first call of the callback
 		 * @return {mixed}
 		 */
 		Array.prototype.reduce = function (callback, initialValue) {
@@ -972,9 +973,9 @@ var Collection;
 		 * apply a function simultaneously against two values of the array (from right-to-left) as to reduce it to a single value
 		 *
 		 * @this {Array}
-		 * @param {Function} callback — искомый элемент
-		 * @param {mixed} [initialValue=Array[Array.length - 1]] — значение первого параметра callback при первой итерации (по умолчанию: последний элемент массива)
-		 * @return {mixed} - исходный массив
+		 * @param {Function} callback — function to execute on each value in the array
+		 * @param {mixed} [initialValue=Array[Array.length - 1]] — object to use as the first argument to the first call of the callback.
+		 * @return {mixed}
 		 */
 		Array.prototype.reduceRight = function (callback, initialValue) {
 			var i = this.length - 1, res;
@@ -1025,7 +1026,8 @@ var Collection;
 		NAMESPACE_SEPARATOR: '.',
 		SPLITTER: '>>>',
 		SHORT_SPLITTER: '>>',
-		PLUS: '+',
+		WITH: '+',
+		DEF: ':',
 		
 		/**
 		 * stack parameters
@@ -1708,7 +1710,7 @@ var Collection;
 			el[key] = active[key];
 			
 			// system
-			sys["active" + upperCase + "ID"] = null;
+			sys["active" + upperCase + "Id"] = null;
 			sys["tmp" + upperCase] = {};
 			sys[key + "ChangeControl"] = null;
 			sys[key + "Back"] = [];
@@ -1750,7 +1752,7 @@ var Collection;
 		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// break the link with a stack
-		this.dObj.sys['active' + upperCase + 'ID'] = null;
+		this.dObj.sys['active' + upperCase + 'Id'] = null;
 		
 		return this;
 	};
@@ -1775,7 +1777,7 @@ var Collection;
 	Collection.prototype._update = function (stackName, newVal) {
 		var active = this.dObj.active,
 			upperCase = C.toUpperCase(stackName, 1), e,
-			activeID = this._getActiveID(stackName),
+			activeId = this._getActiveId(stackName),
 			dom = C.drivers.dom;
 		
 		// events
@@ -1792,7 +1794,7 @@ var Collection;
 		} else { active[stackName] = C.expr(newVal, active[stackName] || ''); }
 		
 		// update the parameter stack
-		if (activeID) { this.dObj.sys['tmp' + upperCase][activeID] = active[stackName]; }
+		if (activeId) { this.dObj.sys['tmp' + upperCase][activeId] = active[stackName]; }
 
 		return this;
 	};
@@ -1802,7 +1804,7 @@ var Collection;
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String} [id=this.ACTIVE] — stack ID
+	 * @param {String} [id=this.ACTIVE] — stack Id
 	 * @throw {Error}
 	 * @return {mixed}
 	 *
@@ -1823,13 +1825,13 @@ var Collection;
 	};
 	
 	/**
-	 * add one or more new parameters in the stack (if you specify as a parameter ID constant 'active ', it will apply the update method) (if the parameter already exists in the stack, it will be updated) (has aliases, format: push + StackName)<br/>
+	 * add one or more new parameters in the stack (if you specify as a parameter Id constant 'active ', it will apply the update method) (if the parameter already exists in the stack, it will be updated) (has aliases, format: push + StackName)<br/>
 	 * events: onPush + stackName
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String|Plain Object} objID — stack ID or object (ID: value)
+	 * @param {String|Plain Object} objId — stack Id or object (Id: value)
 	 * @param {mixed} [newVal] — value (overload)
 	 * @return {Colletion Object}
 	 *
@@ -1841,62 +1843,62 @@ var Collection;
 	 *	test2: [1, 2, 3, 4]
 	 * }).getCollection('test2');
 	 */
-	Collection.prototype._push = function (stackName, objID, newVal) {
+	Collection.prototype._push = function (stackName, objId, newVal) {
 		var	upperCase = C.toUpperCase(stackName, 1), e,
 			tmp = this.dObj.sys['tmp' + upperCase],
-			activeID = this._getActiveID(stackName),
+			activeId = this._getActiveId(stackName),
 
 			key, dom = C.drivers.dom;
 		
 		// events
-		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objID, newVal || ''));
+		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objId, newVal || ''));
 		if (e === false) { return this; }
 		
-		if (C.isPlainObject(objID)) {
-			for (key in objID) {
-				if (objID.hasOwnProperty(key)) {
-					// update, if the ID is 'active'
+		if (C.isPlainObject(objId)) {
+			for (key in objId) {
+				if (objId.hasOwnProperty(key)) {
+					// update, if the Id is 'active'
 					if (key === this.ACTIVE) {
-						this._update(stackName, objID[key]);
+						this._update(stackName, objId[key]);
 					} else {
 						
 						// update the stack
-						if (tmp[key] && activeID && activeID === key) {
-							this._update(stackName, objID[key]);
+						if (tmp[key] && activeId && activeId === key) {
+							this._update(stackName, objId[key]);
 						} else {
 							
 							// compile string if need
-							if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(objID[key])) {
-								tmp[key] = this['_compile' + upperCase](objID[key]);
+							if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(objId[key])) {
+								tmp[key] = this['_compile' + upperCase](objId[key]);
 							
 							// search the DOM (can take a string selector or an array of nodes)
-							} else if (['target', 'pager'].indexOf(stackName) !== -1 && C.isString(objID[key])) {
-								tmp[key] = dom.find.apply(dom, C.isArray(objID[key]) ? objID[key] : [objID[key]]);
-							} else { tmp[key] = objID[key]; }
+							} else if (['target', 'pager'].indexOf(stackName) !== -1 && C.isString(objId[key])) {
+								tmp[key] = dom.find.apply(dom, C.isArray(objId[key]) ? objId[key] : [objId[key]]);
+							} else { tmp[key] = objId[key]; }
 						}
 						
 					}
 				}
 			}
 		} else {
-			// update, if the ID is 'active'
-			if (objID === this.ACTIVE) {
+			// update, if the Id is 'active'
+			if (objId === this.ACTIVE) {
 				this._update(stackName, newVal);
 			} else {
 				
 				// update the stack
-				if (tmp[objID] && activeID && activeID === objID) {
+				if (tmp[objId] && activeId && activeId === objId) {
 					this._update(stackName, newVal);
 				} else {
 					
 					// compile string if need
 					if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
-						tmp[objID] = this['_compile' + upperCase](newVal);
+						tmp[objId] = this['_compile' + upperCase](newVal);
 					
 					// search the DOM (can take a string selector or an array of nodes)
 					} else if (['target', 'pager'].indexOf(stackName) !== -1 && C.isString(newVal)) {
-						tmp[objID] = dom.find.apply(dom, C.isArray(newVal) ? newVal : [newVal]);
-					} else { tmp[objID] = newVal; }
+						tmp[objId] = dom.find.apply(dom, C.isArray(newVal) ? newVal : [newVal]);
+					} else { tmp[objId] = newVal; }
 				}
 			}
 		}
@@ -1910,7 +1912,7 @@ var Collection;
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String} id — stack ID
+	 * @param {String} id — stack Id
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 *
@@ -1925,7 +1927,7 @@ var Collection;
 
 			upperCase = C.toUpperCase(stackName, 1), e,
 			tmpChangeControlStr = stackName + 'ChangeControl',
-			tmpActiveIDStr = 'active' + upperCase + 'ID';
+			tmpActiveIdStr = 'active' + upperCase + 'Id';
 		
 		// throw an exception if the requested parameter does not exist
 		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
@@ -1935,9 +1937,9 @@ var Collection;
 		if (e === false) { return this; }
 		
 		// change the story, if there were changes
-		if (sys[tmpActiveIDStr] !== id) {
+		if (sys[tmpActiveIdStr] !== id) {
 			sys[tmpChangeControlStr] = true;
-			sys[tmpActiveIDStr] = id;
+			sys[tmpActiveIdStr] = id;
 		} else { sys[tmpChangeControlStr] = false; }
 		
 		sys[stackName + 'Back'].push(id);
@@ -2021,7 +2023,7 @@ var Collection;
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs
+	 * @param {String|Array|Plain Object} [objId=active] — stack Id or array of Ids
 	 * @param {mixed} [deleteVal=false] — default value (for active properties)
 	 * @param {mixed} [resetVal] — reset value (overload)
 	 * @return {Colletion Object}
@@ -2033,27 +2035,27 @@ var Collection;
 	 *	.dropCollection('test', 'active')
 	 *	.existsCollection('test2'); // removed the 'test' and' test2' //
 	 */
-	Collection.prototype._drop = function (stackName, objID, deleteVal, resetVal) {
+	Collection.prototype._drop = function (stackName, objId, deleteVal, resetVal) {
 		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
 		
 		var active = this.dObj.active,
 			sys = this.dObj.sys,
 			
 			upperCase = C.toUpperCase(stackName, 1), e,
-			tmpActiveIDStr = 'active' + upperCase + 'ID',
+			tmpActiveIdStr = 'active' + upperCase + 'Id',
 			tmpTmpStr = 'tmp' + upperCase,
 
-			activeID = this._getActiveID(stackName),
-			tmpArray = !objID ? activeID ? [activeID] : [] : C.isArray(objID) || C.isPlainObject(objID) ? objID : [objID],
+			activeId = this._getActiveId(stackName),
+			tmpArray = !objId ? activeId ? [activeId] : [] : C.isArray(objId) || C.isPlainObject(objId) ? objId : [objId],
 			
 			key;
 		
 		// events
 		if (typeof resetVal === 'undefined') {
-			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objID, deleteVal));
+			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objId, deleteVal));
 			if (e === false) { return this; }
 		} else {
-			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objID, resetVal));
+			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objId, resetVal));
 			if (e === false) { return this; }
 		}
 		
@@ -2063,15 +2065,15 @@ var Collection;
 					if (!tmpArray[key] || tmpArray[key] === this.ACTIVE) {
 						if (typeof resetVal === 'undefined') {
 							// if the parameter is on the stack, then remove it too
-							if (activeID) { delete sys[tmpTmpStr][activeID]; }
+							if (activeId) { delete sys[tmpTmpStr][activeId]; }
 							
 							// active parameters are set to null
-							sys[tmpActiveIDStr] = null;
+							sys[tmpActiveIdStr] = null;
 							active[stackName] = deleteVal;
 						
 						// reset (overload)
 						} else {
-							if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+							if (activeId) { sys[tmpTmpStr][activeId] = resetVal; }
 							active[stackName] = resetVal;
 						}
 					} else {
@@ -2079,15 +2081,15 @@ var Collection;
 							delete sys[tmpTmpStr][tmpArray[key]];
 							
 							// if the parameter stack is active, it will still be removed
-							if (activeID && tmpArray[key] === activeID) {
-								sys[tmpActiveIDStr] = null;
+							if (activeId && tmpArray[key] === activeId) {
+								sys[tmpActiveIdStr] = null;
 								active[stackName] = deleteVal;
 							}
 						
 						// reset (overload)
 						} else {
 							sys[tmpTmpStr][tmpArray[key]] = resetVal;
-							if (activeID && tmpArray[key] === activeID) { active[stackName] = resetVal; }
+							if (activeId && tmpArray[key] === activeId) { active[stackName] = resetVal; }
 						}
 					}
 				}
@@ -2095,15 +2097,15 @@ var Collection;
 		} else {
 			if (typeof resetVal === 'undefined') {
 				// if the parameter is on the stack, then remove it too
-				if (activeID) { delete sys[tmpTmpStr][activeID]; }
+				if (activeId) { delete sys[tmpTmpStr][activeId]; }
 				
 				// active parameters are set to null
-				sys[tmpActiveIDStr] = null;
+				sys[tmpActiveIdStr] = null;
 				active[stackName] = deleteVal;
 			
 			// reset (overload)
 			} else {
-				if (activeID) { sys[tmpTmpStr][activeID] = resetVal; }
+				if (activeId) { sys[tmpTmpStr][activeId] = resetVal; }
 				active[stackName] = resetVal;
 			}
 		}
@@ -2117,17 +2119,17 @@ var Collection;
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String|Array|Plain Object} [objID=active] — stack ID or array of IDs
+	 * @param {String|Array|Plain Object} [objId=active] — stack Id or array of Ids
 	 * @param {mixed} [resetVal=false] — reset value
 	 * @return {Colletion Object}
 	 *
 	 * @example
 	 * $C().newContext('a > 2').resetContext().getContext();
 	 */
-	Collection.prototype._reset = function (stackName, objID, resetVal) {
+	Collection.prototype._reset = function (stackName, objId, resetVal) {
 		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
 
-		return this._drop(stackName, objID || '', '', resetVal);
+		return this._drop(stackName, objId || '', '', resetVal);
 	};
 	/**
 	 * reset the value of the parameter stack to another (can use a constant 'active') (has aliases, format: reset + StackName + To)
@@ -2135,8 +2137,8 @@ var Collection;
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String|Array} [objID=active] — stack ID or array of IDs
-	 * @param {String} [id=this.ACTIVE] — source stack ID (for merge)
+	 * @param {String|Array} [objId=active] — stack Id or array of Ids
+	 * @param {String} [id=this.ACTIVE] — source stack Id (for merge)
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2145,10 +2147,10 @@ var Collection;
 	 *	.resetCollectionTo('test', 'test2')
 	 *	.getCollection('test');
 	 */
-	Collection.prototype._resetTo = function (stackName, objID, id) {
+	Collection.prototype._resetTo = function (stackName, objId, id) {
 		var mergeVal = !id || id === this.ACTIVE ? this.dObj.active[stackName] : this.dObj.sys['tmp' + C.toUpperCase(stackName, 1)][id];
 		
-		return this._reset(stackName, objID || '', mergeVal);
+		return this._reset(stackName, objId || '', mergeVal);
 	};
 
 	/**
@@ -2157,7 +2159,7 @@ var Collection;
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String} [id=this.ACTIVE] — stack ID
+	 * @param {String} [id=this.ACTIVE] — stack Id
 	 * @return {Boolean}
 	 *
 	 * @example
@@ -2166,13 +2168,13 @@ var Collection;
 	Collection.prototype._exists = function (stackName, id) {
 		var upperCase = C.toUpperCase(stackName, 1);
 		
-		if ((!id || id === this.ACTIVE) && this._getActiveID(stackName)) { return true; }
+		if ((!id || id === this.ACTIVE) && this._getActiveId(stackName)) { return true; }
 		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
 
 		return false;
 	};
 	/**
-	 * return the ID of the active parameter (has aliases, format: get + StackName + ActiveID)
+	 * return the Id of the active parameter (has aliases, format: get + StackName + ActiveId)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
@@ -2180,18 +2182,18 @@ var Collection;
 	 * @return {String|Null}
 	 *
 	 * @example
-	 * $C().getCollectionActiveID();
+	 * $C().getCollectionActiveId();
 	 */
-	Collection.prototype._getActiveID = function (stackName) {
-		return this.dObj.sys['active' + C.toUpperCase(stackName, 1) + 'ID'];
+	Collection.prototype._getActiveId = function (stackName) {
+		return this.dObj.sys['active' + C.toUpperCase(stackName, 1) + 'Id'];
 	};
 	/**
-	 * check the parameter on the activity (has aliases, format: active + StackName) or return the ID of the active parameter (if don't specify input parameters)
+	 * check the parameter on the activity (has aliases, format: active + StackName) or return the Id of the active parameter (if don't specify input parameters)
 	 * 
 	 * @public
 	 * @this {Colletion Object}
 	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
-	 * @param {String} id — stack ID
+	 * @param {String} id — stack Id
 	 * @return {Boolean}
 	 *
 	 * @example
@@ -2200,9 +2202,9 @@ var Collection;
 	 * $C().pushSetCollection('test', [1, 2]).activeCollection();
 	 */
 	Collection.prototype._active = function (stackName, id) {
-		// overload, returns active ID
-		if (!id) { return this._getActiveID(stackName); }
-		if (id === this._getActiveID(stackName)) { return true; }
+		// overload, returns active Id
+		if (!id) { return this._getActiveId(stackName); }
+		if (id === this._getActiveId(stackName)) { return true; }
 
 		return false;
 	};
@@ -2215,7 +2217,7 @@ var Collection;
 	 * use the assembly (makes active the stacking options, if such exist (supports namespaces))
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} stack ID
+	 * @param {String} stack Id
 	 * @return {Colletion Object}
 	 *
 	 * @example
@@ -2278,11 +2280,11 @@ var Collection;
 				return function () { return this._reset(nm, arguments, resetVal); };
 			}(key, el[key]);
 			fn['reset' + nm + 'To'] = function (nm) {
-				return function (objID, id) { return this._resetTo(nm, objID, id); };
+				return function (objId, id) { return this._resetTo(nm, objId, id); };
 			}(key);
 			
 			fn['push' + nm] = function (nm) {
-				return function (objID, newParam) { return this._push.apply(this, C.unshift(arguments, nm)); }
+				return function (objId, newParam) { return this._push.apply(this, C.unshift(arguments, nm)); }
 			}(key);
 			
 			fn['set' + nm] = function (nm) {
@@ -2319,8 +2321,8 @@ var Collection;
 				return function (id) { return this._exists(nm, id || ''); };
 			}(key);
 			
-			fn['get' + nm + 'ActiveID'] = function (nm) {
-				return function (id) { return this._getActiveID(nm); };
+			fn['get' + nm + 'ActiveId'] = function (nm) {
+				return function (id) { return this._getActiveId(nm); };
 			}(key);
 			
 			fn['get' + nm] = function (nm) {
@@ -2386,10 +2388,10 @@ var Collection;
 	 * events: onAdd
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} [cValue] — new element or context for sourceID
+	 * @param {mixed|Context} [cValue] — new element or context for sourceId
 	 * @param {String} [propType='push'] — add type (constants: 'push', 'unshift') or property name (can use '->unshift' - the result will be similar to work for an array unshift)
-	 * @param {String} [activeID=this.ACTIVE] — collection ID
-	 * @param {String} [sourceID] — source ID (if move)
+	 * @param {String} [activeId=this.ACTIVE] — collection ID
+	 * @param {String} [sourceId] — source Id (if move)
 	 * @param {Boolean} [del=false] — if true, remove source element
 	 * @throw {Error}
 	 * @return {Colletion Object}
@@ -2414,26 +2416,27 @@ var Collection;
 	 *
 	 * console.log(db.getCollection());
 	 */
-	Collection.prototype.add = function (cValue, propType, activeID, sourceID, del) {
+	Collection.prototype.add = function (cValue, propType, activeId, sourceId, del) {
 		cValue = typeof cValue !== 'undefined' ? cValue : '';
 		propType = propType || 'push';
-		activeID = activeID || '';
+		activeId = activeId || '';
+		sourceId = sourceId || '';
 		del = del || false;
 		
-		var data, sObj, lCheck, e;
+		var data, sData, lCheck, e;
 		
 		// events
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		data = this._geOne(this._get('collection', activeID), this._getActiveParam('context'));
+		data = this._geOne('', activeId);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object')  { throw new Error('unable to set property!'); }
 		
 		// simple add
-		if (!sourceID) {
+		if (!sourceId) {
 			// add type
 			if (C.isPlainObject(data)) {
 				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
@@ -2446,23 +2449,23 @@ var Collection;
 		// move
 		} else {
 			cValue = C.isExists(cValue) ? cValue.toString() : '';
-			sObj = C.byLink(this._get('collection', sourceID || ''), cValue);
+			sData = this._geOne(cValue, sourceId);
 			
 			// add type
 			if (C.isPlainObject(data)) {
 				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = C.addElementToObject(data, propType.toString(), sObj);
+				lCheck = C.addElementToObject(data, propType.toString(), sData);
 			} else {
 				lCheck = true;
-				data[propType](sObj);
+				data[propType](sData);
 			}
 			
 			// delete element
-			if (del === true) { this.disable('context')._removeOne(cValue, sourceID).enable('context'); }
+			if (del === true) { this.disable('context')._removeOne(cValue, sourceId).enable('context'); }
 		}
 		
 		// rewrites links (if used for an object 'unshift')
-		if (lCheck !== true) { this._setOne('', lCheck, activeID); }
+		if (lCheck !== true) { this._setOne('', lCheck, activeId); }
 	
 		return this;
 	};
@@ -2604,7 +2607,7 @@ var Collection;
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -2635,7 +2638,7 @@ var Collection;
 		}
 		
 		// overloads
-		// if the ID is not specified, it is taken active collection
+		// if the Id is not specified, it is taken active collection
 		if (!id) {
 			data = this._get('collection');
 		} else if (C.isString(id)) {
@@ -2660,7 +2663,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -2673,7 +2676,7 @@ var Collection;
 	 *
 	 * @example
 	 * var db = $C([[1, 2, 3, 4, 5, 6, 7, 8], 2, 3, 4]);
-	 * db.forEach(':data[key] += 1', '0 >>> :el % 2 === 0');
+	 * db.forEach(':data[key] += 1', '0 >> :el % 2 === 0');
 	 * console.log(db.get());
 	 * @example
 	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
@@ -2701,8 +2704,7 @@ var Collection;
 		lastIndexOf = parseInt(lastIndexOf) || false;
 		rev = rev || false;
 		
-		var self = this,
-			tmpObj = {},
+		var tmpObj = {},
 			tmpArray = [],
 			
 			context = filter.length === 2 ? filter[0] : '',
@@ -2721,7 +2723,7 @@ var Collection;
 		
 		// get by link
 		data = !C.isCollection(id)
-					? C.byLink(this._get('collection', id), this._getActiveParam('context') + C.CHILDREN + context)
+					? this._getOne(this._getActiveParam('context') + C.CHILDREN + context, id)
 						: id;
 		
 		// throw an exception if the element is not an object
@@ -2859,7 +2861,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -2887,7 +2889,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -2911,7 +2913,7 @@ var Collection;
 			arg = C.toArray(arguments),
 			action;
 		
-		// overload ID
+		// overload Id
 		if (id.search(this.SPLITTER) !== -1) {
 			id = id.split(this.SPLITTER);
 			set = true;
@@ -2932,7 +2934,7 @@ var Collection;
 		
 		// save result
 		if (to) {
-			to = to.split(this.PLUS);
+			to = to.split(this.WITH);
 			
 			if (to[1]) {
 				to = to[1].trim();
@@ -2960,7 +2962,7 @@ var Collection;
 	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -2984,7 +2986,7 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=0] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @return {Number|String}
 	 *
 	 * @example
@@ -3004,7 +3006,7 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=Collection Length] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @return {Number|String}
 	 *
 	 * @example
@@ -3027,7 +3029,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -3050,19 +3052,17 @@ var Collection;
 	 *	.get(':i % 3 === 0', '>>>test').get();
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		id = id || '';
+		// overload Id
+		id = this._splitId(id);
+		
 		var res,
-			to, set = false,
+			to = id.to,
+			set = id.set,
+			
 			arg = C.toArray(arguments),
 			action;
 		
-		// overload ID
-		if (id.search(this.SPLITTER) !== -1) {
-			id = id.split(this.SPLITTER);
-			set = true;
-		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = id[1].trim());
-		id = arg[1] = id[0].trim();
+		id = arg[1] = id.id;
 		
 		// overload
 		if (C.isArray(filter)) {
@@ -3091,28 +3091,8 @@ var Collection;
 			}
 		}
 		
-		// save result
-		if (to) {
-			to = to.split(this.PLUS);
-			
-			if (to[1]) {
-				to = to[1].trim();
-				if (this._exists('collection', to)) {
-					this
-						.disable('context')
-						.concat(res, '', to)
-						.enable('context');
-				} else {
-					this._push('collection', to, res);
-				}
-			} else {
-				to = to[0];
-				this._push('collection', to, res);
-			}
-			
-			if (set == true) { return this._set('collection', to); }
-			return this;
-		}
+		// save result if need
+		if (to) { return this._saveResult(to, set, res); }
 		
 		return res;
 	};
@@ -3121,7 +3101,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -3263,7 +3243,7 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
 	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -3284,7 +3264,7 @@ var Collection;
 			isFunc, isExists, isArray,
 			action;
 		
-		// overload ID
+		// overload Id
 		if (id.search(this.SPLITTER) !== -1) {
 			id = id.split(this.SPLITTER);
 			set = true;
@@ -3349,7 +3329,7 @@ var Collection;
 		
 		// save result
 		if (to) {
-			to = to.split(this.PLUS);
+			to = to.split(this.WITH);
 			
 			if (to[1]) {
 				to = to[1].trim();
@@ -3383,8 +3363,8 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} [context] — source context
-	 * @param {String} [sourceID=this.ACTIVE] — source ID
-	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [sourceId=this.ACTIVE] — source Id
+	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
@@ -3406,12 +3386,12 @@ var Collection;
 	 * db.move('eq(-1)', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.move = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
+	Collection.prototype.move = function (moveFilter, context, sourceId, activeId, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
 		moveFilter = moveFilter || '';
 		context = C.isExists(context) ? context.toString() : '';
 		
-		sourceID = sourceID || '';
-		activeID = activeID || '';
+		sourceId = sourceId || '';
+		activeId = activeId || '';
 		
 		addType = addType || 'push';
 		
@@ -3419,7 +3399,7 @@ var Collection;
 		deleteType = deleteType === false ? false : true;
 		
 		var deleteList = [],
-			isArray = C.isArray(C.byLink(this._get('collection', activeID), this._getActiveParam('context'))),
+			isArray = C.isArray(C.byLink(this._get('collection', activeId), this._getActiveParam('context'))),
 	
 			elements, e = null;
 		
@@ -3433,7 +3413,7 @@ var Collection;
 		
 		if (C.isNumber(moveFilter) || (C.isString(moveFilter) && !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
 			elements = moveFilter;
-		} else { elements = this.search(moveFilter, sourceID, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
+		} else { elements = this.search(moveFilter, sourceId, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
 		
 		this.enable('context');
 		
@@ -3442,11 +3422,11 @@ var Collection;
 		// move
 		if (mult === true && C.isArray(elements)) {
 			elements.forEach(function (el) {
-				this.add(context + C.CHILDREN + el, isArray === true ? addType : el + C.METHOD_SEPARATOR + addType, activeID, sourceID);
+				this.add(context + C.CHILDREN + el, isArray === true ? addType : el + C.METHOD_SEPARATOR + addType, activeId, sourceId);
 				deleteType === true && deleteList.push(el);
 			}, this);
 		} else {
-			this.add(context + C.CHILDREN + elements, isArray === true ? addType : elements + C.METHOD_SEPARATOR + addType, activeID, sourceID);
+			this.add(context + C.CHILDREN + elements, isArray === true ? addType : elements + C.METHOD_SEPARATOR + addType, activeId, sourceId);
 			deleteType === true && deleteList.push(elements);
 		}
 		
@@ -3456,9 +3436,9 @@ var Collection;
 			
 			if (rev === true) {
 				deleteList.forEach(function (el) {
-					this._removeOne(el, sourceID);
+					this._removeOne(el, sourceId);
 				}, this);
-			} else { this._remove(deleteList, sourceID); }
+			} else { this._remove(deleteList, sourceId); }
 			
 			this.enable('context');
 		}
@@ -3472,8 +3452,8 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
-	 * @param {String} [sourceID=this.ACTIVE] — source ID
-	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [sourceId=this.ACTIVE] — source Id
+	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3487,8 +3467,8 @@ var Collection;
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.moveOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+	Collection.prototype.moveOne = function (moveFilter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
@@ -3497,8 +3477,8 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
-	 * @param {String} [sourceID=this.ACTIVE] — source ID
-	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [sourceId=this.ACTIVE] — source Id
+	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
@@ -3514,9 +3494,9 @@ var Collection;
 	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copy = function (moveFilter, context, sourceID, activeID, addType, mult, count, from, indexOf, lastIndexOf, rev) {
+	Collection.prototype.copy = function (moveFilter, context, sourceId, activeId, addType, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
 	};
 	/**
 	 * copy one element from one collection to another (in context)<br />
@@ -3525,8 +3505,8 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
-	 * @param {String} [sourceID=this.ACTIVE] — source ID
-	 * @param {String} [activeID=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [sourceId=this.ACTIVE] — source Id
+	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3540,8 +3520,8 @@ var Collection;
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copyOne = function (moveFilter, context, sourceID, activeID, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceID || '', activeID || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
+	Collection.prototype.copyOne = function (moveFilter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -3745,7 +3725,7 @@ var Collection;
 			}
 		}
 		
-		// overload ID
+		// overload Id
 		if (id.search(this.SPLITTER) !== -1) {
 			id = id.split(this.SPLITTER);
 			set = true;
@@ -4210,7 +4190,7 @@ var Collection;
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
 			
-			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveID('collection') : '' : this._active('collection', id) ? 'active' : '',
+			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveId('collection') : '' : this._active('collection', id) ? 'active' : '',
 			storage = local === false ? sessionStorage : localStorage,
 			e = null;
 		
@@ -4748,7 +4728,7 @@ var Collection;
 	/////////////////////////////////
 	
 	/**
-	 * return to active parameter stack (flags included)
+	 * returns the active parameter stack (flags included)
 	 * 
 	 * @this {Collection Object}
 	 * @param {String} name — property name
@@ -4780,6 +4760,82 @@ var Collection;
 	 */
 	Collection.prototype._isStringExpression = function (obj) {
 		return C.isString(obj) && obj.search(/^:/) !== -1;
+	};
+	
+	/**
+	 * splits ID on atoms
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} id — collection ID
+	 * @return {Plain Object}
+	 */
+	Collection.prototype._splitId = function (id) {
+		id = id || '';
+		var res = {};
+		
+		if (id.search(this.SPLITTER) !== -1) {
+			res.id = id.split(this.SPLITTER);
+			res.set = true;
+		} else {
+			res.id = id.split(this.SHORT_SPLITTER);
+			res.set = false;
+		}
+		
+		if (res.id[1]) {
+			res.to = res.id[1].trim();
+		} else { res.to = ''; }
+		res.id = res.id[0].trim();
+		
+		return res;
+	};
+	
+	/**
+	 * save the result in the collection
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} to — ID to be stored in the stack
+	 * @param {Boolean} set — if true, the collection will be active
+	 * @param {mixed} val — value for the save
+	 * @return {Collection Object}
+	 */
+	Collection.prototype._saveResult = function (to, set, val) {
+		to = to.split(this.WITH);
+		
+		var context;
+		
+		if (to[1]) {
+			to = to[1].split(this.DEF);
+			
+			context = to[1].trim() || '';
+			to = to[0].trim();
+			
+			if (this._exists('collection', to)) {
+				this
+					.disable('context')
+					.concat(val, context, to)
+					.enable('context');
+			} else {
+				this._push('collection', to, val);
+			}
+		} else {
+			to = to[0].split(this.DEF);
+			
+			context = to[1].trim() || '';
+			to = to[0].trim();
+			
+			if (this._exists('collection', to) && context) {
+				this
+					.disable('context')
+					._setOne(context, val, to)
+					.enable('context');
+			} else {
+				this._push('collection', to, val);
+			}
+		}
+		
+		if (set === true) { return this._set('collection', to); }
+		
+		return this;
 	};
 	
 	/**
@@ -4831,20 +4887,21 @@ var Collection;
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection
+	 * @param {String|Collection} [objId=this.ACTIVE] — collection ID or collection
 	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space] — indentation of nested structures
 	 * @return {String}
 	 */
-	Collection.prototype.toString = function (objID, replacer, space) {
+	Collection.prototype.toString = function (objId, replacer, space) {
 		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
 		
+		objId = objId || '';
 		replacer = replacer || '';
 		space = space || '';
 		
-		if (objID && C.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }
+		if (C.isCollection(objId)) { return JSON.stringify(objId, replacer, space); }
 		
-		return JSON.stringify(C.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);
+		return JSON.stringify(this._getOne('', objId), replacer, space);
 	};
 	/**
 	 * return collection length (only active)
@@ -4872,7 +4929,7 @@ var Collection;
 	 * @param {Number|Boolean} [param.breaker=this.ACTIVE] — number of entries on per page (if false, returns all records)
 	 * @param {Number} [param.navBreaker=this.ACTIVE] — number of displayed pages (navigation, > 2)
 	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
-	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
+	 * @param {String} [param.variable=this.ACTIVE] — variable Id (if param.target === false)
 	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression))
 	 * @param {Filter} [param.filter=this.ACTIVE] — function, which is performed every iteration of the template (can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (context + >> + filter (the record is equivalent to: return + string expression))

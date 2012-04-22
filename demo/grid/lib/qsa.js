@@ -509,7 +509,7 @@
 						if ( from === doc ) {
 							cache = [];
 							uTag = tag ? tag.toUpperCase() : tag;
-							// ищем все элементы с совпавшим ID в контексте document
+							// ищем все элементы с совпавшим Id в контексте document
 							do {
 								child = doc.getElementById( n );
 								if ( child ) {

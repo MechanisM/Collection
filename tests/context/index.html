@@ -15,8 +15,8 @@
 				equal(db.parentContext(), 'a > b ', 'simple context without parameter');
 				equal(db.parentContext(2), 'a ', 'simple context');
 				
-				equal(db.parentContext('', 'tt'), 'a ', 'simple context without parameter with ID');
-				equal(db.parentContext(2, 'tt'), '', 'simple context with ID');
+				equal(db.parentContext('', 'tt'), 'a ', 'simple context without parameter with Id');
+				equal(db.parentContext(2, 'tt'), '', 'simple context with Id');
 				
 				equal(db.parent().getContext(), 'a > b ', 'set context without parameter');
 				equal(db.parent(2).getContext(), '', 'set context');

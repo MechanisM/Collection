@@ -8,10 +8,10 @@
 	 * events: onAdd
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} [cValue] — new element or context for sourceID
+	 * @param {mixed|Context} [cValue] — new element or context for sourceId
 	 * @param {String} [propType='push'] — add type (constants: 'push', 'unshift') or property name (can use '->unshift' - the result will be similar to work for an array unshift)
-	 * @param {String} [activeID=this.ACTIVE] — collection ID
-	 * @param {String} [sourceID] — source ID (if move)
+	 * @param {String} [activeId=this.ACTIVE] — collection ID
+	 * @param {String} [sourceId] — source Id (if move)
 	 * @param {Boolean} [del=false] — if true, remove source element
 	 * @throw {Error}
 	 * @return {Colletion Object}
@@ -36,26 +36,27 @@
 	 *
 	 * console.log(db.getCollection());
 	 */
-	Collection.prototype.add = function (cValue, propType, activeID, sourceID, del) {
+	Collection.prototype.add = function (cValue, propType, activeId, sourceId, del) {
 		cValue = typeof cValue !== 'undefined' ? cValue : '';
 		propType = propType || 'push';
-		activeID = activeID || '';
+		activeId = activeId || '';
+		sourceId = sourceId || '';
 		del = del || false;
 		
-		var data, sObj, lCheck, e;
+		var data, sData, lCheck, e;
 		
 		// events
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
 		// get by link
-		data = this._geOne(this._get('collection', activeID), this._getActiveParam('context'));
+		data = this._geOne('', activeId);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object')  { throw new Error('unable to set property!'); }
 		
 		// simple add
-		if (!sourceID) {
+		if (!sourceId) {
 			// add type
 			if (C.isPlainObject(data)) {
 				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
@@ -68,23 +69,23 @@
 		// move
 		} else {
 			cValue = C.isExists(cValue) ? cValue.toString() : '';
-			sObj = C.byLink(this._get('collection', sourceID || ''), cValue);
+			sData = this._geOne(cValue, sourceId);
 			
 			// add type
 			if (C.isPlainObject(data)) {
 				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
-				lCheck = C.addElementToObject(data, propType.toString(), sObj);
+				lCheck = C.addElementToObject(data, propType.toString(), sData);
 			} else {
 				lCheck = true;
-				data[propType](sObj);
+				data[propType](sData);
 			}
 			
 			// delete element
-			if (del === true) { this.disable('context')._removeOne(cValue, sourceID).enable('context'); }
+			if (del === true) { this.disable('context')._removeOne(cValue, sourceId).enable('context'); }
 		}
 		
 		// rewrites links (if used for an object 'unshift')
-		if (lCheck !== true) { this._setOne('', lCheck, activeID); }
+		if (lCheck !== true) { this._setOne('', lCheck, activeId); }
 	
 		return this;
 	};

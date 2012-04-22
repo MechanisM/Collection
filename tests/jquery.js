@@ -36,7 +36,7 @@ var jQuery = function( selector, context ) {
 	// A central reference to the root jQuery(document)
 	rootjQuery,
 
-	// A simple way to check for HTML strings or ID strings
+	// A simple way to check for HTML strings or Id strings
 	// Prioritize #id over <tag> to avoid XSS via location.hash (#9521)
 	quickExpr = /^(?:[^#<]*(<[\w\W]+>)[^>]*$|#([\w\-]*)$)/,
 
@@ -122,7 +122,7 @@ jQuery.fn = jQuery.prototype = {
 
 		// Handle HTML strings
 		if ( typeof selector === "string" ) {
-			// Are we dealing with HTML string or an ID?
+			// Are we dealing with HTML string or an Id?
 			if ( selector.charAt(0) === "<" && selector.charAt( selector.length - 1 ) === ">" && selector.length >= 3 ) {
 				// Assume that strings that start and end with <> are HTML and skip the regex check
 				match = [ null, selector, null ];
@@ -167,7 +167,7 @@ jQuery.fn = jQuery.prototype = {
 					// nodes that are no longer in the document #6963
 					if ( elem && elem.parentNode ) {
 						// Handle the case where IE and Opera return items
-						// by name instead of ID
+						// by name instead of Id
 						if ( elem.id !== match[2] ) {
 							return rootjQuery.find( selector );
 						}
@@ -790,7 +790,7 @@ jQuery.extend({
 		return ret.concat.apply( [], ret );
 	},
 
-	// A global GUID counter for objects
+	// A global GUId counter for objects
 	guid: 1,
 
 	// Bind a function to a context, optionally partially applying any
@@ -1661,7 +1661,7 @@ jQuery.extend({
 			// attached directly to the object so GC can occur automatically
 			cache = isNode ? jQuery.cache : elem,
 
-			// Only defining an ID for JS objects if its cache already exists allows
+			// Only defining an Id for JS objects if its cache already exists allows
 			// the code to shortcut on the same path as a DOM node with no cache
 			id = isNode ? elem[ internalKey ] : elem[ internalKey ] && internalKey,
 			isEvents = name === "events";
@@ -1673,7 +1673,7 @@ jQuery.extend({
 		}
 
 		if ( !id ) {
-			// Only DOM nodes need a new unique ID for each element since their data
+			// Only DOM nodes need a new unique Id for each element since their data
 			// ends up in the global cache
 			if ( isNode ) {
 				elem[ internalKey ] = id = ++jQuery.uuid;
@@ -2661,7 +2661,7 @@ boolHook = {
 			// Set boolean attributes to the same name and set the DOM property
 			propName = jQuery.propFix[ name ] || name;
 			if ( propName in elem ) {
-				// Only set the IDL specifically if it already exists on the element
+				// Only set the IdL specifically if it already exists on the element
 				elem[ propName ] = true;
 			}
 
@@ -2856,7 +2856,7 @@ jQuery.event = {
 			handler = handleObjIn.handler;
 		}
 
-		// Make sure that the handler has a unique ID, used to find/remove it later
+		// Make sure that the handler has a unique Id, used to find/remove it later
 		if ( !handler.guid ) {
 			handler.guid = jQuery.guid++;
 		}
@@ -3935,10 +3935,10 @@ var Sizzle = function( selector, context, results, seed ) {
 		}
 
 	} else {
-		// Take a shortcut and set the context if the root selector is an ID
-		// (but not if it'll be faster if the inner selector is an ID)
+		// Take a shortcut and set the context if the root selector is an Id
+		// (but not if it'll be faster if the inner selector is an Id)
 		if ( !seed && parts.length > 1 && context.nodeType === 9 && !contextXML &&
-				Expr.match.ID.test(parts[0]) && !Expr.match.ID.test(parts[parts.length - 1]) ) {
+				Expr.match.Id.test(parts[0]) && !Expr.match.Id.test(parts[parts.length - 1]) ) {
 
 			ret = Sizzle.find( parts.shift(), context, contextXML );
 			context = ret.expr ?
@@ -4219,10 +4219,10 @@ var getText = Sizzle.getText = function( elem ) {
 };
 
 var Expr = Sizzle.selectors = {
-	order: [ "ID", "NAME", "TAG" ],
+	order: [ "Id", "NAME", "TAG" ],
 
 	match: {
-		ID: /#((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
+		Id: /#((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
 		CLASS: /\.((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
 		NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF\-]|\\.)+)['"]*\]/,
 		ATTR: /\[\s*((?:[\w\u00c0-\uFFFF\-]|\\.)+)\s*(?:(\S?=)\s*(?:(['"])(.*?)\3|(#?(?:[\w\u00c0-\uFFFF\-]|\\.)*)|)|)\s*\]/,
@@ -4338,7 +4338,7 @@ var Expr = Sizzle.selectors = {
 	},
 
 	find: {
-		ID: function( match, context, isXML ) {
+		Id: function( match, context, isXML ) {
 			if ( typeof context.getElementById !== "undefined" && !isXML ) {
 				var m = context.getElementById(match[1]);
 				// Check parentNode to catch when Blackberry 4.6 returns
@@ -4392,7 +4392,7 @@ var Expr = Sizzle.selectors = {
 			return false;
 		},
 
-		ID: function( match ) {
+		Id: function( match ) {
 			return match[1].replace( rBackslash, "" );
 		},
 
@@ -4688,7 +4688,7 @@ var Expr = Sizzle.selectors = {
 			}
 		},
 
-		ID: function( elem, match ) {
+		Id: function( elem, match ) {
 			return elem.nodeType === 1 && elem.getAttribute("id") === match;
 		},
 
@@ -4914,7 +4914,7 @@ if ( document.documentElement.compareDocumentPosition ) {
 	// The workaround has to do additional checks after a getElementById
 	// Which slows things down for other browsers (hence the branching)
 	if ( document.getElementById( id ) ) {
-		Expr.find.ID = function( match, context, isXML ) {
+		Expr.find.Id = function( match, context, isXML ) {
 			if ( typeof context.getElementById !== "undefined" && !isXML ) {
 				var m = context.getElementById(match[1]);
 
@@ -4926,7 +4926,7 @@ if ( document.documentElement.compareDocumentPosition ) {
 			}
 		};
 
-		Expr.filter.ID = function( elem, match ) {
+		Expr.filter.Id = function( elem, match ) {
 			var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
 
 			return elem.nodeType === 1 && node && node.nodeValue === match;
@@ -5002,7 +5002,7 @@ if ( document.querySelectorAll ) {
 			context = context || document;
 
 			// Only use querySelectorAll on non-XML documents
-			// (ID selectors don't work in non-HTML documents)
+			// (Id selectors don't work in non-HTML documents)
 			if ( !seed && !Sizzle.isXML(context) ) {
 				// See if we find a selector to speed up
 				var match = /^(\w+$)|^\.([\w\-]+$)|^#([\w\-]+$)/.exec( query );
@@ -5024,7 +5024,7 @@ if ( document.querySelectorAll ) {
 					if ( query === "body" && context.body ) {
 						return makeArray( [ context.body ], extra );
 						
-					// Speed-up: Sizzle("#ID")
+					// Speed-up: Sizzle("#Id")
 					} else if ( match && match[3] ) {
 						var elem = context.getElementById( match[3] );
 
@@ -5032,7 +5032,7 @@ if ( document.querySelectorAll ) {
 						// nodes that are no longer in the document #6963
 						if ( elem && elem.parentNode ) {
 							// Handle the case where IE and Opera return items
-							// by name instead of ID
+							// by name instead of Id
 							if ( elem.id === match[3] ) {
 								return makeArray( [ elem ], extra );
 							}
@@ -5047,7 +5047,7 @@ if ( document.querySelectorAll ) {
 					} catch(qsaError) {}
 
 				// qSA works strangely on Element-rooted queries
-				// We can work around this by specifying an extra ID on the root
+				// We can work around this by specifying an extra Id on the root
 				// and working up from there (Thanks to Andrew Dupont for the technique)
 				// IE 8 doesn't work on object elements
 				} else if ( context.nodeType === 1 && context.nodeName.toLowerCase() !== "object" ) {

@@ -84,10 +84,10 @@ var Sizzle = function( selector, context, results, seed ) {
 		}
 
 	} else {
-		// Take a shortcut and set the context if the root selector is an ID
-		// (but not if it'll be faster if the inner selector is an ID)
+		// Take a shortcut and set the context if the root selector is an Id
+		// (but not if it'll be faster if the inner selector is an Id)
 		if ( !seed && parts.length > 1 && context.nodeType === 9 && !contextXML &&
-				Expr.match.ID.test(parts[0]) && !Expr.match.ID.test(parts[parts.length - 1]) ) {
+				Expr.match.Id.test(parts[0]) && !Expr.match.Id.test(parts[parts.length - 1]) ) {
 
 			ret = Sizzle.find( parts.shift(), context, contextXML );
 			context = ret.expr ?
@@ -368,10 +368,10 @@ var getText = Sizzle.getText = function( elem ) {
 };
 
 var Expr = Sizzle.selectors = {
-	order: [ "ID", "NAME", "TAG" ],
+	order: [ "Id", "NAME", "TAG" ],
 
 	match: {
-		ID: /#((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
+		Id: /#((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
 		CLASS: /\.((?:[\w\u00c0-\uFFFF\-]|\\.)+)/,
 		NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF\-]|\\.)+)['"]*\]/,
 		ATTR: /\[\s*((?:[\w\u00c0-\uFFFF\-]|\\.)+)\s*(?:(\S?=)\s*(?:(['"])(.*?)\3|(#?(?:[\w\u00c0-\uFFFF\-]|\\.)*)|)|)\s*\]/,
@@ -487,7 +487,7 @@ var Expr = Sizzle.selectors = {
 	},
 
 	find: {
-		ID: function( match, context, isXML ) {
+		Id: function( match, context, isXML ) {
 			if ( typeof context.getElementById !== "undefined" && !isXML ) {
 				var m = context.getElementById(match[1]);
 				// Check parentNode to catch when Blackberry 4.6 returns
@@ -541,7 +541,7 @@ var Expr = Sizzle.selectors = {
 			return false;
 		},
 
-		ID: function( match ) {
+		Id: function( match ) {
 			return match[1].replace( rBackslash, "" );
 		},
 
@@ -838,7 +838,7 @@ var Expr = Sizzle.selectors = {
 			}
 		},
 
-		ID: function( elem, match ) {
+		Id: function( elem, match ) {
 			return elem.nodeType === 1 && elem.getAttribute("id") === match;
 		},
 
@@ -1067,7 +1067,7 @@ if ( document.documentElement.compareDocumentPosition ) {
 	// The workaround has to do additional checks after a getElementById
 	// Which slows things down for other browsers (hence the branching)
 	if ( document.getElementById( id ) ) {
-		Expr.find.ID = function( match, context, isXML ) {
+		Expr.find.Id = function( match, context, isXML ) {
 			if ( typeof context.getElementById !== "undefined" && !isXML ) {
 				var m = context.getElementById(match[1]);
 
@@ -1079,7 +1079,7 @@ if ( document.documentElement.compareDocumentPosition ) {
 			}
 		};
 
-		Expr.filter.ID = function( elem, match ) {
+		Expr.filter.Id = function( elem, match ) {
 			var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
 
 			return elem.nodeType === 1 && node && node.nodeValue === match;
@@ -1155,7 +1155,7 @@ if ( document.querySelectorAll ) {
 			context = context || document;
 
 			// Only use querySelectorAll on non-XML documents
-			// (ID selectors don't work in non-HTML documents)
+			// (Id selectors don't work in non-HTML documents)
 			if ( !seed && !Sizzle.isXML(context) ) {
 				// See if we find a selector to speed up
 				var match = /^(\w+$)|^\.([\w\-]+$)|^#([\w\-]+$)/.exec( query );
@@ -1177,7 +1177,7 @@ if ( document.querySelectorAll ) {
 					if ( query === "body" && context.body ) {
 						return makeArray( [ context.body ], extra );
 
-					// Speed-up: Sizzle("#ID")
+					// Speed-up: Sizzle("#Id")
 					} else if ( match && match[3] ) {
 						var elem = context.getElementById( match[3] );
 
@@ -1185,7 +1185,7 @@ if ( document.querySelectorAll ) {
 						// nodes that are no longer in the document #6963
 						if ( elem && elem.parentNode ) {
 							// Handle the case where IE and Opera return items
-							// by name instead of ID
+							// by name instead of Id
 							if ( elem.id === match[3] ) {
 								return makeArray( [ elem ], extra );
 							}
@@ -1200,7 +1200,7 @@ if ( document.querySelectorAll ) {
 					} catch(qsaError) {}
 
 				// qSA works strangely on Element-rooted queries
-				// We can work around this by specifying an extra ID on the root
+				// We can work around this by specifying an extra Id on the root
 				// and working up from there (Thanks to Andrew Dupont for the technique)
 				// IE 8 doesn't work on object elements
 				} else if ( context.nodeType === 1 && context.nodeName.toLowerCase() !== "object" ) {

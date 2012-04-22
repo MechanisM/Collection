@@ -7,7 +7,7 @@
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), collection or true (if disabled)
+	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -38,7 +38,7 @@
 		}
 		
 		// overloads
-		// if the ID is not specified, it is taken active collection
+		// if the Id is not specified, it is taken active collection
 		if (!id) {
 			data = this._get('collection');
 		} else if (C.isString(id)) {
@@ -63,7 +63,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -76,7 +76,7 @@
 	 *
 	 * @example
 	 * var db = $C([[1, 2, 3, 4, 5, 6, 7, 8], 2, 3, 4]);
-	 * db.forEach(':data[key] += 1', '0 >>> :el % 2 === 0');
+	 * db.forEach(':data[key] += 1', '0 >> :el % 2 === 0');
 	 * console.log(db.get());
 	 * @example
 	 * var db = new $C([{a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: 3}]);
@@ -104,8 +104,7 @@
 		lastIndexOf = parseInt(lastIndexOf) || false;
 		rev = rev || false;
 		
-		var self = this,
-			tmpObj = {},
+		var tmpObj = {},
 			tmpArray = [],
 			
 			context = filter.length === 2 ? filter[0] : '',
@@ -124,7 +123,7 @@
 		
 		// get by link
 		data = !C.isCollection(id)
-					? C.byLink(this._get('collection', id), this._getActiveParam('context') + C.CHILDREN + context)
+					? this._getOne(context, id)
 						: id;
 		
 		// throw an exception if the element is not an object
@@ -262,7 +261,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point

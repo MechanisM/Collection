@@ -1907,10 +1907,10 @@ Element.idCounter = 1;
 Element.cache = { };
 
 Element._purgeElement = function(element) {
-  var uid = element._prototypeUID;
+  var uid = element._prototypeUId;
   if (uid) {
     Element.stopObserving(element);
-    element._prototypeUID = void 0;
+    element._prototypeUId = void 0;
     delete Element.Storage[uid];
   }
 }
@@ -3101,7 +3101,7 @@ document.viewport = {
 
 
 Element.Storage = {
-  UID: 1
+  UId: 1
 };
 
 Element.addMethods({
@@ -3112,9 +3112,9 @@ Element.addMethods({
     if (element === window) {
       uid = 0;
     } else {
-      if (typeof element._prototypeUID === "undefined")
-        element._prototypeUID = Element.Storage.UID++;
-      uid = element._prototypeUID;
+      if (typeof element._prototypeUId === "undefined")
+        element._prototypeUId = Element.Storage.UId++;
+      uid = element._prototypeUId;
     }
 
     if (!Element.Storage[uid])
@@ -3150,12 +3150,12 @@ Element.addMethods({
   clone: function(element, deep) {
     if (!(element = $(element))) return;
     var clone = element.cloneNode(deep);
-    clone._prototypeUID = void 0;
+    clone._prototypeUId = void 0;
     if (deep) {
       var descendants = Element.select(clone, '*'),
           i = descendants.length;
       while (i--) {
-        descendants[i]._prototypeUID = void 0;
+        descendants[i]._prototypeUId = void 0;
       }
     }
     return Element.extend(clone);
@@ -4028,7 +4028,7 @@ var Sizzle = function(selector, context, results, seed) {
 		}
 	} else {
 		if ( !seed && parts.length > 1 && context.nodeType === 9 && !contextXML &&
-				Expr.match.ID.test(parts[0]) && !Expr.match.ID.test(parts[parts.length - 1]) ) {
+				Expr.match.Id.test(parts[0]) && !Expr.match.Id.test(parts[parts.length - 1]) ) {
 			var ret = Sizzle.find( parts.shift(), context, contextXML );
 			context = ret.expr ? Sizzle.filter( ret.expr, ret.set )[0] : ret.set[0];
 		}
@@ -4229,9 +4229,9 @@ Sizzle.filter = function(expr, set, inplace, not){
 };
 
 var Expr = Sizzle.selectors = {
-	order: [ "ID", "NAME", "TAG" ],
+	order: [ "Id", "NAME", "TAG" ],
 	match: {
-		ID: /#((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
+		Id: /#((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
 		CLASS: /\.((?:[\w\u00c0-\uFFFF-]|\\.)+)/,
 		NAME: /\[name=['"]*((?:[\w\u00c0-\uFFFF-]|\\.)+)['"]*\]/,
 		ATTR: /\[\s*((?:[\w\u00c0-\uFFFF-]|\\.)+)\s*(?:(\S?=)\s*(['"]*)(.*?)\3|)\s*\]/,
@@ -4324,7 +4324,7 @@ var Expr = Sizzle.selectors = {
 		}
 	},
 	find: {
-		ID: function(match, context, isXML){
+		Id: function(match, context, isXML){
 			if ( typeof context.getElementById !== "undefined" && !isXML ) {
 				var m = context.getElementById(match[1]);
 				return m ? [m] : [];
@@ -4368,7 +4368,7 @@ var Expr = Sizzle.selectors = {
 
 			return false;
 		},
-		ID: function(match){
+		Id: function(match){
 			return match[1].replace(/\\/g, "");
 		},
 		TAG: function(match, curLoop){
@@ -4570,7 +4570,7 @@ var Expr = Sizzle.selectors = {
 					}
 			}
 		},
-		ID: function(elem, match){
+		Id: function(elem, match){
 			return elem.nodeType === 1 && elem.getAttribute("id") === match;
 		},
 		TAG: function(elem, match){
@@ -4727,14 +4727,14 @@ if ( document.documentElement.compareDocumentPosition ) {
 	root.insertBefore( form, root.firstChild );
 
 	if ( !!document.getElementById( id ) ) {
-		Expr.find.ID = function(match, context, isXML){
+		Expr.find.Id = function(match, context, isXML){
 			if ( typeof context.getElementById !== "undefined" && !isXML ) {
 				var m = context.getElementById(match[1]);
 				return m ? m.id === match[1] || typeof m.getAttributeNode !== "undefined" && m.getAttributeNode("id").nodeValue === match[1] ? [m] : undefined : [];
 			}
 		};
 
-		Expr.filter.ID = function(elem, match){
+		Expr.filter.Id = function(elem, match){
 			var node = typeof elem.getAttributeNode !== "undefined" && elem.getAttributeNode("id");
 			return elem.nodeType === 1 && node && node.nodeValue === match;
 		};

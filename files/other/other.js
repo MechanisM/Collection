@@ -4,7 +4,7 @@
 	/////////////////////////////////
 	
 	/**
-	 * return to active parameter stack (flags included)
+	 * returns the active parameter stack (flags included)
 	 * 
 	 * @this {Collection Object}
 	 * @param {String} name — property name
@@ -36,6 +36,82 @@
 	 */
 	Collection.prototype._isStringExpression = function (obj) {
 		return C.isString(obj) && obj.search(/^:/) !== -1;
+	};
+	
+	/**
+	 * splits ID on atoms
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} id — collection ID
+	 * @return {Plain Object}
+	 */
+	Collection.prototype._splitId = function (id) {
+		id = id || '';
+		var res = {};
+		
+		if (id.search(this.SPLITTER) !== -1) {
+			res.id = id.split(this.SPLITTER);
+			res.set = true;
+		} else {
+			res.id = id.split(this.SHORT_SPLITTER);
+			res.set = false;
+		}
+		
+		if (res.id[1]) {
+			res.to = res.id[1].trim();
+		} else { res.to = ''; }
+		res.id = res.id[0].trim();
+		
+		return res;
+	};
+	
+	/**
+	 * save the result in the collection
+	 * 
+	 * @this {Collection Object}
+	 * @param {String} to — ID to be stored in the stack
+	 * @param {Boolean} set — if true, the collection will be active
+	 * @param {mixed} val — value for the save
+	 * @return {Collection Object}
+	 */
+	Collection.prototype._saveResult = function (to, set, val) {
+		to = to.split(this.WITH);
+		
+		var context;
+		
+		if (to[1]) {
+			to = to[1].split(this.DEF);
+			
+			context = to[1].trim() || '';
+			to = to[0].trim();
+			
+			if (this._exists('collection', to)) {
+				this
+					.disable('context')
+					.concat(val, context, to)
+					.enable('context');
+			} else {
+				this._push('collection', to, val);
+			}
+		} else {
+			to = to[0].split(this.DEF);
+			
+			context = to[1].trim() || '';
+			to = to[0].trim();
+			
+			if (this._exists('collection', to) && context) {
+				this
+					.disable('context')
+					._setOne(context, val, to)
+					.enable('context');
+			} else {
+				this._push('collection', to, val);
+			}
+		}
+		
+		if (set === true) { return this._set('collection', to); }
+		
+		return this;
 	};
 	
 	/**
@@ -87,20 +163,21 @@
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|Collection} [objID=this.ACTIVE] — collection ID or collection
+	 * @param {String|Collection} [objId=this.ACTIVE] — collection ID or collection
 	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space] — indentation of nested structures
 	 * @return {String}
 	 */
-	Collection.prototype.toString = function (objID, replacer, space) {
+	Collection.prototype.toString = function (objId, replacer, space) {
 		if (typeof JSON === 'undefined' || !JSON.stringify) { throw new Error('object JSON is not defined!'); }
 		
+		objId = objId || '';
 		replacer = replacer || '';
 		space = space || '';
 		
-		if (objID && C.isCollection(objID)) { return JSON.stringify(objID, replacer, space); }
+		if (C.isCollection(objId)) { return JSON.stringify(objId, replacer, space); }
 		
-		return JSON.stringify(C.byLink(this._get('collection', objID || ''), this._getActiveParam('context')), replacer, space);
+		return JSON.stringify(this._getOne('', objId), replacer, space);
 	};
 	/**
 	 * return collection length (only active)

@@ -8,7 +8,7 @@
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -32,7 +32,7 @@
 			arg = C.toArray(arguments),
 			action;
 		
-		// overload ID
+		// overload Id
 		if (id.search(this.SPLITTER) !== -1) {
 			id = id.split(this.SPLITTER);
 			set = true;
@@ -53,7 +53,7 @@
 		
 		// save result
 		if (to) {
-			to = to.split(this.PLUS);
+			to = to.split(this.WITH);
 			
 			if (to[1]) {
 				to = to[1].trim();
@@ -81,7 +81,7 @@
 	 *
 	 * @this {Colletion Object}
 	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -105,7 +105,7 @@
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=0] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @return {Number|String}
 	 *
 	 * @example
@@ -125,7 +125,7 @@
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=Collection Length] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID to be stored in the stack (if >>> ID will become active), example: test>>>+test2)
+	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @return {Number|String}
 	 *
 	 * @example

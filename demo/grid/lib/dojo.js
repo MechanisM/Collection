@@ -274,9 +274,9 @@
 				};
 			}else{
 				// if in the browser an old IE; find an xhr
-				for(var XMLHTTP_PROGIDS = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'], progid, i = 0; i < 3;){
+				for(var XMLHTTP_PROGIdS = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'], progid, i = 0; i < 3;){
 					try{
-						progid = XMLHTTP_PROGIDS[i++];
+						progid = XMLHTTP_PROGIdS[i++];
 						if(new ActiveXObject(progid)){
 							// this progid works; therefore, use it from now on
 							break;
@@ -2557,7 +2557,7 @@ define("dojo/dom-form", ["./_base/lang", "./dom", "./io-query", "./json"], funct
     dojo.formToQuery = function(formNode){
         // summary:
         //		Returns a URL-encoded string representing the form passed as either a
-        //		node or string ID identifying the form to serialize
+        //		node or string Id identifying the form to serialize
 		// formNode: DOMNode|String
 		// returns: String
     };
@@ -2567,7 +2567,7 @@ define("dojo/dom-form", ["./_base/lang", "./dom", "./io-query", "./json"], funct
     dojo.formToJson = function(formNode, prettyPrint){
         // summary:
         //		Create a serialized JSON string from a form node or string
-        //		ID identifying the form to serialize
+        //		Id identifying the form to serialize
 		// formNode: DOMNode|String
 		// prettyPrint: Boolean?
 		// returns: String
@@ -3303,10 +3303,10 @@ define(["./kernel", "../dom", "../dom-style", "../dom-attr", "../dom-prop", "../
 		//		be sure to include "px" in the value. For instance, top: "200px".
 		//		Otherwise, in some cases, some browsers will not apply the style.
 		// returns:
-		//		when used as a getter, return the computed style of the node if passing in an ID or node,
+		//		when used as a getter, return the computed style of the node if passing in an Id or node,
 		//		or return the normalized, computed value for the property when passing in a node and a style property
 		// example:
-		//		Passing only an ID or node returns the computed style object of
+		//		Passing only an Id or node returns the computed style object of
 		//		the node:
 		//	|	dojo.style("thinger");
 		// example:
@@ -7401,7 +7401,7 @@ define(["./_base/sniff", "./_base/lang", "./_base/window"],
 		//		node references from other documents.
 		//
 		// example:
-		//		Look up a node by ID:
+		//		Look up a node by Id:
 		//	|	var n = dojo.byId("foo");
 		//
 		// example:
@@ -7709,7 +7709,7 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 		};
 
 		var endId = function(){
-			// called when the tokenizer might be at the end of an ID portion of a match
+			// called when the tokenizer might be at the end of an Id portion of a match
 			if(inId >= 0){
 				currentPart.id = ts(inId, x).replace(/\\/g, "");
 				inId = -1;
@@ -7885,7 +7885,7 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 					inPseudo = inParens = -1;
 				}
 			}else if(cc == "#"){
-				// start of an ID match
+				// start of an Id match
 				endAll();
 				inId = x+1;
 			}else if(cc == "."){
@@ -8442,7 +8442,7 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 		var ecs = getDoc()["getElementsByClassName"];
 
 		if(!oper){
-			// if there's no infix operator, then it's a descendant query. ID
+			// if there's no infix operator, then it's a descendant query. Id
 			// and "elements by class name" variants can be accelerated so we
 			// call them out explicitly:
 			if(query.id){
@@ -8473,7 +8473,7 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 			){
 				// it's a class-based query and we've got a fast way to run it.
 
-				// ignore class and ID filters since we will have handled both
+				// ignore class and Id filters since we will have handled both
 				filterFunc = getSimpleFilterFunc(query, { el: 1, classes: 1, id: 1 });
 				var classesString = query.classes.join(" ");
 				retFunc = function(root, arr, bag){
@@ -8712,7 +8712,7 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 		// TODO:
 		//		if we've got a descendant query (e.g., "> .thinger" instead of
 		//		just ".thinger") in a QSA-able doc, but are passed a child as a
-		//		root, it should be possible to give the item a synthetic ID and
+		//		root, it should be possible to give the item a synthetic Id and
 		//		trivially rewrite the query to the form "#synid > .thinger" to
 		//		use the QSA branch
 
@@ -8769,13 +8769,13 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 	// NOTE:
 	//		this function is Moo inspired, but our own impl to deal correctly
 	//		with XML in IE
-	var _nodeUID = dojo.isIE ? function(node){
+	var _nodeUId = dojo.isIE ? function(node){
 		if(caseSensitive){
-			// XML docs don't have uniqueID on their nodes
+			// XML docs don't have uniqueId on their nodes
 			return (node.getAttribute("_uid") || node.setAttribute("_uid", ++_zipIdx) || _zipIdx);
 
 		}else{
-			return node.uniqueID;
+			return node.uniqueId;
 		}
 	} :
 	function(node){
@@ -8786,10 +8786,10 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 	// to flatten a list of unique items, but rather just tell if the item in
 	// question is already in the bag. Normally we'd just use hash lookup to do
 	// this for us but IE's DOM is busted so we can't really count on that. On
-	// the upside, it gives us a built in unique ID function.
+	// the upside, it gives us a built in unique Id function.
 	var _isUnique = function(node, bag){
 		if(!bag){ return 1; }
-		var id = _nodeUID(node);
+		var id = _nodeUId(node);
 		if(!bag[id]){ return bag[id] = 1; }
 		return 0;
 	};
@@ -8863,7 +8863,7 @@ define(["../_base/kernel", "../has", "../dom", "../_base/sniff", "../_base/array
 		//			* node type selectors like `span`
 		//			* ` ` descendant selectors
 		//			* `>` child element selectors
-		//			* `#foo` style ID selectors
+		//			* `#foo` style Id selectors
 		//			* `*` universal selector
 		//			* `~`, the preceded-by sibling selector
 		//			* `+`, the immediately preceded-by sibling selector
@@ -9073,7 +9073,7 @@ define(["./_base/sniff", "./dom"], function(has, dom){
 		//
 		// node: DOMNode
 		//		A reference to a DOM node. Does NOT support taking an
-		//		ID string for speed reasons.
+		//		Id string for speed reasons.
 		// example:
 		//	|	dojo.getComputedStyle(dojo.byId('foo')).borderWidth;
 		//
@@ -9120,7 +9120,7 @@ define(["./_base/sniff", "./dom"], function(has, dom){
 		// name: String?
 		//		the style property to get
 		// example:
-		//		Passing only an ID or node returns the computed style object of
+		//		Passing only an Id or node returns the computed style object of
 		//		the node:
 		//	|	dojo.getStyle("thinger");
 		// example:
@@ -10654,7 +10654,7 @@ define("dojo/dom-construct", ["exports", "./_base/kernel", "./_base/sniff", "./_
 		// refNode: DOMNode?|String?
 		//		Optional reference node. Used by `dojo.place` to place the newly created
 		//		node somewhere in the dom relative to refNode. Can be a DomNode reference
-		//		or String ID of a node.
+		//		or String Id of a node.
 		//
 		// pos: String?
 		//		Optional positional reference. Defaults to "last" by way of `dojo.place`,
@@ -10725,7 +10725,7 @@ define("dojo/dom-construct", ["exports", "./_base/kernel", "./_base/sniff", "./_
 		//		children. Function only works with DomNodes, and returns nothing.
 		//
 		// node: DOMNode|String
-		//		A String ID or DomNode reference of the element to be destroyed
+		//		A String Id or DomNode reference of the element to be destroyed
 		//
 		// example:
 		//		Destroy a node byId:
@@ -11194,7 +11194,7 @@ return dojo.keys = {
 	NUMPAD_ENTER: 108,
 	NUMPAD_MINUS: 109,
 	NUMPAD_PERIOD: 110,
-	NUMPAD_DIVIDE: 111,
+	NUMPAD_DIVIdE: 111,
 	F1: 112,
 	F2: 113,
 	F3: 114,
@@ -12105,7 +12105,7 @@ define(["./_base/kernel", "./on", "./has", "./dom", "./_base/window"], function(
 	if(has("dom-quirks") || !has("dom-addeventlistener")){
 		mouseButtons = {
 			LEFT:   1,
-			MIDDLE: 4,
+			MIdDLE: 4,
 			RIGHT:  2,
 			// helper functions
 			isButton: function(e, button){ return e.button & button; },
@@ -12116,7 +12116,7 @@ define(["./_base/kernel", "./on", "./has", "./dom", "./_base/window"], function(
 	}else{
 		mouseButtons = {
 			LEFT:   0,
-			MIDDLE: 1,
+			MIdDLE: 1,
 			RIGHT:  2,
 			// helper functions
 			isButton: function(e, button){ return e.button == button; },
@@ -12132,9 +12132,9 @@ define(["./_base/kernel", "./on", "./has", "./dom", "./_base/window"], function(
 		// LEFT: Number
 		//		Numeric value of the left mouse button for the platform.
 		LEFT:   0,
-		// MIDDLE: Number
+		// MIdDLE: Number
 		//		Numeric value of the middle mouse button for the platform.
-		MIDDLE: 1,
+		MIdDLE: 1,
 		// RIGHT: Number
 		//		Numeric value of the right mouse button for the platform.
 		RIGHT:  2,
@@ -12259,16 +12259,16 @@ define([
 			}
 		};
 	}else{
-		// PROGIDs are in order of decreasing likelihood; this will change in time.
-		for(var XMLHTTP_PROGIDS = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'], progid, i = 0; i < 3;){
+		// PROGIds are in order of decreasing likelihood; this will change in time.
+		for(var XMLHTTP_PROGIdS = ['Msxml2.XMLHTTP', 'Microsoft.XMLHTTP', 'Msxml2.XMLHTTP.4.0'], progid, i = 0; i < 3;){
 			try{
-				progid = XMLHTTP_PROGIDS[i++];
+				progid = XMLHTTP_PROGIdS[i++];
 				if (new ActiveXObject(progid)) {
 					// this progid works; therefore, use it from now on
 					break;
 				}
 			}catch(e){
-				// squelch; we're just trying to find a good ActiveX PROGID
+				// squelch; we're just trying to find a good ActiveX PROGId
 				// if they all fail, then progid ends up as the last attempt and that will signal the error
 				// the first time the client actually tries to exec an xhr
 			}
@@ -12493,7 +12493,7 @@ define([
 		//		handled.
 		//	id: String
 		//		For dojo.io.script calls only, the internal
-		//		script ID used for the request.
+		//		script Id used for the request.
 		//	canDelete: Boolean
 		//		For dojo.io.script calls only, indicates
 		//		whether the script tag that represents the
@@ -14791,7 +14791,7 @@ define(["./_base/lang", "./_base/array", "./dom"], function(lang, array, dom){
 		//		class list currently applied to the node.
 		//
 		// node: String|DOMNode
-		//		String ID or DomNode reference to check the class for.
+		//		String Id or DomNode reference to check the class for.
 		//
 		// classStr: String
 		//		A string class name to look for.
@@ -14811,7 +14811,7 @@ define(["./_base/lang", "./_base/array", "./dom"], function(lang, array, dom){
 		//		passed node. Will not re-apply duplicate classes.
 		//
 		// node: String|DOMNode
-		//		String ID or DomNode reference to add a class string too
+		//		String Id or DomNode reference to add a class string too
 		//
 		// classStr: String|Array
 		//		A String class name to add, or several space-separated class names,
@@ -14842,7 +14842,7 @@ define(["./_base/lang", "./_base/array", "./dom"], function(lang, array, dom){
 		//		check is required.
 		//
 		// node: String|DOMNode
-		//		String ID or DomNode reference to remove the class from.
+		//		String Id or DomNode reference to remove the class from.
 		//
 		// classStr: String|Array
 		//		An optional String class name to remove, or several space-separated
@@ -14878,7 +14878,7 @@ define(["./_base/lang", "./_base/array", "./dom"], function(lang, array, dom){
 		//		Operates more quickly than calling dojo.removeClass and dojo.addClass
 		//
 		// node: String|DOMNode
-		//		String ID or DomNode reference to remove the class from.
+		//		String Id or DomNode reference to remove the class from.
 		//
 		// addClassStr: String|Array
 		//		A String class name to add, or several space-separated class names,
@@ -14909,7 +14909,7 @@ define(["./_base/lang", "./_base/array", "./dom"], function(lang, array, dom){
 		//      Returns the condition that was specified directly or indirectly.
 		//
 		// node: String|DOMNode
-		//		String ID or DomNode reference to toggle a class string
+		//		String Id or DomNode reference to toggle a class string
 		//
 		// classStr: String|Array
 		//		A String class name to toggle, or several space-separated class names,
