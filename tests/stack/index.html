@@ -139,6 +139,15 @@
 				equal(db._exists('collection'), true, 'with active parameter');
 			});
 			
+			test('_validate', function () {
+				var db = new Collection()
+					._push('collection', {table1: [1, 2], table2: [1]})
+					._set('collection', 'table1');
+
+				equal(db._validate('collection', 'table3'), false, 'simple test');
+				equal(db._validate('collection'), true, 'with active parameter');
+			});
+			
 			test('_getActiveId', function () {
 				var db = new Collection()
 					._push('collection', {table1: [1, 2], table2: [1]})

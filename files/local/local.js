@@ -20,16 +20,16 @@
 	Collection.prototype.save = function (id, local) {
 		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
+		// events
+		var e;
+		this.onSave && (e = this.onSave.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveId('collection') : '' : this._active('collection', id) ? 'active' : '',
-			storage = local === false ? sessionStorage : localStorage,
-			e = null;
-		
-		// events
-		this.onSave && (e = this.onSave.apply(this, arguments));
-		if (e === false) { return this; }
+			storage = local === false ? sessionStorage : localStorage;
 		
 		storage.setItem(name + ':' + id, this.toString(id));
 		storage.setItem(name + '__date:' + id, new Date().toString());
@@ -87,17 +87,18 @@
 	 */
 	Collection.prototype.load = function (id, local) {
 		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
+		
+		// events
+		var e;
+		this.onLoad && (e = this.onLoad.apply(this, arguments));
+		if (e === false) { return this; }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active,
-			storage = local === false ? sessionStorage : localStorage,
-			e = null;
-		
-		// events
-		this.onLoad && (e = this.onLoad.apply(this, arguments));
-		if (e === false) { return this; }
+			storage = local === false ? sessionStorage : localStorage;
 		
 		if (id === this.ACTIVE) {
 			this._new('collection', JSON.parse(storage.getItem(name + ':' + id)));
@@ -213,14 +214,14 @@
 	Collection.prototype.drop = function (id, local) {
 		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
-		id = id || this.ACTIVE;
-		var name = '__' + this.name + '__' + this._get('namespace'),
-			storage = local === false ? sessionStorage : localStorage,
-			e = null;
-		
 		// events
+		var e;
 		this.onDrop && (e = this.onDrop.apply(this, arguments));
 		if (e === false) { return this; }
+		
+		id = id || this.ACTIVE;
+		var name = '__' + this.name + '__' + this._get('namespace'),
+			storage = local === false ? sessionStorage : localStorage;
 		
 		storage.removeItem(name + ':' + id);
 		storage.removeItem(name + '__date:' + id);

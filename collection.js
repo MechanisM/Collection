@@ -1728,13 +1728,14 @@ var Collection;
 	 * $C([1, 2, 3, 4, 5]).newCollection([1, 2]).getCollection();
 	 */
 	Collection.prototype._new = function (stackName, newVal) {
-		var active = this.dObj.active,
-			upperCase = C.toUpperCase(stackName, 1), e,
-			dom = C.drivers.dom;
-		
 		// events
+		var e;
 		this['onNew' + upperCase] && (e = this['onNew' + upperCase](newVal));
 		if (e === false) { return this; }
+		
+		var active = this.dObj.active,
+			upperCase = C.toUpperCase(stackName, 1),
+			dom = C.drivers.dom;
 		
 		// compile string if need
 		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
@@ -1769,14 +1770,15 @@ var Collection;
 	 *	.getCollection('test');
 	 */
 	Collection.prototype._update = function (stackName, newVal) {
-		var active = this.dObj.active,
-			upperCase = C.toUpperCase(stackName, 1), e,
-			activeId = this._getActiveId(stackName),
-			dom = C.drivers.dom;
-		
 		// events
+		var e;
 		this['onUpdate' + upperCase] && (e = this['onUpdate' + upperCase](newVal));
 		if (e === false) { return this; }
+		
+		var active = this.dObj.active,
+			upperCase = C.toUpperCase(stackName, 1),
+			activeId = this._getActiveId(stackName),
+			dom = C.drivers.dom;
 		
 		// compile string if need
 		if (['filter', 'parser'].indexOf(stackName) !== -1 && this._isStringExpression(newVal)) {
@@ -1838,15 +1840,16 @@ var Collection;
 	 * }).getCollection('test2');
 	 */
 	Collection.prototype._push = function (stackName, objId, newVal) {
-		var	upperCase = C.toUpperCase(stackName, 1), e,
+		// events
+		var e;
+		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objId, newVal || ''));
+		if (e === false) { return this; }
+		
+		var	upperCase = C.toUpperCase(stackName, 1),
 			tmp = this.dObj.sys['tmp' + upperCase],
 			activeId = this._getActiveId(stackName),
 
 			key, dom = C.drivers.dom;
-		
-		// events
-		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objId, newVal || ''));
-		if (e === false) { return this; }
 		
 		if (C.isPlainObject(objId)) {
 			for (key in objId) {
@@ -1919,18 +1922,19 @@ var Collection;
 	Collection.prototype._set = function (stackName, id) {
 		if (!id || id === this.ACTIVE) { return this; }
 		
+		// events
+		var e;
+		this['onSet' + upperCase] && (e = this['onSet' + upperCase](id));
+		if (e === false) { return this; }
+		
 		var sys = this.dObj.sys,
 
-			upperCase = C.toUpperCase(stackName, 1), e,
+			upperCase = C.toUpperCase(stackName, 1),
 			tmpChangeControlStr = stackName + 'ChangeControl',
 			tmpActiveIdStr = 'active' + upperCase + 'Id';
 		
 		// throw an exception if the requested parameter does not exist
 		if (!this._exists(stackName, id)) { throw new Error('the object "' + id + '" -> "' + stackName + '" doesn\'t exist in the stack!'); }
-		
-		// events
-		this['onSet' + upperCase] && (e = this['onSet' + upperCase](id));
-		if (e === false) { return this; }
 		
 		// change the story, if there were changes
 		if (sys[tmpActiveIdStr] !== id) {
@@ -1964,17 +1968,18 @@ var Collection;
 	 *	.activeCollection();
 	 */
 	Collection.prototype._back = function (stackName, nmb) {
+		// events
+		var e;
+		this['onBack' + upperCase] && (e = this['onBack' + upperCase](nmb));
+		if (e === false) { return this; }
+		
 		nmb = nmb || 1;
 		var sys = this.dObj.sys,
 			
-			upperCase = C.toUpperCase(stackName, 1), e,
+			upperCase = C.toUpperCase(stackName, 1),
 			propBack = sys[stackName + 'Back'],
 			
 			pos = propBack.length - (nmb) - 1;
-		
-		// events
-		this['onBack' + upperCase] && (e = this['onBack' + upperCase](nmb));
-		if (e === false) { return this; }
 		
 		if (pos >= 0 && propBack[pos]) {
 			if (sys['tmp' + upperCase][propBack[pos]]) {
@@ -2034,19 +2039,8 @@ var Collection;
 	Collection.prototype._drop = function (stackName, objId, deleteVal, resetVal) {
 		deleteVal = typeof deleteVal === 'undefined' ? false : deleteVal;
 		
-		var active = this.dObj.active,
-			sys = this.dObj.sys,
-			
-			upperCase = C.toUpperCase(stackName, 1), e,
-			tmpActiveIdStr = 'active' + upperCase + 'Id',
-			tmpTmpStr = 'tmp' + upperCase,
-
-			activeId = this._getActiveId(stackName),
-			tmpArray = !objId ? activeId ? [activeId] : [] : C.isArray(objId) || C.isPlainObject(objId) ? objId : [objId],
-			
-			key;
-		
 		// events
+		var e;
 		if (typeof resetVal === 'undefined') {
 			this['onDrop' + upperCase] && (e = this['onDrop' + upperCase](objId, deleteVal));
 			if (e === false) { return this; }
@@ -2054,6 +2048,18 @@ var Collection;
 			this['onReset' + upperCase] && (e = this['onReset' + upperCase](objId, resetVal));
 			if (e === false) { return this; }
 		}
+		
+		var active = this.dObj.active,
+			sys = this.dObj.sys,
+			
+			upperCase = C.toUpperCase(stackName, 1),
+			tmpActiveIdStr = 'active' + upperCase + 'Id',
+			tmpTmpStr = 'tmp' + upperCase,
+
+			activeId = this._getActiveId(stackName),
+			tmpArray = !objId ? activeId ? [activeId] : [] : C.isArray(objId) || C.isPlainObject(objId) ? objId : [objId],
+			
+			key;
 		
 		if (tmpArray[0] && tmpArray[0] !== this.ACTIVE) {
 			for (key in tmpArray) {
@@ -4433,16 +4439,16 @@ var Collection;
 	Collection.prototype.save = function (id, local) {
 		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
+		// events
+		var e;
+		this.onSave && (e = this.onSave.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active = id === this.ACTIVE ? this._exists('collection') ? this._getActiveId('collection') : '' : this._active('collection', id) ? 'active' : '',
-			storage = local === false ? sessionStorage : localStorage,
-			e = null;
-		
-		// events
-		this.onSave && (e = this.onSave.apply(this, arguments));
-		if (e === false) { return this; }
+			storage = local === false ? sessionStorage : localStorage;
 		
 		storage.setItem(name + ':' + id, this.toString(id));
 		storage.setItem(name + '__date:' + id, new Date().toString());
@@ -4500,17 +4506,18 @@ var Collection;
 	 */
 	Collection.prototype.load = function (id, local) {
 		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
+		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
+		
+		// events
+		var e;
+		this.onLoad && (e = this.onLoad.apply(this, arguments));
+		if (e === false) { return this; }
 		
 		id = id || this.ACTIVE;
 		var name = '__' + this.name + '__' + this._get('namespace'),
 			
 			active,
-			storage = local === false ? sessionStorage : localStorage,
-			e = null;
-		
-		// events
-		this.onLoad && (e = this.onLoad.apply(this, arguments));
-		if (e === false) { return this; }
+			storage = local === false ? sessionStorage : localStorage;
 		
 		if (id === this.ACTIVE) {
 			this._new('collection', JSON.parse(storage.getItem(name + ':' + id)));
@@ -4626,14 +4633,14 @@ var Collection;
 	Collection.prototype.drop = function (id, local) {
 		if (typeof localStorage === 'undefined') { throw new Error('your browser doesn\'t support web storage!'); }
 		
-		id = id || this.ACTIVE;
-		var name = '__' + this.name + '__' + this._get('namespace'),
-			storage = local === false ? sessionStorage : localStorage,
-			e = null;
-		
 		// events
+		var e;
 		this.onDrop && (e = this.onDrop.apply(this, arguments));
 		if (e === false) { return this; }
+		
+		id = id || this.ACTIVE;
+		var name = '__' + this.name + '__' + this._get('namespace'),
+			storage = local === false ? sessionStorage : localStorage;
 		
 		storage.removeItem(name + ':' + id);
 		storage.removeItem(name + '__date:' + id);

@@ -26,10 +26,17 @@
 			
 			test('concat', function () {
 				var db = new Collection({first: [[1, 2, {second: 3}], 2, 3]});
+				db.pushCollection('test', []);
+				
 				equal(db
-					.concat([1, 2, 3, 4, 5], 'first > 0 >')
+					.concat([1, 2, 3, 4, 5], ':first > 0 >')
 					.get('first > 0 >').length, 8,
 				'simple test');
+				
+				equal(db
+					.concat([1, 2, 3, 4, 5], 'test:')
+					.getCollection('test').length, 5,
+				'with ID');
 			});
 			
 			test('remove', function () {
@@ -67,14 +74,12 @@
 				equal(db
 					.add([1, 2], 'second')
 					.get('second').length, 2,
-				'add - simple add');
+				'simple add');
 				
 				equal(db
-					.add('first > 0', 'second', '', 'active', true)
-					.get('second').length, 3,
-				'add - copy');
-				equal(db.get('first').length, 2,
-				'add - move');
+					.add('second >> [1, 2]')
+					.get('second > eq(-1)').length, 2,
+				'with context');
 				
 				equal($C([1, 2, 3, 4]).push(1).get('eq(-1)'), 1, 'push (array)');
 				equal($C([1, 2, 3, 4]).unshift(0).get('0'), 0, 'unshift (array)');
