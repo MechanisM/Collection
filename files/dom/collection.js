@@ -4,15 +4,14 @@
 	/////////////////////////////////
 	
 	/**
-	 * converts one level nodes in the collection
+	 * converts nodes in the collection
 	 * 
 	 * @this {Collection}
-	 * @param {DOM Nodes} el — DOM node
+	 * @param {DOM Nodes} el — DOM node list
 	 * @return {Array}
 	 */
-	Collection._inObj = function (el) {
-		var array = [],
-			stat = C.fromNode.stat;
+	Collection.parseNode = function (el) {
+		var	array = [];
 				
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
@@ -32,14 +31,14 @@
 				
 				// classes
 				if (classes) {
-					array[i][stat.classes] = {};
+					array[i][C.CLASSES] = {};
 					classes.forEach(function (el) {
-						array[i][stat.classes][el] = el;
+						array[i][C.CLASSES][el] = el;
 					});
 				}
 				
-				if (el.childNodes.length !== 0) { array[i][stat.childNodes] = C._inObj(el.childNodes); }
-				if (txt !== false) { array[i][stat.val] = txt.replace(/[\r\t\n]/g, ' '); }
+				if (el.childNodes.length !== 0) { array[i][C.CHILD_NODES] = C.parseNode(el.childNodes); }
+				if (txt !== false) { array[i][C.VAL] = txt.replace(/[\r\t\n]/g, ' '); }
 			}
 		});
 
@@ -58,17 +57,8 @@
 	Collection.fromNode = function (selector, prop) {
 		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
 		
-		var data = C._inObj(dom.find(selector));
+		var data = C.parseNode(dom.find(selector));
 		
 		if (prop) { return new C(data, prop); }
 		return new C(data);
-	};
-	
-	// values by default
-	if (!C.fromNode.stat) {
-		C.fromNode.stat = {
-			val: 'val',
-			childNodes: 'childNodes',
-			classes: 'classes'
-		};
 	};

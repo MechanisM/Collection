@@ -13,3 +13,7 @@
 	
 	Collection.DOM = ['<?js', '?>'];
 	Collection.ECHO = 'echo';
+	
+	Collection.VAL = 'val';
+	Collection.CHILD_NODES = 'childNodes';
+	Collection.CLASSES = 'classes';
