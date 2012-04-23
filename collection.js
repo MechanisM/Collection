@@ -3379,6 +3379,7 @@ var Collection;
 			elements,
 			to = id.to,
 			set = id.set,
+			update,
 			
 			arg = C.toArray(arguments),
 			/** @private */
@@ -3388,6 +3389,11 @@ var Collection;
 			};
 		
 		id = arg[1] = id.id;
+		if ((!id || id === this.ACTIVE) && set === true) {
+			update = this._active('collection');
+			if (update) { id = update; }
+		} else { update = true; }
+		
 		arg.splice(2, 1);
 		arg.unshift(action);
 		
@@ -3404,7 +3410,7 @@ var Collection;
 		this._saveResult(to, set, elements);
 		
 		// delete element
-		if (deleteType === true) {
+		if (deleteType === true && update) {
 			if (rev === true) {
 				deleteList.forEach(function (el) {
 					this._removeOne(el, id);
@@ -5057,7 +5063,6 @@ var Collection;
 	Collection.prototype._saveResult = function (to, set, val, active) {
 		to = to.split(this.WITH);
 		active = active || false;
-		
 		var context;
 		
 		if (to[1]) {
@@ -5068,11 +5073,11 @@ var Collection;
 			
 			if (this._validate('collection', to)) {
 				if (active) {
-					this.concat(val, context, to);
+					this.concat(val, to + ':' + context);
 				} else {
 					this
 						.disable('context')
-						.concat(val, context, to)
+						.concat(val, to + ':' + context)
 						.enable('context');
 				}
 			} else {

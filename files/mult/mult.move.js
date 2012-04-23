@@ -49,6 +49,7 @@
 			elements,
 			to = id.to,
 			set = id.set,
+			update,
 			
 			arg = C.toArray(arguments),
 			/** @private */
@@ -58,6 +59,11 @@
 			};
 		
 		id = arg[1] = id.id;
+		if ((!id || id === this.ACTIVE) && set === true) {
+			update = this._active('collection');
+			if (update) { id = update; }
+		} else { update = true; }
+		
 		arg.splice(2, 1);
 		arg.unshift(action);
 		
@@ -74,7 +80,7 @@
 		this._saveResult(to, set, elements);
 		
 		// delete element
-		if (deleteType === true) {
+		if (deleteType === true && update) {
 			if (rev === true) {
 				deleteList.forEach(function (el) {
 					this._removeOne(el, id);

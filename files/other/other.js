@@ -78,7 +78,6 @@
 	Collection.prototype._saveResult = function (to, set, val, active) {
 		to = to.split(this.WITH);
 		active = active || false;
-		
 		var context;
 		
 		if (to[1]) {
@@ -89,11 +88,11 @@
 			
 			if (this._validate('collection', to)) {
 				if (active) {
-					this.concat(val, context, to);
+					this.concat(val, to + ':' + context);
 				} else {
 					this
 						.disable('context')
-						.concat(val, context, to)
+						.concat(val, to + ':' + context)
 						.enable('context');
 				}
 			} else {
