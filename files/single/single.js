@@ -14,15 +14,16 @@
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._setOne = function (context, val, id) {
+		// events
+		var e;
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		context = C.isExists(context) ? context.toString() : '';
 		val = typeof val === 'undefined' ? '' : val;
 		id = id || '';
 
-		var activeContext = this._getActiveParam('context'), e;
-		
-		// events
-		this.onSet && (e = this.onSet.apply(this, arguments));
-		if (e === false) { return this; }
+		var activeContext = this._getActiveParam('context');
 		
 		// if no context
 		if (!context && !activeContext) {

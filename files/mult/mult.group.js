@@ -7,9 +7,9 @@
 	 * group the elements on the field or condition (the method returns a new collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Context|String Expression|Function} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -96,9 +96,9 @@
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Context|String Expression|Function} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point

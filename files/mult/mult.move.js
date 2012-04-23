@@ -8,8 +8,8 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
@@ -32,18 +32,23 @@
 	 * console.log(db.get());
 	 */
 	Collection.prototype.move = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
+		deleteType = deleteType === false ? false : true;
+		
+		// events
+		var e;
+		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
+		!deleteType  && this.onCopy && (e = this.onCopy.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		filter = filter || '';
 		id = this._splitId(id);
 		
 		addType = addType || 'push';
-		deleteType = deleteType === false ? false : true;
 		
 		var	deleteList = [],
 			elements,
 			to = id.to,
 			set = id.set,
-			
-			e,
 			
 			arg = C.toArray(arguments),
 			/** @private */
@@ -55,11 +60,6 @@
 		id = arg[1] = id.id;
 		arg.splice(2, 1);
 		arg.unshift(action);
-		
-		// events
-		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
-		!deleteType  && this.onCopy && (e = this.onCopy.apply(this, arguments));
-		if (e === false) { return this; }
 		
 		// search elements
 		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
@@ -89,8 +89,8 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -112,8 +112,8 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
@@ -138,8 +138,8 @@
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point

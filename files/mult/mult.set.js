@@ -8,7 +8,7 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
@@ -54,9 +54,14 @@
 			return this._setOne(filter, replaceObj, id || '');
 		}
 		
+		// events
+		var e;
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
-		var e, arg, res, action,
+		var arg, res, action,
 			isFunc = C.isFunction(replaceObj);
 		
 		if (isFunc) {
@@ -73,10 +78,6 @@
 		arg = C.unshift(arguments, action);
 		arg.splice(2, 1);
 		
-		// events
-		this.onSet && (e = this.onSet.apply(this, arguments));
-		if (e === false) { return this; }
-		
 		return this.forEach.apply(this, arg);
 	};
 	/**
@@ -84,7 +85,7 @@
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
