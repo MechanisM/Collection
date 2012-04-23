@@ -140,7 +140,7 @@
 		if (C.isPlainObject(objId)) {
 			for (key in objId) {
 				if (objId.hasOwnProperty(key)) {
-					// update, if the Id is 'active'
+					// update, if the Id is active
 					if (key === this.ACTIVE) {
 						this._update(stackName, objId[key]);
 					} else {
@@ -164,7 +164,7 @@
 				}
 			}
 		} else {
-			// update, if the Id is 'active'
+			// update, if the Id is active
 			if (objId === this.ACTIVE) {
 				this._update(stackName, newVal);
 			} else {
@@ -206,6 +206,8 @@
 	 *	.getCollection();
 	 */
 	Collection.prototype._set = function (stackName, id) {
+		if (!id || id === this.ACTIVE) { return this; }
+		
 		var sys = this.dObj.sys,
 
 			upperCase = C.toUpperCase(stackName, 1), e,
@@ -455,6 +457,21 @@
 		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
 
 		return false;
+	};
+	/**
+	 * check for the existence (has aliases, format: validate + StackName)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} [id=this.ACTIVE] — stack Id
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C().validateCollection('test');
+	 */
+	Collection.prototype._validate = function (stackName, id) {
+		return !id || id === this.ACTIVE || this._exists(stackName, id);
 	};
 	/**
 	 * return the Id of the active parameter (has aliases, format: get + StackName + ActiveId)

@@ -1860,7 +1860,7 @@ var Collection;
 		if (C.isPlainObject(objId)) {
 			for (key in objId) {
 				if (objId.hasOwnProperty(key)) {
-					// update, if the Id is 'active'
+					// update, if the Id is active
 					if (key === this.ACTIVE) {
 						this._update(stackName, objId[key]);
 					} else {
@@ -1884,7 +1884,7 @@ var Collection;
 				}
 			}
 		} else {
-			// update, if the Id is 'active'
+			// update, if the Id is active
 			if (objId === this.ACTIVE) {
 				this._update(stackName, newVal);
 			} else {
@@ -1926,6 +1926,8 @@ var Collection;
 	 *	.getCollection();
 	 */
 	Collection.prototype._set = function (stackName, id) {
+		if (!id || id === this.ACTIVE) { return this; }
+		
 		var sys = this.dObj.sys,
 
 			upperCase = C.toUpperCase(stackName, 1), e,
@@ -2177,6 +2179,21 @@ var Collection;
 		return false;
 	};
 	/**
+	 * check for the existence (has aliases, format: validate + StackName)
+	 * 
+	 * @public
+	 * @this {Colletion Object}
+	 * @param {String} stackName — the name of the parameter stack (for example: 'collection', 'parser', 'filter', etc.)
+	 * @param {String} [id=this.ACTIVE] — stack Id
+	 * @return {Boolean}
+	 *
+	 * @example
+	 * $C().validateCollection('test');
+	 */
+	Collection.prototype._validate = function (stackName, id) {
+		return !id || id === this.ACTIVE || this._exists(stackName, id);
+	};
+	/**
 	 * return the Id of the active parameter (has aliases, format: get + StackName + ActiveId)
 	 * 
 	 * @public
@@ -2322,6 +2339,10 @@ var Collection;
 			
 			fn['exists' + nm] = function (nm) {
 				return function (id) { return this._exists(nm, id || ''); };
+			}(key);
+			
+			fn['validate' + nm] = function (nm) {
+				return function (id) { return this._validate(nm, id || ''); };
 			}(key);
 			
 			fn['get' + nm + 'ActiveId'] = function (nm) {
@@ -3323,9 +3344,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {Context} [context] — source context
-	 * @param {String} [sourceId=this.ACTIVE] — source Id
-	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
@@ -3350,20 +3369,27 @@ var Collection;
 	Collection.prototype.move = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
 		filter = filter || '';
 		id = this._splitId(id);
-		addType = addType || 'push';
 		
-		mult = mult === false ? false : true;
+		addType = addType || 'push';
 		deleteType = deleteType === false ? false : true;
 		
-		var deleteList = [],
+		var	deleteList = [],
 			elements,
 			to = id.to,
 			set = id.set,
 			
-			isArray = C.isArray(this._getOne('', id.id)),
-			e = null;
+			e,
+			
+			arg = C.toArray(arguments),
+			/** @private */
+			action = function (el, key) {
+				deleteList.push(key);
+				elements.push(el);
+			};
 		
-		id = id.id;
+		id = arg[1] = id.id;
+		arg.splice(2, 1);
+		arg.unshift(action);
 		
 		// events
 		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
@@ -3371,38 +3397,24 @@ var Collection;
 		if (e === false) { return this; }
 		
 		// search elements
-		this.disable('context');
-		
 		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
-			elements = filter;
-		} else { elements = this.search(filter, sourceId, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
-		
-		this.enable('context');
-		
-		console.log(elements);
+			elements = this._getOne(filter, id);
+			deleteList.push(filter);
+		} else {
+			elements = [];
+			this.forEach.apply(this, arg);
+		}
 		
 		// move
-		/*if (mult === true && C.isArray(elements)) {
-			elements.forEach(function (el) {
-				this.add(context + C.CHILDREN + el, isArray === true ? addType : el + C.METHOD + addType, activeId, sourceId);
-				deleteType === true && deleteList.push(el);
-			}, this);
-		} else {
-			this.add(context + C.CHILDREN + elements, isArray === true ? addType : elements + C.METHOD + addType, activeId, sourceId);
-			deleteType === true && deleteList.push(elements);
-		}*/
+		this._saveResult(to, set, elements);
 		
 		// delete element
 		if (deleteType === true) {
-			this.disable('context');
-			
 			if (rev === true) {
 				deleteList.forEach(function (el) {
-					this._removeOne(el, sourceId);
+					this._removeOne(el, id);
 				}, this);
-			} else { this._remove(deleteList, sourceId); }
-			
-			this.enable('context');
+			} else { this._remove(deleteList, id); }
 		}
 	
 		return this;
@@ -3413,9 +3425,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {Context} context — source context
-	 * @param {String} [sourceId=this.ACTIVE] — source Id
-	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3429,8 +3439,8 @@ var Collection;
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.moveOne = function (filter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(filter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+	Collection.prototype.moveOne = function (filter, id, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(filter || '', id || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
@@ -3438,9 +3448,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {Context} context — source context
-	 * @param {String} [sourceId=this.ACTIVE] — source Id
-	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
@@ -3456,9 +3464,9 @@ var Collection;
 	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copy = function (filter, context, sourceId, activeId, addType, mult, count, from, indexOf, lastIndexOf, rev) {
+	Collection.prototype.copy = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		return this.move(filter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
+		return this.move(filter || '', id || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
 	};
 	/**
 	 * copy one element from one collection to another (in context)<br />
@@ -3466,9 +3474,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {Context} context — source context
-	 * @param {String} [sourceId=this.ACTIVE] — source Id
-	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
+	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3482,8 +3488,8 @@ var Collection;
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copyOne = function (filter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(filter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
+	Collection.prototype.copyOne = function (filter, id, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(filter || '', id || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
 	};	
 	/////////////////////////////////
 	//// mult methods (remove)
@@ -4763,10 +4769,12 @@ var Collection;
 	 * @param {String} to — ID to be stored in the stack
 	 * @param {Boolean} set — if true, the collection will be active
 	 * @param {mixed} val — value for the save
+	 * @param {Boolean} [active=false] — use the active context
 	 * @return {Collection Object}
 	 */
-	Collection.prototype._saveResult = function (to, set, val) {
+	Collection.prototype._saveResult = function (to, set, val, active) {
 		to = to.split(this.WITH);
+		active = active || false;
 		
 		var context;
 		
@@ -4776,11 +4784,15 @@ var Collection;
 			context = to[1] ? to[1].trim() : '';
 			to = to[0].trim();
 			
-			if (this._exists('collection', to)) {
-				this
-					.disable('context')
-					.concat(val, context, to)
-					.enable('context');
+			if (this._validate('collection', to)) {
+				if (active) {
+					this.concat(val, context, to);
+				} else {
+					this
+						.disable('context')
+						.concat(val, context, to)
+						.enable('context');
+				}
 			} else {
 				this._push('collection', to, val);
 			}
@@ -4790,11 +4802,15 @@ var Collection;
 			context = to[1] ? to[1].trim() : '';
 			to = to[0].trim();
 			
-			if (this._exists('collection', to) && context) {
-				this
-					.disable('context')
-					._setOne(context, val, to)
-					.enable('context');
+			if (this._validate('collection', to) && (context || active)) {
+				if (active) {
+					this._setOne(context, val, to);
+				} else {
+					this
+						.disable('context')
+						._setOne(context, val, to)
+						.enable('context');
+				}
 			} else {
 				this._push('collection', to, val);
 			}

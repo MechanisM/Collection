@@ -64,6 +64,10 @@
 				return function (id) { return this._exists(nm, id || ''); };
 			}(key);
 			
+			fn['validate' + nm] = function (nm) {
+				return function (id) { return this._validate(nm, id || ''); };
+			}(key);
+			
 			fn['get' + nm + 'ActiveId'] = function (nm) {
 				return function (id) { return this._getActiveId(nm); };
 			}(key);

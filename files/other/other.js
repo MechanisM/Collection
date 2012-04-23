@@ -72,10 +72,12 @@
 	 * @param {String} to — ID to be stored in the stack
 	 * @param {Boolean} set — if true, the collection will be active
 	 * @param {mixed} val — value for the save
+	 * @param {Boolean} [active=false] — use the active context
 	 * @return {Collection Object}
 	 */
-	Collection.prototype._saveResult = function (to, set, val) {
+	Collection.prototype._saveResult = function (to, set, val, active) {
 		to = to.split(this.WITH);
+		active = active || false;
 		
 		var context;
 		
@@ -85,11 +87,15 @@
 			context = to[1] ? to[1].trim() : '';
 			to = to[0].trim();
 			
-			if (this._exists('collection', to)) {
-				this
-					.disable('context')
-					.concat(val, context, to)
-					.enable('context');
+			if (this._validate('collection', to)) {
+				if (active) {
+					this.concat(val, context, to);
+				} else {
+					this
+						.disable('context')
+						.concat(val, context, to)
+						.enable('context');
+				}
 			} else {
 				this._push('collection', to, val);
 			}
@@ -99,11 +105,15 @@
 			context = to[1] ? to[1].trim() : '';
 			to = to[0].trim();
 			
-			if (this._exists('collection', to) && context) {
-				this
-					.disable('context')
-					._setOne(context, val, to)
-					.enable('context');
+			if (this._validate('collection', to) && (context || active)) {
+				if (active) {
+					this._setOne(context, val, to);
+				} else {
+					this
+						.disable('context')
+						._setOne(context, val, to)
+						.enable('context');
+				}
 			} else {
 				this._push('collection', to, val);
 			}
