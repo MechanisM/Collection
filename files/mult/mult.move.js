@@ -8,7 +8,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} [context] — source context
 	 * @param {String} [sourceId=this.ACTIVE] — source Id
 	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
@@ -33,22 +33,23 @@
 	 * db.move('eq(-1)', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.move = function (moveFilter, context, sourceId, activeId, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
-		moveFilter = moveFilter || '';
-		context = C.isExists(context) ? context.toString() : '';
-		
-		sourceId = sourceId || '';
-		activeId = activeId || '';
-		
+	Collection.prototype.move = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
+		filter = filter || '';
+		id = this._splitId(id);
 		addType = addType || 'push';
 		
 		mult = mult === false ? false : true;
 		deleteType = deleteType === false ? false : true;
 		
 		var deleteList = [],
-			isArray = C.isArray(C.byLink(this._get('collection', activeId), this._getActiveParam('context'))),
-	
-			elements, e = null;
+			elements,
+			to = id.to,
+			set = id.set,
+			
+			isArray = C.isArray(this._getOne('', id.id)),
+			e = null;
+		
+		id = id.id;
 		
 		// events
 		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
@@ -58,24 +59,24 @@
 		// search elements
 		this.disable('context');
 		
-		if (C.isNumber(moveFilter) || (C.isString(moveFilter) && !this._isFilter(moveFilter)) || arguments.length === 0 || moveFilter === false) {
-			elements = moveFilter;
-		} else { elements = this.search(moveFilter, sourceId, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
+		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
+			elements = filter;
+		} else { elements = this.search(filter, sourceId, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || ''); }
 		
 		this.enable('context');
 		
 		console.log(elements);
 		
 		// move
-		if (mult === true && C.isArray(elements)) {
+		/*if (mult === true && C.isArray(elements)) {
 			elements.forEach(function (el) {
-				this.add(context + C.CHILDREN + el, isArray === true ? addType : el + C.METHOD_SEPARATOR + addType, activeId, sourceId);
+				this.add(context + C.CHILDREN + el, isArray === true ? addType : el + C.METHOD + addType, activeId, sourceId);
 				deleteType === true && deleteList.push(el);
 			}, this);
 		} else {
-			this.add(context + C.CHILDREN + elements, isArray === true ? addType : elements + C.METHOD_SEPARATOR + addType, activeId, sourceId);
+			this.add(context + C.CHILDREN + elements, isArray === true ? addType : elements + C.METHOD + addType, activeId, sourceId);
 			deleteType === true && deleteList.push(elements);
-		}
+		}*/
 		
 		// delete element
 		if (deleteType === true) {
@@ -97,7 +98,7 @@
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceId=this.ACTIVE] — source Id
 	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
@@ -114,15 +115,15 @@
 	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.get());
 	 */
-	Collection.prototype.moveOne = function (moveFilter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+	Collection.prototype.moveOne = function (filter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(filter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 	};
 	/**
 	 * copy elements from one collection to another (in context)<br />
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceId=this.ACTIVE] — source Id
 	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
@@ -141,16 +142,16 @@
 	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copy = function (moveFilter, context, sourceId, activeId, addType, mult, count, from, indexOf, lastIndexOf, rev) {
+	Collection.prototype.copy = function (filter, context, sourceId, activeId, addType, mult, count, from, indexOf, lastIndexOf, rev) {
 		mult = mult === false ? false : true;
-		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
+		return this.move(filter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || 'push', mult, count || '', from || '', indexOf || '', false);
 	};
 	/**
 	 * copy one element from one collection to another (in context)<br />
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [moveFilter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Context} context — source context
 	 * @param {String} [sourceId=this.ACTIVE] — source Id
 	 * @param {String} [activeId=this.ACTIVE] — collection ID (transferred to)
@@ -167,6 +168,6 @@
 	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
 	 * console.log(db.getCollection('test'));
 	 */
-	Collection.prototype.copyOne = function (moveFilter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
-		return this.move(moveFilter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
+	Collection.prototype.copyOne = function (filter, context, sourceId, activeId, addType, from, indexOf, lastIndexOf, rev) {
+		return this.move(filter || '', C.isExists(context) ? context.toString() : '', sourceId || '', activeId || '', addType || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '', false);
 	};

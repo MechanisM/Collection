@@ -65,6 +65,7 @@
 
 		return str;
 	};
+	
 	/**
 	 * compile parser
 	 * 
@@ -76,7 +77,7 @@
 		if (res.length !== 0) {
 			str = str.substring(res[0].length + 1, str.length - res[0].length);
 		}
-		str = str.split('<:').join('cObj.getVariable("').split(':>').join('")');
+		str = str.split(this.VARIABLE[0]).join('cObj.getVariable("').split(this.VARIABLE[1]).join('")');
 		
-		return new Function('str', 'cObj', 'return ' + str.replace(/^\s*:/, '') + ';');
+		return new Function('str', 'cObj', 'return ' + str.replace(this.DEF_REGEXP, '') + ';');
 	};

@@ -31,7 +31,7 @@
 	 *	.get(':i % 3 === 0', '>>>test').get();
 	 */
 	Collection.prototype.get = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		// overload Id
+		// overload ID
 		id = this._splitId(id);
 		
 		var res,

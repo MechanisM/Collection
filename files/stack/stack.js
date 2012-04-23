@@ -522,11 +522,11 @@
 			if (this._exists(el, id)) {
 				this._set(el, id);
 			} else {
-				nm = id.split(this.NAMESPACE_SEPARATOR);
+				nm = id.split(this.NAMESPACE);
 				
 				for (i = nm.length; (i -= 1) > -1;) {
 					nm.splice(i, 1);
-					tmpNm = nm.join(this.NAMESPACE_SEPARATOR);
+					tmpNm = nm.join(this.NAMESPACE);
 					
 					if (this._exists(el, tmpNm)) {
 						this._set(el, tmpNm);

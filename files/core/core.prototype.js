@@ -29,11 +29,14 @@
 		// const
 		ACTIVE: 'active',
 		SHUFFLE: 'shuffle',
-		NAMESPACE_SEPARATOR: '.',
+		NAMESPACE: '.',
 		SPLITTER: '>>>',
 		SHORT_SPLITTER: '>>',
+		VARIABLE: ['<:', ':>'],
 		WITH: '+',
 		DEF: ':',
+		DEF_REGEXP: /^\s*:/,
+		FILTER_REGEXP: /&&|\|\||:|!/,
 		
 		/**
 		 * stack parameters

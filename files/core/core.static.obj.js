@@ -85,7 +85,7 @@
 	 * $C.addElementToObject({a: 1}, 'b->unshift', 2);
 	 */
 	Collection.addElementToObject = function (obj, keyName, value) {
-		keyName = keyName.split(C.METHOD_SEPARATOR);
+		keyName = keyName.split(C.METHOD);
 		var key, newObj = {};
 	
 		if (keyName[1] && keyName[1] === 'unshift') {

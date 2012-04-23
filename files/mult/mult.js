@@ -104,7 +104,8 @@
 		lastIndexOf = parseInt(lastIndexOf) || false;
 		rev = rev || false;
 		
-		var tmpObj = {},
+		var	self = this,
+			tmpObj = {},
 			tmpArray = [],
 			
 			context = filter.length === 2 ? filter[0] : '',

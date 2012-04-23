@@ -25,20 +25,19 @@
 	 *	.search(function (el, key, data, i) { return i % 3 === 0; });
 	 */
 	Collection.prototype.search = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		id = id || '';
+		// overload ID
+		id = this._splitId(id);
 		mult = mult === false ? false : true;
+		
 		var res = mult === true ? [] : -1,
-			to, set = false,
+			to = id.to,
+			set = id.set,
+			
 			arg = C.toArray(arguments),
 			action;
 		
-		// overload Id
-		if (id.search(this.SPLITTER) !== -1) {
-			id = id.split(this.SPLITTER);
-			set = true;
-		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = id[1].trim());
-		id = arg[1] = id[0].trim();
+		// overload ID
+		id = arg[1] = id.id;
 		
 		if (mult === true) {
 			/** @private */
@@ -51,28 +50,8 @@
 		arg.unshift(action);
 		this.forEach.apply(this, arg);
 		
-		// save result
-		if (to) {
-			to = to.split(this.WITH);
-			
-			if (to[1]) {
-				to = to[1].trim();
-				if (this._exists('collection', to)) {
-					this
-						.disable('context')
-						.concat(res, '', to)
-						.enable('context');
-				} else {
-					this._push('collection', to, res);
-				}
-			} else {
-				to = to[0];
-				this._push('collection', to, res);
-			}
-			
-			if (set == true) { return this._set('collection', to); }
-			return this;
-		}
+		// save result if need
+		if (to) { return this._saveResult(to, set, res); }
 		
 		return res;
 	};

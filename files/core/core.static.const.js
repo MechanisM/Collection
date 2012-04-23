@@ -3,13 +3,13 @@
 	//// constants
 	/////////////////////////////////
 	
-	Collection.CONTEXT_SEPARATOR =  '__context__';
-	Collection.QUERY_SEPARATOR = '/';
-	Collection.SUBQUERY_SEPARATOR = '{';
-	Collection.METHOD_SEPARATOR = '->';
+	Collection.CONTEXT =  '__context__';
+	Collection.QUERY = '/';
+	Collection.SUBQUERY = '{';
+	Collection.METHOD = '->';
 		
 	Collection.CHILDREN = '>';
 	Collection.ORDER = ['eq(', ')'];
 	
-	Collection.DOM_SEPARATOR = ['<?js', '?>'];
+	Collection.DOM = ['<?js', '?>'];
 	Collection.ECHO = 'echo';

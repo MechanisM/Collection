@@ -18,10 +18,10 @@
 		var html = selector[0] ? selector[0][0] ? selector[0][0].innerHTML : selector[0].innerHTML : selector.innerHTML,
 			elem = html
 				.replace(/\/\*.*?\*\//g, '')
-				.split(this.DOM_SEPARATOR[1])
-				.join(this.DOM_SEPARATOR[0])
+				.split(this.DOM[1])
+				.join(this.DOM[0])
 				.replace(/[\r\t\n]/g, ' ')
-				.split(this.DOM_SEPARATOR[0]),
+				.split(this.DOM[0]),
 			
 			resStr = 'var result = ""; ', echo = new RegExp('\\s+' + this.ECHO + '\\s+');
 		

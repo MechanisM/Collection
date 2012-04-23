@@ -23,20 +23,18 @@
 	 * $C([1, 2, 3, 4, 5, 6]).map(Math.sin, ':el % 2 === 0', '>>>test').get();
 	 */
 	Collection.prototype.map = function (replaceObj, filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		id = id || '';
+		// overload ID
+		id = this._splitId(id);
+		
 		var res,
-			to, set = false,
+			to = id.to,
+			set = id.set,
+			
 			arg = C.toArray(arguments),
 			isFunc, isExists, isArray,
 			action;
 		
-		// overload Id
-		if (id.search(this.SPLITTER) !== -1) {
-			id = id.split(this.SPLITTER);
-			set = true;
-		} else { id = id.split(this.SHORT_SPLITTER); }
-		id[1] && (to = id[1].trim());
-		id = arg[2] = id[0].trim();
+		id = arg[2] = id.id;
 		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFilter(replaceObj) : replaceObj || '';
@@ -93,28 +91,8 @@
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
 		
-		// save result
-		if (to) {
-			to = to.split(this.WITH);
-			
-			if (to[1]) {
-				to = to[1].trim();
-				if (this._exists('collection', to)) {
-					this
-						.disable('context')
-						.concat(res, '', to)
-						.enable('context');
-				} else {
-					this._push('collection', to, res);
-				}
-			} else {
-				to = to[0];
-				this._push('collection', to, res);
-			}
-			
-			if (set == true) { return this._set('collection', to); }
-			return this;
-		}
+		// save result if need
+		if (to) { return this._saveResult(to, set, res); }
 		
 		return res;
 	};

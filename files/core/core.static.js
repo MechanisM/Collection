@@ -26,8 +26,8 @@
 		// prepare context
 		context = context
 					.toString()
-					.replace(new RegExp('\\s*' + C.CHILDREN + '\\s*', 'g'), C.CONTEXT_SEPARATOR + C.CHILDREN + C.CONTEXT_SEPARATOR)
-					.split(C.CONTEXT_SEPARATOR);
+					.replace(new RegExp('\\s*' + C.CHILDREN + '\\s*', 'g'), C.CONTEXT + C.CHILDREN + C.CONTEXT)
+					.split(C.CONTEXT);
 		
 		del = del || false;
 		
@@ -190,7 +190,7 @@
 	 * @return {mixed}
 	 */
 	Collection.execEvent = function (query, event, param, thisObject) {
-		query = query.split(C.QUERY_SEPARATOR);
+		query = query.split(C.QUERY);
 		param = C.isExists(param) ? param : [];
 		param = C.isArray(param) ? param : [param];
 		
@@ -201,8 +201,8 @@
 		while ((i += 1) < qLength) { event = event[query[i]]; }
 		thisObject = thisObject || event;
 		
-		if (query[i].search(C.SUBQUERY_SEPARATOR) !== -1) {
-			spliter = query[i].split(C.SUBQUERY_SEPARATOR);
+		if (query[i].search(C.SUBQUERY) !== -1) {
+			spliter = query[i].split(C.SUBQUERY);
 			event = event[spliter[0]];
 			spliter.splice(0, 1);
 			param = param.concat(spliter);

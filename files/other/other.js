@@ -25,7 +25,7 @@
 	 * @return {Boolean}
 	 */
 	Collection.prototype._isFilter = function (str) {
-		return str === this.ACTIVE || this._exists('filter', str) || str.search(/&&|\|\||:|!/) !== -1;
+		return str === this.ACTIVE || this._exists('filter', str) || str.search(this.FILTER_REGEXP) !== -1;
 	};
 	/**
 	 * returns a Boolean indicating whether the object is a string expression
@@ -35,7 +35,7 @@
 	 * @return {Boolean}
 	 */
 	Collection.prototype._isStringExpression = function (obj) {
-		return C.isString(obj) && obj.search(/^:/) !== -1;
+		return C.isString(obj) && obj.search(this.DEF_REGEXP) !== -1;
 	};
 	
 	/**
@@ -82,7 +82,7 @@
 		if (to[1]) {
 			to = to[1].split(this.DEF);
 			
-			context = to[1].trim() || '';
+			context = to[1] ? to[1].trim() : '';
 			to = to[0].trim();
 			
 			if (this._exists('collection', to)) {
@@ -96,7 +96,7 @@
 		} else {
 			to = to[0].split(this.DEF);
 			
-			context = to[1].trim() || '';
+			context = to[1] ? to[1].trim() : '';
 			to = to[0].trim();
 			
 			if (this._exists('collection', to) && context) {

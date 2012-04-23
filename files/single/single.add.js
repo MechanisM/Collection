@@ -50,7 +50,7 @@
 		if (e === false) { return this; }
 		
 		// get by link
-		data = this._geOne('', activeId);
+		data = this._getOne('', activeId);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object')  { throw new Error('unable to set property!'); }
@@ -59,7 +59,7 @@
 		if (!sourceId) {
 			// add type
 			if (C.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD + 'unshift' : propType;
 				lCheck = C.addElementToObject(data, propType.toString(), cValue);
 			} else {
 				lCheck = true;
@@ -69,11 +69,11 @@
 		// move
 		} else {
 			cValue = C.isExists(cValue) ? cValue.toString() : '';
-			sData = this._geOne(cValue, sourceId);
+			sData = this._getOne(cValue, sourceId);
 			
 			// add type
 			if (C.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD_SEPARATOR + 'unshift' : propType;
+				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD + 'unshift' : propType;
 				lCheck = C.addElementToObject(data, propType.toString(), sData);
 			} else {
 				lCheck = true;
