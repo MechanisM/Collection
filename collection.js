@@ -2366,15 +2366,16 @@ var Collection;
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._setOne = function (context, val, id) {
+		// events
+		var e;
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		context = C.isExists(context) ? context.toString() : '';
 		val = typeof val === 'undefined' ? '' : val;
 		id = id || '';
 
-		var activeContext = this._getActiveParam('context'), e;
-		
-		// events
-		this.onSet && (e = this.onSet.apply(this, arguments));
-		if (e === false) { return this; }
+		var activeContext = this._getActiveParam('context');
 		
 		// if no context
 		if (!context && !activeContext) {
@@ -2528,12 +2529,13 @@ var Collection;
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._removeOne = function (context, id) {
-		context = C.isExists(context) ? context.toString() : '';
-		var activeContext = this._getActiveParam('context'), e;
-		
 		// events
+		var e;
 		this.onRemove && (e = this.onRemove.apply(this, arguments));
 		if (e === false) { return this; }
+		
+		context = C.isExists(context) ? context.toString() : '';
+		var activeContext = this._getActiveParam('context');
 		
 		// if no context
 		if (!context && !activeContext) {
@@ -2624,7 +2626,7 @@ var Collection;
 	 * returns the length of the collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)), collection or true (if disabled)
+	 * @param {Filter|String Expression|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -2680,7 +2682,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection (return false stops the cycle, for a string expression need to write clearly, for example: 'el.age += 2; return false')
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
@@ -2725,7 +2727,7 @@ var Collection;
 			tmpObj = {},
 			tmpArray = [],
 			
-			context = filter.length === 2 ? filter[0] : '',
+			context = filter.length === 2 ? filter[0].trim() : '',
 			
 			data, length, fLength,
 			cloneObj,
@@ -2740,9 +2742,7 @@ var Collection;
 		}
 		
 		// get by link
-		data = !C.isCollection(id)
-					? this._getOne(context, id)
-						: id;
+		data = !C.isCollection(id) ? this._getOne(context, id) : id;
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
@@ -2879,7 +2879,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Function|String Expression} callback — function (or string expression) to test each element of the collection
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -2906,8 +2906,8 @@ var Collection;
 	 * search for elements using filter (returns a reference to elements) (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -2958,8 +2958,8 @@ var Collection;
 	 * search for one element using filter (returns a reference to element) (in context)
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -2983,7 +2983,7 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=0] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @return {Number|String}
 	 *
 	 * @example
@@ -3003,7 +3003,7 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {mixed} searchElement — element to locate in the array
 	 * @param {fromIndex} [fromIndex=Collection Length] — the index at which to start searching backwards
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @return {Number|String}
 	 *
 	 * @example
@@ -3025,8 +3025,8 @@ var Collection;
 	 * get the elements using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -3097,8 +3097,8 @@ var Collection;
 	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -3126,7 +3126,7 @@ var Collection;
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression) 
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
@@ -3172,9 +3172,14 @@ var Collection;
 			return this._setOne(filter, replaceObj, id || '');
 		}
 		
+		// events
+		var e;
+		this.onSet && (e = this.onSet.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		// compile replace object if need
 		replaceObj = this._isStringExpression(replaceObj) ? this._compileFunc(replaceObj) : replaceObj;
-		var e, arg, res, action,
+		var arg, res, action,
 			isFunc = C.isFunction(replaceObj);
 		
 		if (isFunc) {
@@ -3191,10 +3196,6 @@ var Collection;
 		arg = C.unshift(arguments, action);
 		arg.splice(2, 1);
 		
-		// events
-		this.onSet && (e = this.onSet.apply(this, arguments));
-		if (e === false) { return this; }
-		
 		return this.forEach.apply(this, arg);
 	};
 	/**
@@ -3202,7 +3203,7 @@ var Collection;
 	 * events: onSet
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {mixed} replaceObj — replace object (if is Function, then executed as a callback, can be used string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
@@ -3239,8 +3240,8 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {mixed} replaceObj — a function that will be invoked for each element in the current set
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -3336,8 +3337,8 @@ var Collection;
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of transfers (by default: all object)
@@ -3360,18 +3361,23 @@ var Collection;
 	 * console.log(db.get());
 	 */
 	Collection.prototype.move = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
+		deleteType = deleteType === false ? false : true;
+		
+		// events
+		var e;
+		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
+		!deleteType  && this.onCopy && (e = this.onCopy.apply(this, arguments));
+		if (e === false) { return this; }
+		
 		filter = filter || '';
 		id = this._splitId(id);
 		
 		addType = addType || 'push';
-		deleteType = deleteType === false ? false : true;
 		
 		var	deleteList = [],
 			elements,
 			to = id.to,
 			set = id.set,
-			
-			e,
 			
 			arg = C.toArray(arguments),
 			/** @private */
@@ -3383,11 +3389,6 @@ var Collection;
 		id = arg[1] = id.id;
 		arg.splice(2, 1);
 		arg.unshift(action);
-		
-		// events
-		deleteType && this.onMove && (e = this.onMove.apply(this, arguments));
-		!deleteType  && this.onCopy && (e = this.onCopy.apply(this, arguments));
-		if (e === false) { return this; }
 		
 		// search elements
 		if (C.isNumber(filter) || (C.isString(filter) && !this._isFilter(filter)) || arguments.length === 0 || filter === false) {
@@ -3417,8 +3418,8 @@ var Collection;
 	 * events: onMove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3440,8 +3441,8 @@ var Collection;
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of copies (by default: all object)
@@ -3466,8 +3467,8 @@ var Collection;
 	 * events: onCopy
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Filter|String Expression|Context|Boolean} [filter] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {String Expression} [id=this.ACTIVE] — string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {String} [addType='push'] — add type (constants: 'push', 'unshift')
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3493,7 +3494,7 @@ var Collection;
 	 * events: onRemove
 	 *
 	 * @this {Colletion Object}
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String Expression|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number|Boolean} [count=false] — maximum number of deletions (by default: all object)
@@ -3538,7 +3539,7 @@ var Collection;
 	 * events: onRemove
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
+	 * @param {Filter|String Expression|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression or context (overload)
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3564,7 +3565,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String Expression|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -3589,7 +3590,7 @@ var Collection;
 	 * 
 	 * @this {Colletion Object}
 	 * @param {String} [id=this.ACTIVE] — collection ID
-	 * @param {Filter|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
+	 * @param {Filter|String Expression|Context|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), context (overload) or true (if disabled)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
 	 * @param {Number} [lastIndexOf] — ending point
@@ -3616,9 +3617,9 @@ var Collection;
 	 * group the elements on the field or condition (the method returns a new collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Context|String Expression|Function} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
@@ -3646,9 +3647,9 @@ var Collection;
 			to = id.to,
 			set = id.set,
 			
-			arg, action;
+			arg = C.toArray(arguments), action;
 		
-		id = arg[1] = id.id;
+		id = arg[2] = id.id;
 		
 		if (isString) {
 			if (link) {
@@ -3692,7 +3693,7 @@ var Collection;
 			}
 		}
 		
-		arg = C.unshift(arguments, action);
+		arg.unshift(action);
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
 		
@@ -3705,9 +3706,9 @@ var Collection;
 	 * group the elements on the field or condition (the method returns a new collection of references to elements in the original collection) (in context)
 	 *  
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Context|String Expression|Function} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3839,84 +3840,225 @@ var Collection;
 	 * db.pushSetCollection('test', db.group(':el % 2 === 0'));
 	 * console.log(db.groupStat('min'));
 	 */
-	Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf) {
+	Collection.prototype.groupStat = function (oper, field, filter, id, count, from, indexOf, lastIndexOf, rev) {
 		oper = (oper = oper || 'count') && this._isStringExpression(oper) ? this._compileFilter(oper) : oper;
 		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;
-		id = id || '';
+		id = this._splitId(id);
 
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
 		indexOf = parseInt(indexOf) || false;
+		lastIndexOf = parseInt(lastIndexOf) || false;
+		rev = rev || false;
 		
-		var operType = C.isString(oper),
-			result = {}, tmp = {}, key,
+		var operIsString = C.isString(oper),
+			fieldIsString = C.isString(field),
 			
-			/** @private */
-			deepAction = function (el, key, data, i, length, cObj, id) {
-				var param = C.isString(field) ? C.byLink(el, field) : field(el, key, data, i, length, cObj, id);
-				
-				switch (oper) {
-					case 'count' : {
-						result[this.key] += 1;
-					} break;
-					case 'summ' : {
-						result[this.key] += param;
-					} break;
-					case 'avg' : {
-						tmp[this.key] += 1;
-						result[this.key] += param;
-					} break;
-					case 'max' : {
-						if (param > result[this.key]) { result[this.key] = param; }
-					} break;
-					case 'min' : {
-						if (tmp[this.key] === 0) {
-							result[this.key] = param;
-							tmp[this.key] = 1;
-						} else if (param < result[this.key]) { result[this.key] = param; }
-					} break;
-					default : {
-						if (!operType) {
-							result[this.key] = oper(param, result[this.key]);
-						} else {
-							if (tmp[this.key] === 0) {
-								result[this.key] = param;
-								tmp[this.key] = 1;
-							} else { result[this.key] = C.expr(oper + '=' + param, result[this.key]); }
-						}
-					}
-				}
-					
-				return true;
-			},
+			res = {},
+			tmp = {},
 			
+			to = id.to,
+			set = id.set,
+			
+			key,
+			deepAction, action;
+		
+		id = id.id;
+		
+		if (oper !== 'first' && oper !== 'last') {
 			/** @private */
 			action = function (el, key, data, i, length, cObj, id) {
-				if (!result[key]) { result[key] = tmp[key] = 0; };
+				if (!res[key]) { res[key] = tmp[key] = 0; };
 				
 				if (oper !== 'first' && oper !== 'last') {
 					cObj
 						._update('context', '+=' + C.CHILDREN + (deepAction.key = key))
-						.forEach(deepAction, filter || '', id, '', count, from, indexOf)
+						.forEach(deepAction, filter || '', id, '', count, from, indexOf, lastIndexOf, rev)
 						.parent();
-				} else if (oper === 'first') {
-					result[key] = C.byLink(el, C.ORDER[0] + '0' + C.ORDER[1]);
-				} else { result[key] = C.byLink(el, C.ORDER[0] + '-1' + C.ORDER[1]); }
+				}
 					
 				return true;
 			};
+		} else if (oper === 'first') {
+			/** @private */
+			action = function (el, key, data, i, length, cObj, id) {
+				if (!res[key]) { res[key] = tmp[key] = 0; };
+				res[key] = C.byLink(el, C.ORDER[0] + '0' + C.ORDER[1]);
+					
+				return true;
+			};
+		} else {
+			/** @private */
+			action = function (el, key, data, i, length, cObj, id) {
+				if (!res[key]) { res[key] = tmp[key] = 0; };
+				res[key] = C.byLink(el, C.ORDER[0] + '-1' + C.ORDER[1]);
+					
+				return true;
+			};
+		}
+		
+		switch (oper) {
+			case 'count' : {
+				/** @private */
+				deepAction = function () { res[this.key] += 1; };				
+			} break;
+			
+			case 'summ' : {
+				if (fieldIsString) {
+					/** @private */
+					deepAction = function (el) {
+						var param = C.byLink(el, field);
+						res[this.key] += param;
+						
+						return true;
+					};
+				} else {
+					/** @private */
+					deepAction = function () {
+						var param = field.apply(this, arguments);
+						res[this.key] += param;
+						
+						return true;
+					};
+				}
+			} break;
+			
+			case 'avg' : {
+				if (fieldIsString) {
+					/** @private */
+					deepAction = function (el) {
+						var param = C.byLink(el, field);
+						
+						tmp[this.key] += 1;
+						res[this.key] += param;
+						
+						return true;
+					};
+				} else {
+					/** @private */
+					deepAction = function () {
+						var param = field.apply(this, arguments);
+						
+						tmp[this.key] += 1;
+						res[this.key] += param;
+						
+						return true;
+					};
+				}
+			} break;
+			
+			case 'max' : {
+				if (fieldIsString) {
+					/** @private */
+					deepAction = function (el) {
+						var param = C.byLink(el, field);
+						if (param > res[this.key]) { res[this.key] = param; }
+						
+						return true;
+					};
+				} else {
+					/** @private */
+					deepAction = function () {
+						var param = field.apply(this, arguments);
+						if (param > res[this.key]) { res[this.key] = param; }
+						
+						return true;
+					};
+				}
+			} break;
+			
+			case 'min' : {
+				if (fieldIsString) {
+					/** @private */
+					deepAction = function (el) {
+						var param = C.byLink(el, field);
+						
+						if (tmp[this.key] === 0) {
+							res[this.key] = param;
+							tmp[this.key] = 1;
+						} else if (param < res[this.key]) { res[this.key] = param; }
+						
+						return true;
+					};
+				} else {
+					/** @private */
+					deepAction = function () {
+						var param = field.apply(this, arguments);
+						
+						if (tmp[this.key] === 0) {
+							res[this.key] = param;
+							tmp[this.key] = 1;
+						} else if (param < res[this.key]) { res[this.key] = param; }
+						
+						return true;
+					};
+				}
+			} break;
+			
+			default : {
+				if (!operIsString) {
+					if (fieldIsString) {
+						/** @private */
+						deepAction = function (el) {
+							var param = C.byLink(el, field);
+							res[this.key] = oper(param, res[this.key]);
+							
+							return true;
+						};
+					} else {
+						/** @private */
+						deepAction = function () {
+							var param = field.apply(this, arguments);
+							res[this.key] = oper(param, res[this.key]);
+							
+							return true;
+						};
+					}
+					
+				} else {
+					if (fieldIsString) {
+						/** @private */
+						deepAction = function (el) {
+							var param = C.byLink(el, field);
+							
+							if (tmp[this.key] === 0) {
+								res[this.key] = param;
+								tmp[this.key] = 1;
+							} else { res[this.key] = C.expr(oper + '=' + param, res[this.key]); }
+							
+							return true;
+						};
+					} else {
+						/** @private */
+						deepAction = function () {
+							var param = field.apply(this, arguments);
+							
+							if (tmp[this.key] === 0) {
+								res[this.key] = param;
+								tmp[this.key] = 1;
+							} else { res[this.key] = C.expr(oper + '=' + param, res[this.key]); }
+							
+							return true;
+						};
+					}
+				}
+			}
+		}
 		
 		this.forEach(action, '', id);
 		
 		if (oper === 'avg') {
-			for (key in result) {
-				if (!result.hasOwnProperty(key)) { continue; }
-				result[key] /= tmp[key];
+			for (key in res) {
+				if (!res.hasOwnProperty(key)) { continue; }
+				res[key] /= tmp[key];
 			}
 		}
-	
-		return result;
+		
+		// save result if need
+		if (to) { return this._saveResult(to, set, res); }
+		
+		return res;
 	};		
 	/////////////////////////////////
 	//// sort method

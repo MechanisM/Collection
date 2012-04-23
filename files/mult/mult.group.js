@@ -37,9 +37,9 @@
 			to = id.to,
 			set = id.set,
 			
-			arg, action;
+			arg = C.toArray(arguments), action;
 		
-		id = arg[1] = id.id;
+		id = arg[2] = id.id;
 		
 		if (isString) {
 			if (link) {
@@ -83,7 +83,7 @@
 			}
 		}
 		
-		arg = C.unshift(arguments, action);
+		arg.unshift(action);
 		arg.splice(1, 1);
 		this.forEach.apply(this, arg);
 		
