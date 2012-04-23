@@ -108,7 +108,7 @@
 			tmpObj = {},
 			tmpArray = [],
 			
-			context = filter.length === 2 ? filter[0].trim() : '',
+			context = '',
 			
 			data, length, fLength,
 			cloneObj,
@@ -117,7 +117,8 @@
 			res = false;
 		
 		if (C.isArray(filter)) {
-			if (filter.length === 2) {
+			if (filter[1]) {
+				context = filter[0].trim();
 				filter = filter[1].trim();
 			} else { filter = filter[0].trim(); }
 		}

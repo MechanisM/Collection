@@ -62,10 +62,10 @@
 	 * events: onSort
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Context|Function|String Expression} [field] — field name, callback function (can be used string expression, the record is equivalent to: return + string expression) or string expression (context + >> + field)
 	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
-	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 *
@@ -84,19 +84,28 @@
 	 *	{name: 'Bill', age: 15, lvl: 80}
 	 * ]).sort(':el.age + el.lvl').getCollection();
 	 */
-	Collection.prototype.sort = function (field, rev, fn, id) {
-		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;
+	Collection.prototype.sort = function (field, rev, id, fn) {
+		// events
+		var e;
+		this.onSort && (e = this.onSort.apply(this, arguments));
+		if (e === false) { return this; }
+		
+		// overload the field of the additional context
+		field = typeof field !== 'undefined' ? field : '';
+		field = C.isString(field) ? field.split(this.SHORT_SPLITTER) : field;
+		
 		rev = rev || false;
+		id = id || '';
+		
 		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
 			if (C.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};
 		fn = this._isStringExpression(fn) ? this._compileFilter(fn) : fn;
-		id = id || '';
 		
 		var self = this,
-			data,
+			data, context = '',
 			
 			/** @private */
 			sort = function (a, b) {
@@ -126,14 +135,18 @@
 				
 				// random sort
 				} else { return Math.round(Math.random() * 2  - 1); }
-			}, e;
+			};
 		
-		// events
-		this.onSort && (e = this.onSort.apply(this, arguments));
-		if (e === false) { return this; }
+		if (C.isArray(field)) {
+			if (field[1]) {
+				context = field[0].trim();
+				field = field[1].trim();
+			} else { field = field[0].trim(); }
+		}
+		field = this._isStringExpression(field) ? this._compileFilter(field) : field;
 		
 		// get by link
-		data = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = this._getOne(context, id);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }

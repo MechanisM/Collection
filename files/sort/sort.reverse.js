@@ -30,7 +30,7 @@
 	 * events: onReverse
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (collection ID + : + context, example: my:eq(-1))
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 *
@@ -39,15 +39,19 @@
 	 *	.reverse().getCollection();
 	 */
 	Collection.prototype.reverse = function (id) {
-		id = id || '';
-		var data, e;
+		var data, e, context;
 		
 		// events
 		this.onReverse && (e = this.onReverse.apply(this, arguments));
 		if (e === false) { return this; }
 		
+		// overload the ID of the additional context
+		id = (id = id || '').split(this.DEF);
+		context = id[1] ? id[1].trim() : '';
+		id = id[0].trim();
+		
 		// get by link
-		data = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = this._getOne(context, id);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }

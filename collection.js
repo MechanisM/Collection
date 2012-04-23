@@ -2727,7 +2727,7 @@ var Collection;
 			tmpObj = {},
 			tmpArray = [],
 			
-			context = filter.length === 2 ? filter[0].trim() : '',
+			context = '',
 			
 			data, length, fLength,
 			cloneObj,
@@ -2736,7 +2736,8 @@ var Collection;
 			res = false;
 		
 		if (C.isArray(filter)) {
-			if (filter.length === 2) {
+			if (filter[1]) {
+				context = filter[0].trim();
 				filter = filter[1].trim();
 			} else { filter = filter[0].trim(); }
 		}
@@ -3739,12 +3740,14 @@ var Collection;
 	 *  
 	 * @this {Colletion Object}
 	 * @param {String|Function|String Expression} [oper='count'] — operation type ('count', 'avg', 'summ', 'max', 'min', 'first', 'last'), string operator (+, -, *, /) or callback function (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Filter|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
-	 * @param {String} [id=this.ACTIVE] — collection ID
+	  * @param {Context|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
+	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
+	 * @param {Number} [lastIndexOf] — ending point
+	 * @param {Boolean} [rev=false] — if true, the collection is processed in order of decreasing
 	 * @return {Colletion}
 	 *
 	 * @example
@@ -3773,7 +3776,6 @@ var Collection;
 			to = id.to,
 			set = id.set,
 			
-			key,
 			action;
 		
 		id = id.id;
@@ -4250,10 +4252,10 @@ var Collection;
 	 * events: onSort
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Context|Function|String Expression} [field] — field name or callback function (can be used string expression, the record is equivalent to: return + string expression)
+	 * @param {Context|Function|String Expression} [field] — field name, callback function (can be used string expression, the record is equivalent to: return + string expression) or string expression (context + >> + field)
 	 * @param {Boolean} [rev=false] — reverce (contstants: 'shuffle' — random order)
-	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
 	 * @param {String} [id=this.ACTIVE] — collection ID
+	 * @param {Function|Boolean} [fn=toUpperCase] — callback function (false if disabled, can be used string expression, the record is equivalent to: return + string expression)
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 *
@@ -4272,19 +4274,28 @@ var Collection;
 	 *	{name: 'Bill', age: 15, lvl: 80}
 	 * ]).sort(':el.age + el.lvl').getCollection();
 	 */
-	Collection.prototype.sort = function (field, rev, fn, id) {
-		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;
+	Collection.prototype.sort = function (field, rev, id, fn) {
+		// events
+		var e;
+		this.onSort && (e = this.onSort.apply(this, arguments));
+		if (e === false) { return this; }
+		
+		// overload the field of the additional context
+		field = typeof field !== 'undefined' ? field : '';
+		field = C.isString(field) ? field.split(this.SHORT_SPLITTER) : field;
+		
 		rev = rev || false;
+		id = id || '';
+		
 		fn = fn && fn !== true ? fn === false ? '' : fn : function (a) {
 			if (C.isString(a)) { return a.toUpperCase(); }
 			
 			return a;
 		};
 		fn = this._isStringExpression(fn) ? this._compileFilter(fn) : fn;
-		id = id || '';
 		
 		var self = this,
-			data,
+			data, context = '',
 			
 			/** @private */
 			sort = function (a, b) {
@@ -4314,14 +4325,18 @@ var Collection;
 				
 				// random sort
 				} else { return Math.round(Math.random() * 2  - 1); }
-			}, e;
+			};
 		
-		// events
-		this.onSort && (e = this.onSort.apply(this, arguments));
-		if (e === false) { return this; }
+		if (C.isArray(field)) {
+			if (field[1]) {
+				context = field[0].trim();
+				field = field[1].trim();
+			} else { field = field[0].trim(); }
+		}
+		field = this._isStringExpression(field) ? this._compileFilter(field) : field;
 		
 		// get by link
-		data = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = this._getOne(context, id);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
@@ -4380,15 +4395,19 @@ var Collection;
 	 *	.reverse().getCollection();
 	 */
 	Collection.prototype.reverse = function (id) {
-		id = id || '';
-		var data, e;
+		var data, e, context;
 		
 		// events
 		this.onReverse && (e = this.onReverse.apply(this, arguments));
 		if (e === false) { return this; }
 		
+		// overload the ID of the additional context
+		id = (id = id || '').split(this.DEF);
+		context = id[1] ? id[1].trim() : '';
+		id = id[0].trim();
+		
 		// get by link
-		data = C.byLink(this._get('collection', id), this._getActiveParam('context'));
+		data = this._getOne(context, id);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
