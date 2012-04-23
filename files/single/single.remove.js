@@ -12,12 +12,13 @@
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype._removeOne = function (context, id) {
-		context = C.isExists(context) ? context.toString() : '';
-		var activeContext = this._getActiveParam('context'), e;
-		
 		// events
+		var e;
 		this.onRemove && (e = this.onRemove.apply(this, arguments));
 		if (e === false) { return this; }
+		
+		context = C.isExists(context) ? context.toString() : '';
+		var activeContext = this._getActiveParam('context');
 		
 		// if no context
 		if (!context && !activeContext) {

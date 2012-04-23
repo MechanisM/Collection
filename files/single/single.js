@@ -4,18 +4,18 @@
 	/////////////////////////////////
 	
 	/**
-	 * set new value to element by link (in context)<br/>
+	 * set new val to element by link (in context)<br/>
 	 * events: onSet
 	 * 
 	 * @this {Colletion Object}
 	 * @param {Context} [context] — additional context
-	 * @param {mixed} value — new value
+	 * @param {mixed} val — new val
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 */
-	Collection.prototype._setOne = function (context, value, id) {
+	Collection.prototype._setOne = function (context, val, id) {
 		context = C.isExists(context) ? context.toString() : '';
-		value = typeof value === 'undefined' ? '' : value;
+		val = typeof val === 'undefined' ? '' : val;
 		id = id || '';
 
 		var activeContext = this._getActiveParam('context'), e;
@@ -27,11 +27,11 @@
 		// if no context
 		if (!context && !activeContext) {
 			if (id && id !== this.ACTIVE) {
-				return this._push('collection', id, value);
-			} else { return this._update('collection', value); }
+				return this._push('collection', id, val);
+			} else { return this._update('collection', val); }
 		}
 		
-		C.byLink(this._get('collection', id), activeContext + C.CHILDREN + context, value);
+		C.byLink(this._get('collection', id), activeContext + C.CHILDREN + context, val);
 	
 		return this;
 	};

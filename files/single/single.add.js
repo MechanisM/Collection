@@ -8,11 +8,9 @@
 	 * events: onAdd
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed|Context} [cValue] — new element or context for sourceId
-	 * @param {String} [propType='push'] — add type (constants: 'push', 'unshift') or property name (can use '->unshift' - the result will be similar to work for an array unshift)
-	 * @param {String} [activeId=this.ACTIVE] — collection ID
-	 * @param {String} [sourceId] — source Id (if move)
-	 * @param {Boolean} [del=false] — if true, remove source element
+	 * @param {mixed|String Expression} [val] — new element or string expression (context + >> + new element, example: eq(-1) > a >> [1, 2, 3])
+	 * @param {String} [propType='push'] — add type (constants: 'push', 'unshift') or property name (can use '->unshift' - the result will be similar to work for an array unshift, example: myName->unshift)
+	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @throw {Error}
 	 * @return {Colletion Object}
 	 *
@@ -36,56 +34,52 @@
 	 *
 	 * console.log(db.getCollection());
 	 */
-	Collection.prototype.add = function (cValue, propType, activeId, sourceId, del) {
-		cValue = typeof cValue !== 'undefined' ? cValue : '';
-		propType = propType || 'push';
-		activeId = activeId || '';
-		sourceId = sourceId || '';
-		del = del || false;
-		
-		var data, sData, lCheck, e;
-		
+	Collection.prototype.add = function (val, propType, id) {
 		// events
+		var e;
 		this.onAdd && (e = this.onAdd.apply(this, arguments));
 		if (e === false) { return this; }
 		
+		// overload the values of the additional context
+		var withSplitter;
+		val = typeof val !== 'undefined' ? val : '';
+		val = C.isString(val) ? (withSplitter = true) && val.split(this.SHORT_SPLITTER) : val;
+		
+		propType = propType || 'push';
+		id = id || '';
+		
+		var	context = '',
+			data, rewrite;
+		
+		if (withSplitter) {
+			if (val[1]) {
+				context = val[0].trim();
+				
+				val = val[1].trim();
+				// data conversion
+				if (val.search(/^\{|\[/) !== -1 || !isNaN(parseFloat(val))) {
+					val = eval(val);
+				}
+			} else { val = val[0].trim(); }
+		}
+		
 		// get by link
-		data = this._getOne('', activeId);
+		data = this._getOne(context, id);
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object')  { throw new Error('unable to set property!'); }
 		
-		// simple add
-		if (!sourceId) {
-			// add type
-			if (C.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD + 'unshift' : propType;
-				lCheck = C.addElementToObject(data, propType.toString(), cValue);
-			} else {
-				lCheck = true;
-				data[propType](cValue);
-			}
-		
-		// move
+		// add type
+		if (C.isPlainObject(data)) {
+			propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD + 'unshift' : propType;
+			rewrite = C.addElementToObject(data, propType.toString(), val);
 		} else {
-			cValue = C.isExists(cValue) ? cValue.toString() : '';
-			sData = this._getOne(cValue, sourceId);
-			
-			// add type
-			if (C.isPlainObject(data)) {
-				propType = propType === 'push' ? this.length(data) : propType === 'unshift' ? this.length(data) + C.METHOD + 'unshift' : propType;
-				lCheck = C.addElementToObject(data, propType.toString(), sData);
-			} else {
-				lCheck = true;
-				data[propType](sData);
-			}
-			
-			// delete element
-			if (del === true) { this.disable('context')._removeOne(cValue, sourceId).enable('context'); }
+			rewrite = true;
+			data[propType](val);
 		}
 		
 		// rewrites links (if used for an object 'unshift')
-		if (lCheck !== true) { this._setOne('', lCheck, activeId); }
+		if (rewrite !== true) { this._setOne('', rewrite, id); }
 	
 		return this;
 	};
@@ -95,7 +89,7 @@
 	 * events: onAdd
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} obj — new element
+	 * @param {mixed|String Expression} obj — new element or string expression (context + >> + new element, example: eq(-1) > a >> [1, 2, 3])
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *
@@ -110,7 +104,7 @@
 	 * events: onAdd
 	 * 
 	 * @this {Colletion Object}
-	 * @param {mixed} obj — new element
+	 * @param {mixed|String Expression} obj — new element or string expression (context + >> + new element, example: eq(-1) > a >> [1, 2, 3])
 	 * @param {String} [id=this.ACTIVE] — collection ID
 	 * @return {Colletion Object}
 	 *

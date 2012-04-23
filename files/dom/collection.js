@@ -12,9 +12,7 @@
 	 */
 	Collection._inObj = function (el) {
 		var array = [],
-			stat = C.fromNode.stat,
-			
-			dom = C.drivers.dom;
+			stat = C.fromNode.stat;
 				
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
@@ -60,7 +58,7 @@
 	Collection.fromNode = function (selector, prop) {
 		if (typeof JSON === 'undefined' || !JSON.parse) { throw new Error('object JSON is not defined!'); }
 		
-		var data = C._inObj(C.drivers.dom.find(selector));
+		var data = C._inObj(dom.find(selector));
 		
 		if (prop) { return new C(data, prop); }
 		return new C(data);

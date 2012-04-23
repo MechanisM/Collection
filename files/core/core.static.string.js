@@ -3,7 +3,7 @@
 	//// string methods
 	/////////////////////////////////
 	
-	if (!String.prototype.trim) {
+	if (!String.prototype.trim || debug) {
 		/**
 		 * removes all leading and trailing whitespace characters
 		 *

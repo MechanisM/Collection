@@ -96,7 +96,7 @@
 		filter = C.isString((filter = filter || '')) ? filter.split(this.SHORT_SPLITTER) : filter;
 		
 		id = id || '';
-
+		
 		mult = mult === false ? false : true;
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
