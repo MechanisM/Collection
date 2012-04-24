@@ -3353,12 +3353,12 @@ var Collection;
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.move(':i % 2 !== 0', '', 'active', 'test');
+	 * db.move(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.get());
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.move('eq(-1)', '', 'active', 'test');
+	 * db.move('eq(-1)', 'active>>test');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.move = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {
@@ -5186,9 +5186,10 @@ var Collection;
 	/////////////////////////////////
 	//// design methods (print)
 	/////////////////////////////////
-		
+	
 	/**
-	 * templating (in context)
+	 * templating (in context)<br/>
+	 * events: onEmptyPage
 	 * 
 	 * @this {Colletion Object}
 	 * @param param - object settings
@@ -5199,10 +5200,9 @@ var Collection;
 	 * @param {Number|Boolean} [param.breaker=this.ACTIVE] — number of entries on per page (if false, returns all records)
 	 * @param {Number} [param.navBreaker=this.ACTIVE] — number of displayed pages (navigation, > 2)
 	 * @param {Selector|Boolean} [param.target=this.ACTIVE] — selector to element to output the result (false — if you print a variable)
-	 * @param {String} [param.variable=this.ACTIVE] — variable Id (if param.target === false)
-	 * @param {Filter} [param.filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression))
-	 * @param {Filter} [param.filter=this.ACTIVE] — function, which is performed every iteration of the template (can be used string expression, the record is equivalent to: return + string expression)
-	 * @param {Parser} [param.parser=this.ACTIVE] — parser function or string expression (context + >> + filter (the record is equivalent to: return + string expression))
+	 * @param {String} [param.variable=this.ACTIVE] — variable ID (if param.target === false)
+	 * @param {Filter|String Expression} [param.filter=this.ACTIVE] — filter function, string expression (the record is equivalent to: return + string expression))
+	 * @param {Parser|String Expression} [param.parser=this.ACTIVE] — parser function or string expression (the record is equivalent to: return + string expression)
 	 * @param {Boolean} [param.cacheIteration=this.ACTIVE] — if true, the last iteration is taken from cache
 	 * @param {Selector} [param.calculator=this.ACTIVE] — the selector for the calculation of the number of records
 	 * @param {Selector} [param.pager=this.ACTIVE] — selector to pager (navigation)
@@ -5224,9 +5224,7 @@ var Collection;
 			
 			breaker,
 			
-			result = '', action, e,
-			
-			dom = C.drivers.dom;
+			result = '', action, e;
 		
 		// easy implementation
 		if (C.isExists(param) && (C.isString(param) || C.isNumber(param))) {
@@ -5276,7 +5274,7 @@ var Collection;
 		/** @private */
 		fLength = function (filter, id) {
 			if (!fLength.val) {
-				fLength.val = self.length(filter, id);
+				fLength.val = self.length(filter || '', id || '');
 			}
 			
 			return fLength.val;
@@ -5368,7 +5366,7 @@ var Collection;
 		// generate navigation bar
 		if (opt.page !== 1 && opt.nmbOfEntriesInPage === 0) {
 			// events
-			this.onIPage && (e = this.onIPage.apply(this, arguments));
+			this.onEmptyPage && (e = this.onEmptyPage.apply(this, arguments));
 			if (e === false) { return this; }
 			
 			this._update('page', (opt.page -= 1)).print(opt, true, true);
@@ -5376,7 +5374,36 @@ var Collection;
 		
 		return this;
 	};
-	
+	Collection.tpl = {
+		nav: {
+			event: [
+				{
+					val: ['first', 'prev', 'next', 'last'],
+					func: function (info) {
+						var	self = this,
+							param = info.param,
+							
+							ctm = info.ctm,
+							classes = ctm.classes;
+						
+						dom.bind(info.node, 'click', function () {
+							if (!dom.hasClass(this, classes && classes.disabled || 'disabled')) {
+								ctm.nav === 'first' && (param.page = 1);
+								ctm.nav === 'prev' && (param.page = '-=1');
+								ctm.nav === 'next' && (param.page = '+=1');
+								ctm.nav === 'last' && (param.page = info.nmbOfPages);
+								
+								self.print(param);
+							}
+						});
+						
+						info.node.setAttribute('data-ctm-event', true);
+					}
+				}
+			]
+		},
+		info: {}
+	};	
 	/**
 	 * activation of the navigation<br />
 	 * info: page, total, from, to, inPage, nmbOfPages<br />
@@ -5388,195 +5415,52 @@ var Collection;
 	 * @return {Colletion Object}
 	 */
 	Collection.prototype.easyPage = function (param) {
+		if (param.navBreaker <= 2) { throw new Error('parameter "navBreaker" must be more than 2'); }
+		
 		var self = this,
 			str = '',
 			
 			// number of pages
-			nmbOfPages = param.nmbOfPages || (param.nmbOfEntries % param.breaker !== 0 ? ~~(param.nmbOfEntries / param.breaker) + 1 : param.nmbOfEntries / param.breaker),
-			
-			/** @private */
-			genPage = function (data, classes, i, nSwitch) {
-				nSwitch = nSwitch || false;
-				var key, str = '<' + (data.tag || 'span') + ' ' + (!nSwitch ? 'data-page="' : 'data-number-break="') + i + '"';
-				
-				if (data.attr) {
-					for (key in data.attr) {
-						if (!data.attr.hasOwnProperty(key)) { continue; }
-						str += ' ' + key + '="' + data.attr[key] + '"';
-					}
-				}
-				
-				if ((!nSwitch && i === param.page) || (nSwitch && i === param.breaker)) { str += ' class="' + (classes && classes.active || 'active') + '"'; }
-				return str += '>' + i + '</' + (data.tag || 'span') + '>';
-			},
-			
-			/** @private */
-			wrap = function (val, tag) {
-				if (tag === 'select') {
-					return '<option value="' + val + '">' + val + '</option>';
-				}
-				
-				return val;
-			},
-			
-			
-			i, j = 0, from, to, dom = C.drivers.dom;
+			nmbOfPages = param.nmbOfPages
+				|| (param.nmbOfEntries % param.breaker !== 0
+					? ~~(param.nmbOfEntries / param.breaker) + 1
+						: param.nmbOfEntries / param.breaker);
 		
-		// for each node
 		Array.prototype.forEach.call(param.pager, function (el) {
-			Array.prototype.forEach.call(dom.find('.ctm', el), function (el) {
-				if (param.navBreaker <= 2) { throw new Error('parameter "navBreaker" must be more than 2'); }
+			Array.prototype.forEach.call(dom.find('.ctm', el), function (node) {
 				str = '';
 				
-				var tag = el.tagName.toLowerCase(),
-					
-					data = dom.data(el),
+				var	data = dom.data(node),
 					ctm = data.ctm,
-					classes = ctm.classes;
-				
-				if (ctm.nav) {
-					// attach event
-					if (['first', 'prev', 'next', 'last'].indexOf(ctm.nav) !== -1 && !data['ctm-delegated']) {
-						dom.bind(el, 'click', function () {
-							if (!dom.hasClass(this, ctm.classes && ctm.classes.disabled || 'disabled')) {
-								ctm.nav === 'first' && (param.page = 1);
-								ctm.nav === 'prev' && (param.page = '-=1');
-								ctm.nav === 'next' && (param.page = '+=1');
-								ctm.nav === 'last' && (param.page = nmbOfPages);
-								
-								self.print(param);
-							}
-						});
-						el.setAttribute('data-ctm-delegated', true);
-					}
 					
-					// adding classes status
-					if ((['first', 'prev'].indexOf(ctm.nav) !== -1 && param.page === 1) || (['next', 'last'].indexOf(ctm.nav) !== -1 && param.finNumber === param.nmbOfEntries)) {
-						dom.addClass(el, classes && classes.disabled || 'disabled');
-					} else if (['first', 'prev', 'next', 'last'].indexOf(ctm.nav) !== -1) {
-						dom.removeClass(el, classes && classes.disabled || 'disabled');
-					}
-					
-					// breaker switch
-					if (ctm.nav === 'numberSwitch') {
-						ctm.val.forEach(function (el) {
-							if (tag === 'select') {
-								str += '<option vale="' + el + '" ' + (el === param.breaker ? 'selected="selected"' : '') + '>' + el + '</option>';
-							} else { str += genPage(ctm, classes || '', el, true); }
-						});
-					}
-					
-					// page navigation
-					if (ctm.nav === 'pageList') {
-						if (tag === 'select') {
-							for (i = 0; (i += 1) <= nmbOfPages;) {
-								str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
-							} 
-						} else {
-							if (nmbOfPages > param.navBreaker) {	
-								j = param.navBreaker % 2 !== 0 ? 1 : 0;
-								from = (param.navBreaker - j) / 2;
-								to = from;
-								
-								if (param.page - j < from) {
-									from = 0;
-								} else {
-									from = param.page - from - j;
-									if (param.page + to > nmbOfPages) {
-										from -= param.page + to - nmbOfPages;
-									}
-								}
-								
-								for (i = from, j = -1; (i += 1) <= nmbOfPages && (j += 1) !== null;) {
-									if (j === param.navBreaker && i !== param.page) { break; }
-									str += genPage(ctm, classes || '', i);
-								}
-							} else { for (i = 0; (i += 1) <= nmbOfPages;) { str += genPage(ctm, classes || '', i); } }
-						}
-					}
-					
-					if (ctm.nav === 'numberSwitch' || ctm.nav === 'pageList') {	
-						// to html
-						el.innerHTML = str;
+					info = {
+						param: param,
+						nmbOfPages: nmbOfPages,
 						
-						// delegate event
-						if (!data['ctm-delegated']) {
-							if (tag !== 'select') {
-								dom.bind(el, 'click', function (e) {
-									e = e || window.event;
-									var target = e.target || e.srcElement, data = dom.data(target);
-									if (target.parentNode !== el) { return false; }
-									
-									if (ctm.nav === 'pageList') {
-										param.page = +data.page;
-									} else {
-										self._push('breaker', param.name || '', +data['number-break']);
-										delete param.breaker;
-									}
-	
-									self.print(param);
-								});
-							
-							// if select
-							} else {
-								dom.bind(el, 'change', function () {
-									var option = dom.children(this, 'selected')[0];
-									
-									if (param.page !== option.value) {
-										if (data.nav === 'pageList') {
-											param.page = +option.value;
-										} else {
-											self._push('breaker', param.name || '', +option.value);
-											delete param.breaker;
-										}
-										
-										self.print(param);
-									}
-								});
-							}
-							
-							el.setAttribute('data-ctm-delegated', true);
-						}
-					}
-				
-				// info
-				} else if (ctm.info) {
-					if (param.nmbOfEntriesInPage === 0) {
-						dom.addClass(el, classes && classes.noData || 'no-data');
-					} else { dom.removeClass(el, classes && classes.noData || 'no-data'); }
+						node: node,
+						tag: node.tagName.toLowerCase(),
+						
+						data: data,
+						ctm: ctm
+					},
 					
-					switch (ctm.info) {
-						case 'page' : {
-							if (tag === 'input') {
-								el.value = wrap(param.page, tag);
-							} else { el.innerHTML = wrap(param.page, tag); }
-						} break;
-						case 'total' : {
-							if (tag === 'input') {
-								el.value = wrap(param.nmbOfEntries, tag);
-							} else { el.innerHTML = wrap(param.nmbOfEntries, tag); }
-						} break;
-						case 'from' : {
-							if (tag === 'input') {
-								el.value = wrap((param.page - 1) * param.breaker + 1, tag);
-							} else { el.innerHTML = wrap((param.page - 1) * param.breaker + 1, tag); }
-						} break;
-						case 'to' : {
-							if (tag === 'input') {
-								el.value = wrap(param.finNumber, tag);
-							} else { el.innerHTML = wrap(param.finNumber, tag); }
-						} break;
-						case 'inPage' : {
-							if (tag === 'input') {
-								el.value = wrap(param.nmbOfEntriesInPage, tag);
-							} else { el.innerHTML = wrap(param.nmbOfEntriesInPage, tag); }
-						} break;
-						case 'nmbOfPages' : {
-							if (tag === 'input') {
-								el.value = wrap(nmbOfPages, tag);
-							} else { el.innerHTML = wrap(nmbOfPages, tag); }
-						} break;
+					key, type;
+				
+				for (key in ctm) {
+					if (!ctm.hasOwnProperty(key) || !C.tpl[key]) { continue; }
+					type = C.tpl[key];
+					
+					if (type.event) {
+						type.event.forEach(function (el) {
+							if (el.val.indexOf(ctm[key]) !== -1 && !data['ctm-event']) {
+								el.func.call(self, info);
+							}
+						});
 					}
+					
+					/*if (exists) {
+						action.func.call(this, info);
+					}*/
 				}
 			});
 		});

@@ -60,6 +60,8 @@ copy	^
 		+ other\other.js ^
 		^
 		+ design\design.print.js ^
+		+ design\design.stat.js ^
+		+ design\design.tpl.js ^
 		+ design\design.table.js ^
 		^
 		+ txt\closure.end.txt ^
