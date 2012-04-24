@@ -5,7 +5,7 @@
 	 * @this {Collection}
 	 * @param {Object|Number|Boolean} obj — some object
 	 * @param {Context} context — link
-	 * @param {mixed} [value] — some value
+	 * @param {mixed} [val] — some value
 	 * @param {Boolean} [del=false] — if true, remove element
 	 * @return {mixed}
 	 *
@@ -22,7 +22,7 @@
 	 * @example
 	 * $C.byLink(-1, 'a > b > eq(5) > 1');
 	 */
-	Collection.byLink = function (obj, context, value, del) {
+	Collection.byLink = function (obj, context, val, del) {
 		// prepare context
 		context = context
 					.toString()
@@ -61,7 +61,7 @@
 		} else if (C.isNumber(obj)) {
 			if ((obj = +obj) < 0) { obj += total; }
 			
-			if (typeof value === 'undefined') { 
+			if (typeof val === 'undefined') { 
 				for (i = -1, n = 0; (i += 1) < cLength;) {
 					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
@@ -89,10 +89,10 @@
 				default : {
 					// children (>)
 					if (type === C.CHILDREN && context[i].substring(0, C.ORDER[0].length) !== C.ORDER[0]) {
-						if (i === last && typeof value !== 'undefined') {
-							// set new value
+						if (i === last && typeof val !== 'undefined') {
+							// set new val
 							if (del === false) {
-								obj[context[i]] = C.expr(value, obj[context[i]]);
+								obj[context[i]] = C.expr(val, obj[context[i]]);
 							
 							// remove from object
 							} else {
@@ -112,21 +112,21 @@
 						
 						// if array
 						if (C.isArray(obj)) {
-							if (i === last && typeof value !== 'undefined') {
+							if (i === last && typeof val !== 'undefined') {
 								// if eq >= 0
 								if (pos >= 0) {
-									// set new value
+									// set new val
 									if (del === false) {
-										obj[pos] = C.expr(value, obj[pos]);
+										obj[pos] = C.expr(val, obj[pos]);
 									
 									// remove from object
 									} else { obj.splice(pos, 1); }
 								
 								// if eq < 0
 								} else {
-									// set new value
+									// set new val
 									if (del === false) {
-										obj[obj.length + pos] = C.expr(value, obj[obj.length + pos]);
+										obj[obj.length + pos] = C.expr(val, obj[obj.length + pos]);
 									
 									// remove from object
 									} else { obj.splice(obj.length + pos, 1); }
@@ -154,10 +154,10 @@
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
-										if (i === last && typeof value !== 'undefined') {
-											// set new value
+										if (i === last && typeof val !== 'undefined') {
+											// set new val
 											if (del === false) {
-												obj[key] = C.expr(value, obj[key]);
+												obj[key] = C.expr(val, obj[key]);
 											
 											// remove from object
 											} else { delete obj[key]; }
@@ -175,7 +175,7 @@
 			}
 		}
 		
-		if (typeof value !== 'undefined') { return clone; }
+		if (typeof val !== 'undefined') { return clone; }
 		return obj;
 	};
 		
