@@ -117,7 +117,7 @@
 			res = false;
 		
 		if (C.isArray(filter)) {
-			if (filter[1]) {
+			if (filter.length === 2) {
 				context = filter[0].trim();
 				filter = filter[1].trim();
 			} else { filter = filter[0].trim(); }

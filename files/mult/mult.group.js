@@ -53,7 +53,7 @@
 				};
 			} else {
 				/** @private */
-				action = function (el, key) {
+				action = function (el) {
 					var param = C.byLink(el, field);
 					
 					if (!res[param]) {
@@ -73,7 +73,7 @@
 				};
 			} else {
 				/** @private */
-				action = function (el, key) {
+				action = function (el) {
 					var param = field.apply(field, arguments);
 					
 					if (!res[param]) {
@@ -89,7 +89,7 @@
 		
 		// save result if need
 		if (to) { return this._saveResult(to, set, res); }
-	
+		
 		return res;
 	};
 	/**
@@ -119,4 +119,4 @@
 		arg.push(true);
 		
 		return this.group.apply(this, arg);
-	};	
+	};

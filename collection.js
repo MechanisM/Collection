@@ -89,7 +89,7 @@ var Collection;
 	 * @this {Collection}
 	 * @param {Object|Number|Boolean} obj — some object
 	 * @param {Context} context — link
-	 * @param {mixed} [value] — some value
+	 * @param {mixed} [val] — some value
 	 * @param {Boolean} [del=false] — if true, remove element
 	 * @return {mixed}
 	 *
@@ -106,7 +106,7 @@ var Collection;
 	 * @example
 	 * $C.byLink(-1, 'a > b > eq(5) > 1');
 	 */
-	Collection.byLink = function (obj, context, value, del) {
+	Collection.byLink = function (obj, context, val, del) {
 		// prepare context
 		context = context
 					.toString()
@@ -145,7 +145,7 @@ var Collection;
 		} else if (C.isNumber(obj)) {
 			if ((obj = +obj) < 0) { obj += total; }
 			
-			if (typeof value === 'undefined') { 
+			if (typeof val === 'undefined') { 
 				for (i = -1, n = 0; (i += 1) < cLength;) {
 					if (context[i] !== C.CHILDREN) {
 						if ((n += 1) === obj) {
@@ -173,10 +173,10 @@ var Collection;
 				default : {
 					// children (>)
 					if (type === C.CHILDREN && context[i].substring(0, C.ORDER[0].length) !== C.ORDER[0]) {
-						if (i === last && typeof value !== 'undefined') {
-							// set new value
+						if (i === last && typeof val !== 'undefined') {
+							// set new val
 							if (del === false) {
-								obj[context[i]] = C.expr(value, obj[context[i]]);
+								obj[context[i]] = C.expr(val, obj[context[i]]);
 							
 							// remove from object
 							} else {
@@ -196,21 +196,21 @@ var Collection;
 						
 						// if array
 						if (C.isArray(obj)) {
-							if (i === last && typeof value !== 'undefined') {
+							if (i === last && typeof val !== 'undefined') {
 								// if eq >= 0
 								if (pos >= 0) {
-									// set new value
+									// set new val
 									if (del === false) {
-										obj[pos] = C.expr(value, obj[pos]);
+										obj[pos] = C.expr(val, obj[pos]);
 									
 									// remove from object
 									} else { obj.splice(pos, 1); }
 								
 								// if eq < 0
 								} else {
-									// set new value
+									// set new val
 									if (del === false) {
-										obj[obj.length + pos] = C.expr(value, obj[obj.length + pos]);
+										obj[obj.length + pos] = C.expr(val, obj[obj.length + pos]);
 									
 									// remove from object
 									} else { obj.splice(obj.length + pos, 1); }
@@ -233,15 +233,15 @@ var Collection;
 								//
 								pos += objLength;
 							}
-			
+							
 							n = 0;
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
 									if (pos === n) {
-										if (i === last && typeof value !== 'undefined') {
-											// set new value
+										if (i === last && typeof val !== 'undefined') {
+											// set new val
 											if (del === false) {
-												obj[key] = C.expr(value, obj[key]);
+												obj[key] = C.expr(val, obj[key]);
 											
 											// remove from object
 											} else { delete obj[key]; }
@@ -259,10 +259,10 @@ var Collection;
 			}
 		}
 		
-		if (typeof value !== 'undefined') { return clone; }
+		if (typeof val !== 'undefined') { return clone; }
 		return obj;
 	};
-		
+	
 	/**
 	 * execute event
 	 * 
@@ -293,7 +293,7 @@ var Collection;
 			
 			return event.apply(thisObject, param);
 		} else { return event[query[i]].apply(thisObject, param); }
-	};		
+	};	
 	/////////////////////////////////
 	//// constants
 	/////////////////////////////////
@@ -302,7 +302,7 @@ var Collection;
 	Collection.QUERY = '/';
 	Collection.SUBQUERY = '{';
 	Collection.METHOD = '->';
-		
+	
 	Collection.CHILDREN = '>';
 	Collection.ORDER = ['eq(', ')'];
 	
@@ -311,7 +311,7 @@ var Collection;
 	
 	Collection.VAL = 'val';
 	Collection.CHILD_NODES = 'childNodes';
-	Collection.CLASSES = 'classes';		
+	Collection.CLASSES = 'classes';	
 	/////////////////////////////////
 	//// data types
 	/////////////////////////////////
@@ -468,12 +468,12 @@ var Collection;
 			// IE8,9 will throw exceptions on certain host objects #9897
 			return false;
 		}
-
+		
 		// own properties are enumerated firstly, so to speed up,
 		// if last one is own, then all properties are own.
 		var key;
 		for (key in obj) {}
-
+		
 		return key === undefined || obj.hasOwnProperty(key);
 	};
 	
@@ -503,7 +503,7 @@ var Collection;
 	 * @example
 	 * $C.isExists(false);
 	 */
-	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };		
+	Collection.isExists = function (obj) { return typeof obj !== 'undefined' && obj !== null && obj !== ''; };	
 	/////////////////////////////////
 	//// string methods
 	/////////////////////////////////
@@ -523,7 +523,7 @@ var Collection;
 		String.prototype.trim = function () {
 			var str = this.replace(/^\s\s*/, ''),
 				i = str.length;
-		
+			
 			while (/\s/.test(str.charAt((i -= 1)))) {};
 			return str.substring(0, i + 1);
 		};
@@ -570,7 +570,7 @@ var Collection;
 		max = C.isExists(max) ? from + max : str.length;
 		
 		return str.substring(0, from) + str.substring(from, max).toLowerCase() + str.substring(max);
-	};		
+	};	
 	/////////////////////////////////
 	//// expressions
 	/////////////////////////////////
@@ -624,7 +624,7 @@ var Collection;
 		
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	};
-		
+	
 	/////////////////////////////////
 	//// methods of arrays and objects
 	/////////////////////////////////
@@ -656,16 +656,16 @@ var Collection;
 			target = arguments[1] || {};
 			i = 1;
 		}
-	
+		
 		// handle case when target is a string or something (possible in deep copy)
 		if (typeof target !== 'object' && !C.isFunction(target)) { target = {}; }
-	
+		
 		// extend Collection itself if only one argument is passed
 		if (aLength === i) {
 			target = C;
 			i -= 1;
 		}
-	
+		
 		while ((i += 1) < aLength) {
 			// only deal with non-null/undefined values
 			if (C.isExists(options = arguments[i])) {
@@ -673,7 +673,7 @@ var Collection;
 				for (name in options) {
 					src = target[name];
 					copy = options[name];
-	
+					
 					// prevent never-ending loop
 					if (target === copy) { continue; }
 					
@@ -683,7 +683,7 @@ var Collection;
 							copyIsArray = false;
 							clone = src && C.isArray(src) ? src : [];
 						} else { clone = src && C.isPlainObject(src) ? src : {}; }
-	
+						
 						// never move original objects, clone them
 						target[name] = C.extend(deep, clone, copy);
 					
@@ -695,7 +695,7 @@ var Collection;
 		
 		return target;
 	};
-		
+	
 	/**
 	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)
 	 *
@@ -713,7 +713,7 @@ var Collection;
 	Collection.addElementToObject = function (obj, keyName, value) {
 		keyName = keyName.split(C.METHOD);
 		var key, newObj = {};
-	
+		
 		if (keyName[1] && keyName[1] === 'unshift') {
 			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;
 			
@@ -723,10 +723,10 @@ var Collection;
 				}
 			}
 			obj = newObj;
-	
+			
 			return obj;
 		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }
-	
+		
 		return true;
 	};
 	
@@ -1052,7 +1052,7 @@ var Collection;
 			{cache: ''},
 			{variable: ''},
 			{defer: ''},
-	
+			
 			{page: ''},
 			{parser: ''},
 			
@@ -1130,7 +1130,7 @@ var Collection;
 		 */
 		data: function (el, name) {
 			var attr = el.attributes, data = {};
-	
+			
 			if (attr && attr.length > 0) {
 				Array.prototype.forEach.call(attr, function (el) {
 					if (el.name.substring(0, 5) === 'data-') {
@@ -2736,7 +2736,7 @@ var Collection;
 			res = false;
 		
 		if (C.isArray(filter)) {
-			if (filter[1]) {
+			if (filter.length === 2) {
 				context = filter[0].trim();
 				filter = filter[1].trim();
 			} else { filter = filter[0].trim(); }
@@ -3098,7 +3098,7 @@ var Collection;
 	 * get the one element using a filter or by link (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Filter|String Expression|String|Boolean|Context} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
+	 * @param {Filter|String Expression|Context|Array|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)), array of references (for example: ['eq(-1)', '0 > 1', '0 >> :el % 2 === 0']) or true (if disabled)
 	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -3117,7 +3117,7 @@ var Collection;
 	 */
 	Collection.prototype.getOne = function (filter, id, from, indexOf, lastIndexOf, rev) {
 		return this.get(filter || '', id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
-	};
+	};	
 	/////////////////////////////////
 	//// mult methods (set)
 	/////////////////////////////////
@@ -3231,7 +3231,7 @@ var Collection;
 	 */
 	Collection.prototype.setOne = function (filter, replaceObj, id, from, indexOf, lastIndexOf, rev) {
 		return this.set(filter || '', replaceObj, id || '', false, '', from || '', indexOf || '', lastIndexOf || '', rev || '');
-	};
+	};	
 	/////////////////////////////////
 	//// mult methods (map)
 	/////////////////////////////////
@@ -3328,11 +3328,11 @@ var Collection;
 		if (to) { return this._saveResult(to, set, res); }
 		
 		return res;
-	};
+	};	
 	/////////////////////////////////
 	//// mult methods (move && copy)
 	/////////////////////////////////
-		
+	
 	/**
 	 * move elements from one collection to another (in context)<br />
 	 * events: onMove
@@ -3670,7 +3670,7 @@ var Collection;
 				};
 			} else {
 				/** @private */
-				action = function (el, key) {
+				action = function (el) {
 					var param = C.byLink(el, field);
 					
 					if (!res[param]) {
@@ -3690,7 +3690,7 @@ var Collection;
 				};
 			} else {
 				/** @private */
-				action = function (el, key) {
+				action = function (el) {
 					var param = field.apply(field, arguments);
 					
 					if (!res[param]) {
@@ -3706,7 +3706,7 @@ var Collection;
 		
 		// save result if need
 		if (to) { return this._saveResult(to, set, res); }
-	
+		
 		return res;
 	};
 	/**
@@ -3736,7 +3736,7 @@ var Collection;
 		arg.push(true);
 		
 		return this.group.apply(this, arg);
-	};		
+	};	
 	/////////////////////////////////
 	//// statistic methods
 	/////////////////////////////////

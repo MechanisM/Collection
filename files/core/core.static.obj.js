@@ -1,4 +1,4 @@
-		
+	
 	/////////////////////////////////
 	//// methods of arrays and objects
 	/////////////////////////////////
@@ -30,16 +30,16 @@
 			target = arguments[1] || {};
 			i = 1;
 		}
-	
+		
 		// handle case when target is a string or something (possible in deep copy)
 		if (typeof target !== 'object' && !C.isFunction(target)) { target = {}; }
-	
+		
 		// extend Collection itself if only one argument is passed
 		if (aLength === i) {
 			target = C;
 			i -= 1;
 		}
-	
+		
 		while ((i += 1) < aLength) {
 			// only deal with non-null/undefined values
 			if (C.isExists(options = arguments[i])) {
@@ -47,7 +47,7 @@
 				for (name in options) {
 					src = target[name];
 					copy = options[name];
-	
+					
 					// prevent never-ending loop
 					if (target === copy) { continue; }
 					
@@ -57,7 +57,7 @@
 							copyIsArray = false;
 							clone = src && C.isArray(src) ? src : [];
 						} else { clone = src && C.isPlainObject(src) ? src : {}; }
-	
+						
 						// never move original objects, clone them
 						target[name] = C.extend(deep, clone, copy);
 					
@@ -69,7 +69,7 @@
 		
 		return target;
 	};
-		
+	
 	/**
 	 * add a new element to an object (returns true when an element is added at the end and a new object, if the element is added to the beginning)
 	 *
@@ -87,7 +87,7 @@
 	Collection.addElementToObject = function (obj, keyName, value) {
 		keyName = keyName.split(C.METHOD);
 		var key, newObj = {};
-	
+		
 		if (keyName[1] && keyName[1] === 'unshift') {
 			newObj[!isNaN(Number(keyName[0])) ? 0 : keyName[0]] = value;
 			
@@ -97,10 +97,10 @@
 				}
 			}
 			obj = newObj;
-	
+			
 			return obj;
 		} else if (!keyName[1] || keyName[1] === 'push') { obj[keyName[0]] = value; }
-	
+		
 		return true;
 	};
 	

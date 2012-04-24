@@ -149,7 +149,7 @@
 								//
 								pos += objLength;
 							}
-			
+							
 							n = 0;
 							for (key in obj) {
 								if (obj.hasOwnProperty(key)) {
@@ -178,7 +178,7 @@
 		if (typeof val !== 'undefined') { return clone; }
 		return obj;
 	};
-		
+	
 	/**
 	 * execute event
 	 * 

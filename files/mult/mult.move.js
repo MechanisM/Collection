@@ -1,8 +1,8 @@
-
+	
 	/////////////////////////////////
 	//// mult methods (move && copy)
 	/////////////////////////////////
-		
+	
 	/**
 	 * move elements from one collection to another (in context)<br />
 	 * events: onMove

@@ -51,7 +51,7 @@
 		 */
 		data: function (el, name) {
 			var attr = el.attributes, data = {};
-	
+			
 			if (attr && attr.length > 0) {
 				Array.prototype.forEach.call(attr, function (el) {
 					if (el.name.substring(0, 5) === 'data-') {

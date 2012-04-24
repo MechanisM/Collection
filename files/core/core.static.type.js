@@ -1,4 +1,4 @@
-		
+	
 	/////////////////////////////////
 	//// data types
 	/////////////////////////////////
@@ -155,12 +155,12 @@
 			// IE8,9 will throw exceptions on certain host objects #9897
 			return false;
 		}
-
+		
 		// own properties are enumerated firstly, so to speed up,
 		// if last one is own, then all properties are own.
 		var key;
 		for (key in obj) {}
-
+		
 		return key === undefined || obj.hasOwnProperty(key);
 	};
 	

@@ -54,7 +54,7 @@
 			{cache: ''},
 			{variable: ''},
 			{defer: ''},
-	
+			
 			{page: ''},
 			{parser: ''},
 			

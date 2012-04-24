@@ -1,4 +1,4 @@
-		
+	
 	/////////////////////////////////
 	//// constants
 	/////////////////////////////////
@@ -7,7 +7,7 @@
 	Collection.QUERY = '/';
 	Collection.SUBQUERY = '{';
 	Collection.METHOD = '->';
-		
+	
 	Collection.CHILDREN = '>';
 	Collection.ORDER = ['eq(', ')'];
 	
