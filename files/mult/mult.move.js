@@ -23,12 +23,12 @@
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.move(':i % 2 !== 0', '', 'active', 'test');
+	 * db.move(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.get());
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.move('eq(-1)', '', 'active', 'test');
+	 * db.move('eq(-1)', 'active>>test');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.move = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev, deleteType) {

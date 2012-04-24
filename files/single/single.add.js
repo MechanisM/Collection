@@ -1,7 +1,7 @@
 	
 	/////////////////////////////////
 	//// single methods (add)
-	/////////////////////////////////	
+	/////////////////////////////////
 	
 	/**
 	 * add new element to the collection (in context)<br/>
@@ -52,7 +52,7 @@
 			data, rewrite;
 		
 		if (withSplitter) {
-			if (val[1]) {
+			if (val.length === 2) {
 				context = val[0].trim();
 				
 				val = val[1].trim();
@@ -80,7 +80,7 @@
 		
 		// rewrites links (if used for an object 'unshift')
 		if (rewrite !== true) { this._setOne('', rewrite, id); }
-	
+		
 		return this;
 	};
 	

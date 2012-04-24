@@ -21,7 +21,7 @@
 		for (key in sortedKeys) {
 			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
 		}
-
+		
 		return sortedObj;
 	};
 	

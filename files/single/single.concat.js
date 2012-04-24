@@ -25,7 +25,7 @@
 		if (e === false) { return this; }
 		
 		id = (id = id || '').split(this.DEF);
-		context = id[1] ? id[1].trim() : '';
+		context = id.length === 2 ? id[1].trim() : '';
 		id = id[0].trim();
 		
 		// get by link

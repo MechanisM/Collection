@@ -2,7 +2,7 @@
 	/////////////////////////////////
 	//// single methods (remove)
 	/////////////////////////////////
-		
+	
 	/**
 	 * remove an one element from the collection by link (in context)
 	 * 
@@ -24,7 +24,7 @@
 		if (!context && !activeContext) {
 			this._setOne('', null);
 		} else { C.byLink(this._get('collection', id || ''), activeContext + C.CHILDREN + context, '', true); }
-	
+		
 		return this;
 	};
 	/**
@@ -52,6 +52,6 @@
 		} else if (C.isArray(objContext)) {
 			for (i = objContext.length; (i -= 1) > -1;) { this._removeOne(objContext[i], id); }
 		} else { this._removeOne(objContext, id); }
-	
+		
 		return this;
 	};

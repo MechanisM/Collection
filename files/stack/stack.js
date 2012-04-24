@@ -188,7 +188,7 @@
 				}
 			}
 		}
-
+		
 		return this;
 	};
 	/**
@@ -217,7 +217,7 @@
 		if (e === false) { return this; }
 		
 		var sys = this.dObj.sys,
-
+			
 			upperCase = C.toUpperCase(stackName, 1),
 			tmpChangeControlStr = stackName + 'ChangeControl',
 			tmpActiveIdStr = 'active' + upperCase + 'Id';
@@ -229,11 +229,11 @@
 		if (sys[tmpActiveIdStr] !== id) {
 			sys[tmpChangeControlStr] = true;
 			sys[tmpActiveIdStr] = id;
+			
+			sys[stackName + 'Back'].push(id);
+			this.dObj.active[stackName] = sys['tmp' + upperCase][id];
 		} else { sys[tmpChangeControlStr] = false; }
 		
-		sys[stackName + 'Back'].push(id);
-		this.dObj.active[stackName] = sys['tmp' + upperCase][id];
-
 		return this;
 	};
 	/**
@@ -277,7 +277,7 @@
 				propBack.splice(pos + 1, propBack.length);
 			}
 		}
-
+		
 		return this;
 	};
 	/**
@@ -303,7 +303,7 @@
 	 */
 	Collection.prototype._backIf = function (stackName, nmb) {
 		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
-
+		
 		return this;
 	};
 	/**
@@ -344,7 +344,7 @@
 			upperCase = C.toUpperCase(stackName, 1),
 			tmpActiveIdStr = 'active' + upperCase + 'Id',
 			tmpTmpStr = 'tmp' + upperCase,
-
+			
 			activeId = this._getActiveId(stackName),
 			tmpArray = !objId ? activeId ? [activeId] : [] : C.isArray(objId) || C.isPlainObject(objId) ? objId : [objId],
 			
@@ -400,7 +400,7 @@
 				active[stackName] = resetVal;
 			}
 		}
-
+		
 		return this;
 	};
 	/**
@@ -419,7 +419,7 @@
 	 */
 	Collection.prototype._reset = function (stackName, objId, resetVal) {
 		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
-
+		
 		return this._drop(stackName, objId || '', '', resetVal);
 	};
 	/**
@@ -443,7 +443,7 @@
 		
 		return this._reset(stackName, objId || '', mergeVal);
 	};
-
+	
 	/**
 	 * verify the existence of a parameter on the stack (has aliases, format: exists + StackName)
 	 * 
@@ -461,7 +461,7 @@
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveId(stackName)) { return true; }
 		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
-
+		
 		return false;
 	};
 	/**
@@ -511,7 +511,7 @@
 		// overload, returns active Id
 		if (!id) { return this._getActiveId(stackName); }
 		if (id === this._getActiveId(stackName)) { return true; }
-
+		
 		return false;
 	};
 	

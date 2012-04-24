@@ -1328,12 +1328,12 @@ var Collection;
 	 * converts nodes in the collection
 	 * 
 	 * @this {Collection}
-	 * @param {DOM Nodes} el — DOM node list
+	 * @param {DOM Nodes} el — DOM nodes
 	 * @return {Array}
 	 */
 	Collection.parseNode = function (el) {
 		var	array = [];
-				
+		
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
 			// not for text nodes
@@ -1362,7 +1362,7 @@ var Collection;
 				if (txt !== false) { array[i][C.VAL] = txt.replace(/[\r\t\n]/g, ' '); }
 			}
 		});
-
+		
 		return array;
 	};
 	
@@ -1382,7 +1382,7 @@ var Collection;
 		
 		if (prop) { return new C(data, prop); }
 		return new C(data);
-	};
+	};	
 	/////////////////////////////////
 	//// DOM methods (compiler templates)
 	/////////////////////////////////
@@ -1899,7 +1899,7 @@ var Collection;
 				}
 			}
 		}
-
+		
 		return this;
 	};
 	/**
@@ -1928,7 +1928,7 @@ var Collection;
 		if (e === false) { return this; }
 		
 		var sys = this.dObj.sys,
-
+			
 			upperCase = C.toUpperCase(stackName, 1),
 			tmpChangeControlStr = stackName + 'ChangeControl',
 			tmpActiveIdStr = 'active' + upperCase + 'Id';
@@ -1940,11 +1940,11 @@ var Collection;
 		if (sys[tmpActiveIdStr] !== id) {
 			sys[tmpChangeControlStr] = true;
 			sys[tmpActiveIdStr] = id;
+			
+			sys[stackName + 'Back'].push(id);
+			this.dObj.active[stackName] = sys['tmp' + upperCase][id];
 		} else { sys[tmpChangeControlStr] = false; }
 		
-		sys[stackName + 'Back'].push(id);
-		this.dObj.active[stackName] = sys['tmp' + upperCase][id];
-
 		return this;
 	};
 	/**
@@ -1988,7 +1988,7 @@ var Collection;
 				propBack.splice(pos + 1, propBack.length);
 			}
 		}
-
+		
 		return this;
 	};
 	/**
@@ -2014,7 +2014,7 @@ var Collection;
 	 */
 	Collection.prototype._backIf = function (stackName, nmb) {
 		if (this.dObj.sys[stackName + 'ChangeControl'] === true) { return this._back.apply(this, arguments); }
-
+		
 		return this;
 	};
 	/**
@@ -2055,7 +2055,7 @@ var Collection;
 			upperCase = C.toUpperCase(stackName, 1),
 			tmpActiveIdStr = 'active' + upperCase + 'Id',
 			tmpTmpStr = 'tmp' + upperCase,
-
+			
 			activeId = this._getActiveId(stackName),
 			tmpArray = !objId ? activeId ? [activeId] : [] : C.isArray(objId) || C.isPlainObject(objId) ? objId : [objId],
 			
@@ -2111,7 +2111,7 @@ var Collection;
 				active[stackName] = resetVal;
 			}
 		}
-
+		
 		return this;
 	};
 	/**
@@ -2130,7 +2130,7 @@ var Collection;
 	 */
 	Collection.prototype._reset = function (stackName, objId, resetVal) {
 		resetVal = typeof resetVal === 'undefined' ? false : resetVal;
-
+		
 		return this._drop(stackName, objId || '', '', resetVal);
 	};
 	/**
@@ -2154,7 +2154,7 @@ var Collection;
 		
 		return this._reset(stackName, objId || '', mergeVal);
 	};
-
+	
 	/**
 	 * verify the existence of a parameter on the stack (has aliases, format: exists + StackName)
 	 * 
@@ -2172,7 +2172,7 @@ var Collection;
 		
 		if ((!id || id === this.ACTIVE) && this._getActiveId(stackName)) { return true; }
 		if (typeof this.dObj.sys['tmp' + upperCase][id] !== 'undefined') { return true; }
-
+		
 		return false;
 	};
 	/**
@@ -2222,7 +2222,7 @@ var Collection;
 		// overload, returns active Id
 		if (!id) { return this._getActiveId(stackName); }
 		if (id === this._getActiveId(stackName)) { return true; }
-
+		
 		return false;
 	};
 	
@@ -2403,7 +2403,7 @@ var Collection;
 	};	
 	/////////////////////////////////
 	//// single methods (add)
-	/////////////////////////////////	
+	/////////////////////////////////
 	
 	/**
 	 * add new element to the collection (in context)<br/>
@@ -2454,7 +2454,7 @@ var Collection;
 			data, rewrite;
 		
 		if (withSplitter) {
-			if (val[1]) {
+			if (val.length === 2) {
 				context = val[0].trim();
 				
 				val = val[1].trim();
@@ -2482,7 +2482,7 @@ var Collection;
 		
 		// rewrites links (if used for an object 'unshift')
 		if (rewrite !== true) { this._setOne('', rewrite, id); }
-	
+		
 		return this;
 	};
 	
@@ -2519,7 +2519,7 @@ var Collection;
 	/////////////////////////////////
 	//// single methods (remove)
 	/////////////////////////////////
-		
+	
 	/**
 	 * remove an one element from the collection by link (in context)
 	 * 
@@ -2541,7 +2541,7 @@ var Collection;
 		if (!context && !activeContext) {
 			this._setOne('', null);
 		} else { C.byLink(this._get('collection', id || ''), activeContext + C.CHILDREN + context, '', true); }
-	
+		
 		return this;
 	};
 	/**
@@ -2569,7 +2569,7 @@ var Collection;
 		} else if (C.isArray(objContext)) {
 			for (i = objContext.length; (i -= 1) > -1;) { this._removeOne(objContext[i], id); }
 		} else { this._removeOne(objContext, id); }
-	
+		
 		return this;
 	};	
 	/////////////////////////////////
@@ -2598,7 +2598,7 @@ var Collection;
 		if (e === false) { return this; }
 		
 		id = (id = id || '').split(this.DEF);
-		context = id[1] ? id[1].trim() : '';
+		context = id.length === 2 ? id[1].trim() : '';
 		id = id[0].trim();
 		
 		// get by link
@@ -3789,7 +3789,7 @@ var Collection;
 		switch (oper) {
 			case 'count' : {
 				/** @private */
-				action = function () { res += 1; };				
+				action = function () { res += 1; };
 			} break;
 			
 			case 'summ' : {
@@ -3979,7 +3979,7 @@ var Collection;
 		oper = (oper = oper || 'count') && this._isStringExpression(oper) ? this._compileFilter(oper) : oper;
 		field = (field = field || '') && this._isStringExpression(field) ? this._compileFilter(field) : field;
 		id = this._splitId(id);
-
+		
 		// values by default
 		count = parseInt(count) >= 0 ? parseInt(count) : false;
 		from = parseInt(from) || false;
@@ -4383,7 +4383,7 @@ var Collection;
 		for (key in sortedKeys) {
 			if (sortedKeys.hasOwnProperty(key)) { sortedObj[sortedKeys[key]] = obj[sortedKeys[key]]; }
 		}
-
+		
 		return sortedObj;
 	};
 	
@@ -4751,7 +4751,7 @@ var Collection;
 				.trim()
 				.split(' ');
 			
-			// remove 'dead' elements		
+			// remove 'dead' elements
 			for (j = filter.length; (j -= 1) > -1;) {
 				if (filter[j] === '') { filter.splice(j, 1); }
 			}
@@ -5586,7 +5586,7 @@ var Collection;
 	/////////////////////////////////
 	//// design methods (table)
 	/////////////////////////////////
-		
+	
 	/**
 	 * generating the table
 	 * 
@@ -5604,12 +5604,12 @@ var Collection;
 			count = target;
 			target = '';
 		}
-
+		
 		count = count || 4;
 		selector = selector || 'div';
 		empty = empty === false ? false : true;
 		
-		var i, table, tr, td, dom = C.drivers.dom;
+		var i, table, tr, td;
 		
 		target = target ? C.isString(target) ? dom.find(target) : target : this._get('target');
 		

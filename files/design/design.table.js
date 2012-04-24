@@ -2,7 +2,7 @@
 	/////////////////////////////////
 	//// design methods (table)
 	/////////////////////////////////
-		
+	
 	/**
 	 * generating the table
 	 * 
@@ -20,12 +20,12 @@
 			count = target;
 			target = '';
 		}
-
+		
 		count = count || 4;
 		selector = selector || 'div';
 		empty = empty === false ? false : true;
 		
-		var i, table, tr, td, dom = C.drivers.dom;
+		var i, table, tr, td;
 		
 		target = target ? C.isString(target) ? dom.find(target) : target : this._get('target');
 		

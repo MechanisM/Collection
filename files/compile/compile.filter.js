@@ -77,7 +77,7 @@
 				.trim()
 				.split(' ');
 			
-			// remove 'dead' elements		
+			// remove 'dead' elements
 			for (j = filter.length; (j -= 1) > -1;) {
 				if (filter[j] === '') { filter.splice(j, 1); }
 			}

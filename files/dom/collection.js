@@ -7,12 +7,12 @@
 	 * converts nodes in the collection
 	 * 
 	 * @this {Collection}
-	 * @param {DOM Nodes} el — DOM node list
+	 * @param {DOM Nodes} el — DOM nodes
 	 * @return {Array}
 	 */
 	Collection.parseNode = function (el) {
 		var	array = [];
-				
+		
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
 			// not for text nodes
@@ -41,7 +41,7 @@
 				if (txt !== false) { array[i][C.VAL] = txt.replace(/[\r\t\n]/g, ' '); }
 			}
 		});
-
+		
 		return array;
 	};
 	

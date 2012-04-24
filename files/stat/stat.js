@@ -51,7 +51,7 @@
 		switch (oper) {
 			case 'count' : {
 				/** @private */
-				action = function () { res += 1; };				
+				action = function () { res += 1; };
 			} break;
 			
 			case 'summ' : {
