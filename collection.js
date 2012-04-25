@@ -1029,7 +1029,7 @@ var Collection;
 		DISABLED: 'disabled',
 		NO_DATA: 'no-data',
 		SIMPLE_TAG: 'span',
-		CTM: '.ctm',
+		CTM: 'ctm',
 		SHUFFLE: 'shuffle',
 		NAMESPACE: '.',
 		SPLITTER: '>>>',
@@ -5377,8 +5377,13 @@ var Collection;
 		} else { this.easyPage(opt); }
 		
 		return this;
-	};
+	};	
+	/////////////////////////////////
+	//// design methods (static models)
+	/////////////////////////////////
+	
 	Collection.tpl = {
+		// navigation
 		nav: {
 			event: [
 				{
@@ -5386,35 +5391,32 @@ var Collection;
 					func: function (info) {
 						var	self = this,
 							param = info.param,
-							
-							node = info.node,
-							
-							ctm = info.ctm,
-							classes = ctm.classes;
+							disabled = info.ctm.classes && info.ctm.classes.disabled || this.DISABLED
 						
-						dom.bind(node, 'click', function () {
-							if (!dom.hasClass(this, classes && classes.disabled || self.DISABLED)) {
-								ctm.nav === 'first' && (param.page = 1);
-								ctm.nav === 'prev' && (param.page = '-=1');
-								ctm.nav === 'next' && (param.page = '+=1');
-								ctm.nav === 'last' && (param.page = info.nmbOfPages);
+						dom.bind(info.el, 'click', function () {
+							if (!dom.hasClass(this, disabled)) {
+								info.key === 'first' && (param.page = 1);
+								info.key === 'prev' && (param.page = '-=1');
+								info.key === 'next' && (param.page = '+=1');
+								info.key === 'last' && (param.page = info.nmbOfPages);
 								
 								self.print(param);
 							}
 						});
 						
-						node.setAttribute('data-ctm-event', true);
+						info.el.setAttribute('data-' + this.CTM + '-event', true);
 					}
 				},
 				
 				{
 					val: ['numberSwitch', 'pageList'],
 					func: function (info) {
-						var self = this;
+						var self = this,
+							param = info.param;
 						
-						if (!info.data['ctm-event']) {
+						if (!info.data[this.CTM + '-event']) {
 							if (info.tag !== 'select') {
-								dom.bind(info.node, 'click', function (e) {
+								dom.bind(info.el, 'click', function (e) {
 									e = e || window.event;
 									var target = e.target || e.srcElement,
 										data = dom.data(target);
@@ -5422,34 +5424,34 @@ var Collection;
 									if (target.parentNode !== el) { return false; }
 									
 									if (info.key === 'pageList') {
-										info.param.page = +data.page;
+										param.page = +data.page;
 									} else {
-										self._push('breaker', info.param.name || '', +data['breaker']);
-										delete info.param.breaker;
+										self._push('breaker', param.name || '', +data['breaker']);
+										delete param.breaker;
 									}
-	
-									self.print(info.param);
+									
+									self.print(param);
 								});
 							
 							// if select
 							} else {
-								dom.bind(info.node, 'change', function () {
+								dom.bind(info.el, 'change', function () {
 									var option = dom.children(this, 'selected')[0];
 									
-									if (info.param.page !== option.value) {
+									if (param.page !== option.value) {
 										if (info.key === 'pageList') {
-											info.param.page = +option.value;
+											param.page = +option.value;
 										} else {
-											self._push('breaker', info.param.name || '', +option.value);
-											delete info.param.breaker;
+											self._push('breaker', param.name || '', +option.value);
+											delete param.breaker;
 										}
 										
-										self.print(info.param);
+										self.print(param);
 									}
 								});
 							}
 							
-							info.node.setAttribute('data-ctm-event', true);
+							info.el.setAttribute('data-' + this.CTM + '-event', true);
 						}
 					}
 				}
@@ -5459,89 +5461,81 @@ var Collection;
 				{
 					val: ['first', 'prev', 'next', 'last'],
 					func: function (info) {
-						var	self = this,
-							
-							key = info.key,
-							param = info.param,
-							
-							node = info.node,
-							
-							ctm = info.ctm,
-							classes = ctm.classes;
+						var	param = info.param,
+							disabled = info.ctm.classes && info.ctm.classes.disabled || this.DISABLED;
 						
-						if ((['first', 'prev'].indexOf(key) !== -1 && param.page === 1)
-							|| (['next', 'last'].indexOf(key) && param.finNumber === param.nmbOfEntries)) {
-								dom.addClass(node, classes && classes.disabled || this.DISABLED);
-						} else {
-							dom.removeClass(node, classes && classes.disabled || this.DISABLED);
-						}
+						if ((['first', 'prev'].indexOf(info.key) !== -1 && param.page === 1)
+							|| (['next', 'last'].indexOf(info.key) !== -1 && param.finNumber === param.nmbOfEntries)) {
+								dom.addClass(info.el, disabled);
+						} else { dom.removeClass(info.el, disabled); }
 					}
 				},
 				{
 					val: 'numberSwitch',
 					func: function (info) {
-						var	self = this,
-							str = '';
-							
+						var	str = '';
+						
 						info.ctm.val.forEach(function (el) {
 							if (info.tag === 'select') {
-								str += '<option value="' + el + '" ' + (el === info.param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
-							} else { str += self._genPage(ctm, classes || '', el, true); }
-						});
+								str += '<option value="' + el + '" ' + (el === info.param.breaker ? 'selected="selected"' : '') + '>' + el + '</option>';
+							} else { str += this._genPage(ctm, el, info.ctm.classes || '', true); }
+						}, this);
 						
-						info.node.innerHTML = str;
+						info.el.innerHTML = str;
 					}
 				},
 				
 				{
 					val: 'pageList',
 					func: function (info) {
-						var	self = this,
-							str = '',
+						var	param = info.param,
+							classes = info.ctm.classes,
 							
+							str = '',
 							from, to,
 							i, j = 0;
-							
+						
 						if (info.tag === 'select') {
 							for (i = 0; (i += 1) <= info.nmbOfPages;) {
-								str += '<option vale="' + i + '" ' + (i === info.param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
+								str += '<option vale="' + i + '" ' + (i === param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
 							} 
 						} else {
-							if (info.nmbOfPages > info.param.pageBreak) {	
-								j = info.param.pageBreak % 2 !== 0 ? 1 : 0;
-								from = (info.param.pageBreak - j) / 2;
+							if (info.nmbOfPages > param.pageBreak) {
+								j = param.pageBreak % 2 !== 0 ? 1 : 0;
+								from = (param.pageBreak - j) / 2;
 								to = from;
 								
-								if (info.param.page - j < from) {
+								if (param.page - j < from) {
 									from = 0;
 								} else {
-									from = info.param.page - from - j;
-									if (info.param.page + to > info.nmbOfPages) {
-										from -= info.param.page + to - info.nmbOfPages;
+									from = param.page - from - j;
+									if (param.page + to > info.nmbOfPages) {
+										from -= param.page + to - info.nmbOfPages;
 									}
 								}
 								
 								for (i = from, j = -1; (i += 1) <= info.nmbOfPages && (j += 1) !== null;) {
-									if (j === info.param.pageBreak && i !== param.page) { break; }
-									str += this._genPage(ctm, classes || '', i);
+									if (j === param.pageBreak && i !== param.page) { break; }
+									str += this._genPage(ctm, i, classes || '');
 								}
-							} else { for (i = 0; (i += 1) <= info.nmbOfPages;) { str += this._genPage(ctm, classes || '', i); } }
+							} else { for (i = 0; (i += 1) <= info.nmbOfPages;) { str += this._genPage(ctm, i, classes || ''); } }
 						}
 					}
 				}
 			]
 		},
 		
+		// information
 		info: {
 			action: [
 				{
 					func: function (info) {
-						var className = info.ctm.classes && info.ctm.classes.noData || this.NO_DATA
+						var noData = info.ctm.classes && info.ctm.classes.noData || this.NO_DATA
 						
 						if (info.param.nmbOfEntriesInPage === 0) {
-							dom.addClass(info.node, className);
+							dom.addClass(info.el, noData);
 						} else {
-							dom.removeClass(info.node, className);
+							dom.removeClass(info.el, noData);
 						}
 					}
 				},
@@ -5550,8 +5544,8 @@ var Collection;
 						var res = this._wrap(info.param.page, info.tag);
 						
 						if (info.tag === 'input') {
-							info.node.value = res;
-						} else { info.node.innerHTML = res; }
+							info.el.value = res;
+						} else { info.el.innerHTML = res; }
 					}
 				},
 				{
@@ -5560,8 +5554,8 @@ var Collection;
 						var res = this._wrap(info.param.page, info.tag);
 						
 						if (info.tag === 'input') {
-							info.node.value = res;
-						} else { info.node.innerHTML = res; }
+							info.el.value = res;
+						} else { info.el.innerHTML = res; }
 					}
 				},
 				{
@@ -5570,8 +5564,8 @@ var Collection;
 						var res = this._wrap(info.param.nmbOfEntries, info.tag);
 						
 						if (info.tag === 'input') {
-							info.node.value = res;
-						} else { info.node.innerHTML = res; }
+							info.el.value = res;
+						} else { info.el.innerHTML = res; }
 					}
 				},
 				{
@@ -5580,8 +5574,8 @@ var Collection;
 						var res = this._wrap((info.param.page - 1) * info.param.breaker + 1, info.tag);
 						
 						if (info.tag === 'input') {
-							info.node.value = res;
-						} else { info.node.innerHTML = res; }
+							info.el.value = res;
+						} else { info.el.innerHTML = res; }
 					}
 				},
 				{
@@ -5590,8 +5584,8 @@ var Collection;
 						var res = this._wrap(info.param.finNumber, info.tag);
 						
 						if (info.tag === 'input') {
-							info.node.value = res;
-						} else { info.node.innerHTML = res; }
+							info.el.value = res;
+						} else { info.el.innerHTML = res; }
 					}
 				},
 				{
@@ -5600,8 +5594,8 @@ var Collection;
 						var res = this._wrap(info.param.nmbOfEntriesInPage, info.tag);
 						
 						if (info.tag === 'input') {
-							info.node.value = res;
-						} else { info.node.innerHTML = res; }
+							info.el.value = res;
+						} else { info.el.innerHTML = res; }
 					}
 				},
 				{
@@ -5610,13 +5604,17 @@ var Collection;
 						var res = this._wrap(info.nmbOfPages, info.tag);
 						
 						if (info.tag === 'input') {
-							info.node.value = res;
-						} else { info.node.innerHTML = res; }
+							info.el.value = res;
+						} else { info.el.innerHTML = res; }
 					}
 				}
 			]
 		}
 	};	
+	/////////////////////////////////
+	//// design methods (template model)
+	/////////////////////////////////	
+	
 	/**
 	 * wrap in a specific tag
 	 * 
@@ -5684,11 +5682,11 @@ var Collection;
 						: param.nmbOfEntries / param.breaker);
 		
 		Array.prototype.forEach.call(param.pager, function (el) {
-			Array.prototype.forEach.call(dom.find(self.CTM, el), function (node) {
+			Array.prototype.forEach.call(dom.find('.' + self.CTM, el), function (node) {
 				var	// data attribute
 					data = dom.data(node),
 					// ctm info
-					ctm = data.ctm,
+					ctm = data[self.CTM],
 					
 					info = {
 						param: param,
