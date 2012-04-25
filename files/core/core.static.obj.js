@@ -115,9 +115,13 @@
 	 * $C.unshift({0: 1, length: 1}, 2);
 	 */
 	Collection.unshift = function (obj, val) {
-		var newArray = [val], key;
+		var newArray = [val], key, arg;
 		
-		if (obj.callee) {
+		try {
+			arg = obj.callee;
+		} catch (e) { arg = true; }
+		
+		if (arg) {
 			Array.prototype.forEach.call(obj, function (el) {
 				newArray.push(el);
 			});
@@ -142,9 +146,13 @@
 	 * $C.toArray({0: 1, 1: 2});
 	 */
 	Collection.toArray = function (obj) {
-		var newArray = [], key;
+		var newArray = [], key, arg;
 		
-		if (obj.callee) {
+		try {
+			arg = obj.callee;
+		} catch (e) { arg = true; }
+		
+		if (arg) {
 			Array.prototype.forEach.call(obj, function (el) {
 				newArray.push(el);
 			});
