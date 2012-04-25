@@ -5421,7 +5421,7 @@ var Collection;
 									var target = e.target || e.srcElement,
 										data = dom.data(target);
 									
-									if (target.parentNode !== el) { return false; }
+									if (target.parentNode !== info.el) { return false; }
 									
 									if (info.key === 'pageList') {
 										param.page = +data.page;
@@ -5478,7 +5478,7 @@ var Collection;
 						info.ctm.val.forEach(function (el) {
 							if (info.tag === 'select') {
 								str += '<option value="' + el + '" ' + (el === info.param.breaker ? 'selected="selected"' : '') + '>' + el + '</option>';
-							} else { str += this._genPage(ctm, el, info.ctm.classes || '', true); }
+							} else { str += this._genPage(info, el, true); }
 						}, this);
 						
 						info.el.innerHTML = str;
@@ -5489,7 +5489,6 @@ var Collection;
 					val: 'pageList',
 					func: function (info) {
 						var	param = info.param,
-							classes = info.ctm.classes,
 							
 							str = '',
 							from, to,
@@ -5516,10 +5515,12 @@ var Collection;
 								
 								for (i = from, j = -1; (i += 1) <= info.nmbOfPages && (j += 1) !== null;) {
 									if (j === param.pageBreak && i !== param.page) { break; }
-									str += this._genPage(ctm, i, classes || '');
+									str += this._genPage(info, i);
 								}
-							} else { for (i = 0; (i += 1) <= info.nmbOfPages;) { str += this._genPage(ctm, i, classes || ''); } }
+							} else { for (i = 0; (i += 1) <= info.nmbOfPages;) { str += this._genPage(info, i); } }
 						}
+						
+						info.el.innerHTML = str;
 					}
 				}
 			]
@@ -5613,7 +5614,7 @@ var Collection;
 	};	
 	/////////////////////////////////
 	//// design methods (template model)
-	/////////////////////////////////	
+	/////////////////////////////////
 	
 	/**
 	 * wrap in a specific tag
@@ -5635,16 +5636,19 @@ var Collection;
 	 * generate navigation pages
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Plain Object} data — data attribute of the element
+	 * @param {Plain Object} info — managing object
 	 * @param {Number} i — iteration
-	 * @param {Plain Object} [classes] — information about the classes
 	 * @param {Boolean} nSwitch — for numberSwitch
 	 * @return {String}
 	 */
-	Collection.prototype._genPage = function (data, i, classes, nSwitch) {
+	Collection.prototype._genPage = function (info, i, nSwitch) {
 		nSwitch = nSwitch || false;
-		var str = '<' + (data.tag || this.SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
-			attr = data.attr, key;
+		var param = info.param,
+			ctm = info.ctm,
+			active = ctm.classes && ctm.classes.active || this.ACTIVE,
+			
+			str = '<' + (ctm.tag || this.SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
+			attr = ctm.attr, key;
 		
 		if (attr) {
 			for (key in attr) {
@@ -5654,10 +5658,10 @@ var Collection;
 		}
 		
 		if ((!nSwitch && i === param.page) || (nSwitch && i === param.breaker)) {
-			str += ' class="' + (classes && classes.active || this.ACTIVE) + '"';
+			str += ' class="' + active + '"';
 		}
 		
-		return str += '>' + i + '</' + (data.tag || this.SIMPLE_TAG) + '>';
+		return str += '>' + i + '</' + (ctm.tag || this.SIMPLE_TAG) + '>';
 	};
 	
 	/**

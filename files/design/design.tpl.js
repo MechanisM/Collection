@@ -1,7 +1,7 @@
 	
 	/////////////////////////////////
 	//// design methods (template model)
-	/////////////////////////////////	
+	/////////////////////////////////
 	
 	/**
 	 * wrap in a specific tag
@@ -23,16 +23,19 @@
 	 * generate navigation pages
 	 * 
 	 * @this {Colletion Object}
-	 * @param {Plain Object} data — data attribute of the element
+	 * @param {Plain Object} info — managing object
 	 * @param {Number} i — iteration
-	 * @param {Plain Object} [classes] — information about the classes
 	 * @param {Boolean} nSwitch — for numberSwitch
 	 * @return {String}
 	 */
-	Collection.prototype._genPage = function (data, i, classes, nSwitch) {
+	Collection.prototype._genPage = function (info, i, nSwitch) {
 		nSwitch = nSwitch || false;
-		var str = '<' + (data.tag || this.SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
-			attr = data.attr, key;
+		var param = info.param,
+			ctm = info.ctm,
+			active = ctm.classes && ctm.classes.active || this.ACTIVE,
+			
+			str = '<' + (ctm.tag || this.SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
+			attr = ctm.attr, key;
 		
 		if (attr) {
 			for (key in attr) {
@@ -42,10 +45,10 @@
 		}
 		
 		if ((!nSwitch && i === param.page) || (nSwitch && i === param.breaker)) {
-			str += ' class="' + (classes && classes.active || this.ACTIVE) + '"';
+			str += ' class="' + active + '"';
 		}
 		
-		return str += '>' + i + '</' + (data.tag || this.SIMPLE_TAG) + '>';
+		return str += '>' + i + '</' + (ctm.tag || this.SIMPLE_TAG) + '>';
 	};
 	
 	/**

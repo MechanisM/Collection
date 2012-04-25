@@ -42,7 +42,7 @@
 									var target = e.target || e.srcElement,
 										data = dom.data(target);
 									
-									if (target.parentNode !== el) { return false; }
+									if (target.parentNode !== info.el) { return false; }
 									
 									if (info.key === 'pageList') {
 										param.page = +data.page;
@@ -99,7 +99,7 @@
 						info.ctm.val.forEach(function (el) {
 							if (info.tag === 'select') {
 								str += '<option value="' + el + '" ' + (el === info.param.breaker ? 'selected="selected"' : '') + '>' + el + '</option>';
-							} else { str += this._genPage(ctm, el, info.ctm.classes || '', true); }
+							} else { str += this._genPage(info, el, true); }
 						}, this);
 						
 						info.el.innerHTML = str;
@@ -110,7 +110,6 @@
 					val: 'pageList',
 					func: function (info) {
 						var	param = info.param,
-							classes = info.ctm.classes,
 							
 							str = '',
 							from, to,
@@ -137,10 +136,12 @@
 								
 								for (i = from, j = -1; (i += 1) <= info.nmbOfPages && (j += 1) !== null;) {
 									if (j === param.pageBreak && i !== param.page) { break; }
-									str += this._genPage(ctm, i, classes || '');
+									str += this._genPage(info, i);
 								}
-							} else { for (i = 0; (i += 1) <= info.nmbOfPages;) { str += this._genPage(ctm, i, classes || ''); } }
+							} else { for (i = 0; (i += 1) <= info.nmbOfPages;) { str += this._genPage(info, i); } }
 						}
+						
+						info.el.innerHTML = str;
 					}
 				}
 			]
