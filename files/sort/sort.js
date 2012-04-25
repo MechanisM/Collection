@@ -150,7 +150,7 @@
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
-
+		
 		if (Collection.isArray(data)) {
 			data.sort(sort);
 		} else {

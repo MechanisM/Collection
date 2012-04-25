@@ -36,7 +36,7 @@
 			
 			return true;
 		}
-
+		
 		// if filter is function
 		if (C.isFunction(filter)) {
 			if (!this._getActiveParam('filter') || !_tmpFilter) {
@@ -64,7 +64,7 @@
 				if (!this._exists('filter', '__tmp:' + filter)) {
 					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
 				}
-
+				
 				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, key, data, i, length, cObj, id);
 			}
 			

@@ -28,6 +28,10 @@
 		
 		// const
 		ACTIVE: 'active',
+		DISABLED: 'disabled',
+		NO_DATA: 'no-data',
+		SIMPLE_TAG: 'span',
+		CTM: 'ctm',
 		SHUFFLE: 'shuffle',
 		NAMESPACE: '.',
 		SPLITTER: '>>>',

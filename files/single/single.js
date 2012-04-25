@@ -22,7 +22,7 @@
 		context = C.isExists(context) ? context.toString() : '';
 		val = typeof val === 'undefined' ? '' : val;
 		id = id || '';
-
+		
 		var activeContext = this._getActiveParam('context');
 		
 		// if no context
@@ -33,7 +33,7 @@
 		}
 		
 		C.byLink(this._get('collection', id), activeContext + C.CHILDREN + context, val);
-	
+		
 		return this;
 	};
 	/**

@@ -1026,6 +1026,10 @@ var Collection;
 		
 		// const
 		ACTIVE: 'active',
+		DISABLED: 'disabled',
+		NO_DATA: 'no-data',
+		SIMPLE_TAG: 'span',
+		CTM: '.ctm',
 		SHUFFLE: 'shuffle',
 		NAMESPACE: '.',
 		SPLITTER: '>>>',
@@ -2374,7 +2378,7 @@ var Collection;
 		context = C.isExists(context) ? context.toString() : '';
 		val = typeof val === 'undefined' ? '' : val;
 		id = id || '';
-
+		
 		var activeContext = this._getActiveParam('context');
 		
 		// if no context
@@ -2385,7 +2389,7 @@ var Collection;
 		}
 		
 		C.byLink(this._get('collection', id), activeContext + C.CHILDREN + context, val);
-	
+		
 		return this;
 	};
 	/**
@@ -4346,7 +4350,7 @@ var Collection;
 		
 		// throw an exception if the element is not an object
 		if (typeof data !== 'object') { throw new Error('incorrect data type!'); }
-
+		
 		if (Collection.isArray(data)) {
 			data.sort(sort);
 		} else {
@@ -4710,7 +4714,7 @@ var Collection;
 			
 			return true;
 		}
-
+		
 		// if filter is function
 		if (C.isFunction(filter)) {
 			if (!this._getActiveParam('filter') || !_tmpFilter) {
@@ -4738,7 +4742,7 @@ var Collection;
 				if (!this._exists('filter', '__tmp:' + filter)) {
 					this._push('filter', '__tmp:' + filter, this._compileFilter(filter));
 				}
-
+				
 				return (filter = this._get('filter', '__tmp:' + filter)).call(filter, el, key, data, i, length, cObj, id);
 			}
 			
@@ -5383,11 +5387,13 @@ var Collection;
 						var	self = this,
 							param = info.param,
 							
+							node = info.node,
+							
 							ctm = info.ctm,
 							classes = ctm.classes;
 						
-						dom.bind(info.node, 'click', function () {
-							if (!dom.hasClass(this, classes && classes.disabled || 'disabled')) {
+						dom.bind(node, 'click', function () {
+							if (!dom.hasClass(this, classes && classes.disabled || self.DISABLED)) {
 								ctm.nav === 'first' && (param.page = 1);
 								ctm.nav === 'prev' && (param.page = '-=1');
 								ctm.nav === 'next' && (param.page = '+=1');
@@ -5397,13 +5403,265 @@ var Collection;
 							}
 						});
 						
-						info.node.setAttribute('data-ctm-event', true);
+						node.setAttribute('data-ctm-event', true);
+					}
+				},
+				
+				{
+					val: ['numberSwitch', 'pageList'],
+					func: function (info) {
+						var self = this;
+						
+						if (!info.data['ctm-event']) {
+							if (info.tag !== 'select') {
+								dom.bind(info.node, 'click', function (e) {
+									e = e || window.event;
+									var target = e.target || e.srcElement,
+										data = dom.data(target);
+									
+									if (target.parentNode !== el) { return false; }
+									
+									if (info.key === 'pageList') {
+										info.param.page = +data.page;
+									} else {
+										self._push('breaker', info.param.name || '', +data['breaker']);
+										delete info.param.breaker;
+									}
+	
+									self.print(info.param);
+								});
+							
+							// if select
+							} else {
+								dom.bind(info.node, 'change', function () {
+									var option = dom.children(this, 'selected')[0];
+									
+									if (info.param.page !== option.value) {
+										if (info.key === 'pageList') {
+											info.param.page = +option.value;
+										} else {
+											self._push('breaker', info.param.name || '', +option.value);
+											delete info.param.breaker;
+										}
+										
+										self.print(info.param);
+									}
+								});
+							}
+							
+							info.node.setAttribute('data-ctm-event', true);
+						}
+					}
+				}
+			],
+			
+			action: [
+				{
+					val: ['first', 'prev', 'next', 'last'],
+					func: function (info) {
+						var	self = this,
+							
+							key = info.key,
+							param = info.param,
+							
+							node = info.node,
+							
+							ctm = info.ctm,
+							classes = ctm.classes;
+						
+						if ((['first', 'prev'].indexOf(key) !== -1 && param.page === 1)
+							|| (['next', 'last'].indexOf(key) && param.finNumber === param.nmbOfEntries)) {
+								dom.addClass(node, classes && classes.disabled || this.DISABLED);
+						} else {
+							dom.removeClass(node, classes && classes.disabled || this.DISABLED);
+						}
+					}
+				},
+				{
+					val: 'numberSwitch',
+					func: function (info) {
+						var	self = this,
+							str = '';
+							
+						info.ctm.val.forEach(function (el) {
+							if (info.tag === 'select') {
+								str += '<option value="' + el + '" ' + (el === info.param.numberBreak ? 'selected="selected"' : '') + '>' + el + '</option>';
+							} else { str += self._genPage(ctm, classes || '', el, true); }
+						});
+						
+						info.node.innerHTML = str;
+					}
+				},
+				
+				{
+					val: 'pageList',
+					func: function (info) {
+						var	self = this,
+							str = '',
+							
+							from, to,
+							i, j = 0;
+							
+						if (info.tag === 'select') {
+							for (i = 0; (i += 1) <= info.nmbOfPages;) {
+								str += '<option vale="' + i + '" ' + (i === info.param.page ? 'selected="selected"' : '') + '>' + i + '</option>';
+							} 
+						} else {
+							if (info.nmbOfPages > info.param.pageBreak) {	
+								j = info.param.pageBreak % 2 !== 0 ? 1 : 0;
+								from = (info.param.pageBreak - j) / 2;
+								to = from;
+								
+								if (info.param.page - j < from) {
+									from = 0;
+								} else {
+									from = info.param.page - from - j;
+									if (info.param.page + to > info.nmbOfPages) {
+										from -= info.param.page + to - info.nmbOfPages;
+									}
+								}
+								
+								for (i = from, j = -1; (i += 1) <= info.nmbOfPages && (j += 1) !== null;) {
+									if (j === info.param.pageBreak && i !== param.page) { break; }
+									str += this._genPage(ctm, classes || '', i);
+								}
+							} else { for (i = 0; (i += 1) <= info.nmbOfPages;) { str += this._genPage(ctm, classes || '', i); } }
+						}
 					}
 				}
 			]
 		},
-		info: {}
+		
+		info: {
+			action: [
+				{
+					func: function (info) {
+						var className = info.ctm.classes && info.ctm.classes.noData || this.NO_DATA
+						
+						if (info.param.nmbOfEntriesInPage === 0) {
+							dom.addClass(info.node, className);
+						} else {
+							dom.removeClass(info.node, className);
+						}
+					}
+				},
+				{
+					func: function (info) {
+						var res = this._wrap(info.param.page, info.tag);
+						
+						if (info.tag === 'input') {
+							info.node.value = res;
+						} else { info.node.innerHTML = res; }
+					}
+				},
+				{
+					val: 'page',
+					func: function (info) {
+						var res = this._wrap(info.param.page, info.tag);
+						
+						if (info.tag === 'input') {
+							info.node.value = res;
+						} else { info.node.innerHTML = res; }
+					}
+				},
+				{
+					val: 'total',
+					func: function (info) {
+						var res = this._wrap(info.param.nmbOfEntries, info.tag);
+						
+						if (info.tag === 'input') {
+							info.node.value = res;
+						} else { info.node.innerHTML = res; }
+					}
+				},
+				{
+					val: 'from',
+					func: function (info) {
+						var res = this._wrap((info.param.page - 1) * info.param.breaker + 1, info.tag);
+						
+						if (info.tag === 'input') {
+							info.node.value = res;
+						} else { info.node.innerHTML = res; }
+					}
+				},
+				{
+					val: 'to',
+					func: function (info) {
+						var res = this._wrap(info.param.finNumber, info.tag);
+						
+						if (info.tag === 'input') {
+							info.node.value = res;
+						} else { info.node.innerHTML = res; }
+					}
+				},
+				{
+					val: 'inPage',
+					func: function (info) {
+						var res = this._wrap(info.param.nmbOfEntriesInPage, info.tag);
+						
+						if (info.tag === 'input') {
+							info.node.value = res;
+						} else { info.node.innerHTML = res; }
+					}
+				},
+				{
+					val: 'nmbOfPages',
+					func: function (info) {
+						var res = this._wrap(info.nmbOfPages, info.tag);
+						
+						if (info.tag === 'input') {
+							info.node.value = res;
+						} else { info.node.innerHTML = res; }
+					}
+				}
+			]
+		}
 	};	
+	/**
+	 * wrap in a specific tag
+	 * 
+	 * @this {Colletion Object}
+	 * @param {String|Number} val — some value
+	 * @param {String} tag — the specified tag
+	 * @return {String}
+	 */
+	Collection.prototype._wrap = function (val, tag) {
+		if (tag === 'select') {
+			return '<option value="' + val + '">' + val + '</option>';
+		}
+		
+		return val.toString();
+	};
+	
+	/**
+	 * generate navigation pages
+	 * 
+	 * @this {Colletion Object}
+	 * @param {Plain Object} data — data attribute of the element
+	 * @param {Number} i — iteration
+	 * @param {Plain Object} [classes] — information about the classes
+	 * @param {Boolean} nSwitch — for numberSwitch
+	 * @return {String}
+	 */
+	Collection.prototype._genPage = function (data, i, classes, nSwitch) {
+		nSwitch = nSwitch || false;
+		var str = '<' + (data.tag || this.SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
+			attr = data.attr, key;
+		
+		if (attr) {
+			for (key in attr) {
+				if (!attr.hasOwnProperty(key)) { continue; }
+				str += ' ' + key + '="' + attr[key] + '"';
+			}
+		}
+		
+		if ((!nSwitch && i === param.page) || (nSwitch && i === param.breaker)) {
+			str += ' class="' + (classes && classes.active || this.ACTIVE) + '"';
+		}
+		
+		return str += '>' + i + '</' + (data.tag || this.SIMPLE_TAG) + '>';
+	};
+	
 	/**
 	 * activation of the navigation<br />
 	 * info: page, total, from, to, inPage, nmbOfPages<br />
@@ -5418,7 +5676,6 @@ var Collection;
 		if (param.navBreaker <= 2) { throw new Error('parameter "navBreaker" must be more than 2'); }
 		
 		var self = this,
-			str = '',
 			
 			// number of pages
 			nmbOfPages = param.nmbOfPages
@@ -5427,17 +5684,17 @@ var Collection;
 						: param.nmbOfEntries / param.breaker);
 		
 		Array.prototype.forEach.call(param.pager, function (el) {
-			Array.prototype.forEach.call(dom.find('.ctm', el), function (node) {
-				str = '';
-				
-				var	data = dom.data(node),
+			Array.prototype.forEach.call(dom.find(self.CTM, el), function (node) {
+				var	// data attribute
+					data = dom.data(node),
+					// ctm info
 					ctm = data.ctm,
 					
 					info = {
 						param: param,
 						nmbOfPages: nmbOfPages,
 						
-						node: node,
+						el: node,
 						tag: node.tagName.toLowerCase(),
 						
 						data: data,
@@ -5448,19 +5705,28 @@ var Collection;
 				
 				for (key in ctm) {
 					if (!ctm.hasOwnProperty(key) || !C.tpl[key]) { continue; }
-					type = C.tpl[key];
 					
+					// tpl type
+					type = C.tpl[key];
+					info.key = ctm[key];
+					
+					// attach events
 					if (type.event) {
 						type.event.forEach(function (el) {
-							if (el.val.indexOf(ctm[key]) !== -1 && !data['ctm-event']) {
+							if ((typeof el.val === 'undefined' || el.val === ctm[key] || el.val.indexOf(ctm[key])) !== -1 && !data['ctm-event']) {
 								el.func.call(self, info);
 							}
 						});
 					}
 					
-					/*if (exists) {
-						action.func.call(this, info);
-					}*/
+					// execute callbacks
+					if (type.action) {
+						type.action.forEach(function (el) {
+							if (typeof el.val === 'undefined' || el.val === ctm[key] || el.val.indexOf(ctm[key]) !== -1) {
+								el.func.call(self, info);
+							}
+						});
+					}
 				}
 			});
 		});
