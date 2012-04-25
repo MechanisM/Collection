@@ -9,7 +9,6 @@
 	 * @this {Colletion Object}
 	 * @param {Filter|String Expression|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
-	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -24,8 +23,7 @@
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.length(':i % 3 === 0');
 	 */
-	Collection.prototype.length = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		mult = mult === false ? false : true;
+	Collection.prototype.length = function (filter, id, count, from, indexOf, lastIndexOf, rev) {
 		var data, length;
 		
 		// overload
@@ -53,7 +51,7 @@
 			length = data.length;
 		} else {
 			length = 0;
-			this.forEach(function () { length += 1; }, filter, data, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+			this.forEach(function () { length += 1; }, filter, data, true, count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 		}
 		
 		return length;
@@ -178,7 +176,7 @@
 			
 			// bypassing the array in descending order
 			} else {
-				lastIndexOf && (cloneObj.length - lastIndexOf);
+				lastIndexOf && (lastIndexOf = cloneObj.length - lastIndexOf);
 				for (key = cloneObj.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }
@@ -228,7 +226,7 @@
 					tmpArray.push(key);
 				}
 				
-				lastIndexOf && (tmpArray.length - lastIndexOf);
+				lastIndexOf && (lastIndexOf = tmpArray.length - lastIndexOf);
 				for (key = tmpArray.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }

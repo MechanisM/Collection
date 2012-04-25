@@ -118,10 +118,10 @@
 				 */
 				parser: false,
 				/**
-				 * DOM insert mode ('replace', 'append', 'prepend')
+				 * DOM insert mode ('replace', 'append', 'prepend', false (return string))
 				 * 
 				 * @field
-				 * @param String
+				 * @param String|Boolean
 				 */
 				toHTML: 'replace',
 				/**

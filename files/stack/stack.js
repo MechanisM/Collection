@@ -137,7 +137,7 @@
 		var upperCase = C.toUpperCase(stackName, 1),
 			tmp = this.dObj.sys['tmp' + upperCase],
 			activeId = this._getActiveId(stackName),
-
+			
 			key, dom = C.drivers.dom;
 		
 		if (C.isPlainObject(objId)) {

@@ -18,12 +18,12 @@
  * <ul>
  * <li><b>[Collection Object]</b> is a reduced form of the <b>[Object]</b> and means an instance of Collection;</li>
  * <li><b>[Colletion]</b> is a reduced form of the <b>[Object|Array]</b> and means an collection of data;</li>
- * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector (CSS3 syntax);</li>
- * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection (Nimble syntax);</li>
- * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function—template;</li>
- * <li><b>[String Expression]</b> is a reduced form of the <b>[String]</b> and means the abbreviated syntax recording function;</li>
- * <li><b>[Filter]</b> is a reduced form of the <b>[Filter|String Expression]</b> and means the function or string expression;</li>
- * <li><b>[Parser]</b> is a reduced form of the <b>[Parser|String]</b> and means function or string expression;</li>
+ * <li><b>[Selector]</b> is a reduced form of the <b>[String]</b>, and means the css selector;</li>
+ * <li><b>[Context]</b> is the reduced form of the <b>[String]</b>, and means the context of the collection;</li>
+ * <li><b>[Template]</b> is a reduced form of the <b>[Function]</b> and means function-template;</li>
+ * <li><b>[String Expression]</b> is a reduced form of the <b>[String]</b> and means some small reductions (for example, a short record of function);</li>
+ * <li><b>[Filter]</b> is a reduced form of the <b>[Function]</b> and means the function-filter;</li>
+ * <li><b>[Parser]</b> is a reduced form of the <b>[Function]</b> and means function-parser;</li>
  * <li><b>[Plain Object]</b> is a reduced form of the <b>[Object]</b> and means hash table;</li>
  * </ul>
  *
@@ -34,8 +34,8 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 19.03.2012 6:57:58
- * @version 3.6.2
+ * @date: 25.04.2012 12:14:53
+ * @version 3.7
  *
  * @constructor
  * @this {Colletion Object}
@@ -743,10 +743,16 @@ var Collection;
 	Collection.unshift = function (obj, val) {
 		var newArray = [val], key;
 		
-		for (key in obj) {
-			if (!obj.hasOwnProperty(key)) { continue; }
-			
-			newArray.push(obj[key]);
+		if (obj.callee) {
+			Array.prototype.forEach.call(obj, function (el) {
+				newArray.push(el);
+			});
+		} else {
+			for (key in obj) {
+				if (!obj.hasOwnProperty(key)) { continue; }
+				
+				newArray.push(obj[key]);
+			}
 		}
 		
 		return newArray;
@@ -764,10 +770,16 @@ var Collection;
 	Collection.toArray = function (obj) {
 		var newArray = [], key;
 		
-		for (key in obj) {
-			if (!obj.hasOwnProperty(key)) { continue; }
-			
-			newArray.push(obj[key]);
+		if (obj.callee) {
+			Array.prototype.forEach.call(obj, function (el) {
+				newArray.push(el);
+			});
+		} else {
+			for (key in obj) {
+				if (!obj.hasOwnProperty(key)) { continue; }
+				
+				newArray.push(obj[key]);
+			}
 		}
 		
 		return newArray;
@@ -1588,10 +1600,10 @@ var Collection;
 				 */
 				parser: false,
 				/**
-				 * DOM insert mode ('replace', 'append', 'prepend')
+				 * DOM insert mode ('replace', 'append', 'prepend', false (return string))
 				 * 
 				 * @field
-				 * @param String
+				 * @param String|Boolean
 				 */
 				toHTML: 'replace',
 				/**
@@ -1852,7 +1864,7 @@ var Collection;
 		var upperCase = C.toUpperCase(stackName, 1),
 			tmp = this.dObj.sys['tmp' + upperCase],
 			activeId = this._getActiveId(stackName),
-
+			
 			key, dom = C.drivers.dom;
 		
 		if (C.isPlainObject(objId)) {
@@ -2632,7 +2644,6 @@ var Collection;
 	 * @this {Colletion Object}
 	 * @param {Filter|String Expression|Collection|Boolean} [filter=this.ACTIVE] — filter function, string expression (context (optional) + >> + filter (optional, the record is equivalent to: return + string expression)), collection or true (if disabled)
 	 * @param {String|Collection} [id=this.ACTIVE] — collection ID or collection
-	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration
 	 * @param {Number} [count] — maximum number of results (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -2647,8 +2658,7 @@ var Collection;
 	 * $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.length(':i % 3 === 0');
 	 */
-	Collection.prototype.length = function (filter, id, mult, count, from, indexOf, lastIndexOf, rev) {
-		mult = mult === false ? false : true;
+	Collection.prototype.length = function (filter, id, count, from, indexOf, lastIndexOf, rev) {
 		var data, length;
 		
 		// overload
@@ -2676,7 +2686,7 @@ var Collection;
 			length = data.length;
 		} else {
 			length = 0;
-			this.forEach(function () { length += 1; }, filter, data, mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
+			this.forEach(function () { length += 1; }, filter, data, true, count || '', from || '', indexOf || '', lastIndexOf || '', rev || '');
 		}
 		
 		return length;
@@ -2801,7 +2811,7 @@ var Collection;
 			
 			// bypassing the array in descending order
 			} else {
-				lastIndexOf && (cloneObj.length - lastIndexOf);
+				lastIndexOf && (lastIndexOf = cloneObj.length - lastIndexOf);
 				for (key = cloneObj.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }
@@ -2851,7 +2861,7 @@ var Collection;
 					tmpArray.push(key);
 				}
 				
-				lastIndexOf && (tmpArray.length - lastIndexOf);
+				lastIndexOf && (lastIndexOf = tmpArray.length - lastIndexOf);
 				for (key = tmpArray.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }
@@ -5356,7 +5366,11 @@ var Collection;
 					el.innerHTML = el.innerHTML + result;
 				
 				// prepend
-				} else { el.innerHTML = result + el.innerHTML; }
+				} else if (opt.toHTML === 'append'){
+					el.innerHTML = result + el.innerHTML;
+				
+				// return string
+				} else { return result; }
 			}, this);
 		}
 		
@@ -5743,6 +5757,7 @@ var Collection;
 	 * generating the table
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String|DOM nodes} [target=this.ACTIVE] — parent node
 	 * @param {Number} [count=4] — td number to a string
 	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes
 	 * @param {Boolean} [empty=true] — display empty cells

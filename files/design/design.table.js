@@ -7,6 +7,7 @@
 	 * generating the table
 	 * 
 	 * @this {Colletion Object}
+	 * @param {String|DOM nodes} [target=this.ACTIVE] — parent node
 	 * @param {Number} [count=4] — td number to a string
 	 * @param {String|DOM nodes} [selector='div'] — CSS selector or DOM nodes
 	 * @param {Boolean} [empty=true] — display empty cells

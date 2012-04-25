@@ -117,10 +117,16 @@
 	Collection.unshift = function (obj, val) {
 		var newArray = [val], key;
 		
-		for (key in obj) {
-			if (!obj.hasOwnProperty(key)) { continue; }
-			
-			newArray.push(obj[key]);
+		if (obj.callee) {
+			Array.prototype.forEach.call(obj, function (el) {
+				newArray.push(el);
+			});
+		} else {
+			for (key in obj) {
+				if (!obj.hasOwnProperty(key)) { continue; }
+				
+				newArray.push(obj[key]);
+			}
 		}
 		
 		return newArray;
@@ -138,10 +144,16 @@
 	Collection.toArray = function (obj) {
 		var newArray = [], key;
 		
-		for (key in obj) {
-			if (!obj.hasOwnProperty(key)) { continue; }
-			
-			newArray.push(obj[key]);
+		if (obj.callee) {
+			Array.prototype.forEach.call(obj, function (el) {
+				newArray.push(el);
+			});
+		} else {
+			for (key in obj) {
+				if (!obj.hasOwnProperty(key)) { continue; }
+				
+				newArray.push(obj[key]);
+			}
 		}
 		
 		return newArray;

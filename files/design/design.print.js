@@ -168,7 +168,11 @@
 					el.innerHTML = el.innerHTML + result;
 				
 				// prepend
-				} else { el.innerHTML = result + el.innerHTML; }
+				} else if (opt.toHTML === 'append'){
+					el.innerHTML = result + el.innerHTML;
+				
+				// return string
+				} else { return result; }
 			}, this);
 		}
 		
