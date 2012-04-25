@@ -134,7 +134,7 @@
 		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objId, newVal || ''));
 		if (e === false) { return this; }
 		
-		var	upperCase = C.toUpperCase(stackName, 1),
+		var upperCase = C.toUpperCase(stackName, 1),
 			tmp = this.dObj.sys['tmp' + upperCase],
 			activeId = this._getActiveId(stackName),
 

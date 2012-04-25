@@ -74,7 +74,7 @@
 		
 		Array.prototype.forEach.call(param.pager, function (el) {
 			Array.prototype.forEach.call(dom.find('.' + self.CTM, el), function (node) {
-				var	// data attribute
+				var // data attribute
 					data = dom.data(node),
 					// ctm info
 					ctm = data[self.CTM],

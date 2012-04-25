@@ -31,7 +31,7 @@
 		
 		del = del || false;
 		
-		var	clone = obj,
+		var clone = obj,
 			type = C.CHILDREN,
 			last = 0, total = 0,
 			

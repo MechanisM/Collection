@@ -10,7 +10,7 @@
 				{
 					val: ['first', 'prev', 'next', 'last'],
 					func: function (info) {
-						var	self = this,
+						var self = this,
 							param = info.param,
 							disabled = info.ctm.classes && info.ctm.classes.disabled || this.DISABLED
 						
@@ -82,7 +82,7 @@
 				{
 					val: ['first', 'prev', 'next', 'last'],
 					func: function (info) {
-						var	param = info.param,
+						var param = info.param,
 							disabled = info.ctm.classes && info.ctm.classes.disabled || this.DISABLED;
 						
 						if ((['first', 'prev'].indexOf(info.key) !== -1 && param.page === 1)
@@ -94,7 +94,7 @@
 				{
 					val: 'numberSwitch',
 					func: function (info) {
-						var	str = '';
+						var str = '';
 						
 						info.ctm.val.forEach(function (el) {
 							if (info.tag === 'select') {
@@ -109,7 +109,7 @@
 				{
 					val: 'pageList',
 					func: function (info) {
-						var	param = info.param,
+						var param = info.param,
 							
 							str = '',
 							from, to,

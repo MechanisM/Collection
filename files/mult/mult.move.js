@@ -45,7 +45,7 @@
 		
 		addType = addType || 'push';
 		
-		var	deleteList = [],
+		var deleteList = [],
 			elements,
 			to = id.to,
 			set = id.set,

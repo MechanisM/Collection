@@ -115,7 +115,7 @@ var Collection;
 		
 		del = del || false;
 		
-		var	clone = obj,
+		var clone = obj,
 			type = C.CHILDREN,
 			last = 0, total = 0,
 			
@@ -1336,7 +1336,7 @@ var Collection;
 	 * @return {Array}
 	 */
 	Collection.parseNode = function (el) {
-		var	array = [];
+		var array = [];
 		
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
@@ -1849,7 +1849,7 @@ var Collection;
 		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objId, newVal || ''));
 		if (e === false) { return this; }
 		
-		var	upperCase = C.toUpperCase(stackName, 1),
+		var upperCase = C.toUpperCase(stackName, 1),
 			tmp = this.dObj.sys['tmp' + upperCase],
 			activeId = this._getActiveId(stackName),
 
@@ -2454,7 +2454,7 @@ var Collection;
 		propType = propType || 'push';
 		id = id || '';
 		
-		var	context = '',
+		var context = '',
 			data, rewrite;
 		
 		if (withSplitter) {
@@ -2727,7 +2727,7 @@ var Collection;
 		lastIndexOf = parseInt(lastIndexOf) || false;
 		rev = rev || false;
 		
-		var	self = this,
+		var self = this,
 			tmpObj = {},
 			tmpArray = [],
 			
@@ -3379,7 +3379,7 @@ var Collection;
 		
 		addType = addType || 'push';
 		
-		var	deleteList = [],
+		var deleteList = [],
 			elements,
 			to = id.to,
 			set = id.set,
@@ -5389,7 +5389,7 @@ var Collection;
 				{
 					val: ['first', 'prev', 'next', 'last'],
 					func: function (info) {
-						var	self = this,
+						var self = this,
 							param = info.param,
 							disabled = info.ctm.classes && info.ctm.classes.disabled || this.DISABLED
 						
@@ -5461,7 +5461,7 @@ var Collection;
 				{
 					val: ['first', 'prev', 'next', 'last'],
 					func: function (info) {
-						var	param = info.param,
+						var param = info.param,
 							disabled = info.ctm.classes && info.ctm.classes.disabled || this.DISABLED;
 						
 						if ((['first', 'prev'].indexOf(info.key) !== -1 && param.page === 1)
@@ -5473,7 +5473,7 @@ var Collection;
 				{
 					val: 'numberSwitch',
 					func: function (info) {
-						var	str = '';
+						var str = '';
 						
 						info.ctm.val.forEach(function (el) {
 							if (info.tag === 'select') {
@@ -5488,7 +5488,7 @@ var Collection;
 				{
 					val: 'pageList',
 					func: function (info) {
-						var	param = info.param,
+						var param = info.param,
 							
 							str = '',
 							from, to,
@@ -5687,7 +5687,7 @@ var Collection;
 		
 		Array.prototype.forEach.call(param.pager, function (el) {
 			Array.prototype.forEach.call(dom.find('.' + self.CTM, el), function (node) {
-				var	// data attribute
+				var // data attribute
 					data = dom.data(node),
 					// ctm info
 					ctm = data[self.CTM],

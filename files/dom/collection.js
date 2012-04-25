@@ -11,7 +11,7 @@
 	 * @return {Array}
 	 */
 	Collection.parseNode = function (el) {
-		var	array = [];
+		var array = [];
 		
 		// each node
 		Array.prototype.forEach.call(el, function (el) {

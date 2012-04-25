@@ -104,7 +104,7 @@
 		lastIndexOf = parseInt(lastIndexOf) || false;
 		rev = rev || false;
 		
-		var	self = this,
+		var self = this,
 			tmpObj = {},
 			tmpArray = [],
 			

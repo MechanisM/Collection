@@ -115,7 +115,7 @@ var Collection;
 		
 		del = del || false;
 		
-		var	clone = obj,
+		var clone = obj,
 			type = C.CHILDREN,
 			last = 0, total = 0,
 			
@@ -1332,7 +1332,7 @@ var Collection;
 	 * @return {Array}
 	 */
 	Collection.parseNode = function (el) {
-		var	array = [];
+		var array = [];
 		
 		// each node
 		Array.prototype.forEach.call(el, function (el) {
@@ -1845,7 +1845,7 @@ var Collection;
 		this['onPush' + upperCase] && (e = this['onPush' + upperCase](objId, newVal || ''));
 		if (e === false) { return this; }
 		
-		var	upperCase = C.toUpperCase(stackName, 1),
+		var upperCase = C.toUpperCase(stackName, 1),
 			tmp = this.dObj.sys['tmp' + upperCase],
 			activeId = this._getActiveId(stackName),
 
@@ -2450,7 +2450,7 @@ var Collection;
 		propType = propType || 'push';
 		id = id || '';
 		
-		var	context = '',
+		var context = '',
 			data, rewrite;
 		
 		if (withSplitter) {
@@ -2723,7 +2723,7 @@ var Collection;
 		lastIndexOf = parseInt(lastIndexOf) || false;
 		rev = rev || false;
 		
-		var	self = this,
+		var self = this,
 			tmpObj = {},
 			tmpArray = [],
 			
@@ -3375,7 +3375,7 @@ var Collection;
 		
 		addType = addType || 'push';
 		
-		var	deleteList = [],
+		var deleteList = [],
 			elements,
 			to = id.to,
 			set = id.set,
@@ -5380,7 +5380,7 @@ var Collection;
 				{
 					val: ['first', 'prev', 'next', 'last'],
 					func: function (info) {
-						var	ctm = info.ctm,
+						var ctm = info.ctm,
 							classes = ctm.classes;
 						
 						dom.bind(info.node, 'click', function () {

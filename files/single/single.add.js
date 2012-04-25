@@ -48,7 +48,7 @@
 		propType = propType || 'push';
 		id = id || '';
 		
-		var	context = '',
+		var context = '',
 			data, rewrite;
 		
 		if (withSplitter) {
