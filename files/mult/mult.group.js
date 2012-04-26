@@ -99,6 +99,7 @@
 	 * @param {Context|String Expression|Function} [field] — field name, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or callback function
 	 * @param {Filter|String Expression|Boolean} [filter=this.ACTIVE] — filter function, string expression (context + >> + filter (the record is equivalent to: return + string expression)) or true (if disabled)
 	 * @param {String|String Expression} [id=this.ACTIVE] — collection ID or string expression (ID + >> + [+] (optional, if the collection already exists, the data will be modified) + ID (to be stored in the stack (if >>> ID will become active)) + :context (optional), example: test>>>+test2:a>eq(-1))
+	 * @param {Boolean} [mult=true] — if false, then there will only be one iteration (for group)
 	 * @param {Number|Boolean} [count=false] — maximum number of substitutions (by default: all object)
 	 * @param {Number} [from=0] — skip a number of elements
 	 * @param {Number} [indexOf=0] — starting point
@@ -114,9 +115,7 @@
 	 * $C([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5])
 	 *	.groupLinks(':el % 2 === 0');
 	 */
-	Collection.prototype.groupLinks = function (field, filter, id, count, from, indexOf, lastIndexOf, rev) {
-		var arg = Collection.unshift(arguments, action);
-		arg.push(true);
-		
-		return this.group.apply(this, arg);
+	Collection.prototype.groupLinks = function (field, filter, id, mult, count, from, indexOf, lastIndexOf, rev, link) {
+		mult = mult === false ? false : true;
+		return this.group(field || '', filter || '', id || '', mult, count || '', from || '', indexOf || '', lastIndexOf || '', rev || '', true);
 	};
