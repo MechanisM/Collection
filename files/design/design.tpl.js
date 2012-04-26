@@ -65,7 +65,6 @@
 		if (param.navBreaker <= 2) { throw new Error('parameter "navBreaker" must be more than 2'); }
 		
 		var self = this,
-			
 			// number of pages
 			nmbOfPages = param.nmbOfPages
 				|| (param.nmbOfEntries % param.breaker !== 0

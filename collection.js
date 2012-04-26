@@ -2275,26 +2275,30 @@ var Collection;
 	 */
 	Collection.prototype.use = function (id) {
 		this.stack.forEach(function (el) {
-			var nm, tmpNm, i;
+			var nm, tmpNm,
+				i, key;
 			
-			if (this._exists(el, id)) {
-				this._set(el, id);
-			} else {
-				nm = id.split(this.NAMESPACE);
+			for (key in el) {
+				if (!el.hasOwnProperty(key)) { continue; }
 				
-				for (i = nm.length; (i -= 1) > -1;) {
-					nm.splice(i, 1);
-					tmpNm = nm.join(this.NAMESPACE);
+				if (this._exists(key, id)) {
+					this._set(key, id);
+				} else {
+					nm = id.split(this.NAMESPACE);
 					
-					if (this._exists(el, tmpNm)) {
-						this._set(el, tmpNm);
-						break;
+					for (i = nm.length; (i -= 1) > -1;) {
+						nm.splice(i, 1);
+						tmpNm = nm.join(this.NAMESPACE);
+						
+						if (this._exists(key, tmpNm)) {
+							this._set(key, tmpNm);
+							break;
+						}
 					}
 				}
-				
 			}
 		}, this);
-				
+		
 		return this;
 	};	
 	/////////////////////////////////
@@ -3459,7 +3463,7 @@ var Collection;
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
+	 * db.moveOne(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.moveOne = function (filter, id, addType, from, indexOf, lastIndexOf, rev) {
@@ -3484,7 +3488,7 @@ var Collection;
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
+	 * db.copy(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copy = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev) {
@@ -3508,7 +3512,7 @@ var Collection;
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
+	 * db.copyOne(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copyOne = function (filter, id, addType, from, indexOf, lastIndexOf, rev) {
@@ -5179,7 +5183,7 @@ var Collection;
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|Collection} [objId=this.ACTIVE] — collection ID or collection
+	 * @param {String|String Expression|Collection} [objId=this.ACTIVE] — collection ID, string expression string expression (collection ID + : + context, example: my:eq(-1)) or collection
 	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space] — indentation of nested structures
 	 * @return {String}
@@ -5190,10 +5194,15 @@ var Collection;
 		objId = objId || '';
 		replacer = replacer || '';
 		space = space || '';
+		var context;
 		
 		if (C.isCollection(objId)) { return JSON.stringify(objId, replacer, space); }
 		
-		return JSON.stringify(this._getOne('', objId), replacer, space);
+		objId = objId.split(this.DEF);
+		context = objId.length === 2 ? objId[1].trim() : '';
+		objId = objId[0].trim();
+		
+		return JSON.stringify(this._getOne(context, objId), replacer, space);
 	};
 	/**
 	 * return collection length (only active)
@@ -5700,7 +5709,6 @@ var Collection;
 		if (param.navBreaker <= 2) { throw new Error('parameter "navBreaker" must be more than 2'); }
 		
 		var self = this,
-			
 			// number of pages
 			nmbOfPages = param.nmbOfPages
 				|| (param.nmbOfEntries % param.breaker !== 0

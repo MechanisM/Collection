@@ -172,7 +172,7 @@
 	 * return JSON string collection (in context)
 	 * 
 	 * @this {Colletion Object}
-	 * @param {String|Collection} [objId=this.ACTIVE] — collection ID or collection
+	 * @param {String|String Expression|Collection} [objId=this.ACTIVE] — collection ID, string expression string expression (collection ID + : + context, example: my:eq(-1)) or collection
 	 * @param {Function|Array} [replacer] — an paramional parameter that determines how object values are stringified for objects
 	 * @param {Number|String} [space] — indentation of nested structures
 	 * @return {String}
@@ -183,10 +183,15 @@
 		objId = objId || '';
 		replacer = replacer || '';
 		space = space || '';
+		var context;
 		
 		if (C.isCollection(objId)) { return JSON.stringify(objId, replacer, space); }
 		
-		return JSON.stringify(this._getOne('', objId), replacer, space);
+		objId = objId.split(this.DEF);
+		context = objId.length === 2 ? objId[1].trim() : '';
+		objId = objId[0].trim();
+		
+		return JSON.stringify(this._getOne(context, objId), replacer, space);
 	};
 	/**
 	 * return collection length (only active)

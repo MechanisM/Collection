@@ -540,25 +540,29 @@
 	 */
 	Collection.prototype.use = function (id) {
 		this.stack.forEach(function (el) {
-			var nm, tmpNm, i;
+			var nm, tmpNm,
+				i, key;
 			
-			if (this._exists(el, id)) {
-				this._set(el, id);
-			} else {
-				nm = id.split(this.NAMESPACE);
+			for (key in el) {
+				if (!el.hasOwnProperty(key)) { continue; }
 				
-				for (i = nm.length; (i -= 1) > -1;) {
-					nm.splice(i, 1);
-					tmpNm = nm.join(this.NAMESPACE);
+				if (this._exists(key, id)) {
+					this._set(key, id);
+				} else {
+					nm = id.split(this.NAMESPACE);
 					
-					if (this._exists(el, tmpNm)) {
-						this._set(el, tmpNm);
-						break;
+					for (i = nm.length; (i -= 1) > -1;) {
+						nm.splice(i, 1);
+						tmpNm = nm.join(this.NAMESPACE);
+						
+						if (this._exists(key, tmpNm)) {
+							this._set(key, tmpNm);
+							break;
+						}
 					}
 				}
-				
 			}
 		}, this);
-				
+		
 		return this;
 	};

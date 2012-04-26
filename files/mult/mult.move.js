@@ -107,7 +107,7 @@
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.moveOne(':i % 2 !== 0', '', 'active', 'test');
+	 * db.moveOne(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.get());
 	 */
 	Collection.prototype.moveOne = function (filter, id, addType, from, indexOf, lastIndexOf, rev) {
@@ -132,7 +132,7 @@
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.copy(':i % 2 !== 0', '', 'active', 'test');
+	 * db.copy(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copy = function (filter, id, addType, mult, count, from, indexOf, lastIndexOf, rev) {
@@ -156,7 +156,7 @@
 	 * @example
 	 * var db = $C([{a: 1}, {b: 2}, {c: 3}, {a: 1}, {b: 2}, {c: 3}])
 	 *	.pushCollection('test', []);
-	 * db.copyOne(':i % 2 !== 0', '', 'active', 'test');
+	 * db.copyOne(':i % 2 !== 0', 'active>>test');
 	 * console.log(db.getCollection('test'));
 	 */
 	Collection.prototype.copyOne = function (filter, id, addType, from, indexOf, lastIndexOf, rev) {
