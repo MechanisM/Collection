@@ -1,2 +1,10 @@
 })();
-if (typeof $C === 'undefined') { var $C = Collection; }//
+if (typeof $C === 'undefined') {
+	var $C = Collection;
+	if (typeof window === 'undefined' && typeof exports !== 'undefined') {
+		exports.$C = Collection;
+	}
+}
+if (typeof window === 'undefined' && typeof exports !== 'undefined') {
+	exports.Collection = Collection;
+}//

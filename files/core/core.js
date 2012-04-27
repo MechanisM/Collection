@@ -34,5 +34,5 @@
 	var // local variable for quick access
 		C = Collection,
 		
-		debug = typeof window.debug !== 'undefined' && window.debug === true,
+		debug = typeof debugMode !== 'undefined' && debugMode === true,
 		key;

@@ -34,7 +34,7 @@
 			ctm = info.ctm,
 			active = ctm.classes && ctm.classes.active || this.ACTIVE,
 			
-			str = '<' + (ctm.tag || this.SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
+			str = '<' + (ctm.tag || this.CTM_SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
 			attr = ctm.attr, key;
 		
 		if (attr) {
@@ -48,7 +48,7 @@
 			str += ' class="' + active + '"';
 		}
 		
-		return str += '>' + i + '</' + (ctm.tag || this.SIMPLE_TAG) + '>';
+		return str += '>' + i + '</' + (ctm.tag || this.CTM_SIMPLE_TAG) + '>';
 	};
 	
 	/**

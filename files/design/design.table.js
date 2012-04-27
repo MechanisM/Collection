@@ -22,8 +22,8 @@
 			target = '';
 		}
 		
-		count = count || 4;
-		selector = selector || 'div';
+		count = count || this.TABLE_DEF_COUNT;
+		selector = selector || this.TABLE_SIMPLE_TAG;
 		empty = empty === false ? false : true;
 		
 		var i, table, tr, td;

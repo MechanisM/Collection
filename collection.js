@@ -34,8 +34,8 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 25.04.2012 12:14:53
- * @version 3.7
+ * @date: 27.04.2012 16:02:57
+ * @version 3.7.1
  *
  * @constructor
  * @this {Colletion Object}
@@ -81,7 +81,7 @@ var Collection;
 	var // local variable for quick access
 		C = Collection,
 		
-		debug = typeof window.debug !== 'undefined' && window.debug === true,
+		debug = typeof debugMode !== 'undefined' && debugMode === true,
 		key;	
 	/**
 	 * set new value of the object by the link, get/remove an element by the link, or return a fragment of the context (overload)
@@ -1035,7 +1035,7 @@ var Collection;
 		 * @constant
 		 * @type String
 		 */
-		version: '3.7',
+		version: '3.7.1',
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -1048,8 +1048,10 @@ var Collection;
 		ACTIVE: 'active',
 		DISABLED: 'disabled',
 		NO_DATA: 'no-data',
-		SIMPLE_TAG: 'span',
+		CTM_SIMPLE_TAG: 'span',
 		CTM: 'ctm',
+		TABLE_SIMPLE_TAG: 'div',
+		TABLE_DEF_COUNT: 4,
 		SHUFFLE: 'shuffle',
 		NAMESPACE: '.',
 		SPLITTER: '>>>',
@@ -5677,7 +5679,7 @@ var Collection;
 			ctm = info.ctm,
 			active = ctm.classes && ctm.classes.active || this.ACTIVE,
 			
-			str = '<' + (ctm.tag || this.SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
+			str = '<' + (ctm.tag || this.CTM_SIMPLE_TAG) + ' ' + (!nSwitch ? 'data-page="' : 'data-breaker="') + i + '"',
 			attr = ctm.attr, key;
 		
 		if (attr) {
@@ -5691,7 +5693,7 @@ var Collection;
 			str += ' class="' + active + '"';
 		}
 		
-		return str += '>' + i + '</' + (ctm.tag || this.SIMPLE_TAG) + '>';
+		return str += '>' + i + '</' + (ctm.tag || this.CTM_SIMPLE_TAG) + '>';
 	};
 	
 	/**
@@ -5787,8 +5789,8 @@ var Collection;
 			target = '';
 		}
 		
-		count = count || 4;
-		selector = selector || 'div';
+		count = count || this.TABLE_DEF_COUNT;
+		selector = selector || this.TABLE_SIMPLE_TAG;
 		empty = empty === false ? false : true;
 		
 		var i, table, tr, td;
@@ -5825,4 +5827,12 @@ var Collection;
 		
 		return this;
 	};})();
-if (typeof $C === 'undefined') { var $C = Collection; }//
+if (typeof $C === 'undefined') {
+	var $C = Collection;
+	if (typeof window === 'undefined' && typeof exports !== 'undefined') {
+		exports.$C = Collection;
+	}
+}
+if (typeof window === 'undefined' && typeof exports !== 'undefined') {
+	exports.Collection = Collection;
+}//

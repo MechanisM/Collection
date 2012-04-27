@@ -17,7 +17,7 @@
 		 * @constant
 		 * @type String
 		 */
-		version: '3.7',
+		version: '3.7.1',
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -30,8 +30,10 @@
 		ACTIVE: 'active',
 		DISABLED: 'disabled',
 		NO_DATA: 'no-data',
-		SIMPLE_TAG: 'span',
+		CTM_SIMPLE_TAG: 'span',
 		CTM: 'ctm',
+		TABLE_SIMPLE_TAG: 'div',
+		TABLE_DEF_COUNT: 4,
 		SHUFFLE: 'shuffle',
 		NAMESPACE: '.',
 		SPLITTER: '>>>',
