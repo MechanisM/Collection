@@ -646,7 +646,7 @@ var Collection;
 	 * @param {Object|String} min — min date
 	 * @param {Object|String} max — max date
 	 * @param {String|Boolrand} [range] — take into account the interval (constants: 'left', 'right')
-	 * @return {Object}
+	 * @return {Boolean}
 	 */
 	Collection.between = function (date, min, max, range) {
 		date = C.date(date);
