@@ -14,6 +14,7 @@ copy	^
 		+ core\core.static.type.js ^
 		+ core\core.static.string.js ^
 		+ core\core.static.expr.js ^
+		+ core\core.static.date.js ^
 		+ core\core.static.obj.js ^
 		+ core\core.array.prototype.js ^
 		+ core\core.prototype.js ^

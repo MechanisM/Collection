@@ -34,8 +34,8 @@
  *
  * @class
  * @autor kobezzza (kobezzza@gmail.com | http://kobezzza.com)
- * @date: 27.04.2012 16:02:57
- * @version 3.7.1
+ * @date: 03.05.2012 06:09:58
+ * @version 3.7.2
  *
  * @constructor
  * @this {Colletion Object}
@@ -626,6 +626,42 @@ var Collection;
 	};
 	
 	/////////////////////////////////
+	//// date
+	/////////////////////////////////
+	
+	/**
+	 * convert string to date
+	 * 
+	 * @param {Object|String} date — date string or object
+	 * @return {Object}
+	 */
+	Collection.date = function (date) {
+		return new Date(date);
+	};
+	
+	/**
+	 * returns true if the date is in the range
+	 * 
+	 * @param {Object|String} date — date string or object
+	 * @param {Object|String} min — min date
+	 * @param {Object|String} max — max date
+	 * @param {String|Boolrand} [range] — take into account the interval (constants: 'left', 'right')
+	 * @return {Object}
+	 */
+	Collection.between = function (date, min, max, range) {
+		date = C.date(date);
+		
+		if (range === true) {
+			C.date(min) <= date && date <= C.date(max);
+		} else if (range === 'left') {
+			C.date(min) <= date && date < C.date(max);
+		} else if (range === 'right') {
+			C.date(min) < date && date <= C.date(max);
+		}
+		
+		return C.date(min) < date && date < C.date(max);
+	};	
+	/////////////////////////////////
 	//// methods of arrays and objects
 	/////////////////////////////////
 	
@@ -1035,7 +1071,7 @@ var Collection;
 		 * @constant
 		 * @type String
 		 */
-		version: '3.7.1',
+		version: '3.7.2',
 		/**
 		 * return string: framework name + framework version
 		 *
@@ -2825,7 +2861,6 @@ var Collection;
 			
 			// bypassing the array in descending order
 			} else {
-				lastIndexOf && (lastIndexOf = cloneObj.length - lastIndexOf);
 				for (key = cloneObj.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }
@@ -2875,7 +2910,6 @@ var Collection;
 					tmpArray.push(key);
 				}
 				
-				lastIndexOf && (lastIndexOf = tmpArray.length - lastIndexOf);
 				for (key = tmpArray.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }

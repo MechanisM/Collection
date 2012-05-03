@@ -176,7 +176,6 @@
 			
 			// bypassing the array in descending order
 			} else {
-				lastIndexOf && (lastIndexOf = cloneObj.length - lastIndexOf);
 				for (key = cloneObj.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }
@@ -226,7 +225,6 @@
 					tmpArray.push(key);
 				}
 				
-				lastIndexOf && (lastIndexOf = tmpArray.length - lastIndexOf);
 				for (key = tmpArray.length - indexOf; (key -= 1) > -1;) {
 					if (lastIndexOf && key === lastIndexOf) { break; }
 					if (count !== false && j === count) { break; }
